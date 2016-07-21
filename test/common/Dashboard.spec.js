@@ -5,7 +5,7 @@ import React from 'react';
 
 chai.use(chaiEnzyme());
 
-import Dashboard from '../../src/common/Dashboard';
+import Dashboard from 'common/Dashboard';
 
 describe('Dashboard', () => {
   let wrapper;

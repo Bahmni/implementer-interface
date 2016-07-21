@@ -1,5 +1,8 @@
-var path = require('path');
-var webpack = require('webpack');
+'use strict';
+
+let path = require('path');
+let webpack = require('webpack');
+let srcPath = path.join(__dirname, './src');
 
 module.exports = {
   devtool: 'eval',
@@ -37,5 +40,11 @@ module.exports = {
         loader: 'json'
       }
     ]
+  },
+  resolve: {
+    alias: {
+      common: srcPath + '/common/',
+      'form-builder': srcPath + '/form-builder/'
+    }
   }
 };

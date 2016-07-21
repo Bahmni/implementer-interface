@@ -5,7 +5,7 @@ module.exports = function (config) {
     basePath: '',
     browsers: ['jsdom'],
     files: [
-      'test/loadtests.js'
+      'test/**/*.spec.js'
     ],
     port: 8080,
     captureTimeout: 60000,
@@ -20,7 +20,7 @@ module.exports = function (config) {
       divider: '*'
     },
     preprocessors: {
-      'test/loadtests.js': ['webpack', 'sourcemap']
+      'test/**/*.spec.js': ['webpack', 'sourcemap']
     },
     webpack: webpackCfg,
     webpackServer: {

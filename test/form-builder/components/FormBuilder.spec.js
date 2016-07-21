@@ -2,7 +2,7 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import FormBuilder from '../../../src/form-builder/components/FormBuilder';
+import FormBuilder from 'form-builder/components/FormBuilder';
 
 describe('FormBuilder', () => {
   let wrapper;
