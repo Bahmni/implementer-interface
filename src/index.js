@@ -1,9 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route } from 'react-router';
-import App from './form-builder/components/App';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
+import App from './common/App';
+import Dashboard from './common/Dashboard'
+import FormBuilder from './form-builder/components/FormBuilder';
 
 ReactDOM.render(
-  <App />,
-  document.getElementById('form-builder-main')
+  <Router history={hashHistory}>
+    <Route path="/" component={App}>
+      <IndexRoute component={Dashboard}></IndexRoute>
+      <Route path="form-builder" component={FormBuilder}></Route>
+    </Route>
+  </Router>,
+  document.getElementById('implementer-interface-main')
 );

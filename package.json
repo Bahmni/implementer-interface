@@ -1,15 +1,14 @@
 {
-  "name": "bahmni-form-builder",
+  "name": "implementer-interface",
   "version": "1.0.0",
-  "description": "App to build forms for Bahmni",
+  "description": "App for implementer interfaces like form builder, reports, etc.",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --hot --progress --colors",
-    "build": "webpack --progress --colors",
     "test": "karma start"
   },
   "author": "",
-  "devDependencies": {
+  "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.10.4",
     "babel-loader": "^6.2.4",
