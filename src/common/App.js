@@ -1,5 +1,9 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 
-export default ({children}) => {
-  return (<div id="container">{children}</div>);
-}
+const App = ({ children }) => <div id="container">{children}</div>;
+
+App.propTypes = {
+  children: PropTypes.object.isRequired,
+};
+
+export default App;

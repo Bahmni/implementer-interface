@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb",
+  "globals": {
+    "describe": true,
+    "beforeEach": true,
+    "context": true,
+    "it": true
+  },
+  "rules": {
+    "react/sort-prop-types": 2,
+    "react/jsx-sort-props": 2
+  }
+}

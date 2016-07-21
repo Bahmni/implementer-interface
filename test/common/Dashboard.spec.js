@@ -1,6 +1,6 @@
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
-import chai,{expect} from 'chai';
+import chai, { expect } from 'chai';
 import React from 'react';
 
 chai.use(chaiEnzyme());
