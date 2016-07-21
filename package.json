@@ -4,19 +4,21 @@
   "description": "App for implementer interfaces like form builder, reports, etc.",
   "main": "index.js",
   "scripts": {
+    "clean": "rimraf dist/*",
+    "copy": "copyfiles -f ./index.html ./dist",
+    "build": "webpack",
+    "compress": "cd dist && zip -r ./implementer_interface.zip *",
+    "test": "karma start",
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
     "start": "webpack-dev-server --hot --progress --colors",
-    "test": "karma start"
+    "ci": "npm run clean && npm run copy && npm run build && npm run compress"
   },
   "author": "",
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-enzyme": "^0.5.0",
+    "copyfiles": "^1.0.0",
     "enzyme": "^2.4.1",
-    "grunt": "^1.0.1",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-compress": "^1.3.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-webpack": "^1.0.11",
     "json-loader": "^0.5.4",
     "karma": "^1.1.1",
     "karma-chai": "^0.1.0",
@@ -27,6 +29,8 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.7.0",
     "mocha": "^2.5.3",
+    "react-addons-test-utils": "^15.2.1",
+    "react-hot-loader": "^1.3.0",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   },
@@ -39,9 +43,7 @@
     "core-js": "^2.4.1",
     "lodash": "^4.13.1",
     "react": "^15.2.1",
-    "react-addons-test-utils": "^15.2.1",
     "react-dom": "^15.2.1",
-    "react-hot-loader": "^1.3.0",
     "react-router": "^2.6.0"
   }
 }

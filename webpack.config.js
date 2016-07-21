@@ -7,7 +7,6 @@ let srcPath = path.join(__dirname, './src');
 module.exports = {
   devtool: 'eval',
   entry: [
-    'webpack/hot/only-dev-server',
     './src/index'
   ],
   output: {
