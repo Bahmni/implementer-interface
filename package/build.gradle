@@ -1,0 +1,36 @@
+plugins {
+    id "nebula.ospackage" version "3.4.0"
+}
+
+group 'org.bahmni.implementerInterface'
+version project.version
+
+task extractImplementerInterface(type: Copy){
+    from zipTree(file("${projectDir}/resources/implementer_interface.zip"))
+    into file("${projectDir}/resources/implementer_interface")
+}
+
+ospackage {
+    packageName = 'bahmni-implementer-interface'
+    release = System.getenv('GO_PIPELINE_COUNTER') ?: project.buildNumber
+    arch = NOARCH
+    os = LINUX
+    user = 'root'
+
+    into '/opt/bahmni-implementer-interface'
+
+    from("${projectDir}/resources/") {
+        fileMode = 0755
+        createDirectoryEntry = true
+        into 'etc'
+        exclude('implementer_interface.zip')
+    }
+}
+
+buildRpm {
+    dependsOn "extractImplementerInterface"
+
+    preInstall file("${projectDir}/scripts/preinstall.sh")
+    postInstall file("${projectDir}/scripts/postinstall.sh")
+    preUninstall file("${projectDir}/scripts/preuninstall.sh")
+}
