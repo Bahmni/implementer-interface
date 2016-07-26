@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import FormList from 'form-builder/components/FormList';
 
 export default class FormBuilder extends Component {
 
-  getClassName() {
-    return 'heading';
+  getData() {
+    return this.props.data;
   }
 
   render() {
-    return (
-      <div>
-        <h1 className={this.getClassName()}>This is the form builder page</h1>
-      </div>
-    );
+    return this.props.error ? <div>Error</div> : <FormList data={this.getData()} />;
   }
 }
+
+FormBuilder.propTypes = {
+  data: PropTypes.array.isRequired,
+  error: PropTypes.object,
+};

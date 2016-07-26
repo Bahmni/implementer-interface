@@ -1,9 +1,7 @@
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-
-import { get } from 'common/utils/httpInterceptor';
-
-const fetchMock = require('fetch-mock');
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import fetchMock from 'fetch-mock';
 
 chai.use(chaiEnzyme());
 
@@ -15,7 +13,7 @@ describe('httpInterceptor', () => {
 
     it('should return response when status is 200', (done) => {
       fetchMock.mock('/someUrl', { data: { id: 1 } });
-      get('/someUrl')
+      httpInterceptor.get('/someUrl')
         .then(res => {
           expect(fetchMock.calls().matched.length).to.eql(1);
           expect(res.data.id).to.eql(1);
@@ -25,7 +23,7 @@ describe('httpInterceptor', () => {
 
     it('should throw an error when status is not 2xx', (done) => {
       fetchMock.mock('/someUrl', 404);
-      get('/someUrl')
+      httpInterceptor.get('/someUrl')
         .then(() => {})
         .catch(err => {
           expect(err.response.status).to.eql(404);
