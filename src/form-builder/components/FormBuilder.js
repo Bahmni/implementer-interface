@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import FormList from 'form-builder/components/FormList';
 import CreateForm from 'form-builder/components/CreateForm';
+import Error from 'common/Error';
 
 export default class FormBuilder extends Component {
 
@@ -8,6 +9,10 @@ export default class FormBuilder extends Component {
     super();
     this.state = { showModal: false };
     this.setState = this.setState.bind(this);
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({ error: props.error });
   }
 
   openFormModal() {
@@ -28,9 +33,14 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
+  closeErrorMessage() {
+    this.setState({ error: undefined });
+  }
+
   render() {
-    return (this.props.error ?
-        <div>Error</div> :
+    return (
+      <div>
+        <Error closeErrorMessage={() => this.closeErrorMessage()} error={this.state.error} />
         <div>
           <button onClick={() => this.openFormModal()}>Create a form</button>
           <CreateForm
@@ -40,6 +50,7 @@ export default class FormBuilder extends Component {
           />
           <FormList data={this.props.data} />
         </div>
+      </div>
     );
   }
 }
