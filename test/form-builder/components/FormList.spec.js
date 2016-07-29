@@ -41,15 +41,13 @@ describe('FormList', () => {
     },
   ];
 
-  beforeEach(() => {
-    wrapper = shallow(<FormList data={data} />);
-  });
-
   function getData(row, column) {
     return wrapper.find('table').find('tbody').find('tr').at(row).find('td').at(column).text();
   }
 
   it('should render form list in table', () => {
+    wrapper = shallow(<FormList data={data} />);
+
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
     expect(getData(0, 0)).to.eql('Vitals');
@@ -63,5 +61,12 @@ describe('FormList', () => {
 
     expect(getData(1, 2)).to.eql('09 Aug 10');
     expect(getData(1, 3)).to.eql('12 Aug 10');
+  });
+
+  it('should not display table if there is no data', () => {
+    wrapper = shallow(<FormList data={[]} />);
+
+    expect(wrapper.find('div').text()).to.eql('No Forms to Display');
+    expect(wrapper).to.not.have.descendants('table');
   });
 });

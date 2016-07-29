@@ -17,7 +17,7 @@ export default class FormList extends Component {
   }
 
   render() {
-    return (
+    return (this.props.data.length === 0 ? <div>No Forms to Display</div> :
       <table>
         <thead>
         <tr>

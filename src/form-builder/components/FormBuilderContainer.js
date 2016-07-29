@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FormBuilder from 'form-builder/components/FormBuilder';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
+import { hashHistory } from 'react-router';
 
 export default class FormBuilderContainer extends Component {
 
@@ -14,13 +15,27 @@ export default class FormBuilderContainer extends Component {
   componentWillMount() {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
-      .then((data) => {
-        this.setState({ data: data.results });
+      .then((data) => this.setState({ data: data.results }))
+      .catch((error) => this.setState({ error }));
+  }
+
+  saveForm(form) {
+    httpInterceptor
+      .post(formBuilderConstants.formUrl, form)
+      .then((response) => {
+        const uuid = response.uuid;
+        hashHistory.push(`/form-builder/${uuid}`);
       })
       .catch((error) => this.setState({ error }));
   }
 
   render() {
-    return <FormBuilder data={this.state.data} error={this.state.error} />;
+    return (
+      <FormBuilder
+        data={this.state.data}
+        error={this.state.error}
+        saveForm={(formName) => this.saveForm(formName)}
+      />
+    );
   }
 }
