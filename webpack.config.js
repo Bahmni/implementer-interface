@@ -14,9 +14,6 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: '/implementer-interface/'
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ],
   externals: {
     'react/lib/ExecutionEnvironment': true,
     'react/lib/ReactContext': true,
@@ -26,7 +23,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loaders: ['react-hot', 'babel'],
+        loaders: ['babel'],
         include: path.join(__dirname, 'src')
       },
       {
@@ -38,7 +35,15 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       }
+    ],
+    postLoaders: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)\//,
+        loader: 'istanbul-instrumenter'
+      }
     ]
+
   },
   resolve: {
     alias: {
