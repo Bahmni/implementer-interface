@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
-import Form from 'form-builder/components/Form';
+import FormDetail from 'form-builder/components/FormDetail';
 
-export default class FormContainer extends Component {
+export default class FormDetailContainer extends Component {
 
   constructor() {
     super();
@@ -20,10 +20,10 @@ export default class FormContainer extends Component {
   }
 
   render() {
-    return (<Form formData={this.state.formData} />);
+    return (<FormDetail formData={this.state.formData} />);
   }
 }
 
-FormContainer.propTypes = {
+FormDetailContainer.propTypes = {
   params: PropTypes.object.isRequired,
 };

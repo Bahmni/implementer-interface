@@ -3,12 +3,12 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import CreateForm from 'form-builder/components/CreateForm';
+import CreateFormModal from 'form-builder/components/CreateFormModal';
 import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
-describe('CreateForm', () => {
+describe('CreateFormModal', () => {
   let wrapper;
   let closeModalSpy;
   let createFormSpy;
@@ -19,7 +19,11 @@ describe('CreateForm', () => {
     createFormSpy = sinon.spy();
     showModal = true;
     wrapper = shallow(
-      <CreateForm closeModal={closeModalSpy} createForm={createFormSpy} showModal={showModal} />
+      <CreateFormModal
+        closeModal={closeModalSpy}
+        createForm={createFormSpy}
+        showModal={showModal}
+      />
     );
   });
 
@@ -30,7 +34,7 @@ describe('CreateForm', () => {
 
   it('should not render create form modal when showModal is false', () => {
     wrapper = shallow(
-      <CreateForm closeModal={closeModalSpy} createForm={createFormSpy} showModal={false} />
+      <CreateFormModal closeModal={closeModalSpy} createForm={createFormSpy} showModal={false} />
     );
     expect(wrapper).to.not.have.descendants('div');
   });

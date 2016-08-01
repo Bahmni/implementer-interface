@@ -1,15 +1,15 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-const Form = ({ formData }) =>
+const FormDetail = ({ formData }) =>
   <div>
     <Link to="form-builder">My Forms</Link>
     <div className="name">{formData.name}</div>
     <div className="version">{formData.version}</div>
   </div>;
 
-Form.propTypes = {
+FormDetail.propTypes = {
   formData: PropTypes.object,
 };
 
-export default Form;
+export default FormDetail;

@@ -26,7 +26,7 @@ describe('FormBuilder', () => {
   });
 
   it('should render create form modal', () => {
-    expect(wrapper).to.have.exactly(1).descendants('CreateForm');
+    expect(wrapper).to.have.exactly(1).descendants('CreateFormModal');
   });
 
   it('should set state of showModal as true when create a form option is clicked', () => {

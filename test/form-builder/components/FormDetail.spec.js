@@ -3,11 +3,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import Form from 'form-builder/components/Form';
+import FormDetail from 'form-builder/components/FormDetail';
 
 chai.use(chaiEnzyme());
 
-describe('Form', () => {
+describe('FormDetails', () => {
   let wrapper;
   let formData = {
     name: 'someFormName',
@@ -15,7 +15,7 @@ describe('Form', () => {
   };
 
   beforeEach(() => {
-    wrapper = shallow(<Form formData={formData} />);
+    wrapper = shallow(<FormDetail formData={formData} />);
   });
 
   it('should render form details', () => {

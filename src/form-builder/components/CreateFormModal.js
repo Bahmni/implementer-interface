@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-export default class CreateForm extends Component {
+export default class CreateFormModal extends Component {
 
   constructor() {
     super();
@@ -34,7 +34,7 @@ export default class CreateForm extends Component {
   }
 }
 
-CreateForm.propTypes = {
+CreateFormModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
   createForm: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,

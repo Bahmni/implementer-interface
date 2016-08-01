@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import FormList from 'form-builder/components/FormList';
-import CreateForm from 'form-builder/components/CreateForm';
+import CreateFormModal from 'form-builder/components/CreateFormModal';
 import Error from 'common/Error';
 
 export default class FormBuilder extends Component {
@@ -43,7 +43,7 @@ export default class FormBuilder extends Component {
         <Error closeErrorMessage={() => this.closeErrorMessage()} error={this.state.error} />
         <div>
           <button onClick={() => this.openFormModal()}>Create a form</button>
-          <CreateForm
+          <CreateFormModal
             closeModal={() => this.closeFormModal()}
             createForm={(formName) => this.createForm(formName)}
             showModal={this.state.showModal}
