@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import FormBuilder from 'form-builder/components/FormBuilder';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
-import { hashHistory } from 'react-router';
 
 export default class FormBuilderContainer extends Component {
 
@@ -24,7 +23,7 @@ export default class FormBuilderContainer extends Component {
       .post(formBuilderConstants.formUrl, form)
       .then((response) => {
         const uuid = response.uuid;
-        hashHistory.push(`/form-builder/${uuid}`);
+        this.context.router.push(`/form-builder/${uuid}`);
       })
       .catch((error) => this.setState({ error }));
   }
@@ -39,3 +38,7 @@ export default class FormBuilderContainer extends Component {
     );
   }
 }
+
+FormBuilderContainer.contextTypes = {
+  router: React.PropTypes.object.isRequired,
+};
