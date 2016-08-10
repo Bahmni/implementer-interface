@@ -1,9 +1,7 @@
-import React, { Component } from 'react';
-import { Router, Route, Link, browserHistory } from 'react-router';
+import React from 'react';
+import { Link } from 'react-router';
 
-class Header extends Component{
-  render(){
-      return(
+const Header = () =>
           <div>
               <div className="header-wrap">
                   <header className="header">
@@ -16,10 +14,6 @@ class Header extends Component{
                       </nav>
                   </header>
               </div>
-              
-          </div>
-      );
-  }
-}
+          </div>;
 
 export default Header;

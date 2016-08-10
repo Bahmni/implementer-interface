@@ -4,8 +4,6 @@ import CreateFormModal from 'form-builder/components/CreateFormModal';
 import Error from 'common/Error';
 import FormBuilderHeader from './FormBuilderHeader';
 
-
-
 export default class FormBuilder extends Component {
 
   constructor() {
@@ -47,12 +45,15 @@ export default class FormBuilder extends Component {
         <FormBuilderHeader />
         <div className="breadcrumb-wrap">
           <div className="breadcrumb">
-            <div class="fl">
+            <div className="fl">
               <ul>
                 <li>My Forms</li>
               </ul>
             </div>
-            <button onClick={() => this.openFormModal()} className="btn--highlight fr" accesskey="n">Create a Form</button>
+            <button
+              accessKey="n" className="btn--highlight fr"
+              onClick={() => this.openFormModal()}
+            >Create a Form</button>
           </div>
         </div>
           <CreateFormModal

@@ -6,7 +6,7 @@ const Error = ({ closeErrorMessage, error }) => {
         <div className="notification">
           <div className="notification--error">
             <div className="message">{error.message}</div>
-            <button onClick={() => closeErrorMessage()} className="btn--close">Close</button>
+            <button className="btn--close" onClick={() => closeErrorMessage()} >Close</button>
           </div>
         </div>);
   }

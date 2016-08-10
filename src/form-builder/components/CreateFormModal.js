@@ -26,8 +26,9 @@ export default class CreateFormModal extends Component {
                 <div className="button-wrapper fr">
                   <button className="btn" onClick={this.props.closeModal}>Cancel</button>
                   <button
-                      className="btn--highlight"
-                      onClick={() => this.props.createForm(this.state.formName)}>
+                    className="btn--highlight"
+                    onClick={() => this.props.createForm(this.state.formName)}
+                  >
                     Create Form
                   </button>
                 </div>

@@ -26,7 +26,7 @@ export default class FormDetailContainer extends Component {
           <FormBuilderHeader />
           <div className="breadcrumb-wrap">
               <div className="breadcrumb">
-                  <div class="fl">
+                  <div className="fl">
                       <ul>
                         <li>My Forms</li>
                       </ul>
