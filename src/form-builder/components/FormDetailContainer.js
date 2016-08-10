@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import FormDetail from 'form-builder/components/FormDetail';
+import FormBuilderHeader from './FormBuilderHeader';
 
 export default class FormDetailContainer extends Component {
 
@@ -20,7 +21,25 @@ export default class FormDetailContainer extends Component {
   }
 
   render() {
-    return (<FormDetail formData={this.state.formData} />);
+    return (
+        <div>
+          <FormBuilderHeader />
+          <div className="breadcrumb-wrap">
+              <div className="breadcrumb">
+                  <div class="fl">
+                      <ul>
+                        <li>My Forms</li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+          <div className="container-content-wrap">
+            <div className="container-content">
+              <FormDetail formData={this.state.formData} />
+            </div>
+          </div>
+        </div>
+    );
   }
 }
 

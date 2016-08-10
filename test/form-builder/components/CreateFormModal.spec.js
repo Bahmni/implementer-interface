@@ -28,8 +28,8 @@ describe('CreateFormModal', () => {
   });
 
   it('should render create form modal when showModal is true', () => {
-    expect(wrapper.find('.modal-header').text()).to.eql('Create a Form');
-    expect(wrapper.find('.modal-title').text()).to.eql('Create a new form from scratch');
+    expect(wrapper.find('.dialog--header').text()).to.eql('Create a Form');
+    expect(wrapper.find('.dialog--title').text()).to.eql('Create a new form from scratch');
   });
 
   it('should not render create form modal when showModal is false', () => {
@@ -40,13 +40,13 @@ describe('CreateFormModal', () => {
   });
 
   it('should call closeModal function on click of close button', () => {
-    wrapper.find('.cancel-button').simulate('click');
+    wrapper.find('.btn').simulate('click');
     sinon.assert.calledOnce(closeModalSpy);
   });
 
   it('should call create function on click of create button', () => {
     wrapper.find('input').simulate('change', { target: { value: 'Form-1' } });
-    wrapper.find('.create-button').simulate('click');
+    wrapper.find('.btn--highlight').simulate('click');
     sinon.assert.calledOnce(createFormSpy);
     sinon.assert.calledWith(createFormSpy, 'Form-1');
   });

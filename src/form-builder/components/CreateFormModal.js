@@ -14,19 +14,24 @@ export default class CreateFormModal extends Component {
   render() {
     if (this.props.showModal) {
       return (
-        <div>
-          <div className="modal-header">Create a Form</div>
-          <div>
-            <div className="modal-title">Create a new form from scratch</div>
-            <div>Form Name</div>
-            <input onChange={(e) => this.setFormName(e.target.value)} type="text" />
-            <button
-              className="create-button"
-              onClick={() => this.props.createForm(this.state.formName)}
-            >
-              Create Form
-            </button>
-            <button className="cancel-button" onClick={this.props.closeModal}>Cancel</button>
+        <div className="dialog-wrapper">
+          <div className="dialog">
+              <div className="dialog--header">Create a Form</div>
+              <div className="dialog--container">
+                <div className="dialog--title">Create a new form from scratch</div>
+                <div className="form-field clearfix">
+                  <label>Form Name</label>
+                  <input onChange={(e) => this.setFormName(e.target.value)} type="text" />
+                </div>
+                <div className="button-wrapper fr">
+                  <button className="btn" onClick={this.props.closeModal}>Cancel</button>
+                  <button
+                      className="btn--highlight"
+                      onClick={() => this.props.createForm(this.state.formName)}>
+                    Create Form
+                  </button>
+                </div>
+              </div>
           </div>
         </div>);
     }

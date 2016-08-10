@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import FormList from 'form-builder/components/FormList';
 import CreateFormModal from 'form-builder/components/CreateFormModal';
 import Error from 'common/Error';
+import FormBuilderHeader from './FormBuilderHeader';
+
+
 
 export default class FormBuilder extends Component {
 
@@ -41,15 +44,27 @@ export default class FormBuilder extends Component {
     return (
       <div>
         <Error closeErrorMessage={() => this.closeErrorMessage()} error={this.state.error} />
-        <div>
-          <button onClick={() => this.openFormModal()}>Create a form</button>
+        <FormBuilderHeader />
+        <div className="breadcrumb-wrap">
+          <div className="breadcrumb">
+            <div class="fl">
+              <ul>
+                <li>My Forms</li>
+              </ul>
+            </div>
+            <button onClick={() => this.openFormModal()} className="btn--highlight fr" accesskey="n">Create a Form</button>
+          </div>
+        </div>
           <CreateFormModal
             closeModal={() => this.closeFormModal()}
             createForm={(formName) => this.createForm(formName)}
             showModal={this.state.showModal}
           />
-          <FormList data={this.props.data} />
-        </div>
+      <div className="container-content-wrap">
+          <div className="container-content">
+             <FormList data={this.props.data} />
+          </div>
+      </div>
       </div>
     );
   }

@@ -1,0 +1,17 @@
+.form-field{
+  padding: 5px 0;
+  label{
+    display: block;
+    font-size: 14px;
+  }
+  input[type=text] {
+    width: 100%;
+    display: inline-block;
+    margin: 2px;
+    padding: 8px 10px;
+    color: #363463;
+    background-color: #FFF;
+    border: 1px solid #DDD;
+    box-sizing: border-box;
+  }
+}

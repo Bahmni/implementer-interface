@@ -1,0 +1,90 @@
+/* settings */
+$max-page-width: 1300px;
+
+/*  _colors - bahmniTheme:  */
+$bahmniPrimaryColor: #00463f;
+$bahmniSecondaryColor: #669999;
+$bahmniTertiaryColor: #457FAC;
+
+$bahmniLinkColor: #2b95ff;
+
+$bahmniPrimaryBtnColor: #a1d030;
+$bahmniPrimaryBtnColorHover: #88af28;
+
+$bahmniSectionHeaderColor: #66b298;
+
+
+
+/*  _different shades of grey/gray:  */
+$darkGray:     #333;
+$mediumGray:   #666;       /* any text will not be lighter than this */
+$lightGray:    #ccc;     /* any border will not be lighter than this */
+$lighterGray:  #ddd;
+$lightestGray: #eee; /* any background will not be lighter than this */
+
+$primarySectionGridBorder: #bbb;
+$bahmniTableHeaderBg: #f1f1f1;
+
+$bahmniPageBg: #fafafa;
+
+//fonts
+$fontPath: "/implementer-interface/fonts";
+
+//colors
+$alertBackground: #FFFDF0;
+$bodyBackground: #EEE;
+
+$white: #FFFFFF;
+$black: #000000;
+$darkerGrey: #BBB;
+$lighterGrey: #f3f3f3;
+
+//openMrs colors
+$highlight: darken(#009384, 15%);
+$text: darken(#5B57A6, 20%);
+$subtleText: darken($darkerGrey, 25%);
+$subtlerText: $darkerGrey;
+
+$link: #007FFF;
+$focus: #FFFDF7;
+
+$success: #A1D030;
+$alert: #FFA000;
+$error: #ff6666;
+$successBackground: #ddffdd;
+
+$bahmniTextColor:#363463;
+
+
+/*  _spacing padding - margin:  */
+$smallestSpacing: 5px;
+$defaultSpacing: 10px;
+$mediumSpacing: 15px;
+$largeSpacing: 20px;
+
+
+/* _fonts */
+
+$primaryFont: "OpenSans";
+$primaryBoldFont: "OpenSansBold";
+$primaryLightFont: "OpenSansLight";
+$primaryItalicFont: "OpenSansItalic";
+
+
+/* _mixins */
+@mixin font-size($sizeValue: 1) {
+  font-size: ($sizeValue * 16) + px;
+  font-size: $sizeValue + rem;
+}
+
+@mixin clearfix() {
+  *zoom:1;
+  &:before,
+  &:after {
+    content:"";
+    display:table;
+  }
+  &:after {
+    clear:both;
+  }
+}

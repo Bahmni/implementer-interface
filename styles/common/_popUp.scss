@@ -1,0 +1,42 @@
+.dialog-wrapper{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+}
+
+.dialog{
+  position: relative;
+  background: $white;
+  color: #333;
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.4);
+  border:1px solid $mediumGray;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  width: auto;
+  display: table;
+  min-width:450px;
+  font-family: $primaryFont, Arial, sans-serif;
+  &--header{
+    background: $bahmniSecondaryColor ;
+    color: $white;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+  }
+  &--container{
+    padding: 10px 20px;
+  }
+  &--title{
+    margin-bottom: 10px;
+  }
+  .button-wrapper{
+    margin: 10px 0;
+    button{
+      margin-left: 10px;
+    }
+  }
+}
