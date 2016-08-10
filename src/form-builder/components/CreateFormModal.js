@@ -7,14 +7,27 @@ export default class CreateFormModal extends Component {
     this.state = {};
   }
 
+  componentDidUpdate() {
+    if (this.refs.createFormModal) {
+      this.refs.createFormModal.focus();
+    }
+  }
+
   setFormName(formName) {
     this.setState({ formName });
+  }
+
+  handleEsc(e) {
+    if (e.keyCode === 27) {
+      this.props.closeModal();
+    }
   }
 
   render() {
     if (this.props.showModal) {
       return (
-        <div className="dialog-wrapper">
+        <div onKeyUp={(e) => this.handleEsc(e)} ref="createFormModal" tabIndex="0" >
+          <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
           <div className="dialog">
               <div className="dialog--header">Create a Form</div>
               <div className="dialog--container">

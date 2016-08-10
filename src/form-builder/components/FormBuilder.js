@@ -30,7 +30,6 @@ export default class FormBuilder extends Component {
       version: '1.0',
       published: false,
     };
-
     this.props.saveForm(form);
   }
 
