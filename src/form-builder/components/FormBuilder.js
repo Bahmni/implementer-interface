@@ -3,7 +3,7 @@ import FormList from 'form-builder/components/FormList';
 import CreateFormModal from 'form-builder/components/CreateFormModal';
 import Error from 'common/Error';
 import FormBuilderHeader from './FormBuilderHeader';
-import FormBuilderBreadcrumbs from './FormBuilderBreadcrumbs';
+import { FormBuilderBreadcrumbs } from './FormBuilderBreadcrumbs';
 
 
 export default class FormBuilder extends Component {

@@ -3,7 +3,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import FormDetail from 'form-builder/components/FormDetail';
 import FormBuilderHeader from './FormBuilderHeader';
-import FormBuilderBreadcrumbs from './FormBuilderBreadcrumbs';
+import { FormBuilderBreadcrumbs } from './FormBuilderBreadcrumbs';
 
 export default class FormDetailContainer extends Component {
 
