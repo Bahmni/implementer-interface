@@ -3,6 +3,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import FormDetail from 'form-builder/components/FormDetail';
 import FormBuilderHeader from './FormBuilderHeader';
+import FormBuilderBreadcrumbs from './FormBuilderBreadcrumbs';
 
 export default class FormDetailContainer extends Component {
 
@@ -27,9 +28,9 @@ export default class FormDetailContainer extends Component {
           <div className="breadcrumb-wrap">
               <div className="breadcrumb">
                   <div className="fl">
-                      <ul>
-                        <li>My Forms</li>
-                      </ul>
+                      <div className="fl">
+                          <FormBuilderBreadcrumbs routes={this.props.routes} />
+                      </div>
                   </div>
               </div>
           </div>
@@ -45,4 +46,5 @@ export default class FormDetailContainer extends Component {
 
 FormDetailContainer.propTypes = {
   params: PropTypes.object.isRequired,
+  routes: PropTypes.array,
 };

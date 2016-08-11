@@ -11,10 +11,10 @@ const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 
 ReactDOM.render(
   <Router history={appHistory}>
-    <Route component={App} path="/">
-      <IndexRoute component={Dashboard} />
-      <Route component={FormBuilderContainer} path="form-builder" />
-      <Route component={FormDetailContainer} path="form-builder/:formUuid" />
+    <Route component={App} name="Dashboard" path="/">
+      <IndexRoute component={Dashboard} name="Dashboard" />
+      <Route component={FormBuilderContainer} name="Form Builder" path="form-builder" />
+      <Route component={FormDetailContainer} name="Form Details" path="form-builder/:formUuid" />
     </Route>
   </Router>,
   document.getElementById('implementer-interface-main')

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import FormBuilder from 'form-builder/components/FormBuilder';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
@@ -30,9 +30,9 @@ export default class FormBuilderContainer extends Component {
 
   render() {
     return (
-      <FormBuilder
-        data={this.state.data}
+      <FormBuilder data={this.state.data}
         error={this.state.error}
+        routes={this.props.routes}
         saveForm={(formName) => this.saveForm(formName)}
       />
     );
@@ -41,4 +41,8 @@ export default class FormBuilderContainer extends Component {
 
 FormBuilderContainer.contextTypes = {
   router: React.PropTypes.object.isRequired,
+};
+
+FormBuilderContainer.propTypes = {
+  routes: PropTypes.array,
 };
