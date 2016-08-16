@@ -11,7 +11,7 @@
     "test": "karma start",
     "test:watch": "karma start --autoWatch=true --singleRun=false",
     "pretest": "rimraf coverage/*",
-    "posttest": "eslint ./src & eslint ./test",
+    "posttest": "eslint ./src && eslint ./test",
     "start": "webpack-dev-server --hot --progress --colors",
     "ci": "npm run clean && npm run copy && npm run build && npm run compress"
   },
