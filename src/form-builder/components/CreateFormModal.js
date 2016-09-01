@@ -4,17 +4,13 @@ export default class CreateFormModal extends Component {
 
   constructor() {
     super();
-    this.state = {};
+    this.formName = '';
   }
 
   componentDidUpdate() {
     if (this.refs.createFormModal) {
       this.refs.createFormModal.focus();
     }
-  }
-
-  setFormName(formName) {
-    this.setState({ formName });
   }
 
   handleEsc(e) {
@@ -34,13 +30,13 @@ export default class CreateFormModal extends Component {
                 <div className="dialog--title">Create a new form from scratch</div>
                 <div className="form-field clearfix">
                   <label>Form Name</label>
-                  <input onChange={(e) => this.setFormName(e.target.value)} type="text" />
+                  <input onChange={(e) => this.formName = e.target.value} type="text" autoFocus/>
                 </div>
                 <div className="button-wrapper fr">
                   <button className="btn" onClick={this.props.closeModal}>Cancel</button>
                   <button
                     className="btn--highlight"
-                    onClick={() => this.props.createForm(this.state.formName)}
+                    onClick={() => this.props.createForm(this.formName)}
                   >
                     Create Form
                   </button>
