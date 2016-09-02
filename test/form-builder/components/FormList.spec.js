@@ -9,7 +9,7 @@ chai.use(chaiEnzyme());
 
 describe('FormList', () => {
   let wrapper;
-  let data = [
+  const data = [
     {
       id: 1,
       name: 'Vitals',

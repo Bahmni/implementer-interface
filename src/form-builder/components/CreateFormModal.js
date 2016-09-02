@@ -13,6 +13,10 @@ export default class CreateFormModal extends Component {
     }
   }
 
+  setFormName(formName) {
+    this.formName = formName;
+  }
+
   handleEsc(e) {
     if (e.keyCode === 27) {
       this.props.closeModal();
@@ -30,7 +34,7 @@ export default class CreateFormModal extends Component {
                 <div className="dialog--title">Create a new form from scratch</div>
                 <div className="form-field clearfix">
                   <label>Form Name</label>
-                  <input onChange={(e) => this.formName = e.target.value} type="text" autoFocus/>
+                  <input autoFocus onChange={(e) => this.setFormName(e.target.value)} type="text" />
                 </div>
                 <div className="button-wrapper fr">
                   <button className="btn" onClick={this.props.closeModal}>Cancel</button>

@@ -10,7 +10,7 @@ chai.use(chaiEnzyme());
 
 describe('FormBuilder', () => {
   let wrapper;
-  let saveFormSpy = sinon.spy();
+  const saveFormSpy = sinon.spy();
 
   beforeEach(() => {
     wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
