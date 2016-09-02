@@ -20,11 +20,19 @@ setupApps(){
     ln -s /opt/bahmni-implementer-interface/etc/implementer_interface/ /var/www/implementer_interface
 }
 
+setupConfFiles() {
+    cp -f /opt/bahmni-implementer-interface/etc/implementer_interface_ssl.conf /etc/httpd/conf.d/implementer_interface_ssl.conf
+}
+
 manage_permissions(){
     # permissions
     chown -R bahmni:bahmni /opt/bahmni-implementer-interface
     chown -R bahmni:bahmni /var/www/implementer_interface
+    chown -R bahmni:bahmni /etc/httpd/conf.d/implementer_interface_ssl.conf
 }
 
 setupApps
+setupConfFiles
 manage_permissions
+
+service httpd reload || true
