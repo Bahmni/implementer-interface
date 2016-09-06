@@ -22,14 +22,19 @@ export default class CreateFormModal extends Component {
       this.props.closeModal();
     }
   }
+  handleEnter(e) {
+    if (e.keyCode === 13) {
+      this.props.createForm(this.formName);
+    }
+  }
 
   render() {
     if (this.props.showModal) {
       return (
         <div onKeyUp={(e) => this.handleEsc(e)} ref="createFormModal" tabIndex="0" >
           <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
-          <div className="dialog">
-              <div className="dialog--header">Create a Form</div>
+          <div className="dialog" onKeyUp={(e) => this.handleEnter(e)}>
+              <div className="dialog__header">Create a Form</div>
               <div className="dialog--container">
                 <div className="dialog--title">Create a new form from scratch</div>
                 <div className="form-field clearfix">
