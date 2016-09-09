@@ -34,9 +34,8 @@ export default class CreateFormModal extends Component {
         <div onKeyUp={(e) => this.handleEsc(e)} ref="createFormModal" tabIndex="0" >
           <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
           <div className="dialog" onKeyUp={(e) => this.handleEnter(e)}>
-              <div className="dialog__header">Create a Form</div>
+              <div className="dialog--header">Create a Form</div>
               <div className="dialog--container">
-                <div className="dialog--title">Create a new form from scratch</div>
                 <div className="form-field clearfix">
                   <label>Form Name</label>
                   <input autoFocus onChange={(e) => this.setFormName(e.target.value)} type="text" />
