@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
@@ -9,17 +8,25 @@ chai.use(chaiEnzyme());
 
 describe('FormDetails', () => {
   let wrapper;
-  let formData = {
+  const formData = {
     name: 'someFormName',
     version: '1.0',
+    uuid: 'someUuid',
   };
 
-  beforeEach(() => {
+  it('should render form details when form data is present', () => {
     wrapper = shallow(<FormDetail formData={formData} />);
+    expect(wrapper).to.have.exactly(1).descendants('ControlPool');
+    expect(wrapper).to.have.exactly(1).descendants('Canvas');
+    expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
-  it('should render form details', () => {
-    expect(wrapper.find('.name').text()).to.be.eql('someFormName');
-    expect(wrapper.find('.version').text()).to.be.eql('1.0');
+  it('should render nothing when form data is not preset', () => {
+    wrapper = shallow(<FormDetail />);
+    expect(wrapper).to.be.blank();
+  });
+
+  it('save should return form json', () => {
+    wrapper = shallow(<FormDetail />);
   });
 });
