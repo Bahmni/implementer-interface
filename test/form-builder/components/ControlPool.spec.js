@@ -9,7 +9,7 @@ chai.use(chaiEnzyme());
 describe('ControlPool', () => {
   beforeEach(() => {
     window.componentStore = {
-      getAllRegisteredComponents: () => {},
+      getAllDesignerComponents: () => {},
     };
   });
 
@@ -17,12 +17,11 @@ describe('ControlPool', () => {
     delete window.componentStore;
   });
 
-  function controlDescriptor(name, isTopLevel) {
+  function controlDescriptor(name) {
     return {
       [name]: {
         designProperties: {
           displayName: name,
-          isTopLevelComponent: isTopLevel,
         },
         metadata: {
           attributes: [],
@@ -31,33 +30,27 @@ describe('ControlPool', () => {
     };
   }
 
-  it('should render an empty listbox if no registered controls present', () => {
+  it('should render an empty listbox if no designer controls are present', () => {
     const controlPool = shallow(<ControlPool />);
     expect(controlPool.find('.controls-list')).to.be.blank();
   });
 
-  it('should render an empty listbox if register controls are not top-level', () => {
-    window.componentStore.getAllRegisteredComponents = () => controlDescriptor('someName', false);
-    const controlPool = shallow(<ControlPool />);
-    expect(controlPool.find('.controls-list')).to.be.blank();
-  });
-
-  it('should render a listbox when there are top-level components', () => {
-    const control1 = controlDescriptor('control1', true);
-    const control2 = controlDescriptor('control2', true);
-    const control3 = controlDescriptor('control3', false);
-    window.componentStore.getAllRegisteredComponents = () =>
+  it('should render a listbox when there are designer components', () => {
+    const control1 = controlDescriptor('control1');
+    const control2 = controlDescriptor('control2');
+    const control3 = controlDescriptor('control3');
+    window.componentStore.getAllDesignerComponents = () =>
       Object.assign(control1, control2, control3);
 
     const controlPool = shallow(<ControlPool />);
     expect(controlPool.find('.controls-list').children().at(0).text()).to.eql('control1');
     expect(controlPool.find('.controls-list').children().at(1).text()).to.eql('control2');
-    expect(controlPool.find('.controls-list').children()).to.have.length(2);
+    expect(controlPool.find('.controls-list').children()).to.have.length(3);
   });
 
   it('should add draggable properties', () => {
     const controls = controlDescriptor('control1', true);
-    window.componentStore.getAllRegisteredComponents = () => controls;
+    window.componentStore.getAllDesignerComponents = () => controls;
 
     const eventData = {
       dataTransfer: {

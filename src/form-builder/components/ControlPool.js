@@ -1,12 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import get from 'lodash/get';
-import filter from 'lodash/filter';
 import map from 'lodash/map';
 
 export class ControlPool extends Component {
   constructor() {
     super();
-    this.draggableControls = this.getAllRegisteredComponent();
+    this.draggableControls = this.getAllDesignerComponents();
   }
 
   onDragStart(type) {
@@ -24,19 +22,11 @@ export class ControlPool extends Component {
       </div>);
   }
 
-  getAllRegisteredComponent() {
-    const registeredComponents = window.componentStore.getAllRegisteredComponents();
-    const topLevelComponents = map(registeredComponents, (componentDescriptor, type) => {
-      if (this.isTopLevel(componentDescriptor)) {
-        return this.getControlItem(type, componentDescriptor);
-      }
-      return undefined;
-    });
-    return filter(topLevelComponents, component => component !== undefined);
-  }
-
-  isTopLevel(componentDescriptor) {
-    return get(componentDescriptor, 'designProperties.isTopLevelComponent');
+  getAllDesignerComponents() {
+    const designerComponentDescriptors = window.componentStore.getAllDesignerComponents();
+    return map(designerComponentDescriptors, (componentDescriptor, type) =>
+      this.getControlItem(type, componentDescriptor)
+    );
   }
 
   render() {

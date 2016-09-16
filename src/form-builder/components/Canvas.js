@@ -14,7 +14,7 @@ export default class Canvas extends DraggableComponent {
   }
 
   postDragProcess(data) {
-    const component = window.componentStore.getRegisteredComponent(data);
+    const component = window.componentStore.getDesignerComponent(data);
     const descriptor = new Descriptor(data, component).data();
     const descriptorClone = Object.assign({}, descriptor);
     descriptorClone.metadata.id = this.createId();
@@ -43,15 +43,13 @@ export default class Canvas extends DraggableComponent {
   }
 
   renderComponents() {
-    return this.state.descriptors.map(descriptor => {
-      const descriptorClone = Object.assign({}, descriptor);
-      descriptorClone.metadata.properties.isDesignMode = true;
-      return React.createElement(descriptor.designerControl, {
-        key: descriptorClone.metadata.id,
-        metadata: descriptorClone.metadata,
+    return this.state.descriptors.map(descriptor =>
+      React.createElement(descriptor.control, {
+        key: descriptor.metadata.id,
+        metadata: descriptor.metadata,
         ref: this.storeComponentRef,
-      });
-    });
+      })
+    );
   }
 
   render() {

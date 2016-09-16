@@ -8,15 +8,15 @@ import sinon from 'sinon';
 chai.use(chaiEnzyme());
 
 describe('Canvas', () => {
-  const designerControl = () => (<div></div>);
+  const control = () => (<div></div>);
 
   before(() => {
     window.componentStore = {
-      getRegisteredComponent: () => ({
+      getDesignerComponent: () => ({
         metadata: {
           attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
         },
-        designerControl,
+        control,
       }),
     };
   });
@@ -59,22 +59,22 @@ describe('Canvas', () => {
 
     const expectedFirstCallProps = {
       key: '1',
-      metadata: { id: '1', properties: { isDesignMode: true } },
+      metadata: { id: '1', properties: {} },
       ref: sinon.match.any,
     };
 
     const expectedSecondCallProps = {
       key: '2',
-      metadata: { id: '2', properties: { isDesignMode: true } },
+      metadata: { id: '2', properties: {} },
       ref: sinon.match.any,
     };
 
     const createElementSpy = sinon.spy(React, 'createElement');
 
     canvas.find('#form-builder-canvas').props().onDrop(eventData);
-    sinon.assert.calledOnce(createElementSpy.withArgs(designerControl, expectedFirstCallProps));
+    sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedFirstCallProps));
 
     canvas.find('#form-builder-canvas').props().onDrop(eventData);
-    sinon.assert.calledOnce(createElementSpy.withArgs(designerControl, expectedSecondCallProps));
+    sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedSecondCallProps));
   });
 });
