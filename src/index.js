@@ -6,6 +6,7 @@ import App from 'common/App';
 import Dashboard from 'common/Dashboard';
 import FormBuilderContainer from 'form-builder/components/FormBuilderContainer';
 import FormDetailContainer from 'form-builder/components/FormDetailContainer';
+import 'bahmni-form-controls';
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 

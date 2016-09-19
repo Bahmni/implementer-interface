@@ -9,37 +9,42 @@ export default class FormDetailContainer extends Component {
 
   constructor() {
     super();
-    this.state = { formData: {} };
+    this.state = { formData: undefined };
     this.setState = this.setState.bind(this);
+    this.saveForm = this.saveForm.bind(this);
   }
 
   componentWillMount() {
-    const params = 'v=custom:(id,uuid,name,version,published,auditInfo)';
+    const params = 'v=custom:(id,uuid,name,version,published,auditInfo,resources)';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data }))
       .catch((error) => this.setState({ error }));
   }
 
+  saveForm(uuid, formJson) {
+    httpInterceptor.post(formBuilderConstants.formResourceUrl(uuid), formJson);
+  }
+
   render() {
     return (
-        <div>
-          <FormBuilderHeader />
-          <div className="breadcrumb-wrap">
-              <div className="breadcrumb">
-                  <div className="fl">
-                      <div className="fl">
-                          <FormBuilderBreadcrumbs routes={this.props.routes} />
-                      </div>
-                  </div>
+      <div>
+        <FormBuilderHeader />
+        <div className="breadcrumb-wrap">
+          <div className="breadcrumb">
+            <div className="fl">
+              <div className="fl">
+                <FormBuilderBreadcrumbs routes={this.props.routes} />
               </div>
-          </div>
-          <div className="container-content-wrap">
-            <div className="container-content">
-              <FormDetail formData={this.state.formData} />
             </div>
           </div>
         </div>
+        <div className="container-content-wrap">
+          <div className="container-content">
+            <FormDetail formData={this.state.formData} saveForm={ this.saveForm } />
+          </div>
+        </div>
+      </div>
     );
   }
 }
