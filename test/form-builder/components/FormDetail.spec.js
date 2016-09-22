@@ -1,8 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormDetail from 'form-builder/components/FormDetail';
+import { getStore } from 'test/utils/storeHelper';
+import { Provider } from 'react-redux';
 
 chai.use(chaiEnzyme());
 
@@ -15,8 +17,9 @@ describe('FormDetails', () => {
   };
 
   it('should render form details when form data is present', () => {
-    wrapper = shallow(<FormDetail formData={formData} />);
+    wrapper = mount(<Provider store={getStore()}><FormDetail formData={formData} /></Provider>);
     expect(wrapper).to.have.exactly(1).descendants('ControlPool');
+    expect(wrapper).to.have.exactly(1).descendants('ControlPropertiesContainer');
     expect(wrapper).to.have.exactly(1).descendants('Canvas');
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
@@ -24,9 +27,5 @@ describe('FormDetails', () => {
   it('should render nothing when form data is not preset', () => {
     wrapper = shallow(<FormDetail />);
     expect(wrapper).to.be.blank();
-  });
-
-  it('save should return form json', () => {
-    wrapper = shallow(<FormDetail />);
   });
 });

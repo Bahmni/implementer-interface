@@ -4,13 +4,16 @@ import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorP
 import maxBy from 'lodash/maxBy';
 import toNumber from 'lodash/toNumber';
 import map from 'lodash/map';
+import { connect } from 'react-redux';
+import { selectControl } from 'form-builder/actions/control';
 
-export default class Canvas extends DraggableComponent {
+class Canvas extends DraggableComponent {
   constructor() {
     super();
     this.state = { descriptors: [] };
     this.components = {};
     this.storeComponentRef = this.storeComponentRef.bind(this);
+    this.onSelect = this.onSelect.bind(this);
   }
 
   postDragProcess(data) {
@@ -21,13 +24,17 @@ export default class Canvas extends DraggableComponent {
     this.setState({ descriptors: this.state.descriptors.concat(descriptorClone) });
   }
 
+  onSelect(id) {
+    this.props.dispatch(selectControl(id));
+  }
+
   createId() {
     const latestDescriptor = maxBy(this.state.descriptors, (d) => toNumber(d.metadata.id));
     return latestDescriptor ? (+latestDescriptor.metadata.id + 1).toString() : '1';
   }
 
   prepareJson() {
-    const controls = map(this.components, (component) => component.getJsonDefinition());
+    const controls = map(this.components, (component) => component.getJsonDefinition()) || [];
     const formJson = {
       id: this.props.formUuid,
       uuid: this.props.formUuid,
@@ -48,6 +55,7 @@ export default class Canvas extends DraggableComponent {
         key: descriptor.metadata.id,
         metadata: descriptor.metadata,
         ref: this.storeComponentRef,
+        onSelect: this.onSelect,
       })
     );
   }
@@ -63,5 +71,8 @@ export default class Canvas extends DraggableComponent {
 }
 
 Canvas.propTypes = {
+  dispatch: PropTypes.func,
   formUuid: PropTypes.string.isRequired,
 };
+
+export default connect()(Canvas);

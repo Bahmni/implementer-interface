@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { ControlPool } from './ControlPool';
 import Canvas from './Canvas';
+import ControlPropertiesContainer from './ControlPropertiesContainer';
 
 export default class FormDetail extends Component {
   constructor() {
@@ -31,6 +32,7 @@ export default class FormDetail extends Component {
         <div>
           <button onClick={ this.onSave }>Save</button>
           <ControlPool />
+          <ControlPropertiesContainer />
           <Canvas formUuid={ formData.uuid } ref={ this.canvasRef } />
         </div>
       );
@@ -46,5 +48,3 @@ FormDetail.propTypes = {
   }),
   saveForm: PropTypes.func,
 };
-
-export default FormDetail;

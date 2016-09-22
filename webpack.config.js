@@ -4,6 +4,7 @@ let path = require('path');
 let webpack = require('webpack');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let srcPath = path.join(__dirname, './src');
+let testPath = path.join(__dirname, './test');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -76,7 +77,8 @@ module.exports = {
   resolve: {
     alias: {
       common: srcPath + '/common/',
-      'form-builder': srcPath + '/form-builder/'
+      'form-builder': srcPath + '/form-builder/',
+      'test': testPath
     }
   }
 };
