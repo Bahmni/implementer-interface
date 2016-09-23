@@ -88,4 +88,42 @@ describe('Canvas', () => {
     instance.onSelect('123');
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('123')));
   });
+
+  it('should update descriptors with concepts on change of conceptToControlMap', () => {
+    const store = getStore();
+    const canvas = shallow(<Canvas formUuid="someFormUuid" store={store} />).shallow();
+    const instance = canvas.instance();
+
+    const descriptor = { control: () => (<div></div>), metadata: { id: '1', type: 'obsControl' } };
+    instance.setState({ descriptors: [descriptor] });
+
+    const conceptToControlMap = {
+      1: {
+        uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
+        display: 'Temperature',
+        name: {
+          uuid: 'c37bdec5-3f10-11e4-adec-0800271c1b75',
+          name: 'Temperature',
+        },
+        conceptClass: {
+          uuid: '8d492774-c2cc-11de-8d13-0010c6dffd0f',
+          name: 'Misc',
+        },
+        datatype: {
+          uuid: '8d4a4488-c2cc-11de-8d13-0010c6dffd0f',
+          name: 'Numeric',
+        },
+        setMembers: [],
+      },
+    };
+    canvas.setProps({ conceptToControlMap });
+    const concept = {
+      name: 'Temperature',
+      uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
+    };
+
+    expect(instance.state.descriptors.length).to.eql(1);
+    expect(instance.state.descriptors[0].metadata.displayType).to.eql('Numeric');
+    expect(instance.state.descriptors[0].metadata.concept).to.eql(concept);
+  });
 });

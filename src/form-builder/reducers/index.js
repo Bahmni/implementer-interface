@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import controlDetails from './controlDetails';
-import conceptToControlMapper from './conceptToControlMapper';
+import conceptToControlMap from './conceptToControlMap';
 
 const implementerInterface = combineReducers({
   controlDetails,
-  conceptToControlMapper,
+  conceptToControlMap,
 });
 
 export default implementerInterface;

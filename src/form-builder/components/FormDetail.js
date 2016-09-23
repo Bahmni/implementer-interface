@@ -12,7 +12,7 @@ export default class FormDetail extends Component {
   }
 
   onSave() {
-    const formJson = this.canvas.prepareJson();
+    const formJson = this.canvas.getWrappedInstance().prepareJson();
     const formName = this.props.formData ? this.props.formData.name : 'FormName';
     const formResource = {
       name: formName,

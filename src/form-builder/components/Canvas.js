@@ -6,6 +6,7 @@ import toNumber from 'lodash/toNumber';
 import map from 'lodash/map';
 import { connect } from 'react-redux';
 import { selectControl } from 'form-builder/actions/control';
+import { componentMapper } from 'form-builder/helpers/componentMapper';
 
 class Canvas extends DraggableComponent {
   constructor() {
@@ -14,6 +15,13 @@ class Canvas extends DraggableComponent {
     this.components = {};
     this.storeComponentRef = this.storeComponentRef.bind(this);
     this.onSelect = this.onSelect.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const currentDescriptors = this.state.descriptors;
+    const conceptToControlMap = nextProps.conceptToControlMap;
+    const descriptorsWithConcepts = componentMapper(currentDescriptors, conceptToControlMap);
+    this.setState({ descriptors: descriptorsWithConcepts });
   }
 
   postDragProcess(data) {
@@ -71,8 +79,13 @@ class Canvas extends DraggableComponent {
 }
 
 Canvas.propTypes = {
+  conceptToControlMap: PropTypes.object,
   dispatch: PropTypes.func,
   formUuid: PropTypes.string.isRequired,
 };
 
-export default connect()(Canvas);
+function mapStateToProps(state) {
+  return { conceptToControlMap: state.conceptToControlMap };
+}
+
+export default connect(mapStateToProps, null, null, { withRef: true })(Canvas);

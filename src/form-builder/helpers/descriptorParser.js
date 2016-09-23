@@ -56,7 +56,6 @@ export class DescriptorParser {
       designProperties: this.descriptor.designProperties,
       metadata: this.parsedMetadata,
       control: this.descriptor.control,
-      designerControl: this.descriptor.designerControl,
     };
   }
 
