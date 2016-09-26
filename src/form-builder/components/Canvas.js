@@ -15,6 +15,7 @@ class Canvas extends DraggableComponent {
     this.components = {};
     this.storeComponentRef = this.storeComponentRef.bind(this);
     this.onSelect = this.onSelect.bind(this);
+    this.clearSelectedControl = this.clearSelectedControl.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,8 +33,13 @@ class Canvas extends DraggableComponent {
     this.setState({ descriptors: this.state.descriptors.concat(descriptorClone) });
   }
 
-  onSelect(id) {
+  onSelect(event, id) {
     this.props.dispatch(selectControl(id));
+    event.stopPropagation();
+  }
+
+  clearSelectedControl() {
+    this.props.dispatch(selectControl(undefined));
   }
 
   createId() {
@@ -70,7 +76,12 @@ class Canvas extends DraggableComponent {
 
   render() {
     return (
-      <div id="form-builder-canvas" onDragOver={ this.onDragOver } onDrop={ this.onDrop }>
+      <div
+        className="form-builder-canvas"
+        onClick={this.clearSelectedControl}
+        onDragOver={ this.onDragOver }
+        onDrop={ this.onDrop }
+      >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
         <div id="form-detail">{ this.renderComponents() }</div>
       </div>

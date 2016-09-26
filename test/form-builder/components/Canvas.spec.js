@@ -39,10 +39,10 @@ describe('Canvas', () => {
       },
     };
 
-    expect(canvas.find('#form-builder-canvas')).to.have.prop('onDrop');
+    expect(canvas.find('.form-builder-canvas')).to.have.prop('onDrop');
 
     sinon.spy(eventData, 'preventDefault');
-    canvas.find('#form-builder-canvas').props().onDrop(eventData);
+    canvas.find('.form-builder-canvas').props().onDrop(eventData);
     sinon.assert.calledOnce(eventData.preventDefault);
     eventData.preventDefault.restore();
   });
@@ -73,10 +73,10 @@ describe('Canvas', () => {
 
     const createElementSpy = sinon.spy(React, 'createElement');
 
-    canvas.find('#form-builder-canvas').props().onDrop(eventData);
+    canvas.find('.form-builder-canvas').props().onDrop(eventData);
     sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedFirstCallProps));
 
-    canvas.find('#form-builder-canvas').props().onDrop(eventData);
+    canvas.find('.form-builder-canvas').props().onDrop(eventData);
     sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedSecondCallProps));
   });
 
@@ -84,8 +84,10 @@ describe('Canvas', () => {
     const store = getStore();
     const canvas = shallow(<Canvas formUuid="someFormUuid" store={store} />).shallow();
     const instance = canvas.instance();
+    const event = { stopPropagation: sinon.spy() };
 
-    instance.onSelect('123');
+    instance.onSelect(event, '123');
+    sinon.assert.calledOnce(event.stopPropagation);
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('123')));
   });
 
@@ -125,5 +127,12 @@ describe('Canvas', () => {
     expect(instance.state.descriptors.length).to.eql(1);
     expect(instance.state.descriptors[0].metadata.displayType).to.eql('Numeric');
     expect(instance.state.descriptors[0].metadata.concept).to.eql(concept);
+  });
+
+  it('should clear selected id when clicked on canvas', () => {
+    const store = getStore();
+    const canvas = mount(<Canvas formUuid="someFormUuid" store={store} />);
+    canvas.find('.form-builder-canvas').simulate('click');
+    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(undefined)));
   });
 });
