@@ -11,7 +11,7 @@ chai.use(chaiEnzyme());
 
 describe('Canvas', () => {
   const control = () => (<div></div>);
-
+  const componentStore = window.componentStore;
   before(() => {
     window.componentStore = {
       getDesignerComponent: () => ({
@@ -23,7 +23,11 @@ describe('Canvas', () => {
     };
   });
 
-  it('should render a blank canvas with place holder text', () => {
+  after(() => {
+    window.componentStore = componentStore;
+  });
+
+  it('should render a blank canvas with grid and place holder text', () => {
     const canvas = mount(<Canvas formUuid="someFormUuid" store={getStore()} />);
     const placeholderText = 'Drag & Drop controls to create a form';
     expect(canvas.find('.canvas-placeholder').text()).to.eql(placeholderText);
@@ -35,7 +39,7 @@ describe('Canvas', () => {
     const eventData = {
       preventDefault: () => {},
       dataTransfer: {
-        getData: () => 'someType',
+        getData: () => JSON.stringify({ type: 'someType' }),
       },
     };
 

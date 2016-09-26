@@ -16,6 +16,8 @@ class Canvas extends DraggableComponent {
     this.storeComponentRef = this.storeComponentRef.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
+    const gridDescriptor = window.componentStore.getDesignerComponent('grid');
+    this.grid = gridDescriptor ? gridDescriptor.control : () => (<div />);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,8 +28,9 @@ class Canvas extends DraggableComponent {
   }
 
   postDragProcess(data) {
-    const component = window.componentStore.getDesignerComponent(data);
-    const descriptor = new Descriptor(data, component).data();
+    const type = JSON.parse(data).type;
+    const component = window.componentStore.getDesignerComponent(type);
+    const descriptor = new Descriptor(type, component).data();
     const descriptorClone = Object.assign({}, descriptor);
     descriptorClone.metadata.id = this.createId();
     this.setState({ descriptors: this.state.descriptors.concat(descriptorClone) });
@@ -84,6 +87,7 @@ class Canvas extends DraggableComponent {
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
         <div id="form-detail">{ this.renderComponents() }</div>
+        <this.grid />
       </div>
     );
   }

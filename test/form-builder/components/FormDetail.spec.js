@@ -15,6 +15,24 @@ describe('FormDetails', () => {
     version: '1.0',
     uuid: 'someUuid',
   };
+  const control = () => (<div></div>);
+  const componentStore = window.componentStore;
+
+  before(() => {
+    window.componentStore = {
+      getDesignerComponent: () => ({
+        metadata: {
+          attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
+        },
+        control,
+      }),
+      getAllDesignerComponents: () => ({}),
+    };
+  });
+
+  after(() => {
+    window.componentStore = componentStore;
+  });
 
   it('should render form details when form data is present', () => {
     wrapper = mount(<Provider store={getStore()}><FormDetail formData={formData} /></Provider>);

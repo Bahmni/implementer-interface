@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorParser';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
@@ -9,20 +10,24 @@ export class ControlPool extends Component {
     this.draggableControls = this.getAllDesignerComponents();
   }
 
-  onDragStart(type) {
-    return (e) => e.dataTransfer.setData('data', type);
+  onDragStart(context) {
+    return (e) => e.dataTransfer.setData('data', JSON.stringify(context));
   }
 
   getControlItem(type, descriptor) {
     const { displayName } = descriptor.designProperties;
+    const metadata = new Descriptor(type, descriptor).data().metadata;
+    metadata.id = Math.round(Math.random() * 100);
+    const context = { type, data: metadata };
     return (
       <div draggable="true"
         key={displayName}
-        onDragStart={this.onDragStart(type)}
+        onDragStart={this.onDragStart(context)}
       >
         {displayName}
       </div>);
   }
+
 
   getAllDesignerComponents() {
     const designerComponentDescriptors = window.componentStore.getAllDesignerComponents();
