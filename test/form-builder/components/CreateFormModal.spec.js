@@ -44,8 +44,8 @@ describe('CreateFormModal', () => {
   });
 
   it('should call create function on click of create button', () => {
-    wrapper.find('input').simulate('change', { target: { value: 'Form-1' } });
-    wrapper.find('.btn--highlight').simulate('click');
+    wrapper.find('.form-name').simulate('change', { target: { value: 'Form-1' } });
+    wrapper.find('.dialog--container').simulate('submit');
     sinon.assert.calledOnce(createFormSpy);
     sinon.assert.calledWith(createFormSpy, 'Form-1');
   });

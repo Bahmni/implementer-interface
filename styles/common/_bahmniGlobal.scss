@@ -76,17 +76,20 @@ a{
   &:hover {
     opacity: 0.8;
   }
+  &:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
-.button, button, input[type="submit"], input[type="button"],input[type="reset"], input[type="submit"], a.button {
+.button, button, input[type="button"],input[type="reset"], a.button {
   @include button;
 }
 .btn{
-  &--highlight{
+  &--highlight , input[type="submit"], button[type="submit"]{
     background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
     border: 1px solid #88af28;
     color:#fff !important;
-
   }
   &--close{
     padding: 5px;

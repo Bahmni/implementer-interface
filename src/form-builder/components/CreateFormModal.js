@@ -5,6 +5,7 @@ export default class CreateFormModal extends Component {
   constructor() {
     super();
     this.formName = '';
+    this.errorMessage = '';
   }
 
   componentDidUpdate() {
@@ -15,6 +16,10 @@ export default class CreateFormModal extends Component {
 
   setFormName(formName) {
     this.formName = formName;
+    if (this.errorMessage !== '') {
+      this.errorMessage = '';
+      this.setState({});
+    }
   }
 
   handleEsc(e) {
@@ -22,34 +27,39 @@ export default class CreateFormModal extends Component {
       this.props.closeModal();
     }
   }
-  handleEnter(e) {
-    if (e.keyCode === 13) {
+  validateForm(e) {
+    const formLength = this.formName.trim().length;
+    if (formLength !== 0) {
       this.props.createForm(this.formName);
+    } else {
+      this.errorMessage = 'This field is required';
+      this.setState({});
+      e.stopPropagation();
     }
   }
 
   render() {
     if (this.props.showModal) {
       return (
-        <div onKeyUp={(e) => this.handleEsc(e)} ref="createFormModal" tabIndex="0" >
+        <div onKeyUp={(e) => this.handleEsc(e)}>
           <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
-          <div className="dialog" onKeyUp={(e) => this.handleEnter(e)}>
+          <div className="dialog">
               <div className="dialog--header">Create a Form</div>
-              <div className="dialog--container">
-                <div className="form-field clearfix">
-                  <label>Form Name</label>
-                  <input autoFocus onChange={(e) => this.setFormName(e.target.value)} type="text" />
-                </div>
-                <div className="button-wrapper fr">
-                  <button className="btn" onClick={this.props.closeModal}>Cancel</button>
-                  <button
-                    className="btn--highlight"
-                    onClick={() => this.props.createForm(this.formName)}
-                  >
-                    Create Form
-                  </button>
-                </div>
-              </div>
+                <form className="dialog--container" onSubmit={(e) => this.validateForm(e)}>
+                  <div className="form-field clearfix">
+                    <label>Form Name <span className="asterick">*</span></label>
+                    <input className="form-name" onChange={(e) => this.setFormName(e.target.value)}
+                      ref="createFormModal" type="text"
+                    />
+                    <span className="form-error">{this.errorMessage}</span>
+                  </div>
+                  <div className="button-wrapper fr">
+                    <input className="btn--highlight" type="submit" value="Create Form" />
+                    <button className="btn" onClick={this.props.closeModal} type="reset" >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
           </div>
         </div>);
     }

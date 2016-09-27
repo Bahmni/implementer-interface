@@ -1,11 +1,17 @@
 .form-field{
   padding: 5px 0;
+  font-family: $primaryFont;
   label{
     display: block;
     font-size: 14px;
+    .asterick{
+      color: red;
+      padding: 0 5px;
+    }
   }
-  input[type=text] {
+  input[type=text],input {
     width: 100%;
+    min-width: 198px !important;
     display: inline-block;
     margin: 2px;
     padding: 8px 10px;
@@ -13,5 +19,20 @@
     background-color: #FFF;
     border: 1px solid #DDD;
     box-sizing: border-box;
+  }
+  .form-error{
+    color: red;
+    font-size: 12px;
+  }
+}
+
+// REMOVE once npm style package is installed
+
+.Select-input{
+  width:300px !important;
+  min-width: 300px !important;
+  input{
+    width:198px !important;
+    min-width: 198px !important;
   }
 }
