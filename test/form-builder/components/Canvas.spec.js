@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { selectControl } from 'form-builder/actions/control';
+import { deselectControl, selectControl } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
 
@@ -137,6 +137,6 @@ describe('Canvas', () => {
     const store = getStore();
     const canvas = mount(<Canvas formUuid="someFormUuid" store={store} />);
     canvas.find('.form-builder-canvas').simulate('click');
-    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(undefined)));
+    sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
   });
 });

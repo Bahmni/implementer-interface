@@ -51,4 +51,24 @@ describe('ControlPropertiesContainer', () => {
     expect(wrapper).to.have.descendants('AutoComplete');
     expect(wrapper.find('AutoComplete').props().value).to.eql([]);
   });
+
+  it('should pass disabled value as false when there is no value for Autocomplete', () => {
+    const state = {
+      controlDetails: { selectedControl: '123' },
+      conceptToControlMap: { 1: { name: 'someOtherName' } },
+    };
+    const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+    expect(wrapper).to.have.descendants('AutoComplete');
+    expect(wrapper.find('AutoComplete').props().disabled).to.eql(false);
+  });
+
+  it('should pass disabled value as true when there is a value for Autocomplete', () => {
+    const state = {
+      controlDetails: { selectedControl: '123' },
+      conceptToControlMap: { 123: { name: 'someOtherName' } },
+    };
+    const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+    expect(wrapper).to.have.descendants('AutoComplete');
+    expect(wrapper.find('AutoComplete').props().disabled).to.eql(true);
+  });
 });

@@ -4,14 +4,19 @@ import { formBuilderConstants } from 'form-builder/constants';
 import FormDetail from 'form-builder/components/FormDetail';
 import FormBuilderHeader from './FormBuilderHeader';
 import { FormBuilderBreadcrumbs } from './FormBuilderBreadcrumbs';
+import { connect } from 'react-redux';
+import { deselectControl, removeSourceMap } from 'form-builder/actions/control';
 
-export default class FormDetailContainer extends Component {
 
-  constructor() {
-    super();
+class FormDetailContainer extends Component {
+
+  constructor(props) {
+    super(props);
     this.state = { formData: undefined };
     this.setState = this.setState.bind(this);
     this.saveForm = this.saveForm.bind(this);
+    props.dispatch(deselectControl());
+    props.dispatch(removeSourceMap());
   }
 
   componentWillMount() {
@@ -20,6 +25,11 @@ export default class FormDetailContainer extends Component {
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data }))
       .catch((error) => this.setState({ error }));
+  }
+
+  componentWillUpdate() {
+    this.props.dispatch(deselectControl());
+    this.props.dispatch(removeSourceMap());
   }
 
   saveForm(uuid, formJson) {
@@ -50,6 +60,9 @@ export default class FormDetailContainer extends Component {
 }
 
 FormDetailContainer.propTypes = {
+  dispatch: PropTypes.func,
   params: PropTypes.object.isRequired,
   routes: PropTypes.array,
 };
+
+export default connect()(FormDetailContainer);

@@ -48,4 +48,10 @@ describe('conceptToControlMap', () => {
     const state = conceptToControlMap(undefined, action);
     expect(state).to.be.eql({});
   });
+
+  it('should remove source map', () => {
+    action.type = 'REMOVE_SOURCE_MAP';
+    const state = conceptToControlMap({ 123: {} }, action);
+    expect(state).to.be.eql({});
+  });
 });

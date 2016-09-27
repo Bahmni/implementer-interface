@@ -1,27 +1,39 @@
 import { expect } from 'chai';
-import { selectSource, selectControl } from 'form-builder/actions/control';
+import * as control from 'form-builder/actions/control';
 
 describe('control', () => {
-  describe('selectSource', () => {
-    let action;
+  describe('selectControl', () => {
     it('should return the selected control id', () => {
-      action = selectControl(1);
+      const action = control.selectControl(1);
       expect(action.type).to.be.eql('SELECT_CONTROL');
       expect(action.id).to.be.eql(1);
     });
   });
 
   describe('selectSource', () => {
-    let action;
     it('should return the selected control id', () => {
       const concept = {
         name: 'Pulse',
         uuid: 'someUuid',
       };
-      action = selectSource(concept, 1);
+      const action = control.selectSource(concept, 1);
       expect(action.type).to.be.eql('SELECT_SOURCE');
       expect(action.id).to.be.eql(1);
       expect(action.concept).to.be.eql(concept);
+    });
+  });
+
+  describe('deselectControl', () => {
+    it('should return appropriate type', () => {
+      const action = control.deselectControl();
+      expect(action).to.be.eql({ type: 'DESELECT_CONTROL' });
+    });
+  });
+
+  describe('removeSourceMap', () => {
+    it('should return appropriate type', () => {
+      const action = control.removeSourceMap();
+      expect(action).to.be.eql({ type: 'REMOVE_SOURCE_MAP' });
     });
   });
 });

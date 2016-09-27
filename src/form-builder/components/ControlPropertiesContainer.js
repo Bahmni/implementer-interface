@@ -19,8 +19,15 @@ class ControlPropertiesContainer extends Component {
     if (selectedControlId) {
       let value = (conceptToControlMap && conceptToControlMap[selectedControlId]);
       value = value ? [value] : [];
+      const disableAutoComplete = (value.length > 0);
       const optionsUrl = `${constants.conceptUrl}?v=${constants.conceptRepresentation}&q=`;
-      return (<AutoComplete onSelect={this.onSelect} optionsUrl={optionsUrl} value={value} />);
+      return (
+        <AutoComplete
+          disabled={disableAutoComplete}
+          onSelect={this.onSelect}
+          optionsUrl={optionsUrl}
+          value={value}
+        />);
     }
     return null;
   }

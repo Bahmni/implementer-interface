@@ -5,7 +5,7 @@ import maxBy from 'lodash/maxBy';
 import toNumber from 'lodash/toNumber';
 import map from 'lodash/map';
 import { connect } from 'react-redux';
-import { selectControl } from 'form-builder/actions/control';
+import { deselectControl, selectControl } from 'form-builder/actions/control';
 import { componentMapper } from 'form-builder/helpers/componentMapper';
 
 class Canvas extends DraggableComponent {
@@ -42,7 +42,7 @@ class Canvas extends DraggableComponent {
   }
 
   clearSelectedControl() {
-    this.props.dispatch(selectControl(undefined));
+    this.props.dispatch(deselectControl());
   }
 
   createId() {
