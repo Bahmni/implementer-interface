@@ -19,8 +19,10 @@ ReactDOM.render(
     <Router history={appHistory}>
       <Route component={App} name="Dashboard" path="/">
         <IndexRoute component={Dashboard} name="Dashboard" />
-        <Route component={FormBuilderContainer} name="Form Builder" path="form-builder" />
-        <Route component={FormDetailContainer} name="Form Details" path="form-builder/:formUuid" />
+        <Route name="Form Builder" path="form-builder">
+          <IndexRoute component={FormBuilderContainer} name="Form Builder" />
+          <Route component={FormDetailContainer} name="Form Details" path=":formUuid" />
+        </Route>
       </Route>
     </Router>
   </Provider>,
