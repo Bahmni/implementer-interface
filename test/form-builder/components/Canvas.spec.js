@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { deselectControl, selectControl } from 'form-builder/actions/control';
+import { addSourceMap, deselectControl, selectControl } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
 
@@ -222,5 +222,35 @@ describe('Canvas', () => {
     const instance = canvas.instance();
     expect(instance.state.descriptors.length).to.eql(1);
     expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
+  });
+
+  it('should dispatch addToSourceMap', () => {
+    const store = getStore();
+    const formResource = [
+      {
+        id: '1',
+        type: 'obsControl',
+        concept: {
+          name: 'someName-1',
+          uuid: 'someUuid-1',
+        },
+        displayType: 'Numeric',
+      },
+      {
+        id: '2',
+        type: 'random',
+      },
+    ];
+    const expectedSourceMap = {
+      1: {
+        name: { name: 'someName-1' },
+        uuid: 'someUuid-1',
+        datatype: { name: 'Numeric' },
+        display: 'someName-1',
+      },
+    };
+
+    mount(<Canvas formResourceControls={formResource} formUuid="someFormUuid" store={store} />);
+    sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
   });
 });

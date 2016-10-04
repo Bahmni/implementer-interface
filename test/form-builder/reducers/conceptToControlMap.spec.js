@@ -54,4 +54,34 @@ describe('conceptToControlMap', () => {
     const state = conceptToControlMap({ 123: {} }, action);
     expect(state).to.be.eql({});
   });
+
+  it('should add source map to empty store', () => {
+    action.type = 'ADD_SOURCE_MAP';
+    action.sourceMap = {
+      1: { name: 'someName-1', uuid: 'someUuid-1' },
+      2: { name: 'someName-2', uuid: 'someUuid-2' },
+    };
+    const state = conceptToControlMap({}, action);
+    expect(state).to.be.eql(action.sourceMap);
+  });
+
+  it('should add source map to existing store', () => {
+    action.type = 'ADD_SOURCE_MAP';
+    action.sourceMap = {
+      1: { name: 'someName-1', uuid: 'someUuid-1' },
+      2: { name: 'someName-2', uuid: 'someUuid-2' },
+    };
+    const store = {
+      1: { name: 'someName-0', uuid: 'someUuid-0' },
+      3: { name: 'someName-3', uuid: 'someUuid-3' },
+    };
+    const expectedSourceMap = {
+      1: { name: 'someName-1', uuid: 'someUuid-1' },
+      2: { name: 'someName-2', uuid: 'someUuid-2' },
+      3: { name: 'someName-3', uuid: 'someUuid-3' },
+    };
+
+    const state = conceptToControlMap(store, action);
+    expect(state).to.be.eql(expectedSourceMap);
+  });
 });

@@ -6,18 +6,23 @@ import toNumber from 'lodash/toNumber';
 import map from 'lodash/map';
 import each from 'lodash/each';
 import { connect } from 'react-redux';
-import { deselectControl, selectControl } from 'form-builder/actions/control';
-import { setConceptToControls } from 'form-builder/helpers/componentMapper';
+import { addSourceMap, deselectControl, selectControl } from 'form-builder/actions/control';
+import { getConceptFromControls, setConceptToControls } from 'form-builder/helpers/componentMapper';
 
 class Canvas extends DraggableComponent {
   constructor(props) {
     super(props);
-    this.state = { descriptors: this.getComponentDescriptors() };
     this.components = {};
     this.storeComponentRef = this.storeComponentRef.bind(this);
-    this.onSelect = this.onSelect.bind(this);
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
+    this.onSelect = this.onSelect.bind(this);
+
+    const initialComponentDescriptors = this.getComponentDescriptors();
+    const initialConceptToControlMap = getConceptFromControls(initialComponentDescriptors);
     const gridDescriptor = window.componentStore.getDesignerComponent('grid');
+
+    this.state = { descriptors: initialComponentDescriptors };
+    props.dispatch(addSourceMap(initialConceptToControlMap));
     this.grid = gridDescriptor ? gridDescriptor.control : () => (<div />);
   }
 

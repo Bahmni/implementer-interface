@@ -36,4 +36,13 @@ describe('control', () => {
       expect(action).to.be.eql({ type: 'REMOVE_SOURCE_MAP' });
     });
   });
+
+  describe('addSourceMap', () => {
+    it('should return the source map', () => {
+      const sourceMap = { 1: { name: 'someName', uuid: 'someUuid' } };
+      const action = control.addSourceMap(sourceMap);
+      expect(action.type).to.be.eql('ADD_SOURCE_MAP');
+      expect(action.sourceMap).to.be.eql(sourceMap);
+    });
+  });
 });
