@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import { dateUtils } from 'common/utils/dateUtils';
+import { Link } from 'react-router';
 
 export default class FormList extends Component {
 
@@ -12,6 +13,7 @@ export default class FormList extends Component {
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateChanged)}</td>
         <td>published</td>
+        <td><Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>Edit</Link></td>
       </tr>
     ));
   }
@@ -26,6 +28,7 @@ export default class FormList extends Component {
           <th>Created On</th>
           <th>Last Modified</th>
           <th>Status</th>
+          <th>Action</th>
         </tr>
         </thead>
         <tbody>{this.getRows()}</tbody>

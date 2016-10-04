@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormList from 'form-builder/components/FormList';
@@ -18,6 +18,7 @@ describe('FormList', () => {
         dateCreated: '2010-10-10T15:21:17.000+0530',
         dateChanged: null,
       },
+      uuid: 'someUuid-1',
     },
     {
       id: 2,
@@ -28,6 +29,7 @@ describe('FormList', () => {
         dateChanged: '2010-08-12T15:21:17.000+0530',
       },
       status: 'published',
+      uuid: 'someUuid-2',
     },
     {
       id: 3,
@@ -38,6 +40,7 @@ describe('FormList', () => {
         dateChanged: '2010-08-12T15:21:17.000+0530',
       },
       status: 'published',
+      uuid: 'someUuid-3',
     },
   ];
 
@@ -45,8 +48,12 @@ describe('FormList', () => {
     return wrapper.find('table').find('tbody').find('tr').at(row).find('td').at(column).text();
   }
 
+  function getLinkAt(row) {
+    return wrapper.find('Link').at(row);
+  }
+
   it('should render form list in table', () => {
-    wrapper = shallow(<FormList data={data} />);
+    wrapper = mount(<FormList data={data} />);
 
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
@@ -55,12 +62,17 @@ describe('FormList', () => {
     expect(getData(0, 2)).to.eql('10 Oct 10');
     expect(getData(0, 3)).to.eql('');
     expect(getData(0, 4)).to.eql('published');
+    expect(getData(0, 5)).to.eql('Edit');
 
     expect(getData(1, 0)).to.eql('BP');
     expect(getData(2, 0)).to.eql('Pulse');
 
     expect(getData(1, 2)).to.eql('09 Aug 10');
     expect(getData(1, 3)).to.eql('12 Aug 10');
+
+    expect(getLinkAt(0).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1' });
+    expect(getLinkAt(1).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2' });
+    expect(getLinkAt(2).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-3' });
   });
 
   it('should not display table if there is no data', () => {
