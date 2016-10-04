@@ -4,4 +4,5 @@ export const formBuilderConstants = {
   conceptUrl: '/openmrs/ws/rest/v1/concept',
   conceptRepresentation: 'custom:(uuid,display,name:(uuid,name),' +
   'conceptClass:(uuid,name),datatype:(uuid,name),setMembers)',
+  formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
 };

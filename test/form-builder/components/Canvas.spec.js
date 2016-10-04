@@ -10,16 +10,25 @@ import { deselectControl, selectControl } from 'form-builder/actions/control';
 chai.use(chaiEnzyme());
 
 describe('Canvas', () => {
-  const control = () => (<div></div>);
+  const control = () => (<div className="dummy-div">Dummy Div</div>);
   const componentStore = window.componentStore;
   before(() => {
     window.componentStore = {
-      getDesignerComponent: () => ({
-        metadata: {
-          attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
-        },
-        control,
-      }),
+      getDesignerComponent: (type) => {
+        if (type === 'grid') {
+          return ({
+            control: () => (<div className="dummy-grid">Dummy Grid</div>),
+          });
+        } else if (type === 'random') {
+          return undefined;
+        }
+        return ({
+          metadata: {
+            attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
+          },
+          control,
+        });
+      },
     };
   });
 
@@ -28,14 +37,24 @@ describe('Canvas', () => {
   });
 
   it('should render a blank canvas with grid and place holder text', () => {
-    const canvas = mount(<Canvas formUuid="someFormUuid" store={getStore()} />);
+    const canvas = mount(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        store={getStore()}
+      />);
     const placeholderText = 'Drag & Drop controls to create a form';
     expect(canvas.find('.canvas-placeholder').text()).to.eql(placeholderText);
     expect(canvas.find('.form-detail')).to.be.blank();
   });
 
   it('should be a drop target', () => {
-    const canvas = mount(<Canvas formUuid="someFormUuid" store={getStore()} />);
+    const canvas = mount(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        store={getStore()}
+      />);
     const eventData = {
       preventDefault: () => {},
       dataTransfer: {
@@ -52,7 +71,12 @@ describe('Canvas', () => {
   });
 
   it('should render dropped controls on canvas with correct id', () => {
-    const canvas = shallow(<Canvas formUuid="someFormUuid" store={getStore()} />).shallow();
+    const canvas = shallow(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        store={getStore()}
+      />).shallow();
     const canvasInstance = canvas.instance();
     const eventData = {
       preventDefault: () => {},
@@ -86,7 +110,12 @@ describe('Canvas', () => {
 
   it('should dispatch selectControl action when control is selected', () => {
     const store = getStore();
-    const canvas = shallow(<Canvas formUuid="someFormUuid" store={store} />).shallow();
+    const canvas = shallow(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        store={store}
+      />).shallow();
     const instance = canvas.instance();
     const event = { stopPropagation: sinon.spy() };
 
@@ -97,7 +126,12 @@ describe('Canvas', () => {
 
   it('should update descriptors with concepts on change of conceptToControlMap', () => {
     const store = getStore();
-    const canvas = shallow(<Canvas formUuid="someFormUuid" store={store} />).shallow();
+    const canvas = shallow(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        store={store}
+      />).shallow();
     const instance = canvas.instance();
 
     const descriptor = { control: () => (<div></div>), metadata: { id: '1', type: 'obsControl' } };
@@ -135,8 +169,58 @@ describe('Canvas', () => {
 
   it('should clear selected id when clicked on canvas', () => {
     const store = getStore();
-    const canvas = mount(<Canvas formUuid="someFormUuid" store={store} />);
+    const canvas = mount(
+      <Canvas
+        formResourceControls={[]}
+        formUuid="someFormUuid" store={store}
+      />);
     canvas.find('.form-builder-canvas').simulate('click');
     sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
+  });
+
+  it('should render form controls from Form Resource json if present already', () => {
+    const store = getStore();
+    const formResourceJSON = [
+      {
+        id: '1',
+        type: 'obsControl',
+      },
+      {
+        id: '2',
+        type: 'random',
+      },
+    ];
+    const canvas = mount(
+      <Canvas
+        formResourceControls={formResourceJSON}
+        formUuid="someFormUuid"
+        store={store}
+      />);
+
+    expect(canvas.find('.dummy-div').text()).to.eql('Dummy Div');
+    expect(canvas.find('.dummy-grid').text()).to.eql('Dummy Grid');
+  });
+
+  it('should pass metadata to controls from Form Resource', () => {
+    const store = getStore();
+    const formResourceJSON = [
+      {
+        id: '1',
+        type: 'obsControl',
+      },
+      {
+        id: '2',
+        type: 'random',
+      },
+    ];
+    const canvas = shallow(
+      <Canvas
+        formResourceControls={formResourceJSON}
+        formUuid="someFormUuid"
+        store={store}
+      />).shallow();
+    const instance = canvas.instance();
+    expect(instance.state.descriptors.length).to.eql(1);
+    expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
   });
 });

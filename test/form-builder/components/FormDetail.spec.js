@@ -11,6 +11,7 @@ chai.use(chaiEnzyme());
 describe('FormDetails', () => {
   let wrapper;
   const formData = {
+    id: 1,
     name: 'someFormName',
     version: '1.0',
     uuid: 'someUuid',

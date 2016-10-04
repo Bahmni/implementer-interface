@@ -4,14 +4,15 @@ import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorP
 import maxBy from 'lodash/maxBy';
 import toNumber from 'lodash/toNumber';
 import map from 'lodash/map';
+import each from 'lodash/each';
 import { connect } from 'react-redux';
 import { deselectControl, selectControl } from 'form-builder/actions/control';
-import { componentMapper } from 'form-builder/helpers/componentMapper';
+import { setConceptToControls } from 'form-builder/helpers/componentMapper';
 
 class Canvas extends DraggableComponent {
-  constructor() {
-    super();
-    this.state = { descriptors: [] };
+  constructor(props) {
+    super(props);
+    this.state = { descriptors: this.getComponentDescriptors() };
     this.components = {};
     this.storeComponentRef = this.storeComponentRef.bind(this);
     this.onSelect = this.onSelect.bind(this);
@@ -20,10 +21,23 @@ class Canvas extends DraggableComponent {
     this.grid = gridDescriptor ? gridDescriptor.control : () => (<div />);
   }
 
+  getComponentDescriptors() {
+    const descriptors = [];
+    each(this.props.formResourceControls, control => {
+      const designerComponentDescriptor = window.componentStore.getDesignerComponent(control.type);
+      if (designerComponentDescriptor) {
+        const descriptorClone = Object.assign({}, designerComponentDescriptor);
+        descriptorClone.metadata = control;
+        descriptors.push(descriptorClone);
+      }
+    });
+    return descriptors;
+  }
+
   componentWillReceiveProps(nextProps) {
     const currentDescriptors = this.state.descriptors;
     const conceptToControlMap = nextProps.conceptToControlMap;
-    const descriptorsWithConcepts = componentMapper(currentDescriptors, conceptToControlMap);
+    const descriptorsWithConcepts = setConceptToControls(currentDescriptors, conceptToControlMap);
     this.setState({ descriptors: descriptorsWithConcepts });
   }
 
@@ -96,6 +110,7 @@ class Canvas extends DraggableComponent {
 Canvas.propTypes = {
   conceptToControlMap: PropTypes.object,
   dispatch: PropTypes.func,
+  formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
 };
 

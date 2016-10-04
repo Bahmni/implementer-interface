@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { ControlPool } from './ControlPool';
 import Canvas from './Canvas';
 import ControlPropertiesContainer from './ControlPropertiesContainer';
+import { formBuilderConstants } from 'form-builder/constants';
+import filter from 'lodash/filter';
+import get from 'lodash/get';
 
 export default class FormDetail extends Component {
   constructor() {
@@ -17,6 +20,7 @@ export default class FormDetail extends Component {
     const formResource = {
       name: formName,
       valueReference: JSON.stringify(formJson),
+      dataType: formBuilderConstants.formResourceDataType,
     };
     this.props.saveForm(formJson.uuid, formResource);
   }
@@ -28,12 +32,24 @@ export default class FormDetail extends Component {
   render() {
     const { formData } = this.props;
     if (formData) {
+      const { name, uuid, id, resources } = this.props.formData;
+      const formResources = filter(resources,
+        (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
+      const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
+      const formResourceControls =
+        (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
       return (
         <div>
           <button onClick={ this.onSave }>Save</button>
           <ControlPool />
           <ControlPropertiesContainer />
-          <Canvas formUuid={ formData.uuid } ref={ this.canvasRef } />
+          <Canvas
+            formId={id}
+            formName={name}
+            formResourceControls={formResourceControls}
+            formUuid={ uuid }
+            ref={this.canvasRef}
+          />
         </div>
       );
     }
@@ -43,7 +59,9 @@ export default class FormDetail extends Component {
 
 FormDetail.propTypes = {
   formData: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    resources: PropTypes.array,
     uuid: PropTypes.string.isRequired,
   }),
   saveForm: PropTypes.func,

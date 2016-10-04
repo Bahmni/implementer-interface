@@ -20,7 +20,8 @@ class FormDetailContainer extends Component {
   }
 
   componentWillMount() {
-    const params = 'v=custom:(id,uuid,name,version,published,auditInfo,resources)';
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,resources:(valueReference,dataType))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data }))
