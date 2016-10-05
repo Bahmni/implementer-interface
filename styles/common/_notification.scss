@@ -27,4 +27,19 @@
        padding: 0 0 10px;
     }
   }
+  &--success{
+    background: rgb(138, 211, 130);
+    background: -moz-linear-gradient(top, rgba(138, 211, 130, 1) 0%, rgba(106, 177, 101, 1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(138, 211, 130, 1)), color-stop(100%, rgba(106, 177, 101, 1)));
+    background: -webkit-linear-gradient(top, rgba(138, 211, 130, 1) 0%, rgba(106, 177, 101, 1) 100%);
+    background: -o-linear-gradient(top, rgba(138, 211, 130, 1) 0%, rgba(106, 177, 101, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(138, 211, 130, 1) 0%, rgba(106, 177, 101, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#8ad382', endColorstr = '#6ab165', GradientType = 0);
+    background: linear-gradient(top, rgba(138, 211, 130, 1) 0%, rgba(106, 177, 101, 1) 100%);
+    border: 1px solid #4b8048;
+    padding: 10px;
+    .message{
+      padding: 0 0 10px;
+    }
+  }
 }

@@ -4,7 +4,7 @@ import { Router, Route, IndexRoute, useRouterHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import { createHashHistory } from 'history';
 import { createStore } from 'redux';
-import implementerInterface from 'form-builder/reducers';
+import implementerInterface from 'common/reducers';
 import App from 'common/App';
 import Dashboard from 'common/Dashboard';
 import FormBuilderContainer from 'form-builder/components/FormBuilderContainer';

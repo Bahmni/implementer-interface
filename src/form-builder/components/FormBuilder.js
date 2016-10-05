@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import FormList from 'form-builder/components/FormList';
 import CreateFormModal from 'form-builder/components/CreateFormModal';
-import Error from 'common/Error';
 import FormBuilderHeader from './FormBuilderHeader';
 import { FormBuilderBreadcrumbs } from './FormBuilderBreadcrumbs';
 
@@ -12,10 +11,6 @@ export default class FormBuilder extends Component {
     super();
     this.state = { showModal: false };
     this.setState = this.setState.bind(this);
-  }
-
-  componentWillReceiveProps(props) {
-    this.setState({ error: props.error });
   }
 
   openFormModal() {
@@ -35,14 +30,9 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  closeErrorMessage() {
-    this.setState({ error: undefined });
-  }
-
   render() {
     return (
       <div>
-        <Error closeErrorMessage={() => this.closeErrorMessage()} error={this.state.error} />
         <FormBuilderHeader />
         <div className="breadcrumb-wrap">
           <div className="breadcrumb">
@@ -72,7 +62,6 @@ export default class FormBuilder extends Component {
 
 FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
-  error: PropTypes.object,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
 };

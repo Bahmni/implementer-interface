@@ -1,10 +1,9 @@
-import { combineReducers } from 'redux';
 import controlDetails from './controlDetails';
 import conceptToControlMap from './conceptToControlMap';
 
-const implementerInterface = combineReducers({
+const formBuilder = {
   controlDetails,
   conceptToControlMap,
-});
+};
 
-export default implementerInterface;
+export default formBuilder;

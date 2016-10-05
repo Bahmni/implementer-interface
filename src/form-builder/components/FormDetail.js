@@ -22,7 +22,7 @@ export default class FormDetail extends Component {
       valueReference: JSON.stringify(formJson),
       dataType: formBuilderConstants.formResourceDataType,
     };
-    this.props.saveForm(formJson.uuid, formResource);
+    this.props.saveFormResource(formJson.uuid, formResource);
   }
 
   canvasRef(ref) {
@@ -64,5 +64,5 @@ FormDetail.propTypes = {
     resources: PropTypes.array,
     uuid: PropTypes.string.isRequired,
   }),
-  saveForm: PropTypes.func,
+  saveFormResource: PropTypes.func,
 };

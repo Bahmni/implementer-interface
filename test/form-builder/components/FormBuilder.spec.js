@@ -20,11 +20,6 @@ describe('FormBuilder', () => {
     expect(wrapper).to.have.exactly(1).descendants('FormList');
   });
 
-  it('should render Error component when there is an error', () => {
-    wrapper = shallow(<FormBuilder data={[]} error={{ status: 404 }} saveForm={saveFormSpy} />);
-    expect(wrapper).to.have.exactly(1).descendants('Error');
-  });
-
   it('should render create form modal', () => {
     expect(wrapper).to.have.exactly(1).descendants('CreateFormModal');
   });
