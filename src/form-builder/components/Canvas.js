@@ -8,6 +8,7 @@ import each from 'lodash/each';
 import { connect } from 'react-redux';
 import { addSourceMap, deselectControl, selectControl } from 'form-builder/actions/control';
 import { getConceptFromControls, setConceptToControls } from 'form-builder/helpers/componentMapper';
+import ControlWrapper from 'form-builder/components/ControlReduxWrapper.js';
 
 class Canvas extends DraggableComponent {
   constructor(props) {
@@ -105,8 +106,9 @@ class Canvas extends DraggableComponent {
         onDrop={ this.onDrop }
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <div id="form-detail">{ this.renderComponents() }</div>
-        <this.grid />
+        <this.grid>
+          <ControlWrapper />
+        </this.grid>
       </div>
     );
   }
