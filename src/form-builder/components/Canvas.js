@@ -19,6 +19,8 @@ class Canvas extends DraggableComponent {
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
     const gridDescriptor = window.componentStore.getDesignerComponent('grid');
     this.grid = gridDescriptor ? gridDescriptor.control : () => (<div />);
+    this.gridReference = this.gridReference.bind(this);
+    this.gridRef = undefined;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,7 +54,8 @@ class Canvas extends DraggableComponent {
   }
 
   prepareJson() {
-    const controls = map(this.components, (component) => component.getJsonDefinition()) || [];
+    var controls = this.gridRef.getControls();
+    console.log("def", controls);
     const formJson = {
       id: this.props.formUuid,
       uuid: this.props.formUuid,
@@ -78,6 +81,12 @@ class Canvas extends DraggableComponent {
     );
   }
 
+  gridReference(ref) {
+    if (ref) {
+      this.gridRef = ref;
+    }
+  }
+
   render() {
     return (
       <div
@@ -87,7 +96,7 @@ class Canvas extends DraggableComponent {
         onDrop={ this.onDrop }
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <this.grid>
+        <this.grid ref={ this.gridReference }>
           <ControlWrapper />
         </this.grid>
       </div>

@@ -17,6 +17,7 @@ export default class FormDetail extends Component {
     const formResource = {
       name: formName,
       valueReference: JSON.stringify(formJson),
+      dataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
     };
     this.props.saveForm(formJson.uuid, formResource);
   }

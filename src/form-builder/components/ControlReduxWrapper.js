@@ -4,6 +4,7 @@ import { selectControl } from 'form-builder/actions/control';
 import { componentMapper } from 'form-builder/helpers/componentMapper';
 import { Draggable } from 'bahmni-form-controls';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual'
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -22,13 +23,15 @@ class ControlWrapper extends Draggable {
 
   componentWillUpdate(newProps) {
     const concept = get(newProps.conceptToControlMap, this.props.context.data.id);
-    if (concept) {
+    if (concept && !this.controlContext.data.concept) {
       this.controlContext.data = this.control.injectConceptToMetadata(this.controlContext.data, concept);
+      this.props.onUpdateMetadata(this.controlContext.data);
     }
   }
 
   updateMetadata(newData) {
     this.controlContext.data = Object.assign({}, this.controlContext.data, newData);
+    this.props.onUpdateMetadata(this.controlContext.data);
   }
 
   render() {
@@ -46,6 +49,7 @@ ControlWrapper.propTypes = {
     metadata: PropTypes.object,
   }),
   idGenerator: PropTypes.func.isRequired,
+  onUpdateMetadata: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
