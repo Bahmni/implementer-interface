@@ -160,11 +160,11 @@ describe('Canvas', () => {
     const concept = {
       name: 'Temperature',
       uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
+      datatype: 'Numeric',
     };
 
     expect(instance.state.descriptors.length).to.eql(1);
-    expect(instance.state.descriptors[0].metadata.displayType).to.eql('Numeric');
-    expect(instance.state.descriptors[0].metadata.concept).to.eql(concept);
+    expect(instance.state.descriptors[0].metadata.concept).to.deep.eql(concept);
   });
 
   it('should clear selected id when clicked on canvas', () => {
@@ -233,8 +233,8 @@ describe('Canvas', () => {
         concept: {
           name: 'someName-1',
           uuid: 'someUuid-1',
+          datatype: 'Numeric',
         },
-        displayType: 'Numeric',
       },
       {
         id: '2',

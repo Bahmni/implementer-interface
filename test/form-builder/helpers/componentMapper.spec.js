@@ -53,8 +53,8 @@ describe('componentMapper', () => {
       expectedDescriptor2.metadata.concept = {
         name: 'Temperature',
         uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
+        datatype: 'Numeric',
       };
-      expectedDescriptor2.metadata.displayType = 'Numeric';
       const updatedDescriptors = setConceptToControls(descriptors, conceptToControlMap);
       expect(updatedDescriptors).to.deep.eql([obsControl1, expectedDescriptor2]);
     });
@@ -64,7 +64,7 @@ describe('componentMapper', () => {
     const getDescriptorWithConcept = (id, concept) =>
       ({
         control: () => (<div></div>),
-        metadata: { id, concept, type: 'obsControl', displayType: 'text' },
+        metadata: { id, concept, type: 'obsControl' },
       });
 
     const getConceptFrom = (uuid, name, datatype) =>
@@ -85,8 +85,10 @@ describe('componentMapper', () => {
     });
 
     it('should return conceptToContolMap when there are concepts in descriptors', () => {
-      const obsControl1 = getDescriptorWithConcept('1', { name: 'someName-1', uuid: 'someUuid-1' });
-      const obsControl2 = getDescriptorWithConcept('2', { name: 'someName-2', uuid: 'someUuid-2' });
+      const concept1 = { name: 'someName-1', datatype: 'text', uuid: 'someUuid-1' };
+      const concept2 = { name: 'someName-2', datatype: 'text', uuid: 'someUuid-2' };
+      const obsControl1 = getDescriptorWithConcept('1', concept1);
+      const obsControl2 = getDescriptorWithConcept('2', concept2);
       const obsControl3 = getDescriptor('3');
       const descriptors = [obsControl1, obsControl2, obsControl3];
 

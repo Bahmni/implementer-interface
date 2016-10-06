@@ -8,8 +8,8 @@ export function setConceptToControls(descriptors, conceptToControlMap) {
       descriptorClone.metadata.concept = {
         name: concept.name.name,
         uuid: concept.uuid,
+        datatype: concept.datatype.name,
       };
-      descriptorClone.metadata.displayType = concept.datatype.name;
       return descriptorClone;
     }
     return descriptor;
@@ -19,10 +19,10 @@ export function setConceptToControls(descriptors, conceptToControlMap) {
 export function getConceptFromControls(descriptors) {
   const mapper = {};
   _.each(descriptors, (descriptor) => {
-    const { concept, id, displayType } = descriptor.metadata;
+    const { concept, id } = descriptor.metadata;
     if (concept) {
       const name = { name: concept.name };
-      const datatype = { name: displayType };
+      const datatype = { name: concept.datatype };
       mapper[id] = { datatype, display: concept.name, name, uuid: concept.uuid };
     }
   });

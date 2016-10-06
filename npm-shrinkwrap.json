@@ -576,9 +576,9 @@
       "resolved": "https://registry.npmjs.org/backo2/-/backo2-1.0.2.tgz"
     },
     "bahmni-form-controls": {
-      "version": "0.1.5",
-      "from": "bahmni-form-controls@>=0.1.5 <0.2.0",
-      "resolved": "https://registry.npmjs.org/bahmni-form-controls/-/bahmni-form-controls-0.1.5.tgz",
+      "version": "0.1.6",
+      "from": "bahmni-form-controls@>=0.1.6 <0.2.0",
+      "resolved": "https://registry.npmjs.org/bahmni-form-controls/-/bahmni-form-controls-0.1.6.tgz",
       "dependencies": {
         "classnames": {
           "version": "2.2.5",
