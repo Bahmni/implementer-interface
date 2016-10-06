@@ -16,7 +16,6 @@ describe('FormList', () => {
       version: 1.1,
       auditInfo: {
         dateCreated: '2010-10-10T15:21:17.000+0530',
-        dateChanged: null,
       },
       uuid: 'someUuid-1',
     },
@@ -26,7 +25,6 @@ describe('FormList', () => {
       version: 1.2,
       auditInfo: {
         dateCreated: '2010-08-09T15:21:17.000+0530',
-        dateChanged: '2010-08-12T15:21:17.000+0530',
       },
       status: 'published',
       uuid: 'someUuid-2',
@@ -37,7 +35,6 @@ describe('FormList', () => {
       version: 1.1,
       auditInfo: {
         dateCreated: '2010-08-09T15:21:17.000+0530',
-        dateChanged: '2010-08-12T15:21:17.000+0530',
       },
       status: 'published',
       uuid: 'someUuid-3',
@@ -60,15 +57,13 @@ describe('FormList', () => {
     expect(getData(0, 0)).to.eql('Vitals');
     expect(getData(0, 1)).to.eql('1.1');
     expect(getData(0, 2)).to.eql('10 Oct 10');
-    expect(getData(0, 3)).to.eql('');
-    expect(getData(0, 4)).to.eql('published');
-    expect(getData(0, 5)).to.eql('Edit');
+    expect(getData(0, 3)).to.eql('published');
+    expect(getData(0, 4)).to.eql('Edit');
 
     expect(getData(1, 0)).to.eql('BP');
     expect(getData(2, 0)).to.eql('Pulse');
 
     expect(getData(1, 2)).to.eql('09 Aug 10');
-    expect(getData(1, 3)).to.eql('12 Aug 10');
 
     expect(getLinkAt(0).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1' });
     expect(getLinkAt(1).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2' });

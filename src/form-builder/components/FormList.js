@@ -11,7 +11,6 @@ export default class FormList extends Component {
         <td>{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
-        <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateChanged)}</td>
         <td>published</td>
         <td><Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>Edit</Link></td>
       </tr>
@@ -26,7 +25,6 @@ export default class FormList extends Component {
           <th>Name</th>
           <th>Version</th>
           <th>Created On</th>
-          <th>Last Modified</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
