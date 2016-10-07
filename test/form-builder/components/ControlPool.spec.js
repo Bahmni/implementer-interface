@@ -51,9 +51,9 @@ describe('ControlPool', () => {
       Object.assign(control1, control2, control3);
 
     const controlPool = shallow(<ControlPool />);
-    expect(controlPool.find('.controls-list').children().at(0).text()).to.eql('control1');
-    expect(controlPool.find('.controls-list').children().at(1).text()).to.eql('control2');
-    expect(controlPool.find('.controls-list').children()).to.have.length(2);
+    expect(controlPool.find('.section-content').children().at(0).text()).to.eql('control1');
+    expect(controlPool.find('.section-content').children().at(1).text()).to.eql('control2');
+    expect(controlPool.find('.section-content').children()).to.have.length(2);
   });
 
   it('should add draggable properties', () => {
@@ -66,11 +66,11 @@ describe('ControlPool', () => {
       },
     };
     const controlPool = shallow(<ControlPool />);
-    const dragData = controlPool.find('.controls-list').children().props().onDragStart(eventData);
+    const dragData = controlPool.find('.section-content').children().props().onDragStart(eventData);
 
     expect(dragData.type).to.eql('data');
     expect(dragData.data).to.deep.eql(JSON.stringify({ type: 'control1', data: { id: 4200 } }));
-    expect(controlPool.find('.controls-list').children().props().draggable).to.eql('true');
+    expect(controlPool.find('.section-content').children().props().draggable).to.eql('true');
     Math.random.restore();
   });
 });

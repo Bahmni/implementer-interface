@@ -28,7 +28,7 @@ describe('CreateFormModal', () => {
   });
 
   it('should render create form modal when showModal is true', () => {
-    expect(wrapper.find('.dialog--header').text()).to.eql('Create a Form');
+    expect(wrapper.find('.header-title').text()).to.eql('Create a Form');
   });
 
   it('should not render create form modal when showModal is false', () => {

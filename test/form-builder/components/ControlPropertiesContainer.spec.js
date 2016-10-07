@@ -10,7 +10,7 @@ chai.use(chaiEnzyme());
 describe('ControlPropertiesContainer', () => {
   it('should display Control Properties title', () => {
     const wrapper = mount(<ControlPropertiesContainer store={getStore()} />);
-    expect(wrapper.find('.control-properties-title').text()).to.eql('Control Properties');
+    expect(wrapper.find('.header-title').text()).to.eql('Control Properties');
   });
 
   it('should not display autocomplete component when no control is selected', () => {

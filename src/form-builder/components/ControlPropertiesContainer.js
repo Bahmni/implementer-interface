@@ -34,8 +34,8 @@ class ControlPropertiesContainer extends Component {
 
   render() {
     return (
-      <div>
-        <div className="control-properties-title">Control Properties</div>
+      <div className="section-grid">
+        <h2 className="header-title">Control Properties</h2>
         {this.displayAutoComplete()}
       </div>
     );

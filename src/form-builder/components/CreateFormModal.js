@@ -28,7 +28,7 @@ export default class CreateFormModal extends Component {
         <div onKeyUp={(e) => this.handleEsc(e)}>
           <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
           <div className="dialog">
-            <div className="dialog--header">Create a Form</div>
+            <h2 className="header-title">Create a Form</h2>
             <form className="dialog--container" onSubmit={(e) => this.createForm(e)}>
               <div className="form-field clearfix">
                 <label>Form Name <span className="asterisk">*</span></label>

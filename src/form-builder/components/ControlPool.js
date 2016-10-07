@@ -20,7 +20,9 @@ export class ControlPool extends Component {
     metadata.id = Math.round(Math.random() * 100);
     const context = { type, data: metadata };
     return (
-      <div draggable="true"
+      <div
+        className="control-list"
+        draggable="true"
         key={displayName}
         onDragStart={this.onDragStart(context)}
       >
@@ -46,9 +48,9 @@ export class ControlPool extends Component {
 
   render() {
     return (
-      <div>
-        <div className="controls-title">Controls</div>
-        <div className="controls-list">{this.draggableControls}</div>
+      <div className="section-grid">
+        <h2 className="header-title">Controls</h2>
+        <div className="section-content">{this.draggableControls}</div>
       </div>
     );
   }

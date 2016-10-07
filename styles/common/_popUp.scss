@@ -20,13 +20,6 @@
   display: table;
   min-width:450px;
   font-family: $primaryFont, Arial, sans-serif;
-  &--header{
-    background: $bahmniSecondaryColor ;
-    color: $white;
-    font-size: 16px;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-  }
   &--container{
     padding: 10px 20px;
   }

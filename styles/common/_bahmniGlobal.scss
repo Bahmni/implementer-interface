@@ -8,12 +8,35 @@ a{
   @include clearfix();
   background: $bahmniSecondaryColor;
 }
+
 .header ,.breadcrumb ,.container-content{
   @include clearfix();
   max-width:$max-page-width ;
   margin:0 auto;
   padding: 20px 0;
 }
+
+.section-grid {
+  margin: 0 0 10px;
+  font-size: 14px;
+  position: relative;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);
+  border: 1px solid #699;
+  border-radius: 5px 5px 0 0;
+  background: $white;
+  .section-content{
+    padding: 10px 0;
+  }
+}
+
+h2.header-title {
+  background: $bahmniSecondaryColor ;
+  color: $lightestGray;
+  font-size: 16px;
+  padding: 10px 20px;
+  margin: 0;
+}
+
 .nav{
   float:left;
   width: auto;
@@ -51,6 +74,7 @@ a{
     padding: 9px 0;
   }
 }
+
 .breadcrumb{
   padding: 15px 0;
   ul{
@@ -85,6 +109,7 @@ a{
 .button, button, input[type="button"],input[type="reset"], a.button {
   @include button;
 }
+
 .btn{
   &--highlight , input[type="submit"], button[type="submit"]{
     background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
@@ -98,8 +123,23 @@ a{
   }
 }
 
-
-.container-content{
-
+.container-columns {
+  @include clearfix();
+  margin: 10px 0;
 }
 
+.column-side {
+  width: 300px;
+  float: left;
+  margin-right:-100%;
+}
+
+.container-column-main {
+  float: right;
+  width: 100%;
+}
+
+.column-main {
+  margin-left: 300px;
+  padding-left: 10px;
+}
