@@ -17,7 +17,6 @@ export class ControlPool extends Component {
   getControlItem(type, descriptor) {
     const { displayName } = descriptor.designProperties;
     const metadata = new Descriptor(type, descriptor).data().metadata;
-    metadata.id = String(1 + Math.floor(Math.random() * 100));
     const context = { type, data: metadata };
     return (
       <div draggable="true"

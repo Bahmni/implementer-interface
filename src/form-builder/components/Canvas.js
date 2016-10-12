@@ -7,6 +7,7 @@ import map from 'lodash/map';
 import { connect } from 'react-redux';
 import { deselectControl, selectControl } from 'form-builder/actions/control';
 import { componentMapper } from 'form-builder/helpers/componentMapper';
+import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.js';
 
 class Canvas extends DraggableComponent {
@@ -21,6 +22,7 @@ class Canvas extends DraggableComponent {
     this.grid = gridDescriptor ? gridDescriptor.control : () => (<div />);
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
+    window.bahmniIDGenerator = new IDGenerator();
   }
 
   componentWillReceiveProps(nextProps) {
