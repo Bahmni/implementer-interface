@@ -75,8 +75,7 @@ class Canvas extends DraggableComponent {
   }
 
   prepareJson() {
-    var controls = this.gridRef.getControls();
-    console.log("def", controls);
+    const controls = this.gridRef.getControls();
     const formJson = {
       id: this.props.formUuid,
       uuid: this.props.formUuid,
