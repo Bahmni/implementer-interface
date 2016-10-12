@@ -1,7 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { selectControl } from 'form-builder/actions/control';
-import { componentMapper } from 'form-builder/helpers/componentMapper';
 import { Draggable } from 'bahmni-form-controls';
 import get from 'lodash/get';
 
@@ -13,7 +12,7 @@ class ControlWrapper extends Draggable {
     this.controlContext = Object.assign({}, props.context);
     this.onSelected = this.onSelected.bind(this);
     this.updateMetadata = this.updateMetadata.bind(this);
-    const id = String(bahmniIDGenerator.getId());
+    const id = String(window.bahmniIDGenerator.getId());
     this.controlContext.data.id = id;
   }
 
@@ -29,12 +28,11 @@ class ControlWrapper extends Draggable {
   componentWillUpdate(newProps) {
     const concept = get(newProps.conceptToControlMap, this.props.context.data.id);
     if (concept && !this.controlContext.data.concept) {
-      this.controlContext.data = this.control.injectConceptToMetadata(this.controlContext.data, concept);
-      this.props.onUpdateMetadata(this.controlContext.data);
-    }
-    else if(this.controlContext.data.id !== newProps.context.data.id) {
+      const newMetadata = this.control.injectConceptToMetadata(this.controlContext.data, concept);
+      this.controlContext.data = newMetadata;
+      this.props.onUpdateMetadata(newMetadata);
+    } else if (this.controlContext.data.id !== newProps.context.data.id) {
       this.controlContext = Object.assign({}, this.controlContext, newProps.context);
-      console.log('context change', this.controlContext.data);
     }
   }
 
@@ -45,10 +43,12 @@ class ControlWrapper extends Draggable {
 
   render() {
     return (
-      <div onDragEnd={ this.onDragEnd(this.controlContext) } onDragStart={ this.onDragStart(this.controlContext) }>
+      <div onDragEnd={ this.onDragEnd(this.controlContext) }
+        onDragStart={ this.onDragStart(this.controlContext) }
+      >
         <this.control metadata={ this.controlContext.data }
-                      onSelect={ this.onSelected }
-                      onUpdateMetadata={ this.updateMetadata }
+          onSelect={ this.onSelected }
+          onUpdateMetadata={ this.updateMetadata }
         />
       </div>
     );

@@ -3,7 +3,6 @@ import { DraggableComponent } from './DraggableComponent';
 import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorParser';
 import maxBy from 'lodash/maxBy';
 import toNumber from 'lodash/toNumber';
-import map from 'lodash/map';
 import { connect } from 'react-redux';
 import { deselectControl, selectControl } from 'form-builder/actions/control';
 import { componentMapper } from 'form-builder/helpers/componentMapper';
@@ -56,8 +55,7 @@ class Canvas extends DraggableComponent {
   }
 
   prepareJson() {
-    var controls = this.gridRef.getControls();
-    console.log("def", controls);
+    const controls = this.gridRef.getControls();
     const formJson = {
       id: this.props.formUuid,
       uuid: this.props.formUuid,

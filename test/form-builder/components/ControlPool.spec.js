@@ -69,7 +69,7 @@ describe('ControlPool', () => {
     const dragData = controlPool.find('.controls-list').children().props().onDragStart(eventData);
 
     expect(dragData.type).to.eql('data');
-    expect(dragData.data).to.deep.eql(JSON.stringify({ type: 'control1', data: { id: 4200 } }));
+    expect(dragData.data).to.deep.eql(JSON.stringify({ type: 'control1', data: {} }));
     expect(controlPool.find('.controls-list').children().props().draggable).to.eql('true');
     Math.random.restore();
   });
