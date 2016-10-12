@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { ControlPool } from 'form-builder/components/ControlPool';
-import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
@@ -59,7 +58,6 @@ describe('ControlPool', () => {
   it('should add draggable properties', () => {
     const controls = controlDescriptor('control1', true);
     window.componentStore.getAllDesignerComponents = () => controls;
-    sinon.stub(Math, 'random', () => 42);
     const eventData = {
       dataTransfer: {
         setData: (type, data) => ({ data, type }),
@@ -70,7 +68,6 @@ describe('ControlPool', () => {
 
     expect(dragData.type).to.eql('data');
     expect(dragData.data).to.deep.eql(JSON.stringify({ type: 'control1', data: {} }));
-    expect(controlPool.find('.controls-list').children().props().draggable).to.eql('true');
-    Math.random.restore();
+    expect(controlPool.find('.section-content').children().props().draggable).to.eql('true');
   });
 });
