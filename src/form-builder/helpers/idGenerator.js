@@ -13,7 +13,7 @@ export class IDGenerator {
       }
       return control.id;
     });
-    return [].concat(controlIDs);
+    return [].concat(...controlIDs);
   }
 
   getId() {
