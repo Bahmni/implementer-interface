@@ -43,7 +43,7 @@ class ControlWrapper extends Draggable {
 
   render() {
     return (
-      <div onDragEnd={ this.onDragEnd(this.controlContext) }
+      <div className="control-wrapper" onDragEnd={ this.onDragEnd(this.controlContext) }
         onDragStart={ this.onDragStart(this.controlContext) }
       >
         <this.control metadata={ this.controlContext.data }
@@ -58,7 +58,7 @@ class ControlWrapper extends Draggable {
 ControlWrapper.propTypes = {
   context: PropTypes.shape({
     type: PropTypes.string,
-    metadata: PropTypes.object,
+    data: PropTypes.object,
   }),
   onUpdateMetadata: PropTypes.func.isRequired,
 };
