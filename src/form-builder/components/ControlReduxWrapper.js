@@ -11,7 +11,8 @@ class ControlWrapper extends Draggable {
     this.props = props;
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
-    this.updateMetadata = this.updateMetadata.bind(this);
+    this.childControl = undefined;
+    this.storeChildRef = this.storeChildRef.bind(this);
   }
 
   onSelected(event, id) {
@@ -24,15 +25,20 @@ class ControlWrapper extends Draggable {
     if (concept && !this.metadata.concept) {
       const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept);
       this.metadata = newMetadata;
-      this.props.onUpdateMetadata(newMetadata);
     } else if (this.metadata.id !== newProps.metadata.id) {
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
     }
   }
 
-  updateMetadata(newData) {
-    this.metadata = Object.assign({}, this.metadata, newData);
-    this.props.onUpdateMetadata(this.metadata);
+  getJsonDefinition() {
+    if (this.childControl) {
+      return this.childControl.getJsonDefinition();
+    }
+    return undefined;
+  }
+
+  storeChildRef(ref) {
+    this.childControl = ref;
   }
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
@@ -45,7 +51,7 @@ class ControlWrapper extends Draggable {
       >
         <this.control metadata={ this.metadata }
           onSelect={ this.onSelected }
-          onUpdateMetadata={ this.updateMetadata }
+          ref={this.storeChildRef}
         />
       </div>
     );
@@ -54,11 +60,10 @@ class ControlWrapper extends Draggable {
 
 ControlWrapper.propTypes = {
   metadata: PropTypes.object,
-  onUpdateMetadata: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
   return { conceptToControlMap: state.conceptToControlMap };
 }
 
-export default connect(mapStateToProps)(ControlWrapper);
+export default connect(mapStateToProps, null, null, { withRef: true })(ControlWrapper);
