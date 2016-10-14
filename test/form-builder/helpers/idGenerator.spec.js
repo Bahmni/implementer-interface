@@ -29,7 +29,7 @@ describe('idGenerator', () => {
       expect(controlId).to.be.eql(1);
     });
     it('should return all the max control Id', () => {
-      const idGenerator = new IDGenerator({ controls });
+      const idGenerator = new IDGenerator(controls);
       const controlIds = idGenerator.getId();
       expect(controlIds).to.be.eql(236);
     });

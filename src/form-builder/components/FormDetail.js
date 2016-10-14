@@ -43,7 +43,7 @@ export default class FormDetail extends Component {
           <button onClick={ this.onSave }>Save</button>
           <div className="container-columns">
             <div className="column-side">
-              <ControlPool />
+              <ControlPool formResourceControls={formResourceControls} />
               <ControlPropertiesContainer />
             </div>
             <div className="container-column-main">

@@ -107,6 +107,7 @@ class Canvas extends DraggableComponent {
   }
 
   render() {
+    const { formResourceControls } = this.props;
     return (
       <div
         className="form-builder-canvas"
@@ -115,7 +116,11 @@ class Canvas extends DraggableComponent {
         onDrop={ this.onDrop }
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <this.grid className="bahmni-grid" ref={ this.gridReference }>
+        <this.grid
+          className="bahmni-grid"
+          controls={formResourceControls}
+          ref={ this.gridReference }
+        >
           <ControlWrapper />
         </this.grid>
       </div>

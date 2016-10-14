@@ -1,6 +1,5 @@
 export class IDGenerator {
-  constructor(formDetails = { controls: [] }) {
-    const controls = formDetails.controls;
+  constructor(controls = []) {
     this.controlIDs = this.getControlIDs(controls);
     this.maxId = Math.max(...this.controlIDs) || 0;
     this.maxId = this.maxId === -Infinity ? 1 : this.maxId + 1;

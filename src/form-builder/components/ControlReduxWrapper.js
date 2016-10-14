@@ -7,13 +7,11 @@ import get from 'lodash/get';
 class ControlWrapper extends Draggable {
   constructor(props) {
     super(props);
-    this.control = window.componentStore.getDesignerComponent(props.context.type).control;
+    this.control = window.componentStore.getDesignerComponent(props.metadata.type).control;
     this.props = props;
-    this.controlContext = Object.assign({}, props.context);
+    this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.updateMetadata = this.updateMetadata.bind(this);
-    const id = String(window.bahmniIDGenerator.getId());
-    this.controlContext.data.id = id;
   }
 
   onSelected(event, id) {
@@ -21,32 +19,31 @@ class ControlWrapper extends Draggable {
     event.stopPropagation();
   }
 
-  componentWillMount() {
-    this.props.onUpdateMetadata(this.controlContext.data);
-  }
-
   componentWillUpdate(newProps) {
-    const concept = get(newProps.conceptToControlMap, this.props.context.data.id);
-    if (concept && !this.controlContext.data.concept) {
-      const newMetadata = this.control.injectConceptToMetadata(this.controlContext.data, concept);
-      this.controlContext.data = newMetadata;
+    const concept = get(newProps.conceptToControlMap, this.metadata.id);
+    if (concept && !this.metadata.concept) {
+      const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept);
+      this.metadata = newMetadata;
       this.props.onUpdateMetadata(newMetadata);
-    } else if (this.controlContext.data.id !== newProps.context.data.id) {
-      this.controlContext = Object.assign({}, this.controlContext, newProps.context);
+    } else if (this.metadata.id !== newProps.metadata.id) {
+      this.metadata = Object.assign({}, this.metadata, newProps.metadata);
     }
   }
 
   updateMetadata(newData) {
-    this.controlContext.data = Object.assign({}, this.controlContext.data, newData);
-    this.props.onUpdateMetadata(this.controlContext.data);
+    this.metadata = Object.assign({}, this.metadata, newData);
+    this.props.onUpdateMetadata(this.metadata);
   }
-
   render() {
+    const onDragEndFunc = this.onDragEnd(this.metadata);
     return (
-      <div className="control-wrapper" onDragEnd={ this.onDragEnd(this.controlContext) }
-        onDragStart={ this.onDragStart(this.controlContext) }
+      <div
+        className="control-wrapper"
+        draggable="true"
+        onDragEnd={ (e) => onDragEndFunc(e) }
+        onDragStart={ this.onDragStart(this.metadata) }
       >
-        <this.control metadata={ this.controlContext.data }
+        <this.control metadata={ this.metadata }
           onSelect={ this.onSelected }
           onUpdateMetadata={ this.updateMetadata }
         />
@@ -56,10 +53,7 @@ class ControlWrapper extends Draggable {
 }
 
 ControlWrapper.propTypes = {
-  context: PropTypes.shape({
-    type: PropTypes.string,
-    data: PropTypes.object,
-  }),
+  metadata: PropTypes.object,
   onUpdateMetadata: PropTypes.func.isRequired,
 };
 

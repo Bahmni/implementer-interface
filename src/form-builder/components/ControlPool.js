@@ -3,27 +3,32 @@ import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorP
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
+import { IDGenerator } from 'form-builder/helpers/idGenerator';
 
 export class ControlPool extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.draggableControls = this.getAllDesignerComponents();
+    this.idGenerator = new IDGenerator(props.formResourceControls);
   }
 
-  onDragStart(context) {
-    return (e) => e.dataTransfer.setData('data', JSON.stringify(context));
+  onDragStart(metadata) {
+    return (e) => {
+      const id = String(this.idGenerator.getId());
+      const modifiedMetadata = Object.assign({}, metadata, { id });
+      e.dataTransfer.setData('data', JSON.stringify(modifiedMetadata));
+    };
   }
 
   getControlItem(type, descriptor) {
     const { displayName } = descriptor.designProperties;
     const metadata = new Descriptor(type, descriptor).data().metadata;
-    const context = { type, data: metadata };
     return (
       <div
         className="control-list"
         draggable="true"
         key={displayName}
-        onDragStart={this.onDragStart(context)}
+        onDragStart={this.onDragStart(metadata)}
       >
         {displayName}
       </div>);
@@ -56,5 +61,5 @@ export class ControlPool extends Component {
 }
 
 ControlPool.propTypes = {
-  formData: PropTypes.object,
+  formResourceControls: PropTypes.array.isRequired,
 };

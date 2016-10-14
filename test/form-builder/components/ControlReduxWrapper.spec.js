@@ -21,12 +21,10 @@ describe('ControlWrapper', () => {
   });
   const componentStore = window.componentStore;
   const bahmniIDGenerator = window.bahmniIDGenerator;
-  const context = {
+  const metadata = {
+    id: '1',
     type: 'testType',
-    data: {
-      type: 'testType',
-      value: 'testValue',
-    },
+    value: 'testValue',
   };
   before(() => {
     window.componentStore = {
@@ -46,17 +44,17 @@ describe('ControlWrapper', () => {
   it('should render a control with the given metadata', () => {
     const controlWrapper = mount(
       <ControlWrapper
-        context={ context }
+        metadata={ metadata }
         onUpdateMetadata={ () => {} }
         store={ getStore() }
       />);
-    expect(controlWrapper.find('.control-wrapper').children().text()).to.eql(context.data.value);
+    expect(controlWrapper.find('.control-wrapper').children().text()).to.eql(metadata.value);
   });
 
   it('should be draggable', () => {
     const controlWrapper = mount(
       <ControlWrapper
-        context={ context }
+        metadata={ metadata }
         onUpdateMetadata={ () => {} }
         store={ getStore() }
       />);
@@ -69,12 +67,11 @@ describe('ControlWrapper', () => {
   it('should update context with concepts on change of conceptToControlMap', () => {
     const controlWrapper = shallow(
       <ControlWrapper
-        context={ context }
+        metadata={ metadata }
         onUpdateMetadata={ () => {} }
         store={ getStore() }
       />).shallow();
 
-    // const controlWrapper = wrapper.instance();
     const conceptToControlMap = {
       1: {
         uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
@@ -117,7 +114,7 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
-        context={ context }
+        metadata={ metadata }
         onUpdateMetadata={ () => {} }
         store={ store }
       />).shallow();

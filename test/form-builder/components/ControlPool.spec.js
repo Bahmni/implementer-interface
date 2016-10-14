@@ -25,20 +25,20 @@ describe('ControlPool', () => {
           displayName: name,
         },
         metadata: {
-          attributes: [],
+          attributes: [{ name: 'label', type: 'text', defaultValue: 'someLabel' }],
         },
       },
     };
   }
 
   it('should render an empty listbox if no designer controls are present', () => {
-    const controlPool = shallow(<ControlPool />);
+    const controlPool = shallow(<ControlPool formResourceControls={[]} />);
     expect(controlPool.find('.controls-list')).to.be.blank();
   });
 
   it('should render an empty listbox if register controls are not top-level', () => {
     window.componentStore.getAllRegisteredComponents = () => controlDescriptor('someName', false);
-    const controlPool = shallow(<ControlPool />);
+    const controlPool = shallow(<ControlPool formResourceControls={[]} />);
     expect(controlPool.find('.controls-list')).to.be.blank();
   });
 
@@ -49,7 +49,7 @@ describe('ControlPool', () => {
     window.componentStore.getAllDesignerComponents = () =>
       Object.assign(control1, control2, control3);
 
-    const controlPool = shallow(<ControlPool />);
+    const controlPool = shallow(<ControlPool formResourceControls={[]} />);
     expect(controlPool.find('.section-content').children().at(0).text()).to.eql('control1');
     expect(controlPool.find('.section-content').children().at(1).text()).to.eql('control2');
     expect(controlPool.find('.section-content').children()).to.have.length(2);
@@ -60,14 +60,17 @@ describe('ControlPool', () => {
     window.componentStore.getAllDesignerComponents = () => controls;
     const eventData = {
       dataTransfer: {
-        setData: (type, data) => ({ data, type }),
+        dragData: {},
+        setData: function setData(type, data) {
+          this.dragData = data;
+        },
       },
     };
-    const controlPool = shallow(<ControlPool />);
-    const dragData = controlPool.find('.section-content').children().props().onDragStart(eventData);
+    const expectedDragData = { label: 'someLabel', id: '1' };
+    const controlPool = shallow(<ControlPool formResourceControls={[]} />);
 
-    expect(dragData.type).to.eql('data');
-    expect(dragData.data).to.deep.eql(JSON.stringify({ type: 'control1', data: {} }));
+    controlPool.find('.section-content').children().props().onDragStart(eventData);
+    expect(JSON.parse(eventData.dataTransfer.dragData)).to.deep.eql(expectedDragData);
     expect(controlPool.find('.section-content').children().props().draggable).to.eql('true');
   });
 });
