@@ -13,6 +13,8 @@ class ControlWrapper extends Draggable {
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
     this.storeChildRef = this.storeChildRef.bind(this);
+    this.getJsonDefinition = this.getJsonDefinition.bind(this);
+    this.processDragStart = this.processDragStart.bind(this);
   }
 
   onSelected(event, id) {
@@ -38,9 +40,16 @@ class ControlWrapper extends Draggable {
     return undefined;
   }
 
-  storeChildRef(ref) {
-    this.childControl = ref;
+  processDragStart() {
+    return this.getJsonDefinition();
   }
+
+  storeChildRef(ref) {
+    if (ref) {
+      this.childControl = ref;
+    }
+  }
+
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
     return (

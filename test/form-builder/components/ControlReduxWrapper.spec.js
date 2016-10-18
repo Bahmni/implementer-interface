@@ -122,4 +122,19 @@ describe('ControlWrapper', () => {
     controlWrapper.instance().onSelected({ stopPropagation: () => {} }, '1');
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('1')));
   });
+
+  it('should set the updated metadata as the drag data', () => {
+    const store = getStore();
+    const controlWrapperShallow = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+    const controlWrapper = controlWrapperShallow.instance();
+    sinon.stub(controlWrapper, 'getJsonDefinition');
+
+    controlWrapper.processDragStart();
+    sinon.assert.calledOnce(controlWrapper.getJsonDefinition);
+  });
 });
