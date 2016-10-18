@@ -9,6 +9,7 @@ import { addSourceMap, deselectControl, selectControl } from 'form-builder/actio
 import { getConceptFromControls, setConceptToControls } from 'form-builder/helpers/componentMapper';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.js';
+import { GridDesigner as Grid } from 'bahmni-form-controls';
 
 class Canvas extends DraggableComponent {
   constructor(props) {
@@ -116,13 +117,14 @@ class Canvas extends DraggableComponent {
         onDrop={ this.onDrop }
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <this.grid
+        <Grid
           className="bahmni-grid"
-          controls={formResourceControls}
+          controls={ formResourceControls || [] }
           ref={ this.gridReference }
+          wrapper={ ControlWrapper }
         >
           <ControlWrapper />
-        </this.grid>
+        </Grid>
       </div>
     );
   }

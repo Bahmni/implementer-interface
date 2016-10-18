@@ -19,7 +19,7 @@ class ControlWrapper extends Draggable {
     this.props.dispatch(selectControl(id));
     event.stopPropagation();
   }
-
+  
   componentWillUpdate(newProps) {
     const concept = get(newProps.conceptToControlMap, this.metadata.id);
     if (concept && !this.metadata.concept) {
@@ -27,6 +27,7 @@ class ControlWrapper extends Draggable {
       this.metadata = newMetadata;
     } else if (this.metadata.id !== newProps.metadata.id) {
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
+      this.control = window.componentStore.getDesignerComponent(this.metadata.type).control;
     }
   }
 
