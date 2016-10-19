@@ -48,126 +48,6 @@ describe('Canvas', () => {
     expect(canvas.find('.form-detail')).to.be.blank();
   });
 
-  it('should be a drop target', () => {
-    const canvas = mount(
-      <Canvas
-        formResourceControls={[]}
-        formUuid="someFormUuid"
-        store={getStore()}
-      />);
-    const eventData = {
-      preventDefault: () => {},
-      dataTransfer: {
-        getData: () => JSON.stringify({ type: 'someType' }),
-      },
-    };
-
-    expect(canvas.find('.form-builder-canvas')).to.have.prop('onDrop');
-
-    sinon.spy(eventData, 'preventDefault');
-    canvas.find('.form-builder-canvas').props().onDrop(eventData);
-    sinon.assert.calledOnce(eventData.preventDefault);
-    eventData.preventDefault.restore();
-  });
-
-  // eslint-disable-next-line
-  xit('should render dropped controls on canvas with correct id', () => {
-    const canvas = shallow(
-      <Canvas
-        formResourceControls={[]}
-        formUuid="someFormUuid"
-        store={getStore()}
-      />).shallow();
-    const canvasInstance = canvas.instance();
-    const eventData = {
-      preventDefault: () => {},
-      dataTransfer: {
-        getData: () => JSON.stringify({ metadata: {} }),
-      },
-    };
-
-    const expectedFirstCallProps = {
-      key: '1',
-      metadata: { id: '1', properties: {} },
-      ref: sinon.match.any,
-      onSelect: canvasInstance.onSelect,
-    };
-
-    const expectedSecondCallProps = {
-      key: '2',
-      metadata: { id: '2', properties: {} },
-      ref: sinon.match.any,
-      onSelect: canvasInstance.onSelect,
-    };
-
-    const createElementSpy = sinon.spy(React, 'createElement');
-
-    canvas.find('.form-builder-canvas').props().onDrop(eventData);
-    sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedFirstCallProps));
-
-    canvas.find('.form-builder-canvas').props().onDrop(eventData);
-    sinon.assert.calledOnce(createElementSpy.withArgs(control, expectedSecondCallProps));
-  });
-
-  it('should dispatch selectControl action when control is selected', () => {
-    const store = getStore();
-    const canvas = shallow(
-      <Canvas
-        formResourceControls={[]}
-        formUuid="someFormUuid"
-        store={store}
-      />).shallow();
-    const instance = canvas.instance();
-    const event = { stopPropagation: sinon.spy() };
-
-    instance.onSelect(event, '123');
-    sinon.assert.calledOnce(event.stopPropagation);
-    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('123')));
-  });
-
-  it('should update descriptors with concepts on change of conceptToControlMap', () => {
-    const store = getStore();
-    const canvas = shallow(
-      <Canvas
-        formResourceControls={[]}
-        formUuid="someFormUuid"
-        store={store}
-      />).shallow();
-    const instance = canvas.instance();
-
-    const descriptor = { control: () => (<div></div>), metadata: { id: '1', type: 'obsControl' } };
-    instance.setState({ descriptors: [descriptor] });
-
-    const conceptToControlMap = {
-      1: {
-        uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
-        display: 'Temperature',
-        name: {
-          uuid: 'c37bdec5-3f10-11e4-adec-0800271c1b75',
-          name: 'Temperature',
-        },
-        conceptClass: {
-          uuid: '8d492774-c2cc-11de-8d13-0010c6dffd0f',
-          name: 'Misc',
-        },
-        datatype: {
-          uuid: '8d4a4488-c2cc-11de-8d13-0010c6dffd0f',
-          name: 'Numeric',
-        },
-        setMembers: [],
-      },
-    };
-    canvas.setProps({ conceptToControlMap });
-    const concept = {
-      name: 'Temperature',
-      uuid: 'c37bd733-3f10-11e4-adec-0800271c1b75',
-      datatype: 'Numeric',
-    };
-
-    expect(instance.state.descriptors.length).to.eql(1);
-    expect(instance.state.descriptors[0].metadata.concept).to.deep.eql(concept);
-  });
-
   it('should clear selected id when clicked on canvas', () => {
     const store = getStore();
     const canvas = mount(
@@ -177,30 +57,6 @@ describe('Canvas', () => {
       />);
     canvas.find('.form-builder-canvas').simulate('click');
     sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
-  });
-
-  // eslint-disable-next-line
-  xit('should render form controls from Form Resource json if present already', () => {
-    const store = getStore();
-    const formResourceJSON = [
-      {
-        id: '1',
-        type: 'obsControl',
-      },
-      {
-        id: '2',
-        type: 'random',
-      },
-    ];
-    const canvas = mount(
-      <Canvas
-        formResourceControls={formResourceJSON}
-        formUuid="someFormUuid"
-        store={store}
-      />);
-
-    expect(canvas.find('.dummy-div').text()).to.eql('Dummy Div');
-    expect(canvas.find('.bahmni-grid').text()).to.eql('Dummy Grid');
   });
 
   it('should pass metadata to controls from Form Resource', () => {
@@ -226,8 +82,7 @@ describe('Canvas', () => {
     expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
   });
 
-  // eslint-disable-next-line
-  xit('should dispatch addToSourceMap', () => {
+  it('should dispatch addToSourceMap', () => {
     const store = getStore();
     const formResource = [
       {
@@ -238,10 +93,22 @@ describe('Canvas', () => {
           uuid: 'someUuid-1',
           datatype: 'Numeric',
         },
+        properties: {
+          location: {
+            row: 0,
+            column: 0,
+          },
+        },
       },
       {
         id: '2',
         type: 'random',
+        properties: {
+          location: {
+            row: 0,
+            column: 1,
+          },
+        },
       },
     ];
     const expectedSourceMap = {
@@ -253,7 +120,7 @@ describe('Canvas', () => {
       },
     };
 
-    mount(<Canvas formResourceControls={formResource} formUuid="someFormUuid" store={store} />);
+    shallow(<Canvas formResourceControls={formResource} formUuid="someFormUuid" store={store} />).shallow();
     sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
   });
 });
