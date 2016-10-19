@@ -22,12 +22,28 @@ class ControlWrapper extends Draggable {
     event.stopPropagation();
   }
 
-  componentWillUpdate(newProps) {
+  conditionallyAddConcept(newProps) {
     const concept = get(newProps.conceptToControlMap, this.metadata.id);
     if (concept && !this.metadata.concept) {
       const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept);
       this.metadata = newMetadata;
-    } else if (this.metadata.id !== newProps.metadata.id) {
+    }
+  }
+
+  updateProperties(newProps) {
+    const propertyDetails = newProps.propertyDetails;
+    if (propertyDetails && this.metadata.id === propertyDetails.id) {
+      const childMetadata = this.childControl.getJsonDefinition();
+      const childProperties = childMetadata.properties;
+      const updatedProperties = Object.assign({}, childProperties, propertyDetails.property);
+      this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
+    }
+  }
+
+  componentWillUpdate(newProps) {
+    this.conditionallyAddConcept(newProps);
+    this.updateProperties(newProps);
+    if (this.metadata.id !== newProps.metadata.id) {
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
       this.control = window.componentStore.getDesignerComponent(this.metadata.type).control;
     }
@@ -70,10 +86,17 @@ class ControlWrapper extends Draggable {
 
 ControlWrapper.propTypes = {
   metadata: PropTypes.object,
+  propertyDetails: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    property: PropTypes.object.isRequired,
+  }),
 };
 
 function mapStateToProps(state) {
-  return { conceptToControlMap: state.conceptToControlMap };
+  return {
+    conceptToControlMap: state.conceptToControlMap,
+    propertyDetails: state.propertyDetails,
+  };
 }
 
 export default connect(mapStateToProps, null, null, { withRef: true })(ControlWrapper);

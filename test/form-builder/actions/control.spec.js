@@ -52,4 +52,14 @@ describe('control', () => {
       expect(action.sourceMap).to.be.eql(sourceMap);
     });
   });
+
+  describe('setChangedProperty', () => {
+    it('should return the property', () => {
+      const property = { mandatory: true };
+      const action = control.setChangedProperty(property, '123');
+      expect(action.type).to.be.eql('SET_CHANGED_PROPERTY');
+      expect(action.property).to.be.eql(property);
+      expect(action.id).to.be.eql('123');
+    });
+  });
 });

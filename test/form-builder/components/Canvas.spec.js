@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { addSourceMap, deselectControl, selectControl } from 'form-builder/actions/control';
+import { addSourceMap, deselectControl } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
 
@@ -120,7 +120,13 @@ describe('Canvas', () => {
       },
     };
 
-    shallow(<Canvas formResourceControls={formResource} formUuid="someFormUuid" store={store} />).shallow();
+    shallow(
+      <Canvas
+        formResourceControls={formResource}
+        formUuid="someFormUuid"
+        store={store}
+      />
+    ).shallow();
     sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
   });
 });

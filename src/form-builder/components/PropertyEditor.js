@@ -7,16 +7,9 @@ export class PropertyEditor extends Component {
       <Property
         description={attribute}
         key={index}
-        onPropertyUpdate={(property) => this.updateMetadataProperty(property)}
+        onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
       />
     );
-  }
-
-  updateMetadataProperty(property) {
-    const { metadata, metadata: { properties } } = this.props;
-    const updatedProperties = Object.assign({}, properties, property);
-    const updatedMetadata = Object.assign({}, metadata, { properties: updatedProperties });
-    this.props.onPropertyUpdate(updatedMetadata);
   }
 
   render() {

@@ -110,6 +110,24 @@ describe('ControlWrapper', () => {
     expect(actualMetadata).to.deep.eql(expectedMetadata);
   });
 
+  it('should update properties when changed', () => {
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ getStore() }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    const propertyDetails = { id: '1', property: { mandatory: true } };
+
+    controlWrapper.setProps({ propertyDetails });
+
+    const expectedMetadata = Object.assign({}, metadata, { properties: { mandatory: true } });
+    const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
+    expect(actualMetadata).to.deep.eql(expectedMetadata);
+  });
+
   it('should dispatch selectControlId', () => {
     const store = getStore();
     const controlWrapper = shallow(

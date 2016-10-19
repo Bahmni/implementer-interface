@@ -2,7 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { AutoComplete } from 'bahmni-form-controls';
 import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
-import { selectSource } from 'form-builder/actions/control';
+import { selectSource, setChangedProperty } from 'form-builder/actions/control';
+import { PropertyEditor } from 'form-builder/components/PropertyEditor';
 
 class ControlPropertiesContainer extends Component {
   constructor() {
@@ -14,20 +15,45 @@ class ControlPropertiesContainer extends Component {
     this.props.dispatch(selectSource(concept, this.props.selectedControl.id));
   }
 
+  onPropertyUpdate(properties, id) {
+    this.props.dispatch(setChangedProperty(properties, id));
+  }
+
   displayAutoComplete() {
     const { selectedControl, conceptToControlMap } = this.props;
+    let value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
+    value = value ? [value] : [];
+    const disableAutoComplete = (value.length > 0);
+    const optionsUrl = `${constants.conceptUrl}?v=${constants.conceptRepresentation}&q=`;
+    return (
+      <AutoComplete
+        disabled={disableAutoComplete}
+        onSelect={this.onSelect}
+        optionsUrl={optionsUrl}
+        value={value}
+      />
+    );
+  }
+
+  displayPropertyEditor() {
+    const { selectedControl, selectedControl: { id } } = this.props;
+    return (
+      <PropertyEditor
+        metadata={selectedControl}
+        onPropertyUpdate={(property) => this.onPropertyUpdate(property, id)}
+      />
+    );
+  }
+
+  displayControlPropertyDetails() {
+    const { selectedControl } = this.props;
     if (selectedControl) {
-      let value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
-      value = value ? [value] : [];
-      const disableAutoComplete = (value.length > 0);
-      const optionsUrl = `${constants.conceptUrl}?v=${constants.conceptRepresentation}&q=`;
       return (
-        <AutoComplete
-          disabled={disableAutoComplete}
-          onSelect={this.onSelect}
-          optionsUrl={optionsUrl}
-          value={value}
-        />);
+        <div>
+          {this.displayAutoComplete()}
+          {this.displayPropertyEditor()}
+        </div>
+      );
     }
     return null;
   }
@@ -36,7 +62,7 @@ class ControlPropertiesContainer extends Component {
     return (
       <div className="section-grid">
         <h2 className="header-title">Control Properties</h2>
-        {this.displayAutoComplete()}
+        {this.displayControlPropertyDetails()}
       </div>
     );
   }
@@ -50,8 +76,8 @@ ControlPropertiesContainer.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    selectedControl: state.controlDetails.selectedControl,
     conceptToControlMap: state.conceptToControlMap,
+    selectedControl: state.controlDetails.selectedControl,
   };
 }
 

@@ -75,20 +75,11 @@ describe('PropertyEditor', () => {
 
   it('should update properties in metadata if changed', () => {
     const spy = sinon.spy();
-    const expectedMetadata = {
-      type: 'text',
-      properties: {
-        mandatory: false,
-        allowDecimal: true,
-        somethingElse: true,
-      },
-    };
-
     window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
 
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={spy} />);
     wrapper.find('Property').at(1).props().onPropertyUpdate({ allowDecimal: true });
 
-    sinon.assert.calledWith(spy, expectedMetadata);
+    sinon.assert.calledWith(spy, { allowDecimal: true });
   });
 });
