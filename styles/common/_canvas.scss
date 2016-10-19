@@ -2,5 +2,49 @@
   width: 100%;
   height: auto;
   padding: 20px;
-  background: #DDDDDD;
+  border: 1px solid #699;
+  border-radius: 5px 5px 0 0;
+  background: #FAFAFA;
+  font-size: 12px;
+  .canvas-placeholder{
+    text-align: center;
+  }
+}
+.grid {
+  @include clearfix();
+  display: block;
+  width: 100%;
+  margin:10px 0;
+  border: 1px dotted $darkerGrey;
+
+}
+.canvas-row{
+  display: flex;
+  flex-flow: row wrap;
+  min-height: 40px;
+  border-bottom: 1px dotted $darkerGrey;
+  &:last-child{
+    border-bottom: none;
+  }
+}
+.gridCell{
+  flex-grow: 1;
+  padding: 5px;
+  &.active{
+    border: 1px dotted $darkerGrey;
+  }
+  .control-wrapper{
+    label{
+      padding-right: 5px;
+      display: inline-block;
+    }
+    input{
+      color: #363463;
+      padding: 3px 10px;
+      background-color: $white;
+      border: 1px solid $lighterGray;
+      width:197px;
+
+    }
+  }
 }

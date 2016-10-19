@@ -15,7 +15,7 @@
     display: inline-block;
     margin: 2px;
     padding: 8px 10px;
-    color: #363463;
+    color: $bahmniTextColor;
     background-color: #FFF;
     border: 1px solid #DDD;
     box-sizing: border-box;
@@ -26,13 +26,3 @@
   }
 }
 
-// REMOVE once npm style package is installed
-
-.Select-input{
-  width:300px !important;
-  min-width: 300px !important;
-  input{
-    width:198px !important;
-    min-width: 198px !important;
-  }
-}
