@@ -17,8 +17,8 @@ class ControlWrapper extends Draggable {
     this.processDragStart = this.processDragStart.bind(this);
   }
 
-  onSelected(event, id) {
-    this.props.dispatch(selectControl(id));
+  onSelected(event, metadata) {
+    this.props.dispatch(selectControl(metadata));
     event.stopPropagation();
   }
 

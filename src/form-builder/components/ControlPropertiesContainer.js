@@ -11,13 +11,13 @@ class ControlPropertiesContainer extends Component {
   }
 
   onSelect(concept) {
-    this.props.dispatch(selectSource(concept, this.props.selectedControlId));
+    this.props.dispatch(selectSource(concept, this.props.selectedControl.id));
   }
 
   displayAutoComplete() {
-    const { selectedControlId, conceptToControlMap } = this.props;
-    if (selectedControlId) {
-      let value = (conceptToControlMap && conceptToControlMap[selectedControlId]);
+    const { selectedControl, conceptToControlMap } = this.props;
+    if (selectedControl) {
+      let value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
       value = value ? [value] : [];
       const disableAutoComplete = (value.length > 0);
       const optionsUrl = `${constants.conceptUrl}?v=${constants.conceptRepresentation}&q=`;
@@ -45,12 +45,12 @@ class ControlPropertiesContainer extends Component {
 ControlPropertiesContainer.propTypes = {
   conceptToControlMap: PropTypes.object,
   dispatch: PropTypes.func,
-  selectedControlId: PropTypes.string,
+  selectedControl: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
-    selectedControlId: state.controlDetails.selectedControl,
+    selectedControl: state.controlDetails.selectedControl,
     conceptToControlMap: state.conceptToControlMap,
   };
 }

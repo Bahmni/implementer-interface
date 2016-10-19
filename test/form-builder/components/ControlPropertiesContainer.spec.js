@@ -19,14 +19,14 @@ describe('ControlPropertiesContainer', () => {
   });
 
   it('should display autocomplete component when control is selected', () => {
-    const state = { controlDetails: { selectedControl: '123' } };
+    const state = { controlDetails: { selectedControl: { id: '123' } } };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
     expect(wrapper).to.have.descendants('AutoComplete');
   });
 
   it('should pass value if present from conceptToControlMap to AutoCompleted component', () => {
     const state = {
-      controlDetails: { selectedControl: '123' },
+      controlDetails: { selectedControl: { id: '123' } },
       conceptToControlMap: { 123: { name: 'someName' } },
     };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
@@ -35,7 +35,10 @@ describe('ControlPropertiesContainer', () => {
   });
 
   it('should pass value as empty array when conceptToControlMap is undefined', () => {
-    const state = { controlDetails: { selectedControl: '123' }, conceptToControlMap: undefined };
+    const state = {
+      controlDetails: { selectedControl: { id: '123' } },
+      conceptToControlMap: undefined,
+    };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
     expect(wrapper).to.have.descendants('AutoComplete');
     expect(wrapper.find('AutoComplete').props().value).to.eql([]);
@@ -44,7 +47,7 @@ describe('ControlPropertiesContainer', () => {
   it('should pass value as empty array when ' +
     'conceptToControlMap does not have value for selected control', () => {
     const state = {
-      controlDetails: { selectedControl: '123' },
+      controlDetails: { selectedControl: { id: '123' } },
       conceptToControlMap: { 1: { name: 'someOtherName' } },
     };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
@@ -54,7 +57,7 @@ describe('ControlPropertiesContainer', () => {
 
   it('should pass disabled value as false when there is no value for Autocomplete', () => {
     const state = {
-      controlDetails: { selectedControl: '123' },
+      controlDetails: { selectedControl: { id: '123' } },
       conceptToControlMap: { 1: { name: 'someOtherName' } },
     };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
@@ -64,7 +67,7 @@ describe('ControlPropertiesContainer', () => {
 
   it('should pass disabled value as true when there is a value for Autocomplete', () => {
     const state = {
-      controlDetails: { selectedControl: '123' },
+      controlDetails: { selectedControl: { id: '123' } },
       conceptToControlMap: { 123: { name: 'someOtherName' } },
     };
     const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);

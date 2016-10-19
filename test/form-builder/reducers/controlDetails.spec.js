@@ -6,11 +6,19 @@ describe('controlDetails', () => {
   let expectedStoreState;
   describe('selectControl', () => {
     beforeEach(() => {
+      const metadata = {
+        type: 'obsControl',
+        concept: {
+          uuid: 'someUuid',
+          datatype: 'text',
+        },
+      };
+
       action = {
         type: 'SELECT_CONTROL',
-        id: '123',
+        metadata,
       };
-      expectedStoreState = { selectedControl: '123' };
+      expectedStoreState = { selectedControl: metadata };
     });
 
     it('should add selected control id to store', () => {

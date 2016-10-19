@@ -3,10 +3,17 @@ import * as control from 'form-builder/actions/control';
 
 describe('control', () => {
   describe('selectControl', () => {
-    it('should return the selected control id', () => {
-      const action = control.selectControl(1);
+    it('should return the selected control metadata', () => {
+      const metadata = {
+        type: 'obsControl',
+        concept: {
+          uuid: 'someUuid',
+          datatype: 'text',
+        },
+      };
+      const action = control.selectControl(metadata);
       expect(action.type).to.be.eql('SELECT_CONTROL');
-      expect(action.id).to.be.eql(1);
+      expect(action.metadata).to.be.eql(metadata);
     });
   });
 
