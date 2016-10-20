@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import propertyDetails from 'form-builder/reducers/propertyDetails';
+import controlProperty from 'form-builder/reducers/controlProperty';
 
 describe('propertyDetails', () => {
   let action = {};
@@ -11,20 +11,20 @@ describe('propertyDetails', () => {
   });
 
   it('should add updated properties to store', () => {
-    const state = propertyDetails({}, action);
+    const state = controlProperty({}, action);
     expect(state).to.be.eql(expectedStoreState);
   });
 
   it('should return store as is when action type does not match', () => {
     action.type = 'SOME_RANDOM_TYPE';
     const store = { property: {} };
-    const state = propertyDetails(store, action);
+    const state = controlProperty(store, action);
     expect(state).to.be.eql(store);
   });
 
   it('should return default value of store when it is undefined', () => {
     action.type = 'SOME_RANDOM_TYPE';
-    const state = propertyDetails(undefined, action);
+    const state = controlProperty(undefined, action);
     expect(state).to.be.eql({});
   });
 });

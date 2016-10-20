@@ -1,4 +1,4 @@
-const propertyDetails = (store = {}, action) => {
+const controlProperty = (store = {}, action) => {
   switch (action.type) {
     case 'SET_CHANGED_PROPERTY':
       return Object.assign({}, store, { id: action.id, property: action.property });
@@ -7,4 +7,4 @@ const propertyDetails = (store = {}, action) => {
   }
 };
 
-export default propertyDetails;
+export default controlProperty;

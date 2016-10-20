@@ -122,8 +122,8 @@ describe('ControlWrapper', () => {
       />).shallow();
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
-    const propertyDetails = { id: '1', property: { mandatory: true } };
-    controlWrapper.setProps({ propertyDetails });
+    const controlProperty = { id: '1', property: { mandatory: true } };
+    controlWrapper.setProps({ controlProperty });
 
     const expectedMetadata = Object.assign({}, metadata, { properties: { mandatory: true } });
     const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
@@ -141,8 +141,8 @@ describe('ControlWrapper', () => {
       />).shallow();
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
-    const propertyDetails = { id: 'someOtherId', property: { mandatory: true } };
-    controlWrapper.setProps({ propertyDetails });
+    const controlProperty = { id: 'someOtherId', property: { mandatory: true } };
+    controlWrapper.setProps({ controlProperty });
 
     const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
     expect(actualMetadata).to.deep.eql(metadata);

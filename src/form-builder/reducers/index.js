@@ -1,11 +1,11 @@
 import controlDetails from './controlDetails';
 import conceptToControlMap from './conceptToControlMap';
-import propertyDetails from './propertyDetails';
+import controlProperty from './controlProperty';
 
 const formBuilder = {
   controlDetails,
   conceptToControlMap,
-  propertyDetails,
+  controlProperty,
 };
 
 export default formBuilder;

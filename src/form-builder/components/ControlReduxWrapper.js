@@ -32,11 +32,11 @@ class ControlWrapper extends Draggable {
   }
 
   updateProperties(newProps) {
-    const propertyDetails = newProps.propertyDetails;
-    if (propertyDetails && this.metadata.id === propertyDetails.id) {
+    const controlProperty = newProps.controlProperty;
+    if (controlProperty && this.metadata.id === controlProperty.id) {
       const childMetadata = this.childControl.getJsonDefinition();
       const childProperties = childMetadata.properties;
-      const updatedProperties = Object.assign({}, childProperties, propertyDetails.property);
+      const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
       this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
       this.props.dispatch(selectControl(this.metadata));
     }
@@ -87,17 +87,17 @@ class ControlWrapper extends Draggable {
 }
 
 ControlWrapper.propTypes = {
-  metadata: PropTypes.object,
-  propertyDetails: PropTypes.shape({
+  controlProperty: PropTypes.shape({
     id: PropTypes.string.isRequired,
     property: PropTypes.object.isRequired,
   }),
+  metadata: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
     conceptToControlMap: state.conceptToControlMap,
-    propertyDetails: state.propertyDetails,
+    controlProperty: state.controlProperty,
   };
 }
 
