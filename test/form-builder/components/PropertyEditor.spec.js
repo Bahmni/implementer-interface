@@ -38,8 +38,11 @@ describe('Property Editor', () => {
     };
 
     metadata = {
-      type: 'text',
+      type: 'obsControl',
       properties,
+      concept: {
+        datatype: 'text',
+      },
     };
 
     attributes = [
@@ -60,10 +63,21 @@ describe('Property Editor', () => {
     delete window.componentStore;
   });
 
-  it('should render Property if present', () => {
+  it('should render unique Property from type and conceptType', () => {
     window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.have.exactly(2).descendants('Property');
+  });
+
+  it('should not render Property if property key is not present', () => {
+    const descriptorWithoutProperties = {
+      metadata: {
+        attributes: [{ name: 'label', type: 'text', defaultValue: 'someLabel' }],
+      },
+    };
+    window.componentStore.getDesignerComponent = () => descriptorWithoutProperties;
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+    expect(wrapper).to.be.blank();
   });
 
   it('should render Property with default value when not present in metadata', () => {
@@ -80,6 +94,21 @@ describe('Property Editor', () => {
 
     expect(wrapper.find('Property').at(1).props().name).to.eql('allowDecimal');
     expect(wrapper.find('Property').at(1).props().value).to.eql(true);
+  });
+
+  it('should render Properties from conceptType (child)', () => {
+    window.componentStore.getDesignerComponent = (type) => {
+      if (type === 'obsControl') {
+        return controlDescriptor(attributes);
+      }
+      return controlDescriptor([{ name: 'child', dataType: 'boolean', defaultValue: true }]);
+    };
+
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    expect(wrapper).to.have.exactly(3).descendants('Property');
+    expect(wrapper.find('Property').at(2).props().name).to.eql('child');
+    expect(wrapper.find('Property').at(2).props().value).to.eql(true);
   });
 
   it('should not render Property if there are no property attributes', () => {

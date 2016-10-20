@@ -88,8 +88,8 @@ class ControlWrapper extends Draggable {
 
 ControlWrapper.propTypes = {
   controlProperty: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    property: PropTypes.object.isRequired,
+    id: PropTypes.string,
+    property: PropTypes.object,
   }),
   metadata: PropTypes.object,
 };

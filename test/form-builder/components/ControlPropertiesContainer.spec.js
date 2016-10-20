@@ -100,7 +100,7 @@ describe('ControlPropertiesContainer', () => {
         id: '123',
         type: 'obsControl',
         properties: {},
-        concept: { name: 'someName', uuid: 'someUuid' },
+        concept: { name: 'someName', uuid: 'someUuid', datatype: 'text' },
       };
     });
 
