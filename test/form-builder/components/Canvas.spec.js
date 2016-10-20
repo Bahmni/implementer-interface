@@ -122,11 +122,10 @@ describe('Canvas', () => {
 
     shallow(
       <Canvas
-        formResourceControls={formResource}
+        formResourceControls={ formResource }
         formUuid="someFormUuid"
-        store={store}
-      />
-    ).shallow();
+        store={ store }
+      />).shallow();
     sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
   });
 });

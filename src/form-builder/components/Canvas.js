@@ -78,4 +78,4 @@ Canvas.propTypes = {
   formUuid: PropTypes.string.isRequired,
 };
 
-export default connect()(Canvas);
+export default connect(null, null, null, { withRef: true })(Canvas);

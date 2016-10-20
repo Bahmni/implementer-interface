@@ -4,34 +4,25 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
+import { ControlPoolElement } from 'form-builder/components/ControlPoolElement';
 
 export class ControlPool extends Component {
   constructor(props) {
     super(props);
-    this.draggableControls = this.getAllDesignerComponents();
     this.idGenerator = new IDGenerator(props.formResourceControls);
-  }
-
-  onDragStart(metadata) {
-    return (e) => {
-      const id = String(this.idGenerator.getId());
-      const modifiedMetadata = Object.assign({}, metadata, { id });
-      e.dataTransfer.setData('data', JSON.stringify(modifiedMetadata));
-    };
+    this.draggableControls = this.getAllDesignerComponents();
   }
 
   getControlItem(type, descriptor) {
     const { displayName } = descriptor.designProperties;
     const metadata = new Descriptor(type, descriptor).data().metadata;
     return (
-      <div
-        className="control-list"
-        draggable="true"
+      <ControlPoolElement
+        displayName={displayName}
+        idGenerator={ this.idGenerator }
         key={displayName}
-        onDragStart={this.onDragStart(metadata)}
-      >
-        {displayName}
-      </div>);
+        metadata={metadata}
+      />);
   }
 
 
