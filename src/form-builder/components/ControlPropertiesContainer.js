@@ -52,7 +52,7 @@ class ControlPropertiesContainer extends Component {
     const { selectedControl } = this.props;
     if (selectedControl) {
       return (
-        <div>
+        <div className="obs-control-wrap">
           {this.displayAutoComplete()}
           {this.displayPropertyEditor()}
         </div>

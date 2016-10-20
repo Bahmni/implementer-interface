@@ -7,9 +7,18 @@
     border: 1px solid $lightGray;
   }
 }
-
-.obs-control-select-wrapper {
+.obs-control-wrap{
   padding: 10px;
+  label{
+    width:10em;
+    display: inline-block;
+    text-transform: capitalize;
+    margin: 0.7em 0.8em 0em 0em;
+    line-height: 1;
+  }
+}
+.obs-control-select-wrapper {
+  padding: 0 0 10px;
   .Select {
     position: relative;
   }
