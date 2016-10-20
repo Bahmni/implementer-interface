@@ -41,20 +41,23 @@ export default class FormDetail extends Component {
       return (
         <div>
           <button onClick={ this.onSave }>Save</button>
-          <div className="container-columns">
-            <div className="column-side">
-              <ControlPool formResourceControls={formResourceControls} />
-              <ControlPropertiesContainer />
-            </div>
-            <div className="container-column-main">
-              <div className="column-main">
-                <Canvas
-                  formId={id}
-                  formName={name}
-                  formResourceControls={formResourceControls}
-                  formUuid={ uuid }
-                  ref={this.canvasRef}
-                />
+          <div className="container-main">
+            <h2 className="header-title">{name}</h2>
+            <div className="container-columns">
+              <div className="column-side">
+                <ControlPool formResourceControls={formResourceControls} />
+                <ControlPropertiesContainer />
+              </div>
+              <div className="container-column-main">
+                <div className="column-main">
+                  <Canvas
+                    formId={id}
+                    formName={name}
+                    formResourceControls={formResourceControls}
+                    formUuid={ uuid }
+                    ref={this.canvasRef}
+                  />
+                </div>
               </div>
             </div>
           </div>

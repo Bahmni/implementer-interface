@@ -141,7 +141,7 @@ input[type="checkbox"]{
 
 .container-columns {
   @include clearfix();
-  margin: 10px 0;
+  margin: 10px;
 }
 
 .column-side {
@@ -158,4 +158,10 @@ input[type="checkbox"]{
 .column-main {
   margin-left: 255px;
   padding-left: 10px;
+}
+
+.container-main {
+  border: 1px solid $bahmniSecondaryColor;
+  border-radius: 5px 5px 0 0;
+  margin: 10px 0;
 }

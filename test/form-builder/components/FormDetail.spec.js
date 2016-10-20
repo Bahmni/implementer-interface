@@ -40,6 +40,7 @@ describe('FormDetails', () => {
     expect(wrapper).to.have.exactly(1).descendants('ControlPool');
     expect(wrapper).to.have.exactly(1).descendants('ControlPropertiesContainer');
     expect(wrapper).to.have.exactly(1).descendants('Canvas');
+    expect(wrapper.find('.header-title').at(0).text()).to.eql('someFormName');
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
