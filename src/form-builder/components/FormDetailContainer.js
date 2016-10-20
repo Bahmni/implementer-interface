@@ -45,7 +45,7 @@ class FormDetailContainer extends Component {
     httpInterceptor.post(formBuilderConstants.formResourceUrl(uuid), formJson)
       .then(() => {
         const successNotification = {
-          message: commonConstants.successMessage,
+          message: commonConstants.saveSuccessMessage,
           type: commonConstants.responseType.success,
         };
         const notificationsClone = this.state.notifications.splice(0);
