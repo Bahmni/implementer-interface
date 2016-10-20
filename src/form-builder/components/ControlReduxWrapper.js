@@ -27,6 +27,7 @@ class ControlWrapper extends Draggable {
     if (concept && !this.metadata.concept) {
       const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept);
       this.metadata = newMetadata;
+      this.props.dispatch(selectControl(this.metadata));
     }
   }
 
@@ -37,6 +38,7 @@ class ControlWrapper extends Draggable {
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, propertyDetails.property);
       this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
+      this.props.dispatch(selectControl(this.metadata));
     }
   }
 

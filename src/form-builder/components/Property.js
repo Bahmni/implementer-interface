@@ -2,27 +2,24 @@ import React, { Component, PropTypes } from 'react';
 
 export class Property extends Component {
   updateProperty(e) {
-    const { description: { name } } = this.props;
+    const { name } = this.props;
     this.props.onPropertyUpdate({ [name]: e.target.checked });
   }
 
   render() {
-    const { name, defaultValue } = this.props.description;
+    const { name, value } = this.props;
     return (
       <div>
         <label>{name}</label>
-        <input onClick={(e) => this.updateProperty(e)} type="checkbox" value={defaultValue} />
+        <input checked={value} onChange={(e) => this.updateProperty(e)} type="checkbox" />
       </div>
     );
   }
 }
 
 Property.propTypes = {
-  description: PropTypes.shape({
-    dataType: PropTypes.string.isRequired,
-    defaultValue: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
+  name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
+  value: PropTypes.bool.isRequired,
 };
 

@@ -1,15 +1,22 @@
 import React, { Component, PropTypes } from 'react';
 import { Property } from 'form-builder/components/Property';
+import get from 'lodash/get';
 
 export class PropertyEditor extends Component {
   getProperties(attributes) {
-    return attributes.map((attribute, index) =>
-      <Property
-        description={attribute}
-        key={index}
-        onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
-      />
-    );
+    const { metadata: { properties } } = this.props;
+    return attributes.map((attribute, index) => {
+      const { name } = attribute;
+      const value = get(properties, name, attribute.defaultValue);
+      return (
+        <Property
+          key={index}
+          name={name}
+          onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
+          value={value}
+        />
+      );
+    });
   }
 
   render() {

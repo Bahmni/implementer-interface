@@ -7,7 +7,7 @@ import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
-describe('PropertyEditor', () => {
+describe('Property Editor', () => {
   let wrapper;
   let metadata;
   let attributes;
@@ -33,8 +33,7 @@ describe('PropertyEditor', () => {
     };
 
     const properties = {
-      mandatory: false,
-      allowDecimal: false,
+      allowDecimal: true,
       somethingElse: true,
     };
 
@@ -61,19 +60,35 @@ describe('PropertyEditor', () => {
     delete window.componentStore;
   });
 
-  it('should render properties if present', () => {
+  it('should render Property if present', () => {
     window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.have.exactly(2).descendants('Property');
   });
 
-  it('should not render properties if there are no property attributes', () => {
+  it('should render Property with default value when not present in metadata', () => {
+    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    expect(wrapper.find('Property').at(0).props().name).to.eql('mandatory');
+    expect(wrapper.find('Property').at(0).props().value).to.eql(false);
+  });
+
+  it('should render Property with value from metadata if present', () => {
+    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    expect(wrapper.find('Property').at(1).props().name).to.eql('allowDecimal');
+    expect(wrapper.find('Property').at(1).props().value).to.eql(true);
+  });
+
+  it('should not render Property if there are no property attributes', () => {
     window.componentStore.getDesignerComponent = () => controlDescriptor([]);
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.be.blank();
   });
 
-  it('should update properties in metadata if changed', () => {
+  it('should update property in metadata if changed', () => {
     const spy = sinon.spy();
     window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
 

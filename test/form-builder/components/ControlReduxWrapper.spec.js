@@ -65,11 +65,12 @@ describe('ControlWrapper', () => {
   });
 
   it('should update context with concepts on change of conceptToControlMap', () => {
+    const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ getStore() }
+        store={ store }
       />).shallow();
 
     const conceptToControlMap = {
@@ -108,24 +109,44 @@ describe('ControlWrapper', () => {
     };
     const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
     expect(actualMetadata).to.deep.eql(expectedMetadata);
+    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata)));
   });
 
   it('should update properties when changed', () => {
+    const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ getStore() }
+        store={ store }
       />).shallow();
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
     const propertyDetails = { id: '1', property: { mandatory: true } };
-
     controlWrapper.setProps({ propertyDetails });
 
     const expectedMetadata = Object.assign({}, metadata, { properties: { mandatory: true } });
     const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
     expect(actualMetadata).to.deep.eql(expectedMetadata);
+    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata)));
+  });
+
+  it('should not update properties when metadata id is different', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    const propertyDetails = { id: 'someOtherId', property: { mandatory: true } };
+    controlWrapper.setProps({ propertyDetails });
+
+    const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
+    expect(actualMetadata).to.deep.eql(metadata);
+    sinon.assert.callCount(store.dispatch, 0);
   });
 
   it('should dispatch selectControlId', () => {

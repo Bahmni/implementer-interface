@@ -11,28 +11,17 @@ describe('Property', () => {
   let wrapper;
 
   it('should render property', () => {
-    const property = {
-      name: 'mandatory',
-      dataType: 'boolean',
-      defaultValue: false,
-    };
-
-    wrapper = shallow(<Property description={property} onPropertyUpdate={() => {}} />);
+    wrapper = shallow(<Property name="mandatory" onPropertyUpdate={() => {}} value={false} />);
     expect(wrapper.find('label').text()).to.eql('mandatory');
     expect(wrapper.find('input').props().type).to.eql('checkbox');
-    expect(wrapper.find('input').props().value).to.eql(false);
+    expect(wrapper.find('input').props().checked).to.eql(false);
   });
 
   it('should call update property on selection of checkbox', () => {
-    const property = {
-      name: 'mandatory',
-      dataType: 'boolean',
-      defaultValue: false,
-    };
-    const onPropertyUpdateSpy = sinon.spy();
+    const spy = sinon.spy();
 
-    wrapper = shallow(<Property description={property} onPropertyUpdate={onPropertyUpdateSpy} />);
-    wrapper.find('input').simulate('click', { target: { checked: true } });
-    sinon.assert.calledWith(onPropertyUpdateSpy, { mandatory: true });
+    wrapper = shallow(<Property name="mandatory" onPropertyUpdate={spy} value />);
+    wrapper.find('input').props().onChange({ target: { checked: true } });
+    sinon.assert.calledWith(spy, { mandatory: true });
   });
 });
