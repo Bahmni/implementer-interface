@@ -13,7 +13,6 @@ describe('ControlPropertiesContainer', () => {
   let controlMetadata;
 
   beforeEach(() => {
-    controlMetadata = { id: '123', type: 'obsControl', properties: {} };
     const controlDescriptor = {
       metadata: { attributes: [{ name: 'properties', type: 'complex', attributes: [] }] },
     };
@@ -28,6 +27,10 @@ describe('ControlPropertiesContainer', () => {
   });
 
   describe('AutoComplete', () => {
+    beforeEach(() => {
+      controlMetadata = { id: '123', type: 'obsControl', properties: {} };
+    });
+
     it('should not display autocomplete component when no control is selected', () => {
       const wrapper = mount(<ControlPropertiesContainer store={getStore()} />);
       expect(wrapper).to.not.have.descendants('AutoComplete');
@@ -92,6 +95,15 @@ describe('ControlPropertiesContainer', () => {
   });
 
   describe('PropertyEditor', () => {
+    beforeEach(() => {
+      controlMetadata = {
+        id: '123',
+        type: 'obsControl',
+        properties: {},
+        concept: { name: 'someName', uuid: 'someUuid' },
+      };
+    });
+
     it('should not display property editor component when no control is selected', () => {
       const wrapper = mount(<ControlPropertiesContainer store={getStore()} />);
       expect(wrapper).to.not.have.descendants('PropertyEditor');
@@ -101,6 +113,13 @@ describe('ControlPropertiesContainer', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('PropertyEditor');
+    });
+
+    it('should not display property editor when selected control does not have concept', () => {
+      controlMetadata = { id: '123', type: 'obsControl', properties: {} };
+      const state = { controlDetails: { selectedControl: controlMetadata } };
+      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      expect(wrapper).to.not.have.descendants('PropertyEditor');
     });
 
     it('should pass appropriate props to property editor component', () => {

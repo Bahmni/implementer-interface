@@ -36,13 +36,16 @@ class ControlPropertiesContainer extends Component {
   }
 
   displayPropertyEditor() {
-    const { selectedControl, selectedControl: { id } } = this.props;
-    return (
-      <PropertyEditor
-        metadata={selectedControl}
-        onPropertyUpdate={(property) => this.onPropertyUpdate(property, id)}
-      />
-    );
+    const { selectedControl, selectedControl: { id, concept } } = this.props;
+    if (concept) {
+      return (
+        <PropertyEditor
+          metadata={selectedControl}
+          onPropertyUpdate={(property) => this.onPropertyUpdate(property, id)}
+        />
+      );
+    }
+    return null;
   }
 
   displayControlPropertyDetails() {
