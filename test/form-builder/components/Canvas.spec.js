@@ -82,8 +82,7 @@ describe('Canvas', () => {
     expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
   });
 
-  it('should dispatch addToSourceMap', () => {
-    const store = getStore();
+  context('should dispatch addToSourceMap', () => {
     const formResource = [
       {
         id: '1',
@@ -119,13 +118,29 @@ describe('Canvas', () => {
         display: 'someName-1',
       },
     };
+    let wrapper;
+    it('on mount', () => {
+      const store = getStore();
+      shallow(
+        <Canvas
+          formResourceControls={ formResource }
+          formUuid="someFormUuid"
+          store={ store }
+        />).shallow();
+      sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
+    });
 
-    shallow(
-      <Canvas
-        formResourceControls={ formResource }
-        formUuid="someFormUuid"
-        store={ store }
-      />).shallow();
-    sinon.assert.calledOnce(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
+    it('on update of props', () => {
+      const store = getStore();
+      wrapper = shallow(
+        <Canvas
+          formResourceControls={ formResource }
+          formUuid="someFormUuid"
+          store={ store }
+        />).shallow();
+
+      wrapper.setProps({ formUuid: 'someUuid' });
+      sinon.assert.calledTwice(store.dispatch.withArgs(addSourceMap(expectedSourceMap)));
+    });
   });
 });

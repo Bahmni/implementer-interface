@@ -11,13 +11,19 @@ class Canvas extends Component {
     super(props);
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
-
-    const initialComponentDescriptors = this.getComponentDescriptors();
-    const initialConceptToControlMap = getConceptFromControls(initialComponentDescriptors);
-    this.state = { descriptors: initialComponentDescriptors };
-    props.dispatch(addSourceMap(initialConceptToControlMap));
+    this.state = { descriptors: this.getComponentDescriptors() };
+    props.dispatch(addSourceMap(this.getConceptToControlMap()));
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
+  }
+
+  componentWillUpdate() {
+    this.props.dispatch(addSourceMap(this.getConceptToControlMap()));
+  }
+
+  getConceptToControlMap() {
+    const initialComponentDescriptors = this.getComponentDescriptors();
+    return getConceptFromControls(initialComponentDescriptors);
   }
 
   getComponentDescriptors() {
