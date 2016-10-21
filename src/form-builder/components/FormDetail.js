@@ -40,7 +40,9 @@ export default class FormDetail extends Component {
         (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
       return (
         <div>
-          <button onClick={ this.onSave }>Save</button>
+          <div className="button-wrapper">
+            <button className="fr save-button" onClick={ this.onSave }>Save</button>
+          </div>
           <div className="container-main">
             <h2 className="header-title">{name}</h2>
             <div className="container-columns">

@@ -161,7 +161,21 @@ input[type="checkbox"]{
 }
 
 .container-main {
+  @include clearfix();
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   margin: 10px 0;
+}
+
+.button-wrapper {
+  // remove
+  clear:both;
+  overflow: hidden;
+  margin: 0 0 10px;
+}
+
+.save-button {
+  background: $bahmniPrimaryBtnColor;
+  color: white !important;
+  border: $bahmniPrimaryBtnColorHover 1px solid;
 }
