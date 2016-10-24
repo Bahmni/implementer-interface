@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 
 const Header = () =>
           <div>
@@ -7,9 +6,11 @@ const Header = () =>
                   <header className="header">
                       <nav className="nav">
                           <ul>
-                              <li><Link to="formBuilder">FORM BUILDER</Link></li>
-                              <li><Link to="FormList">My Forms</Link></li>
-                              <li><Link to="form-builder">Templates</Link></li>
+                              <li>
+                                <a className="back-btn" href="/home">
+                                  <i className="fa fa-home"></i>
+                                </a>
+                              </li>
                           </ul>
                       </nav>
                   </header>
