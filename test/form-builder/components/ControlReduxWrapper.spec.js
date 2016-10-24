@@ -176,4 +176,18 @@ describe('ControlWrapper', () => {
     controlWrapper.processDragStart();
     sinon.assert.calledOnce(controlWrapper.getJsonDefinition);
   });
+
+  it('should use the available metadata if the control returns undefined metadata', () => {
+    const store = getStore();
+    const controlWrapperShallow = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+    const controlWrapper = controlWrapperShallow.instance();
+    sinon.stub(controlWrapper, 'getJsonDefinition', () => undefined);
+
+    const newMetadata = controlWrapper.processDragStart();
+    expect(newMetadata).to.eql(metadata);
+  });
 });

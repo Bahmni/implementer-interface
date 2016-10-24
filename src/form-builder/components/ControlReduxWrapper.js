@@ -59,7 +59,8 @@ class ControlWrapper extends Draggable {
   }
 
   processDragStart() {
-    return this.getJsonDefinition();
+    const metadata = this.getJsonDefinition();
+    return metadata || this.props.metadata;
   }
 
   storeChildRef(ref) {
