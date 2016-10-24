@@ -3,5 +3,5 @@ export const commonConstants = {
     success: 'success',
     error: 'error',
   },
-  saveSuccessMessage: 'Saved Successfully',
+  saveSuccessMessage: 'Form Saved Successfully',
 };

@@ -50,7 +50,9 @@ class FormDetailContainer extends Component {
         };
         const notificationsClone = this.state.notifications.splice(0);
         notificationsClone.push(successNotification);
-        this.setState({ notifications: notificationsClone });
+        const formDataWithUpdatedResource = Object.assign({},
+          this.state.formData, { resources: [formJson] });
+        this.setState({ notifications: notificationsClone, formData: formDataWithUpdatedResource });
       })
       .catch((error) => this.setErrorMessage(error));
   }

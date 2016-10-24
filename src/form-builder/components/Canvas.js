@@ -11,24 +11,24 @@ class Canvas extends Component {
     super(props);
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
-    this.state = { descriptors: this.getComponentDescriptors() };
-    props.dispatch(addSourceMap(this.getConceptToControlMap()));
+    this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls) };
+    props.dispatch(addSourceMap(this.getConceptToControlMap(props.formResourceControls)));
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
   }
 
-  componentWillUpdate() {
-    this.props.dispatch(addSourceMap(this.getConceptToControlMap()));
+  componentWillUpdate(newProps) {
+    this.props.dispatch(addSourceMap(this.getConceptToControlMap(newProps.formResourceControls)));
   }
 
-  getConceptToControlMap() {
-    const initialComponentDescriptors = this.getComponentDescriptors();
+  getConceptToControlMap(formResourceControls) {
+    const initialComponentDescriptors = this.getComponentDescriptors(formResourceControls);
     return getConceptFromControls(initialComponentDescriptors);
   }
 
-  getComponentDescriptors() {
+  getComponentDescriptors(formResourceControls) {
     const descriptors = [];
-    each(this.props.formResourceControls, control => {
+    each(formResourceControls, control => {
       const designerComponentDescriptor = window.componentStore.getDesignerComponent(control.type);
       if (designerComponentDescriptor) {
         const descriptorClone = Object.assign({}, designerComponentDescriptor);
