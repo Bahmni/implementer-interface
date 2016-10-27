@@ -1,4 +1,5 @@
 export const formBuilderConstants = {
+  supportedDataTypes: 'Boolean,Text,Numeric',
   formUrl: '/openmrs/ws/rest/v1/form',
   formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   conceptUrl: '/openmrs/ws/rest/v1/concept',

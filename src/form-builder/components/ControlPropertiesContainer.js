@@ -24,7 +24,10 @@ class ControlPropertiesContainer extends Component {
     let value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
     value = value ? [value] : [];
     const disableAutoComplete = (value.length > 0);
-    const optionsUrl = `${constants.conceptUrl}?v=${constants.conceptRepresentation}&q=`;
+    const dataTypesQueryParam = `dataTypes=${constants.supportedDataTypes}`;
+    const representation = `v=${constants.conceptRepresentation}&name=`;
+    const queryParams = `?s=byDataType&${dataTypesQueryParam}&${representation}`;
+    const optionsUrl = `${constants.conceptUrl}${queryParams}`;
     return (
       <AutoComplete
         disabled={disableAutoComplete}
