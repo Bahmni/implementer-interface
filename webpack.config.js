@@ -18,6 +18,16 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: '/implementer-interface/'
   },
+  devServer: {
+    inline: true,
+    contentBase: "./dist",
+    proxy: {
+      '/openmrs': {
+        target: 'https://192.168.33.10',
+        secure: false
+      }
+    }
+  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('styles.css', { allChunks: true }),
