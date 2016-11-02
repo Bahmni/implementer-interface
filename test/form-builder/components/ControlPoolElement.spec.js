@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import { ControlPoolElement } from 'form-builder/components/ControlPoolElement';
+import { ControlPoolElement } from 'form-builder/components/ControlPoolElement.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
 
 chai.use(chaiEnzyme());

@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import FormList from 'form-builder/components/FormList';
-import CreateFormModal from 'form-builder/components/CreateFormModal';
-import FormBuilderHeader from './FormBuilderHeader';
-import { FormBuilderBreadcrumbs } from './FormBuilderBreadcrumbs';
+import FormList from 'form-builder/components/FormList.jsx';
+import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
+import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
+import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 
 
 export default class FormBuilder extends Component {

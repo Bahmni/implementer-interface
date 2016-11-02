@@ -3,7 +3,7 @@ import { AutoComplete } from 'bahmni-form-controls';
 import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
 import { selectSource, setChangedProperty } from 'form-builder/actions/control';
-import { PropertyEditor } from 'form-builder/components/PropertyEditor';
+import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
 
 class ControlPropertiesContainer extends Component {
   constructor() {

@@ -4,7 +4,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
-import { ControlPoolElement } from 'form-builder/components/ControlPoolElement';
+import { ControlPoolElement } from 'form-builder/components/ControlPoolElement.jsx';
 
 export class ControlPool extends Component {
   constructor(props) {

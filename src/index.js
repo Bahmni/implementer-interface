@@ -7,8 +7,8 @@ import { createStore } from 'redux';
 import implementerInterface from 'common/reducers';
 import App from 'common/App';
 import Dashboard from 'common/Dashboard';
-import FormBuilderContainer from 'form-builder/components/FormBuilderContainer';
-import FormDetailContainer from 'form-builder/components/FormDetailContainer';
+import FormBuilderContainer from 'form-builder/components/FormBuilderContainer.jsx';
+import FormDetailContainer from 'form-builder/components/FormDetailContainer.jsx';
 import 'bahmni-form-controls';
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });

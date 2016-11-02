@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import FormDetail from 'form-builder/components/FormDetail';
+import FormDetail from 'form-builder/components/FormDetail.jsx';
 import { getStore } from 'test/utils/storeHelper';
 import { Provider } from 'react-redux';
 

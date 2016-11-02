@@ -3,7 +3,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import FormList from 'form-builder/components/FormList';
+import FormList from 'form-builder/components/FormList.jsx';
 
 chai.use(chaiEnzyme());
 

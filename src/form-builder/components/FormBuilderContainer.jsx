@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import FormBuilder from 'form-builder/components/FormBuilder';
+import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';

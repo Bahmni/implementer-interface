@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import ControlWrapper from 'form-builder/components/ControlReduxWrapper';
+import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import { selectControl } from 'form-builder/actions/control';

@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import FormBuilder from 'form-builder/components/FormBuilder';
+import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
 
 chai.use(chaiEnzyme());

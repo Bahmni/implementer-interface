@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import Canvas from 'form-builder/components/Canvas';
+import Canvas from 'form-builder/components/Canvas.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import { addSourceMap, deselectControl } from 'form-builder/actions/control';

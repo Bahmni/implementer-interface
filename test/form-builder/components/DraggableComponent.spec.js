@@ -1,6 +1,6 @@
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import { DraggableComponent } from 'form-builder/components/DraggableComponent';
+import { DraggableComponent } from 'form-builder/components/DraggableComponent.jsx';
 import sinon from 'sinon';
 
 chai.use(chaiEnzyme());

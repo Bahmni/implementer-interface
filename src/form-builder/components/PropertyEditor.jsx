@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Property } from 'form-builder/components/Property';
+import { Property } from 'form-builder/components/Property.jsx';
 import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
 

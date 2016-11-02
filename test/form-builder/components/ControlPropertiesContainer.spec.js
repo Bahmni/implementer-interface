@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer';
+import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import { getStore } from 'test/utils/storeHelper';
 import { setChangedProperty } from 'form-builder/actions/control';
 import sinon from 'sinon';

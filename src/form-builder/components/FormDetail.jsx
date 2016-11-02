@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { ControlPool } from './ControlPool';
-import Canvas from './Canvas';
-import ControlPropertiesContainer from './ControlPropertiesContainer';
+import { ControlPool } from 'form-builder/components/ControlPool.jsx';
+import Canvas from 'form-builder/components/Canvas.jsx';
+import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import { formBuilderConstants } from 'form-builder/constants';
 import filter from 'lodash/filter';
 import get from 'lodash/get';

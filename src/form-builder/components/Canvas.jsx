@@ -3,7 +3,7 @@ import each from 'lodash/each';
 import { connect } from 'react-redux';
 import { addSourceMap, deselectControl } from 'form-builder/actions/control';
 import { getConceptFromControls } from 'form-builder/helpers/componentMapper';
-import ControlWrapper from 'form-builder/components/ControlReduxWrapper.js';
+import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 
 class Canvas extends Component {
