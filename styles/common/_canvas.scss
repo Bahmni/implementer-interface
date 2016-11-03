@@ -44,7 +44,16 @@
       background-color: $white;
       border: 1px solid $lighterGray;
       width:197px;
-
+    }
+    textarea{
+      overflow: hidden;
+      resize: horizontal;
+      height: 30px;
+      width: 197px;
+      padding: 3px 10px;
+      background-color: $white;
+      border: 1px solid $lighterGray;
+      vertical-align: middle
     }
   }
 }
