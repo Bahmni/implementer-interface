@@ -36,7 +36,11 @@ describe('FormDetails', () => {
   });
 
   it('should render form details when form data is present', () => {
-    wrapper = mount(<Provider store={getStore()}><FormDetail formData={formData} /></Provider>);
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail formData={formData} saveFormResource={() => {}} setError={() => {}} />
+      </Provider>
+    );
     expect(wrapper).to.have.exactly(1).descendants('ControlPool');
     expect(wrapper).to.have.exactly(1).descendants('ControlPropertiesContainer');
     expect(wrapper).to.have.exactly(1).descendants('Canvas');
@@ -45,7 +49,7 @@ describe('FormDetails', () => {
   });
 
   it('should render nothing when form data is not preset', () => {
-    wrapper = shallow(<FormDetail />);
+    wrapper = shallow(<FormDetail saveFormResource={() => {}} setError={() => {}} />);
     expect(wrapper).to.be.blank();
   });
 });

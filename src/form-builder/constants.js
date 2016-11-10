@@ -1,9 +1,12 @@
 export const formBuilderConstants = {
-  supportedDataTypes: 'Boolean,Text,Numeric',
-  formUrl: '/openmrs/ws/rest/v1/form',
-  formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   conceptUrl: '/openmrs/ws/rest/v1/concept',
   conceptRepresentation: 'custom:(uuid,display,allowDecimal,name:(uuid,name),' +
   'conceptClass:(uuid,name),datatype:(uuid,name),setMembers)',
+  exceptionMessages: {
+    conceptMissing: 'Please associate Concept to Obs',
+  },
+  formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
+  formUrl: '/openmrs/ws/rest/v1/form',
+  supportedDataTypes: 'Boolean,Text,Numeric',
 };

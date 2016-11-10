@@ -16,6 +16,7 @@ class FormDetailContainer extends Component {
     this.state = { formData: undefined, notifications: [] };
     this.setState = this.setState.bind(this);
     this.saveFormResource = this.saveFormResource.bind(this);
+    this.setErrorMessage = this.setErrorMessage.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
   }
@@ -82,7 +83,11 @@ class FormDetailContainer extends Component {
         </div>
         <div className="container-content-wrap">
           <div className="container-content">
-            <FormDetail formData={this.state.formData} saveFormResource={ this.saveFormResource } />
+            <FormDetail
+              formData={this.state.formData}
+              saveFormResource={ this.saveFormResource }
+              setError={this.setErrorMessage}
+            />
           </div>
         </div>
       </div>

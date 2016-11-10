@@ -6,6 +6,8 @@ import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import { selectControl } from 'form-builder/actions/control';
+import { formBuilderConstants } from 'form-builder/constants';
+import { Exception } from 'form-builder/helpers/Exception';
 
 chai.use(chaiEnzyme());
 
@@ -189,5 +191,36 @@ describe('ControlWrapper', () => {
 
     const newMetadata = controlWrapper.processDragStart();
     expect(newMetadata).to.eql(metadata);
+  });
+
+  it('getJsonDefinition should return json if present', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+
+    expect(instance.getJsonDefinition()).to.deep.eql(metadata);
+  });
+
+  it('getJsonDefinition should throw exception when childControl returns undefined', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => undefined };
+
+    const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
+    const expectedException = new Exception(conceptMissingMessage);
+
+    expect(instance.getJsonDefinition.bind(instance)).to.throw(expectedException);
   });
 });

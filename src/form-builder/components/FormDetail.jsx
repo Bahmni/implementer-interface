@@ -15,14 +15,18 @@ export default class FormDetail extends Component {
   }
 
   onSave() {
-    const formJson = this.canvas.getWrappedInstance().prepareJson();
-    const formName = this.props.formData ? this.props.formData.name : 'FormName';
-    const formResource = {
-      name: formName,
-      valueReference: JSON.stringify(formJson),
-      dataType: formBuilderConstants.formResourceDataType,
-    };
-    this.props.saveFormResource(formJson.uuid, formResource);
+    try {
+      const formJson = this.canvas.getWrappedInstance().prepareJson();
+      const formName = this.props.formData ? this.props.formData.name : 'FormName';
+      const formResource = {
+        name: formName,
+        valueReference: JSON.stringify(formJson),
+        dataType: formBuilderConstants.formResourceDataType,
+      };
+      this.props.saveFormResource(formJson.uuid, formResource);
+    } catch (e) {
+      this.props.setError(e.getException());
+    }
   }
 
   canvasRef(ref) {
@@ -77,5 +81,6 @@ FormDetail.propTypes = {
     resources: PropTypes.array,
     uuid: PropTypes.string.isRequired,
   }),
-  saveFormResource: PropTypes.func,
+  saveFormResource: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
 };

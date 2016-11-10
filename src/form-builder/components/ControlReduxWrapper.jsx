@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { selectControl } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
+import { Exception } from 'form-builder/helpers/Exception';
+import { formBuilderConstants } from 'form-builder/constants';
 import get from 'lodash/get';
 
 class ControlWrapper extends Draggable {
@@ -53,7 +55,12 @@ class ControlWrapper extends Draggable {
 
   getJsonDefinition() {
     if (this.childControl) {
-      return this.childControl.getJsonDefinition();
+      const jsonDefinition = this.childControl.getJsonDefinition();
+      if (jsonDefinition === undefined) {
+        const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
+        throw new Exception(conceptMissingMessage);
+      }
+      return jsonDefinition;
     }
     return undefined;
   }
