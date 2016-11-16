@@ -247,5 +247,8 @@ table {
   margin: 5px
 }
 
+input[type="checkbox"]{
+  @include check-box;
+}
 
 

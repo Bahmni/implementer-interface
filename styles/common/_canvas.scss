@@ -30,6 +30,7 @@
 .gridCell{
   flex-grow: 1;
   padding: 5px;
+  width:33.33%;
   &.active{
     border: 1px dotted $darkerGrey;
   }
@@ -37,6 +38,9 @@
     label{
       padding-right: 5px;
       display: inline-block;
+      width: 8.7em;
+      vertical-align: middle;
+      text-align: right;
     }
     input{
       color: #363463;
