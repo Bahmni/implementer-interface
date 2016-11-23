@@ -35,10 +35,10 @@
     border: 1px dotted $darkerGrey;
   }
   .control-wrapper{
-    label{
-      padding-right: 5px;
+    .label-wrap{
+      padding-right: 10px;
       display: inline-block;
-      width: 8.7em;
+      width: 25%;
       vertical-align: middle;
       text-align: right;
     }
@@ -58,6 +58,24 @@
       background-color: $white;
       border: 1px solid $lighterGray;
       vertical-align: middle
+    }
+    .comment-toggle {
+      padding: 5px;
+      .fa-file-o {
+        position: relative;
+        font-size: 16px;
+        color: $mediumGray;
+        .fa-plus-circle{
+          position: absolute;
+          right: 2px;
+          bottom: 2px;
+          font-size: 10px;
+          color: green;
+          background: $white;
+          border-radius: 8px;
+          padding: 0;
+        }
+      }
     }
   }
 }
