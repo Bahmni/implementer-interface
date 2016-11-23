@@ -12,7 +12,7 @@ export default class FormList extends Component {
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>published</td>
-        <td><Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>Edit</Link></td>
+        <td><Link to={{ pathname: `form-builder/${rowItem.uuid}` }}><i className="fa fa-pencil"></i></Link></td>
       </tr>
     ));
   }
