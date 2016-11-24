@@ -28,6 +28,7 @@ export class ControlPool extends Component {
 
   getAllDesignerComponents() {
     const designerComponentDescriptors = window.componentStore.getAllDesignerComponents();
+      console.log('Designer components descriptors',designerComponentDescriptors);
     const topLevelComponents = map(designerComponentDescriptors, (componentDescriptor, type) => {
       if (this.isTopLevel(componentDescriptor)) {
         return this.getControlItem(type, componentDescriptor);
