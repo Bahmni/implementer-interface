@@ -58,7 +58,8 @@ describe('FormList', () => {
     expect(getData(0, 1)).to.eql('1.1');
     expect(getData(0, 2)).to.eql('10 Oct 10');
     expect(getData(0, 3)).to.eql('published');
-    expect(getData(0, 4)).to.eql('Edit');
+    expect(wrapper.find('table').find('.edit-icon')).to.have.exactly(3).descendants('i');
+
 
     expect(getData(1, 0)).to.eql('BP');
     expect(getData(2, 0)).to.eql('Pulse');
