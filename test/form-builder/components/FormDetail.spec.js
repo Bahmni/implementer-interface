@@ -52,4 +52,18 @@ describe('FormDetails', () => {
     wrapper = shallow(<FormDetail saveFormResource={() => {}} setError={() => {}} />);
     expect(wrapper).to.be.blank();
   });
+
+  it('should create the idGenerator and pass it as props to required children', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail formData={formData} saveFormResource={() => {}} setError={() => {}}/>
+      </Provider>
+    );
+    const controlPoolProps = wrapper.find('ControlPool').props();
+    const canvasProps = wrapper.find('Canvas').props();
+
+    expect(controlPoolProps).to.have.property('idGenerator');
+    expect(canvasProps).to.have.property('idGenerator');
+    expect(canvasProps.idGenerator).to.be.equal(controlPoolProps.idGenerator);
+  });
 });

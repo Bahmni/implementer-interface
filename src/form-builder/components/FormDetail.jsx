@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
+import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import { formBuilderConstants } from 'form-builder/constants';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
+
 
 export default class FormDetail extends Component {
   constructor() {
@@ -42,6 +44,7 @@ export default class FormDetail extends Component {
       const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
       const formResourceControls =
         (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
+      const idGenerator = new IDGenerator(formResourceControls);
       return (
         <div>
           <div className="button-wrapper">
@@ -51,7 +54,7 @@ export default class FormDetail extends Component {
             <h2 className="header-title">{name}</h2>
             <div className="container-columns">
               <div className="column-side">
-                <ControlPool formResourceControls={formResourceControls} />
+                <ControlPool idGenerator={idGenerator} formResourceControls={formResourceControls} />
                 <ControlPropertiesContainer />
               </div>
               <div className="container-column-main">
@@ -61,6 +64,7 @@ export default class FormDetail extends Component {
                     formName={name}
                     formResourceControls={formResourceControls}
                     formUuid={ uuid }
+                    idGenerator={idGenerator}
                     ref={this.canvasRef}
                   />
                 </div>
