@@ -35,6 +35,7 @@
     border: 1px dotted $darkerGrey;
   }
   .control-wrapper{
+    position: relative;
     .label-wrap{
       padding-right: 10px;
       display: inline-block;
@@ -59,13 +60,33 @@
       border: 1px solid $lighterGray;
       vertical-align: middle
     }
+    .obs-comment-section-wrap{
+      margin-top: 5px;
+      clear: both;
+    }
     .comment-toggle {
       padding: 5px;
+      position: absolute;
+      right:0;
+      top:0;
+      &.active {
+        .fa-file-o {
+          .fa-plus-circle {
+            display: none;
+          }
+          .fa-minus-circle {
+            display: block;
+          }
+        }
+      }
       .fa-file-o {
         position: relative;
         font-size: 16px;
         color: $mediumGray;
-        .fa-plus-circle{
+        .fa-minus-circle {
+          display: none;
+        }
+        .fa-plus-circle, .fa-ok-sign, .fa-plus, .fa-minus-circle {
           position: absolute;
           right: 2px;
           bottom: 2px;
