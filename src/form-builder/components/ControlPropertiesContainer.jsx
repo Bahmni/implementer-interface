@@ -30,7 +30,7 @@ class ControlPropertiesContainer extends Component {
     const optionsUrl = `${constants.conceptUrl}${queryParams}`;
     return (
       <AutoComplete
-        autofocus={true}
+        autofocus
         disabled={disableAutoComplete}
         onValueChange={this.onSelect}
         optionsUrl={optionsUrl}

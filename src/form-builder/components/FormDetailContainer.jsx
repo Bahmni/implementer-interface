@@ -6,7 +6,8 @@ import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
-import { deselectControl, removeControlProperties, removeSourceMap } from 'form-builder/actions/control';
+import { deselectControl, removeControlProperties, removeSourceMap }
+  from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 
 class FormDetailContainer extends Component {
