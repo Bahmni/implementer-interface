@@ -36,7 +36,7 @@ export class PropertyEditor extends Component {
 
   render() {
     const allPropertyDescriptors = this.getAllPropertyDescriptors();
-    return <div>{this.getProperties(allPropertyDescriptors)}</div>;
+    return <div className="form-properties">{this.getProperties(allPropertyDescriptors)}</div>;
   }
 }
 
