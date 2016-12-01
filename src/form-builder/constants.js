@@ -1,7 +1,7 @@
 export const formBuilderConstants = {
   conceptUrl: '/openmrs/ws/rest/v1/concept',
   conceptRepresentation: 'custom:(uuid,display,allowDecimal,name:(uuid,name),' +
-  'conceptClass:(uuid,name),datatype:(uuid,name),setMembers,answers)',
+  'conceptClass:(uuid,name),datatype:(uuid,name),setMembers,answers,hiNormal,lowNormal,hiAbsolute,lowAbsolute,units)',
   exceptionMessages: {
     conceptMissing: 'Please associate Concept to Obs',
   },
