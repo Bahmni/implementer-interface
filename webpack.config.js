@@ -20,12 +20,17 @@ module.exports = {
   },
   devServer: {
     inline: true,
+    headers: { "Access-Control-Allow-Origin": "*" },
     contentBase: "./dist",
     proxy: {
       '/openmrs': {
         target: 'https://192.168.33.10',
         secure: false
-      }
+      },
+        '/bahmni': {
+            target: 'https://192.168.33.10',
+            secure: false
+        }
     }
   },
   plugins: [
