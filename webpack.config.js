@@ -1,99 +1,99 @@
-'use strict';
 
-let path = require('path');
-let webpack = require('webpack');
-let ExtractTextPlugin = require('extract-text-webpack-plugin');
-let srcPath = path.join(__dirname, './src');
-let testPath = path.join(__dirname, './test');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const srcPath = path.join(__dirname, './src');
+const testPath = path.join(__dirname, './test');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   devtool: 'eval',
   entry: [
     './src/index.js',
-    './styles/styles.scss'
+    './styles/styles.scss',
   ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/implementer-interface/'
+    publicPath: '/implementer-interface/',
   },
   devServer: {
     inline: true,
-    headers: { "Access-Control-Allow-Origin": "*" },
-    contentBase: "./dist",
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    contentBase: './dist',
     proxy: {
       '/openmrs': {
         target: 'https://192.168.33.10',
-        secure: false
+        secure: false,
       },
-        '/bahmni': {
-            target: 'https://192.168.33.10',
-            secure: false
-        }
-    }
+      '/bahmni': {
+        target: 'https://192.168.33.10',
+        secure: false,
+      },
+    },
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('styles.css', { allChunks: true }),
     new CopyWebpackPlugin([
-        {
-          from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, '../dist/fonts'),
-        },
-      ],{copyUnmodified: true}
+      {
+        from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, '../dist/fonts'),
+      },
+    ], { copyUnmodified: true }
     ),
   ],
   externals: {
     'react/lib/ExecutionEnvironment': true,
     'react/lib/ReactContext': true,
-    'react/addons': true
+    'react/addons': true,
   },
   module: {
     loaders: [
       {
         test: /\.(js|jsx)$/,
         loaders: ['babel'],
-        include: path.join(__dirname, 'src')
+        include: path.join(__dirname, 'src'),
       },
       {
         test: /\.js$/,
         loaders: ['babel-loader'],
-        include: path.join(__dirname, 'test')
+        include: path.join(__dirname, 'test'),
       },
       {
         test: /\.json$/,
-        loader: 'json'
+        loader: 'json',
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('css!sass')
+        loader: ExtractTextPlugin.extract('css!sass'),
       },
       // the url-loader uses DataUrls.
       // the file-loader emits files.
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff"
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff',
       },
       {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "file-loader"
-      }
+        loader: 'file-loader',
+      },
 
     ],
     preLoaders: [
       {
         test: /\.(js|jsx)$/,
         include: path.join(__dirname, 'src'),
-        loader: 'isparta'
-      }
-    ]
+        loader: 'isparta',
+      },
+    ],
 
   },
   resolve: {
     alias: {
-      common: srcPath + '/common/',
-      'form-builder': srcPath + '/form-builder/',
-      'test': testPath
-    }
-  }
+      common: `${srcPath}/common/`,
+      'form-builder': `${srcPath}/form-builder/`,
+      test: testPath,
+    },
+  },
 };
