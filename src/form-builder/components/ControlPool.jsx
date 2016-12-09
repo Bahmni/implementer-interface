@@ -3,7 +3,6 @@ import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorP
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
-import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import { ControlPoolElement } from 'form-builder/components/ControlPoolElement.jsx';
 
 export class ControlPool extends Component {
@@ -41,7 +40,6 @@ export class ControlPool extends Component {
   }
 
   render() {
-    
     return (
       <div className="section-grid">
         <h2 className="header-title">Controls</h2>

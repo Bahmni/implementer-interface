@@ -54,7 +54,10 @@ export default class FormDetail extends Component {
             <h2 className="header-title">{name}</h2>
             <div className="container-columns">
               <div className="column-side">
-                <ControlPool idGenerator={idGenerator} formResourceControls={formResourceControls} />
+                <ControlPool
+                  formResourceControls={formResourceControls}
+                  idGenerator={idGenerator}
+                />
                 <ControlPropertiesContainer />
               </div>
               <div className="container-column-main">

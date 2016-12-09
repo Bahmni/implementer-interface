@@ -1,6 +1,10 @@
 import { expect } from 'chai';
 import React from 'react';
-import { getConceptFromControls, setConceptToControls, getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
+import {
+  getConceptFromControls,
+  setConceptToControls,
+  getConceptFromMetadata,
+} from 'form-builder/helpers/componentMapper';
 
 describe('componentMapper', () => {
   const getDescriptor = (id) =>

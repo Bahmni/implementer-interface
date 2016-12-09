@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { addSourceMap, deselectControl } from 'form-builder/actions/control';
+import { deselectControl } from 'form-builder/actions/control';
 import { IDGenerator } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
@@ -72,18 +72,24 @@ describe('Canvas', () => {
   });
 
   it('should clear selected id when clicked on canvas', () => {
+    const idGenerator = new IDGenerator();
     const store = getStore();
+
     const canvas = mount(
       <Canvas
         formResourceControls={[]}
-        formUuid="someFormUuid" store={store}
+        formUuid="someFormUuid"
+        idGenerator={idGenerator}
+        store={store}
       />);
     canvas.find('.form-builder-canvas').simulate('click');
     sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
   });
 
   it('should pass metadata to controls from Form Resource', () => {
+    const idGenerator = new IDGenerator();
     const store = getStore();
+
     const formResourceJSON = [
       {
         id: '1',
@@ -98,6 +104,7 @@ describe('Canvas', () => {
       <Canvas
         formResourceControls={formResourceJSON}
         formUuid="someFormUuid"
+        idGenerator={idGenerator}
         store={store}
       />).shallow();
     const instance = canvas.instance();

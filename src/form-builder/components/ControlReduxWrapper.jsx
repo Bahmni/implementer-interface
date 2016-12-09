@@ -5,7 +5,7 @@ import { Draggable } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
 import { addSourceMap } from 'form-builder/actions/control';
-import { getConceptFromControls, getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
+import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 
 class ControlWrapper extends Draggable {
@@ -29,7 +29,11 @@ class ControlWrapper extends Draggable {
   conditionallyAddConcept(newProps) {
     const concept = get(newProps.conceptToControlMap, this.metadata.id);
     if (concept && !this.metadata.concept) {
-      const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept, this.props.idGenerator);
+      const newMetadata = this.control.injectConceptToMetadata(
+        this.metadata,
+        concept,
+        this.props.idGenerator
+      );
       this.metadata = newMetadata;
       this.props.dispatch(selectControl(this.metadata));
     }
