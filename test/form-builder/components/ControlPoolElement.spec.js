@@ -31,6 +31,7 @@ describe('ControlPoolElement', () => {
       />);
 
     const eventData = {
+      stopPropagation(){},
       dataTransfer: {
         dragData: {},
         setData: function setData(type, data) {

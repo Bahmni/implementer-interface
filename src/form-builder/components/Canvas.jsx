@@ -70,6 +70,7 @@ class Canvas extends Component {
         <Grid
           className="bahmni-grid"
           controls={ formResourceControls || [] }
+          idGenerator={ this.props.idGenerator }
           ref={ this.gridReference }
           wrapper={ ControlWrapper }
         />
@@ -82,6 +83,7 @@ Canvas.propTypes = {
   dispatch: PropTypes.func,
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
+  idGenerator: PropTypes.object.isRequired,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);
