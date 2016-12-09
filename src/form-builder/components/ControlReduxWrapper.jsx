@@ -4,6 +4,8 @@ import { selectControl } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
+import { addSourceMap } from 'form-builder/actions/control';
+import { getConceptFromControls, getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 
 class ControlWrapper extends Draggable {
@@ -27,7 +29,7 @@ class ControlWrapper extends Draggable {
   conditionallyAddConcept(newProps) {
     const concept = get(newProps.conceptToControlMap, this.metadata.id);
     if (concept && !this.metadata.concept) {
-      const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept);
+      const newMetadata = this.control.injectConceptToMetadata(this.metadata, concept, this.props.idGenerator);
       this.metadata = newMetadata;
       this.props.dispatch(selectControl(this.metadata));
     }
@@ -41,6 +43,12 @@ class ControlWrapper extends Draggable {
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
       this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
       this.props.dispatch(selectControl(this.metadata));
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.metadata && this.props.metadata.id && this.props.metadata.concept) {
+      this.props.dispatch(addSourceMap(getConceptFromMetadata(this.props.metadata)));
     }
   }
 
@@ -85,9 +93,12 @@ class ControlWrapper extends Draggable {
         onDragEnd={ (e) => onDragEndFunc(e) }
         onDragStart={ this.onDragStart(this.metadata) }
       >
-        <this.control metadata={ this.metadata }
+        <this.control
+          idGenerator={ this.props.idGenerator}
+          metadata={ this.metadata }
           onSelect={ this.onSelected }
           ref={this.storeChildRef}
+          wrapper={ this.props.wrapper }
         />
       </div>
     );
@@ -100,6 +111,7 @@ ControlWrapper.propTypes = {
     property: PropTypes.object,
   }),
   metadata: PropTypes.object,
+  wrapper: PropTypes.func,
 };
 
 function mapStateToProps(state) {

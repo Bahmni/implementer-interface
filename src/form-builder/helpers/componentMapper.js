@@ -16,15 +16,27 @@ export function setConceptToControls(descriptors, conceptToControlMap) {
   });
 }
 
-export function getConceptFromControls(descriptors) {
+export function getConceptFromControls(metatdatas) {
   const mapper = {};
-  _.each(descriptors, (descriptor) => {
-    const { concept, id } = descriptor.metadata;
+  _.each(metatdatas, (metadata) => {
+    const { concept, id } = metadata;
     if (concept) {
       const name = { name: concept.name };
       const datatype = { name: concept.datatype };
       mapper[id] = { datatype, display: concept.name, name, uuid: concept.uuid };
     }
   });
+  return mapper;
+}
+
+
+export function getConceptFromMetadata(metadata) {
+  const mapper = {};
+  const { concept, id } = metadata;
+  if (concept) {
+    const name = { name: concept.name };
+    const datatype = { name: concept.datatype };
+    mapper[id] = { datatype, display: concept.name, name, uuid: concept.uuid };
+  }
   return mapper;
 }

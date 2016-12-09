@@ -1,10 +1,18 @@
 import { expect } from 'chai';
 import React from 'react';
-import { getConceptFromControls, setConceptToControls } from 'form-builder/helpers/componentMapper';
+import { getConceptFromControls, setConceptToControls, getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 
 describe('componentMapper', () => {
   const getDescriptor = (id) =>
     ({ control: () => (<div></div>), metadata: { id, type: 'obsControl' } });
+
+  const getConceptFrom = (uuid, name, datatype) =>
+    ({
+      datatype: { name: datatype },
+      display: name,
+      name: { name },
+      uuid,
+    });
 
   describe('setConceptToControls', () => {
     it('should return descriptors as is when there are no concepts', () => {
@@ -61,43 +69,45 @@ describe('componentMapper', () => {
   });
 
   describe('getConceptFromControls', () => {
-    const getDescriptorWithConcept = (id, concept) =>
-      ({
-        control: () => (<div></div>),
-        metadata: { id, concept, type: 'obsControl' },
-      });
-
-    const getConceptFrom = (uuid, name, datatype) =>
-      ({
-        datatype: { name: datatype },
-        display: name,
-        name: { name },
-        uuid,
-      });
-
     it('should return empty object when there are no concepts in descriptors', () => {
-      const obsControl1 = getDescriptor('1');
-      const obsControl2 = getDescriptor('2');
-      const descriptors = [obsControl1, obsControl2];
+      const metadata1 = { id: '1' };
+      const metadata2 = { id: '2' };
 
-      const conceptToControlMap = getConceptFromControls(descriptors);
+      const conceptToControlMap = getConceptFromControls([metadata1, metadata2]);
       expect(conceptToControlMap).to.be.eql({});
     });
 
-    it('should return conceptToContolMap when there are concepts in descriptors', () => {
+    it('should return controlId-Concept map when there are concepts in descriptors', () => {
       const concept1 = { name: 'someName-1', datatype: 'text', uuid: 'someUuid-1' };
       const concept2 = { name: 'someName-2', datatype: 'text', uuid: 'someUuid-2' };
-      const obsControl1 = getDescriptorWithConcept('1', concept1);
-      const obsControl2 = getDescriptorWithConcept('2', concept2);
-      const obsControl3 = getDescriptor('3');
-      const descriptors = [obsControl1, obsControl2, obsControl3];
+      const metadata1 = { concept: concept1, id: '1' };
+      const metadata2 = { concept: concept2, id: '2' };
 
       const expectedMap = {
         1: getConceptFrom('someUuid-1', 'someName-1', 'text'),
         2: getConceptFrom('someUuid-2', 'someName-2', 'text'),
       };
 
-      const conceptToControlMap = getConceptFromControls(descriptors);
+      const conceptToControlMap = getConceptFromControls([metadata1, metadata2]);
+      expect(conceptToControlMap).to.be.eql(expectedMap);
+    });
+  });
+
+  describe('getConceptFromMetadata', () => {
+    it('should return empty map if the concept is absent', () => {
+      const metadata1 = { id: '1' };
+
+      const conceptToControlMap = getConceptFromMetadata(metadata1);
+
+      expect(conceptToControlMap).to.be.eql({});
+    });
+
+    it('should return the map of controlid-to-concept', () => {
+      const concept1 = { name: 'someName-1', datatype: 'text', uuid: 'someUuid-1' };
+      const metadata1 = { concept: concept1, id: '1' };
+
+      const conceptToControlMap = getConceptFromMetadata(metadata1);
+      const expectedMap = { ['1']: getConceptFrom('someUuid-1', 'someName-1', 'text') };
       expect(conceptToControlMap).to.be.eql(expectedMap);
     });
   });

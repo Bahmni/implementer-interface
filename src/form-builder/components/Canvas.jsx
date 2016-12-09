@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import each from 'lodash/each';
 import { connect } from 'react-redux';
-import { addSourceMap, deselectControl } from 'form-builder/actions/control';
-import { getConceptFromControls } from 'form-builder/helpers/componentMapper';
+import { deselectControl } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 
@@ -12,18 +11,8 @@ class Canvas extends Component {
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
     this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls) };
-    props.dispatch(addSourceMap(this.getConceptToControlMap(props.formResourceControls)));
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
-  }
-
-  componentWillUpdate(newProps) {
-    this.props.dispatch(addSourceMap(this.getConceptToControlMap(newProps.formResourceControls)));
-  }
-
-  getConceptToControlMap(formResourceControls) {
-    const initialComponentDescriptors = this.getComponentDescriptors(formResourceControls);
-    return getConceptFromControls(initialComponentDescriptors);
   }
 
   getComponentDescriptors(formResourceControls) {
