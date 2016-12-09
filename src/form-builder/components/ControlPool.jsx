@@ -9,7 +9,6 @@ import { ControlPoolElement } from 'form-builder/components/ControlPoolElement.j
 export class ControlPool extends Component {
   constructor(props) {
     super(props);
-    this.idGenerator = new IDGenerator(props.formResourceControls);
     this.draggableControls = this.getAllDesignerComponents();
   }
 
@@ -19,7 +18,7 @@ export class ControlPool extends Component {
     return (
       <ControlPoolElement
         displayName={displayName}
-        idGenerator={ this.idGenerator }
+        idGenerator={ this.props.idGenerator }
         key={displayName}
         metadata={metadata}
       />);
@@ -28,7 +27,6 @@ export class ControlPool extends Component {
 
   getAllDesignerComponents() {
     const designerComponentDescriptors = window.componentStore.getAllDesignerComponents();
-      console.log('Designer components descriptors',designerComponentDescriptors);
     const topLevelComponents = map(designerComponentDescriptors, (componentDescriptor, type) => {
       if (this.isTopLevel(componentDescriptor)) {
         return this.getControlItem(type, componentDescriptor);
@@ -43,6 +41,7 @@ export class ControlPool extends Component {
   }
 
   render() {
+    
     return (
       <div className="section-grid">
         <h2 className="header-title">Controls</h2>
@@ -53,5 +52,5 @@ export class ControlPool extends Component {
 }
 
 ControlPool.propTypes = {
-  formResourceControls: PropTypes.array.isRequired,
+  idGenerator: PropTypes.object.isRequired,
 };

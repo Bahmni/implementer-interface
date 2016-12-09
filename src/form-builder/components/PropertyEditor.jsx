@@ -27,7 +27,9 @@ export class PropertyEditor extends Component {
   }
 
   getAllPropertyDescriptors() {
-    const { metadata: { type, concept: { datatype } } } = this.props;
+    const { metadata: { type, concept } } = this.props;
+    let { metadata: { concept: { datatype } } } = this.props;
+    datatype = concept.set ? 'obsGroupControl' : datatype;
     const descriptorsByType = this.getPropertyDescriptor(type);
     const descriptorsByConceptType = this.getPropertyDescriptor(datatype);
     const allPropertyDescriptors = descriptorsByType.concat(descriptorsByConceptType);
