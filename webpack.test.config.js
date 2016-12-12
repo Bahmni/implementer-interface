@@ -1,5 +1,3 @@
-
-
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -8,7 +6,7 @@ const testPath = path.join(__dirname, './test');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'cheap-module-source-map',
   entry: [
     './src/index.js',
     './styles/styles.scss',
@@ -80,6 +78,14 @@ module.exports = {
       },
 
     ],
+    preLoaders: [
+      {
+        test: /\.(js|jsx)$/,
+        include: path.join(__dirname, 'src'),
+        loader: 'isparta',
+      },
+    ],
+
   },
   resolve: {
     alias: {

@@ -1,11 +1,11 @@
-var webpackCfg = require('./webpack.config');
+var webpackCfg = require('./webpack.test.config');
 
 module.exports = function (config) {
   config.set({
     basePath: '',
     browsers: ['jsdom'],
     files: [
-      'test/**/*.spec.js'
+      'test/index.js'
     ],
     port: 8080,
     captureTimeout: 60000,
@@ -15,13 +15,13 @@ module.exports = function (config) {
       mocha: {}
     },
     singleRun: true,
-    reporters: ['mocha', 'coverage'],
+    reporters: ['progress', 'coverage'],
     mochaReporter: {
       showDiff: true,
       divider: '*'
     },
     preprocessors: {
-      'test/**/*.spec.js': ['webpack', 'sourcemap']
+      'test/index.js': ['webpack']
     },
     webpack: webpackCfg,
     webpackServer: {
