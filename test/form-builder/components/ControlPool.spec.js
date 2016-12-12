@@ -4,30 +4,27 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import { IDGenerator } from 'bahmni-form-controls';
+import { ComponentStore } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
 
 describe('ControlPool', () => {
   beforeEach(() => {
-    window.componentStore = {
-      getAllDesignerComponents: () => {},
-    };
+    ComponentStore.designerComponentList = {};
   });
 
   afterEach(() => {
-    delete window.componentStore;
+    ComponentStore.designerComponentList = {};
   });
 
   function controlDescriptor(name, isTopLevelComponent) {
     return {
-      [name]: {
-        designProperties: {
-          isTopLevelComponent,
-          displayName: name,
-        },
-        metadata: {
-          attributes: [{ name: 'label', type: 'text', defaultValue: 'someLabel' }],
-        },
+      designProperties: {
+        isTopLevelComponent,
+        displayName: name,
+      },
+      metadata: {
+        attributes: [{ name: 'label', type: 'text', defaultValue: 'someLabel' }],
       },
     };
   }
@@ -38,25 +35,22 @@ describe('ControlPool', () => {
   });
 
   it('should render an empty listbox if register controls are not top-level', () => {
-    window.componentStore.getAllRegisteredComponents = () => controlDescriptor('someName', false);
+    ComponentStore.registerDesignerComponent('someName', controlDescriptor('someName', false));
     const controlPool = shallow(<ControlPool idGenerator={ new IDGenerator() } />);
     expect(controlPool.find('.section-content').children()).to.be.blank();
   });
 
   it('should render a listbox when there are designer components', () => {
-    const control1 = controlDescriptor('control1', true);
-    const control2 = controlDescriptor('control2', true);
-    const control3 = controlDescriptor('control3', false);
-    window.componentStore.getAllDesignerComponents = () =>
-      Object.assign(control1, control2, control3);
+    ComponentStore.registerDesignerComponent('control1', controlDescriptor('control1', true));
+    ComponentStore.registerDesignerComponent('control2', controlDescriptor('control2', true));
+    ComponentStore.registerDesignerComponent('control3', controlDescriptor('control3', false));
 
-    const controlPool = shallow(<ControlPool idGenerator={ new IDGenerator() } />);
+    const controlPool = mount(<ControlPool idGenerator={ new IDGenerator() } />);
     expect(controlPool.find('.section-content').children()).to.have.length(2);
   });
 
   it('should pass appropriate props to the children', () => {
-    const control1 = controlDescriptor('control1', true);
-    window.componentStore.getAllDesignerComponents = () => Object.assign(control1);
+    ComponentStore.registerDesignerComponent('control1', controlDescriptor('control1', true));
 
     const controlPool = mount(<ControlPool idGenerator={ new IDGenerator() } />);
     const controlPoolElements = controlPool.find('.section-content').children();

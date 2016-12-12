@@ -8,6 +8,7 @@ import { getStore } from 'test/utils/storeHelper';
 import { selectControl } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
 import { Exception } from 'form-builder/helpers/Exception';
+import { ComponentStore } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
 
@@ -21,7 +22,6 @@ describe('ControlWrapper', () => {
       datatype: concept.datatype.name,
     },
   });
-  const componentStore = window.componentStore;
   const bahmniIDGenerator = window.bahmniIDGenerator;
   const metadata = {
     id: '1',
@@ -29,17 +29,14 @@ describe('ControlWrapper', () => {
     value: 'testValue',
   };
   before(() => {
-    window.componentStore = {
-      getDesignerComponent: () => ({ control: testControl }),
-    };
-
+    ComponentStore.registerDesignerComponent('testType', { control: testControl });
     window.bahmniIDGenerator = {
       getId: () => 1,
     };
   });
 
   after(() => {
-    window.componentStore = componentStore;
+    ComponentStore.deRegisterDesignerComponent('testType');
     window.bahmniIDGenerator = bahmniIDGenerator;
   });
 

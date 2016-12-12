@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { deselectControl } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
+import { ComponentStore } from 'bahmni-form-controls';
 
 class Canvas extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class Canvas extends Component {
   getComponentDescriptors(formResourceControls) {
     const descriptors = [];
     each(formResourceControls, control => {
-      const designerComponentDescriptor = window.componentStore.getDesignerComponent(control.type);
+      const designerComponentDescriptor = ComponentStore.getDesignerComponent(control.type);
       if (designerComponentDescriptor) {
         const descriptorClone = Object.assign({}, designerComponentDescriptor);
         descriptorClone.metadata = control;

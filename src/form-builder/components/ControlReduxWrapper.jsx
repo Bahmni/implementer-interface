@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { selectControl } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
+import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
 import { addSourceMap } from 'form-builder/actions/control';
@@ -11,7 +12,7 @@ import get from 'lodash/get';
 class ControlWrapper extends Draggable {
   constructor(props) {
     super(props);
-    this.control = window.componentStore.getDesignerComponent(props.metadata.type).control;
+    this.control = ComponentStore.getDesignerComponent(props.metadata.type).control;
     this.props = props;
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
@@ -61,7 +62,7 @@ class ControlWrapper extends Draggable {
     this.updateProperties(newProps);
     if (this.metadata.id !== newProps.metadata.id) {
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
-      this.control = window.componentStore.getDesignerComponent(this.metadata.type).control;
+      this.control = ComponentStore.getDesignerComponent(this.metadata.type).control;
     }
   }
 

@@ -4,6 +4,7 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
 import sinon from 'sinon';
+import { ComponentStore } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
 
@@ -28,10 +29,7 @@ describe('Property Editor', () => {
   }
 
   beforeEach(() => {
-    window.componentStore = {
-      getDesignerComponent: () => controlDescriptor(),
-    };
-
+    ComponentStore.registerDesignerComponent('text', controlDescriptor());
     const properties = {
       allowDecimal: true,
       somethingElse: true,
@@ -60,11 +58,12 @@ describe('Property Editor', () => {
   });
 
   afterEach(() => {
-    delete window.componentStore;
+    ComponentStore.deRegisterDesignerComponent('text');
+    ComponentStore.deRegisterDesignerComponent('obsControl');
   });
 
   it('should render unique Property from type and conceptType', () => {
-    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.have.exactly(2).descendants('Property');
   });
@@ -75,13 +74,13 @@ describe('Property Editor', () => {
         attributes: [{ name: 'label', type: 'text', defaultValue: 'someLabel' }],
       },
     };
-    window.componentStore.getDesignerComponent = () => descriptorWithoutProperties;
+    ComponentStore.registerDesignerComponent('obsControl', descriptorWithoutProperties);
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.be.blank();
   });
 
   it('should render Property with default value when not present in metadata', () => {
-    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
 
     expect(wrapper.find('Property').at(0).props().name).to.eql('mandatory');
@@ -89,7 +88,7 @@ describe('Property Editor', () => {
   });
 
   it('should render Property with value from metadata if present', () => {
-    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
 
     expect(wrapper.find('Property').at(1).props().name).to.eql('allowDecimal');
@@ -97,12 +96,10 @@ describe('Property Editor', () => {
   });
 
   it('should render Properties from conceptType (child)', () => {
-    window.componentStore.getDesignerComponent = (type) => {
-      if (type === 'obsControl') {
-        return controlDescriptor(attributes);
-      }
-      return controlDescriptor([{ name: 'child', dataType: 'boolean', defaultValue: true }]);
-    };
+    ComponentStore.deRegisterDesignerComponent('text');
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
+    ComponentStore.registerDesignerComponent('text',
+      controlDescriptor([{ name: 'child', dataType: 'boolean', defaultValue: true }]));
 
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
 
@@ -112,15 +109,14 @@ describe('Property Editor', () => {
   });
 
   it('should not render Property if there are no property attributes', () => {
-    window.componentStore.getDesignerComponent = () => controlDescriptor([]);
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor([]));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
     expect(wrapper).to.be.blank();
   });
 
   it('should update property in metadata if changed', () => {
     const spy = sinon.spy();
-    window.componentStore.getDesignerComponent = () => controlDescriptor(attributes);
-
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={spy} />);
     wrapper.find('Property').at(1).props().onPropertyUpdate({ allowDecimal: true });
 

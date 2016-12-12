@@ -4,6 +4,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 import { ControlPoolElement } from 'form-builder/components/ControlPoolElement.jsx';
+import { ComponentStore } from 'bahmni-form-controls';
 
 export class ControlPool extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export class ControlPool extends Component {
 
 
   getAllDesignerComponents() {
-    const designerComponentDescriptors = window.componentStore.getAllDesignerComponents();
+    const designerComponentDescriptors = ComponentStore.getAllDesignerComponents();
     const topLevelComponents = map(designerComponentDescriptors, (componentDescriptor, type) => {
       if (this.isTopLevel(componentDescriptor)) {
         return this.getControlItem(type, componentDescriptor);

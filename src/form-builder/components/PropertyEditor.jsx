@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Property } from 'form-builder/components/Property.jsx';
 import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
+import { ComponentStore } from 'bahmni-form-controls';
 
 export class PropertyEditor extends Component {
   getProperties(attributes) {
@@ -21,7 +22,7 @@ export class PropertyEditor extends Component {
   }
 
   getPropertyDescriptor(type) {
-    const descriptor = window.componentStore.getDesignerComponent(type);
+    const descriptor = ComponentStore.getDesignerComponent(type);
     const properties = descriptor.metadata.attributes.find((attr) => attr.name === 'properties');
     return get(properties, 'attributes', []);
   }

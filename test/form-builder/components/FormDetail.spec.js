@@ -5,11 +5,15 @@ import chai, { expect } from 'chai';
 import FormDetail from 'form-builder/components/FormDetail.jsx';
 import { getStore } from 'test/utils/storeHelper';
 import { Provider } from 'react-redux';
+import { ComponentStore } from 'bahmni-form-controls';
+import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
 describe('FormDetails', () => {
   let wrapper;
+  let getDesignerComponentStub;
+  let getAllDesignerComponentsStub;
   const formData = {
     id: 1,
     name: 'someFormName',
@@ -17,22 +21,22 @@ describe('FormDetails', () => {
     uuid: 'someUuid',
   };
   const control = () => (<div></div>);
-  const componentStore = window.componentStore;
 
   before(() => {
-    window.componentStore = {
-      getDesignerComponent: () => ({
-        metadata: {
-          attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
-        },
-        control,
-      }),
-      getAllDesignerComponents: () => ({}),
-    };
+    getDesignerComponentStub = sinon.stub(ComponentStore, 'getDesignerComponent');
+    getDesignerComponentStub.returns({
+      metadata: {
+        attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
+      },
+      control,
+    });
+    getAllDesignerComponentsStub = sinon.stub(ComponentStore, 'getAllDesignerComponents');
+    getAllDesignerComponentsStub.returns({});
   });
 
   after(() => {
-    window.componentStore = componentStore;
+    getDesignerComponentStub.restore();
+    getAllDesignerComponentsStub.restore();
   });
 
   it('should render form details when form data is present', () => {

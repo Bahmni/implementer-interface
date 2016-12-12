@@ -7,34 +7,30 @@ import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import { deselectControl } from 'form-builder/actions/control';
 import { IDGenerator } from 'bahmni-form-controls';
+import { ComponentStore } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
 
 describe('Canvas', () => {
+  let componentStoreStub;
   const control = () => (<div className="dummy-div">Dummy Div</div>);
-  const componentStore = window.componentStore;
   before(() => {
-    window.componentStore = {
-      getDesignerComponent: (type) => {
-        if (type === 'grid') {
-          return ({
-            control: () => (<div className="dummy-grid">Dummy Grid</div>),
-          });
-        } else if (type === 'random') {
-          return undefined;
-        }
-        return ({
-          metadata: {
-            attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
-          },
-          control,
-        });
+    componentStoreStub = sinon.stub(ComponentStore, 'getDesignerComponent');
+
+    componentStoreStub.withArgs('grid').returns({
+      control: () => (<div className="dummy-grid">Dummy Grid</div>),
+    });
+    componentStoreStub.withArgs('random').returns(undefined);
+    componentStoreStub.returns({
+      metadata: {
+        attributes: [{ name: 'properties', dataType: 'complex', attributes: [] }],
       },
-    };
+      control,
+    });
   });
 
   after(() => {
-    window.componentStore = componentStore;
+    componentStoreStub.restore();
   });
 
   it('should render a blank canvas with grid and place holder text', () => {

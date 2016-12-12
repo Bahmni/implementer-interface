@@ -6,19 +6,24 @@ import ControlPropertiesContainer from 'form-builder/components/ControlPropertie
 import { getStore } from 'test/utils/storeHelper';
 import { setChangedProperty } from 'form-builder/actions/control';
 import sinon from 'sinon';
+import { ComponentStore } from 'bahmni-form-controls';
 
 chai.use(chaiEnzyme());
 
 describe('ControlPropertiesContainer', () => {
   let controlMetadata;
+  let componentStoreStub;
 
-  beforeEach(() => {
+  before(() => {
     const controlDescriptor = {
       metadata: { attributes: [{ name: 'properties', type: 'complex', attributes: [] }] },
     };
-    window.componentStore = {
-      getDesignerComponent: () => controlDescriptor,
-    };
+    componentStoreStub = sinon.stub(ComponentStore, 'getDesignerComponent');
+    componentStoreStub.returns(controlDescriptor);
+  });
+
+  after(() => {
+    componentStoreStub.restore();
   });
 
   it('should display Control Properties title', () => {
