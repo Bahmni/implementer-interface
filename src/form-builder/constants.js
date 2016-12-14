@@ -8,6 +8,7 @@ export const formBuilderConstants = {
   exceptionMessages: {
     conceptMissing: 'Please associate Concept to Obs',
   },
+  // eslint-disable-next-line
   getFullConceptRepresentation: (conceptName) => `/openmrs/ws/rest/v1/concept?s=byFullySpecifiedName&locale=en&name=${conceptName}&v=bahmni`,
   formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
