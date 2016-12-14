@@ -4,6 +4,8 @@ import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
 import { selectSource, setChangedProperty } from 'form-builder/actions/control';
 import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from 'form-builder/constants';
 
 class ControlPropertiesContainer extends Component {
   constructor() {
@@ -11,8 +13,22 @@ class ControlPropertiesContainer extends Component {
     this.onSelect = this.onSelect.bind(this);
   }
 
+  setErrorMessage(error) {
+    const errorNotification = { message: error.message, type: commonConstants.responseType.error };
+    const notificationsClone = this.state.notifications.slice(0);
+    notificationsClone.push(errorNotification);
+    this.setState({ notifications: notificationsClone });
+  }
+
   onSelect(concept) {
-    this.props.dispatch(selectSource(concept, this.props.selectedControl.id));
+    const conceptName = concept.name.name;
+    httpInterceptor
+      .get(formBuilderConstants.getFullConceptRepresentation(conceptName))
+      .then((data) => {
+        console.log(data.results[0]);
+        this.props.dispatch(selectSource(data.results[0], this.props.selectedControl.id));
+      })
+      .catch((error) => this.setErrorMessage(error));
   }
 
   onPropertyUpdate(properties, id) {
