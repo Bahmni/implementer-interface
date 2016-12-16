@@ -13,14 +13,15 @@ Implementer Interface
 2. Install node
 3. Install dependencies, `npm install`
 4. Ensure that Bahmni is running in the vagrant box and is accessible on ip 192.168.33.10.
-5. Start the webserver using `npm start`. You can configure the same in [intellij](http://picpaste.com/Screen_Shot_2016-10-30_at_7.04.02_PM-riCem4le.png) as well
-6. Update the `/etc/httpd/conf/httpd.conf` file in vagrant box.  Add these under the `AddOutputFilterByType DEFLATE text/javascript`
+5. Build implementer-interface - `npm run build`
+6. Start the webserver using `npm start`. You can configure the same in [intellij](http://picpaste.com/Screen_Shot_2016-10-30_at_7.04.02_PM-riCem4le.png) as well
+7. Update the `/etc/httpd/conf/httpd.conf` file in vagrant box.  Add these under the `AddOutputFilterByType DEFLATE text/javascript`
 `
 Header set Access-Control-Allow-Origin "http://localhost:8080"`
 `Header set Access-Control-Allow-Methods "*"`
 `Header set Access-Control-Allow-Credentials "true"`
-7. Restart the httpd service
+8. Restart the httpd service
 `
 service httpd restart
 `
-8. Access the application using https://192.168.33.10/implementer-interface
+9. Access server at http://localhost:8080
