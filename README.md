@@ -23,3 +23,4 @@ Header set Access-Control-Allow-Origin "http://localhost:8080"`
 `
 service httpd restart
 `
+8. Access the application using https://192.168.33.10/implementer-interface
