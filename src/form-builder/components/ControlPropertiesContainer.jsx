@@ -37,9 +37,8 @@ class ControlPropertiesContainer extends Component {
 
   displayAutoComplete() {
     const { selectedControl, conceptToControlMap } = this.props;
-    let value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
-    value = value ? [value] : [];
-    const disableAutoComplete = (value.length > 0);
+    const value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
+    const disableAutoComplete = value !== undefined;
     const dataTypesQueryParam = `dataTypes=${constants.supportedDataTypes}`;
     const representation = `v=${constants.conceptRepresentation}&name=`;
     const queryParams = `?s=byDataType&${dataTypesQueryParam}&${representation}`;

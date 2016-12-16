@@ -54,20 +54,20 @@ describe('ControlPropertiesContainer', () => {
       };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
-      expect(wrapper.find('AutoComplete').props().value).to.eql([{ name: 'someName' }]);
+      expect(wrapper.find('AutoComplete').props().value).to.eql({ name: 'someName' });
     });
 
-    it('should pass value as empty array when conceptToControlMap is undefined', () => {
+    it('should pass value as undefined when conceptToControlMap is undefined', () => {
       const state = {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: undefined,
       };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
-      expect(wrapper.find('AutoComplete').props().value).to.eql([]);
+      expect(wrapper.find('AutoComplete').props().value).to.eql(undefined);
     });
 
-    it('should pass value as empty array when ' +
+    it('should pass value as undefined when ' +
       'conceptToControlMap does not have value for selected control', () => {
       const state = {
         controlDetails: { selectedControl: controlMetadata },
@@ -75,7 +75,7 @@ describe('ControlPropertiesContainer', () => {
       };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
-      expect(wrapper.find('AutoComplete').props().value).to.eql([]);
+      expect(wrapper.find('AutoComplete').props().value).to.eql(undefined);
     });
 
     it('should pass disabled value as false when there is no value for Autocomplete', () => {
