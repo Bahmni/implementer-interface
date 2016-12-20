@@ -79,6 +79,8 @@
         background: $white;
         padding: 0;
         margin-left: 5px;
+        z-index: 999;
+        position: relative;
 
       }
       .concept-tooltip-description {
