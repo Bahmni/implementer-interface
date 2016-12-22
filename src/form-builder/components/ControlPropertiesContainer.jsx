@@ -19,7 +19,9 @@ class ControlPropertiesContainer extends Component {
     httpInterceptor
       .get(formBuilderConstants.getFullConceptRepresentation(conceptName))
       .then((data) => {
-        this.props.dispatch(selectSource(data.results[0], this.props.selectedControl.id));
+        const result = data.results[0];
+        result.display = result.name.name;
+        this.props.dispatch(selectSource(result, this.props.selectedControl.id));
       })
       .catch((error) => this.setErrorMessage(error));
   }
