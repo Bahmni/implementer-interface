@@ -153,53 +153,6 @@ em {
   font-style: normal;
 }
 
-
-table {
-  width: 100%;
-
-  th, td {
-    padding: 5px 10px;
-    border: 1px solid $lighterGray;
-  }
-
-  tr {
-    border: 1px solid $bodyBackground;
-  }
-
-  tr:nth-child(even) {
-    background: $focus;
-  }
-
-  tr:nth-child(odd) {
-    background: white;
-  }
-
-  tr.hover{
-    background: lighten(desaturate($link, 20%), 20%);
-    color: white;
-    cursor: pointer;
-  }
-
-  tr.selected{
-    background: $link;
-    color: white;
-
-    a {
-      color: white
-    }
-  }
-
-  thead th {
-    border-bottom: 1px solid $lighterGray;
-    background: $lighterGrey;
-    width: auto;
-    text-align: left;
-    word-break: normal;
-    font-weight: normal;
-    font-family: $primaryBoldFont;
-  }
-}
-
 .title {
   font-family: $primaryBoldFont;
 }
@@ -241,5 +194,6 @@ table {
 input[type="checkbox"]{
   @include check-box;
 }
+
 
 

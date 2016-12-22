@@ -7,7 +7,6 @@ import { formBuilderConstants } from 'form-builder/constants';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 
-
 export default class FormDetail extends Component {
   constructor() {
     super();
@@ -48,7 +47,9 @@ export default class FormDetail extends Component {
       return (
         <div>
           <div className="button-wrapper">
-            <button className="fr save-button" onClick={ this.onSave }>Save</button>
+            <div className="button-wrapper">
+              <button className="fr btn--highlight fr" onClick={ this.onSave }>Save</button>
+            </div>
           </div>
           <div className="container-main">
             <h2 className="header-title">{name}</h2>

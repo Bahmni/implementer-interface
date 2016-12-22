@@ -76,11 +76,9 @@ class FormDetailContainer extends Component {
         />
         <FormBuilderHeader />
         <div className="breadcrumb-wrap">
-          <div className="breadcrumb">
+          <div className="breadcrumb-inner">
             <div className="fl">
-              <div className="fl">
-                <FormBuilderBreadcrumbs routes={this.props.routes} />
-              </div>
+              <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
           </div>
         </div>

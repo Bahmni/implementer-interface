@@ -1,0 +1,35 @@
+.form-list table{
+  width: 100%;
+  border: 1px solid #b3b3b3;
+  font-size: 13px;
+  tr{
+    th, td {
+      padding:10px;
+      border-bottom: 1px solid #ccc;
+    }
+  }
+  thead tr {
+    background: #eee;
+    th{
+      width: auto;
+      text-align: left;
+      word-break: normal;
+      font-family: $primaryBoldFont;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+  tbody{
+    color: $bahmniTextColor;
+    padding: 7px 10px;
+    td.edit-icon{
+      i{
+        color: $black;
+        &:hover{
+          color: #5C8A93;
+        }
+      }
+    }
+
+  }
+}

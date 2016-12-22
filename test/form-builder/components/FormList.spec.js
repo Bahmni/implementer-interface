@@ -54,15 +54,16 @@ describe('FormList', () => {
 
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
-    expect(getData(0, 0)).to.eql('Vitals');
+    expect(getData(0, 0)).to.have.string('Vitals');
+
     expect(getData(0, 1)).to.eql('1.1');
     expect(getData(0, 2)).to.eql('10 Oct 10');
     expect(getData(0, 3)).to.eql('published');
     expect(wrapper.find('table').find('.edit-icon')).to.have.exactly(3).descendants('i');
 
 
-    expect(getData(1, 0)).to.eql('BP');
-    expect(getData(2, 0)).to.eql('Pulse');
+    expect(getData(1, 0)).to.have.string('BP');
+    expect(getData(2, 0)).to.have.string('Pulse');
 
     expect(getData(1, 2)).to.eql('09 Aug 10');
 

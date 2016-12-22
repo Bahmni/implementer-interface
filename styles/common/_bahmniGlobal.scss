@@ -11,26 +11,27 @@ a{
 }
 
 .header-wrap{
-  @include clearfix();
   background: $bahmniSecondaryColor;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  padding: 0 10px;
+  height: 52px;
 }
 
-.header ,.breadcrumb ,.container-content{
+.header ,.breadcrumb-inner ,.container-content{
   @include clearfix();
   max-width:$max-page-width ;
   margin:0 auto;
-  padding: 20px 0;
-}
-
-.header {
-  padding: 0px;
 }
 
 .section-grid {
   margin: 0 0 10px;
   font-size: 14px;
   position: relative;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);
+  @include box-shadow-for-section;
   border: 1px solid #699;
   border-radius: 5px 5px 0 0;
   background: $white;
@@ -43,8 +44,9 @@ h2.header-title {
   background: $bahmniSecondaryColor ;
   color: $lightestGray;
   font-size: 16px;
-  padding: 10px 20px;
+  padding: 10px;
   margin: 0;
+  border-radius: 3px 3px 0 0;
 }
 
 .nav{
@@ -57,10 +59,8 @@ h2.header-title {
       a{
         color: #fff;
         font-weight: 400;
-        transition: all .2s ease-out;
       }
       &:hover{
-        transform: translateY(-2px);
         opacity: 0.75;
       }
       &.active{
@@ -71,28 +71,6 @@ h2.header-title {
   }
 }
 
-//SECOND FIXED HEADER
-
-.breadcrumb-wrap{
-  @include clearfix();
-  background: #ddd;
-  box-shadow: 0 1px 8px #686666;
-  .page-title h1{
-    margin:0;
-    font-size: 17px;
-    color:$black;
-    padding: 9px 0;
-  }
-}
-
-.breadcrumb{
-  padding: 15px 0;
-  ul{
-    display: table;
-    float: left;
-    width:auto;
-  }
-}
 
 @mixin button($tcolor: #FFF, $bcolor: #DDD, $font: $bahmniTextColor) {
   border-radius: 3px;
@@ -107,6 +85,7 @@ h2.header-title {
   min-width: 0;
   max-width: 300px;
   text-decoration: none;
+  font-size: 14px;
   &:hover {
     opacity: 0.8;
   }
@@ -125,6 +104,9 @@ h2.header-title {
     background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
     border: 1px solid #88af28;
     color:#fff !important;
+    letter-spacing: 0.5px;
+    font-family: $primaryBoldFont;
+    border-radius: 2px;
   }
   &--close{
     padding: 5px;
@@ -136,11 +118,16 @@ h2.header-title {
 input[type="checkbox"]{
   background-color: #fafafa;
   border: 1px solid #cacece;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+  @include box-shadow-for-section;
   padding: 8px !important;
   border-radius: 3px;
   display: inline-block;
   position: relative;
+}
+
+.container-content-wrap{
+  @include clearfix();
+  padding-top: 106px;
 }
 
 .container-columns {
@@ -169,6 +156,7 @@ input[type="checkbox"]{
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   margin: 10px 0;
+  @include box-shadow-for-section;
 }
 
 .button-wrapper {
@@ -184,13 +172,13 @@ input[type="checkbox"]{
   border: $bahmniPrimaryBtnColorHover 1px solid;
 }
 
-ul li a.back-btn, ul li a.back-btn:hover, a.back-btn {
+ul li a.back-btn, a.back-btn {
   padding: 4px 10px 5px 10px;
   border: 1px solid #476b6b;
   background: linear-gradient(to bottom, #669999, #527a7a);
 }
 
-ul li a.back-btn i, ul li a.back-btn:hover i, a.back-btn i {
+ul li a.back-btn i, a.back-btn i {
   font-size: 30px;
   line-height: 1;
   margin: 0;

@@ -35,7 +35,7 @@ export default class FormBuilder extends Component {
       <div>
         <FormBuilderHeader />
         <div className="breadcrumb-wrap">
-          <div className="breadcrumb">
+          <div className="breadcrumb-inner">
             <div className="fl">
               <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
@@ -52,7 +52,10 @@ export default class FormBuilder extends Component {
           />
       <div className="container-content-wrap">
           <div className="container-content">
-             <FormList data={this.props.data} />
+            <div className="container-main form-list">
+              <h2 className="header-title">Observation Forms</h2>
+              <FormList data={this.props.data} />
+            </div>
           </div>
       </div>
       </div>

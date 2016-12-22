@@ -8,7 +8,7 @@ export default class FormList extends Component {
   getRows() {
     return _.map(this.props.data, (rowItem) => (
       <tr key={rowItem.id}>
-        <td>{rowItem.name}</td>
+        <td><i className=" fa fa-file-text-o"></i> {rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>published</td>
