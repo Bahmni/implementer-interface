@@ -35,12 +35,13 @@ class Canvas extends Component {
 
   prepareJson() {
     const controls = this.gridRef.getControls();
-    const formJson = {
-      id: this.props.formUuid,
+    return {
+      name: this.props.formName,
+      version: this.props.formVersion,
+      id: this.props.formId,
       uuid: this.props.formUuid,
       controls,
     };
-    return formJson;
   }
 
   gridReference(ref) {
@@ -71,8 +72,11 @@ class Canvas extends Component {
 
 Canvas.propTypes = {
   dispatch: PropTypes.func,
+  formId: PropTypes.number.isRequired,
+  formName: PropTypes.string.isRequired,
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
+  formVersion: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
 };
 

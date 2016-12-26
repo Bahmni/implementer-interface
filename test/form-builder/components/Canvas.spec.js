@@ -33,12 +33,16 @@ describe('Canvas', () => {
     componentStoreStub.restore();
   });
 
+
   it('should render a blank canvas with grid and place holder text', () => {
     const idGenerator = new IDGenerator();
     const canvas = mount(
       <Canvas
+        formId={1}
+        formName="formName"
         formResourceControls={[]}
         formUuid="someFormUuid"
+        formVersion="1"
         idGenerator={idGenerator}
         store={getStore()}
       />);
@@ -51,8 +55,11 @@ describe('Canvas', () => {
     const idGenerator = new IDGenerator();
     const canvas = mount(
       <Canvas
+        formId={1}
+        formName="formName"
         formResourceControls={[]}
         formUuid="someFormUuid"
+        formVersion="1"
         idGenerator={idGenerator}
         store={getStore()}
       />);
@@ -73,8 +80,11 @@ describe('Canvas', () => {
 
     const canvas = mount(
       <Canvas
+        formId={1}
+        formName="formName"
         formResourceControls={[]}
         formUuid="someFormUuid"
+        formVersion="1"
         idGenerator={idGenerator}
         store={store}
       />);
@@ -98,8 +108,11 @@ describe('Canvas', () => {
     ];
     const canvas = shallow(
       <Canvas
+        formId={1}
+        formName="formName"
         formResourceControls={formResourceJSON}
         formUuid="someFormUuid"
+        formVersion="1"
         idGenerator={idGenerator}
         store={store}
       />).shallow();
