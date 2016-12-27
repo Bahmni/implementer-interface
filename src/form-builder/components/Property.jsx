@@ -11,7 +11,9 @@ export class Property extends Component {
     return (
       <div>
         <label>{name}</label>
-        <input checked={value} onChange={(e) => this.updateProperty(e)} type="checkbox" />
+        <input checked={value} className="fr"
+          onChange={(e) => this.updateProperty(e)} type="checkbox"
+        />
       </div>
     );
   }

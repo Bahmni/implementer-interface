@@ -155,7 +155,6 @@ input[type="checkbox"]{
   @include clearfix();
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
-  margin: 10px 0;
   @include box-shadow-for-section;
 }
 

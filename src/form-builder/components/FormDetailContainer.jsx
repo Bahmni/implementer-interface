@@ -18,6 +18,7 @@ class FormDetailContainer extends Component {
     this.setState = this.setState.bind(this);
     this.saveFormResource = this.saveFormResource.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.onSave = this.onSave.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -36,6 +37,12 @@ class FormDetailContainer extends Component {
     this.props.dispatch(deselectControl());
     this.props.dispatch(removeSourceMap());
     this.props.dispatch(removeControlProperties());
+  }
+
+  onSave() {
+    if (this.formDetail) {
+      this.formDetail.onSave();
+    }
   }
 
   setErrorMessage(error) {
@@ -80,12 +87,14 @@ class FormDetailContainer extends Component {
             <div className="fl">
               <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
+            <button className="btn--highlight fr" onClick={ this.onSave } >Save</button>
           </div>
         </div>
         <div className="container-content-wrap">
           <div className="container-content">
             <FormDetail
               formData={this.state.formData}
+              ref={r => { this.formDetail = r; }}
               saveFormResource={ this.saveFormResource }
               setError={this.setErrorMessage}
             />

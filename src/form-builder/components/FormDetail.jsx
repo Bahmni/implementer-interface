@@ -46,11 +46,6 @@ export default class FormDetail extends Component {
       const idGenerator = new IDGenerator(formResourceControls);
       return (
         <div>
-          <div className="button-wrapper">
-            <div className="button-wrapper">
-              <button className="fr btn--highlight fr" onClick={ this.onSave }>Save</button>
-            </div>
-          </div>
           <div className="container-main">
             <h2 className="header-title">{name}</h2>
             <div className="container-columns">
