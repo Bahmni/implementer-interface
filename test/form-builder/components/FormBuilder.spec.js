@@ -56,7 +56,7 @@ describe('FormBuilder', () => {
     const formName = 'someFormName';
     const expectedFormJson = {
       name: formName,
-      version: '1.0',
+      version: '1',
       published: false,
     };
     instance.createForm(formName);

@@ -24,7 +24,7 @@ export default class FormBuilder extends Component {
   createForm(formName) {
     const form = {
       name: formName,
-      version: '1.0',
+      version: '1',
       published: false,
     };
     this.props.saveForm(form);
