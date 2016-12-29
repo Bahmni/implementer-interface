@@ -37,7 +37,7 @@ export default class FormDetail extends Component {
   render() {
     const { formData } = this.props;
     if (formData) {
-      const { name, uuid, id, resources, version } = this.props.formData;
+      const { name, uuid, id, resources } = this.props.formData;
       const formResources = filter(resources,
         (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
       const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
@@ -63,7 +63,6 @@ export default class FormDetail extends Component {
                     formName={name}
                     formResourceControls={formResourceControls}
                     formUuid={ uuid }
-                    formVersion={version}
                     idGenerator={idGenerator}
                     ref={this.canvasRef}
                   />
@@ -80,7 +79,6 @@ export default class FormDetail extends Component {
 
 FormDetail.propTypes = {
   formData: PropTypes.shape({
-    version: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     resources: PropTypes.array,

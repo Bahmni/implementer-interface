@@ -37,7 +37,6 @@ class Canvas extends Component {
     const controls = this.gridRef.getControls();
     return {
       name: this.props.formName,
-      version: this.props.formVersion,
       id: this.props.formId,
       uuid: this.props.formUuid,
       controls,
@@ -76,7 +75,6 @@ Canvas.propTypes = {
   formName: PropTypes.string.isRequired,
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
-  formVersion: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
 };
 
