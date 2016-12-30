@@ -10,34 +10,30 @@ import get from 'lodash/get';
 export default class FormDetail extends Component {
   constructor() {
     super();
-    this.onSave = this.onSave.bind(this);
     this.canvasRef = this.canvasRef.bind(this);
     this.canvas = undefined;
   }
 
-  onSave() {
-    try {
-      const formJson = this.canvas.getWrappedInstance().prepareJson();
-      const formName = this.props.formData ? this.props.formData.name : 'FormName';
-      const formResource = {
-        name: formName,
-        valueReference: JSON.stringify(formJson),
-        dataType: formBuilderConstants.formResourceDataType,
-      };
-      this.props.saveFormResource(formJson.uuid, formResource);
-    } catch (e) {
-      this.props.setError(e.getException());
+  getFormJson() {
+    if (this.canvas) {
+      return this.canvas.getWrappedInstance().prepareJson();
     }
+    return null;
   }
 
   canvasRef(ref) {
     this.canvas = ref;
   }
 
+  formTitle(name, version, published, editable) {
+    const status = published && !editable ? 'Published' : 'Draft';
+    return `${name} v${version} - ${status}`;
+  }
+
   render() {
     const { formData } = this.props;
     if (formData) {
-      const { name, uuid, id, resources } = this.props.formData;
+      const { name, uuid, id, resources, version, published, editable } = this.props.formData;
       const formResources = filter(resources,
         (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
       const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
@@ -46,8 +42,10 @@ export default class FormDetail extends Component {
       const idGenerator = new IDGenerator(formResourceControls);
       return (
         <div>
+          <div className="button-wrapper">
+          </div>
           <div className="container-main">
-            <h2 className="header-title">{name}</h2>
+            <h2 className="header-title">{this.formTitle(name, version, published, editable)}</h2>
             <div className="container-columns">
               <div className="column-side">
                 <ControlPool
@@ -81,9 +79,11 @@ FormDetail.propTypes = {
   formData: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    published: PropTypes.bool.isRequired,
     resources: PropTypes.array,
     uuid: PropTypes.string.isRequired,
+    version: PropTypes.string.isRequired,
+    editable: PropTypes.bool,
   }),
-  saveFormResource: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
 };

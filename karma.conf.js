@@ -39,9 +39,9 @@ module.exports = function (config) {
           statements: 95,
           branches: 93,
           functions: 94,
-          lines: 90,
+          lines: 89,
         },
       },
-    }
+    },
   });
 };

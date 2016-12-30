@@ -5,6 +5,7 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';
 import NotificationContainer from 'common/Notification';
 import get from 'lodash/get';
+import sortBy from 'lodash/sortBy';
 
 export default class FormBuilderContainer extends Component {
 
@@ -17,7 +18,9 @@ export default class FormBuilderContainer extends Component {
   componentWillMount() {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
-      .then((data) => this.setState({ data: data.results }))
+      .then((data) => {
+        this.setState({ data: this.orderFormByVersion(data.results) });
+      })
       .catch((error) => this.showErrors(error));
   }
 
@@ -26,6 +29,14 @@ export default class FormBuilderContainer extends Component {
     const notificationsClone = this.state.notifications.slice(0);
     notificationsClone.push(errorNotification);
     this.setState({ notifications: notificationsClone });
+  }
+  orderFormByVersion(forms) {
+    forms.forEach((form) => {
+      // eslint-disable-next-line
+      form.version = Number.parseInt(form.version, 10);
+    });
+    if (!forms) return [];
+    return sortBy(forms, ['name', 'version']);
   }
 
   showErrors(error) {

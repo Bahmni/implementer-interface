@@ -4,4 +4,5 @@ export const commonConstants = {
     error: 'error',
   },
   saveSuccessMessage: 'Form Saved Successfully',
+  publishSuccessMessage: 'Form Successfully Published',
 };
