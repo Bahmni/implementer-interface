@@ -20,6 +20,7 @@ describe('FormDetails', () => {
     version: '1',
     uuid: 'someUuid',
     resources: [],
+    published: false,
   };
   const control = () => (<div></div>);
 

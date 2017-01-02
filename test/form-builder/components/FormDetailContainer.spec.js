@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { FormDetailContainer } from 'form-builder/components/FormDetailContainer.jsx';
@@ -21,6 +21,9 @@ describe('FormDetailContainer', () => {
     resources: [],
     published: false,
   };
+
+  const publishedFormData = Object.assign({}, formData, { published: true });
+
   const formJson = { uuid: 'FID' };
 
   const formResource = {
@@ -68,6 +71,7 @@ describe('FormDetailContainer', () => {
   });
 
   it('should render appropriate controls with appropriate props', () => {
+    sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
     const wrapper = mount(
       <FormDetailContainer
         {...defaultProps}
@@ -87,6 +91,7 @@ describe('FormDetailContainer', () => {
 
     const formBuilderBreadcrumbs = wrapper.find('FormBuilderBreadcrumbs');
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
+    httpInterceptor.get.restore();
   });
 
   it('should call the appropriate endpoint to fetch the formData', (done) => {
@@ -107,6 +112,13 @@ describe('FormDetailContainer', () => {
   });
 
   describe('when NOT published', () => {
+    beforeEach(() => {
+      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+    });
+    afterEach(() => {
+      httpInterceptor.get.restore();
+    });
+
     it('should show save button', () => {
       const wrapper = mount(
         <FormDetailContainer
@@ -120,7 +132,6 @@ describe('FormDetailContainer', () => {
     });
 
     it('should save form when save button is clicked', (done) => {
-      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
       sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
       const wrapper = mount(
         <FormDetailContainer
@@ -139,7 +150,6 @@ describe('FormDetailContainer', () => {
         );
 
         httpInterceptor.post.restore();
-        httpInterceptor.get.restore();
         done();
       }, 500);
     });
@@ -157,7 +167,6 @@ describe('FormDetailContainer', () => {
     });
 
     it('should publish form when the publish button is clicked', (done) => {
-      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
       sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
       const wrapper = mount(
         <FormDetailContainer
@@ -175,13 +184,11 @@ describe('FormDetailContainer', () => {
         );
 
         httpInterceptor.post.restore();
-        httpInterceptor.get.restore();
         done();
       }, 500);
     });
 
     it('should NOT show edit button', (done) => {
-      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
       const wrapper = mount(
         <FormDetailContainer
           {...defaultProps}
@@ -191,28 +198,68 @@ describe('FormDetailContainer', () => {
 
       setTimeout(() => {
         expect(editButton.nodes.length).to.equal(0);
-
-        httpInterceptor.get.restore();
         done();
       }, 500);
     });
   });
 
   describe('when published', () => {
-    it.only('should NOT show save button', (done) => {
+    beforeEach(() => {
+      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(publishedFormData));
+    });
 
+    afterEach(() => {
+      httpInterceptor.get.restore();
+    });
+
+    it('should show edit button', (done) => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+      const editButton = wrapper.find('.edit-button');
+
+      setTimeout(() => {
+        expect(editButton.text()).to.equal('Edit');
+        done();
+      }, 500);
+    });
+
+    it('should make the form editable when edit button is clicked', (done) => {
+      sinon.stub(window, 'confirm', () => true);
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+
+      wrapper.setState({ formData: publishedFormData });
+      const editButton = wrapper.find('.edit-button');
+      const formDetail = wrapper.find('FormDetail');
+      editButton.simulate('click');
+
+      setTimeout(() => {
+        expect(formDetail.prop('formData').editable).to.equal(true);
+        window.confirm.restore();
+        done();
+      }, 1000);
+    });
+
+    it('should NOT show publish button', (done) => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      wrapper.setState({ formData: publishedFormData });
+      const publishButton = wrapper.find('.publish-button');
+
+      setTimeout(() => {
+        expect(publishButton.nodes.length).to.equal(0);
+        done();
+      }, 500);
     });
   });
-  //it('should publish form on click of Publish button', () => {
-  //  sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
-  //  const wrapper = mount(
-  //    <FormDetailContainer
-  //      {...defaultProps}
-  //    />, { context }
-  //  );
-  //
-  //  wrapper.find('.publish-button').simulate('click');
-  //  expect(saveButton.text()).to.equal('Save');
-  //  httpInterceptor.post.restore();
-  //});
 });

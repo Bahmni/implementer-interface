@@ -51,6 +51,7 @@ export class FormDetailContainer extends Component {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
         this.state.formData.resources[0].uuid : '';
+
       const formResource = {
         form: {
           name: formName,
@@ -60,7 +61,20 @@ export class FormDetailContainer extends Component {
         dataType: formBuilderConstants.formResourceDataType,
         uuid: formResourceUuid,
       };
-      this._saveFormResource(formJson.uuid, formResource);
+      this.saveFormResource(formJson.uuid, formResource);
+    } catch (e) {
+      this.setErrorMessage(e.getException());
+    }
+  }
+
+  onEdit() {
+    try {
+      /* eslint-disable no-alert*/
+      const confirmResult = confirm('Edit of the form will allow you to ' +
+        'create a new version of form. Do you want to proceed?');
+      if (confirmResult) {
+        this.editForm();
+      }
     } catch (e) {
       this.setErrorMessage(e.getException());
     }

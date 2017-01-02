@@ -8,7 +8,7 @@ export default class FormList extends Component {
   getRows() {
     const data = _.map(this.props.data, (rowItem) => (
       <tr key={rowItem.id}>
-        <td><i className=" fa fa-file-text-o"></i> {rowItem.name}</td>
+        <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{this._getFormStatus(rowItem)}</td>
