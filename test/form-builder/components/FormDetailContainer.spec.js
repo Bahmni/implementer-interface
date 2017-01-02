@@ -1,17 +1,16 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
-import chai from 'chai';
-import FormDetail from 'form-builder/components/FormDetail.jsx';
-import { getStore } from 'test/utils/storeHelper';
-import { Provider } from 'react-redux';
+import chai, { expect } from 'chai';
+import { FormDetailContainer } from 'form-builder/components/FormDetailContainer.jsx';
 import { ComponentStore } from 'bahmni-form-controls';
 import sinon from 'sinon';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from 'form-builder/constants';
 
 chai.use(chaiEnzyme());
 
 describe.skip('FormDetailContainer', () => {
-  let wrapper;
   let getDesignerComponentStub;
   let getAllDesignerComponentsStub;
   const formData = {
@@ -20,7 +19,21 @@ describe.skip('FormDetailContainer', () => {
     version: '1',
     uuid: 'someUuid',
     resources: [],
+    published: false,
   };
+
+  const params =
+    'v=custom:(id,uuid,name,version,published,auditInfo,' +
+    'resources:(valueReference,dataType,uuid))';
+  const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
+
+  const defaultProps = {
+    params: { formUuid: 'FID' },
+    routes: [],
+    dispatch: () => {},
+  };
+  const context = { router: {} };
+
   const control = () => (<div></div>);
 
   before(() => {
@@ -31,8 +44,11 @@ describe.skip('FormDetailContainer', () => {
       },
       control,
     });
-    getAllDesignerComponentsStub = sinon.stub(ComponentStore, 'getAllDesignerComponents');
-    getAllDesignerComponentsStub.returns({});
+    getAllDesignerComponentsStub = sinon.stub(
+      ComponentStore,
+      'getAllDesignerComponents',
+      () => ({})
+    );
   });
 
   after(() => {
@@ -40,100 +56,99 @@ describe.skip('FormDetailContainer', () => {
     getAllDesignerComponentsStub.restore();
   });
 
-  it('should save the form on save button press', () => {
-    const mockSaveFormResource = {
-      saveFormResource: () => {
-      },
-    };
-    const mockFunc = sinon.mock(mockSaveFormResource);
-    mockFunc.expects('saveFormResource').once().withArgs('someUuid',
-      sinon.match.has('form', {
-        name: 'someFormName',
-        uuid: 'someUuid',
-      }));
-    wrapper = mount(
-      <Provider store={getStore()}>
-        <FormDetail
-          formData={formData}
-          publishForm={() => {}}
-          saveFormResource={mockSaveFormResource.saveFormResource}
-          setError={() => {}}
-        />
-      </Provider>
+  it('should render appropriate controls with appropriate props', () => {
+    const wrapper = mount(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
     );
 
-    wrapper.find('.save-button').simulate('click');
-    mockFunc.verify();
+    const formDetail = wrapper.find('FormDetail');
+    expect(formDetail).to.have.prop('editForm');
+    expect(formDetail.prop('formData')).to.equal(undefined);
+    expect(formDetail).to.have.prop('publishForm');
+    expect(formDetail).to.have.prop('saveFormResource');
+    expect(formDetail).to.have.prop('setError');
+
+    const notification = wrapper.find('NotificationContainer');
+    expect(notification).to.have.prop('notifications');
+    expect(notification).to.have.prop('closeMessage');
+
+    const formBuilderBreadcrumbs = wrapper.find('FormBuilderBreadcrumbs');
+    expect(formBuilderBreadcrumbs).to.have.prop('routes');
   });
 
-  it('should set error on failure to save form', () => {
-    const mockSetError = {
-      setError: () => {
-      },
-    };
-    const mockError = sinon.mock(mockSetError);
-    mockError.expects('setError').once();
-
-    wrapper = mount(
-      <Provider store={getStore()}>
-        <FormDetail
-          formData={formData}
-          publishForm={() => {}}
-          // eslint-disable-next-line
-          saveFormResource={() => {throw { getException: function () {} };}}
-          setError={mockSetError.setError}
-        />
-      </Provider>
+  it('should call the appropriate endpoint to fetch the formData', () => {
+    sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+    mount(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
     );
 
-    wrapper.find('.save-button').simulate('click');
-    mockError.verify();
+    sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
+    httpInterceptor.get.restore();
+  });
+
+  describe('when NOT published', () => {
+    it('should show save button', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      const saveButton = wrapper.find('.save-button');
+      expect(saveButton.text()).to.equal('Save');
+      expect(saveButton).to.have.prop('onClick');
+    });
+
+    it('should show publish button', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      const publishButton = wrapper.find('.publish-button');
+      expect(publishButton.text()).to.equal('Publish');
+      expect(publishButton).to.have.prop('onClick');
+    });
+
+    it('should call the save form endpoint when save button is clicked', () => {
+      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      sinon.stub(wrapper.instance(), 'getFormJson', () => ({ uuid: 'FID' }));
+      wrapper.find('.save-button').simulate('click');
+      httpInterceptor.post.restore();
+    });
+  });
+
+  it('should show save button if the form is NOT published', () => {
+    const wrapper = mount(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+
+    const saveButton = wrapper.find('.save-button');
+    expect(saveButton.text()).to.equal('Save');
+    expect(saveButton).to.have.prop('onClick');
   });
 
   it('should publish form on click of Publish button', () => {
-    const mockPublishForm = {
-      publishForm: () => {
-      },
-    };
-    const mockPublish = sinon.mock(mockPublishForm);
-    mockPublish.expects('publishForm').once().withArgs('someUuid');
-
-    wrapper = mount(
-      <Provider store={getStore()}>
-        <FormDetail
-          formData={formData}
-          publishForm={mockPublishForm.publishForm}
-          saveFormResource={() => {}}
-          setError={() => {}}
-        />
-      </Provider>
+    sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
+    const wrapper = mount(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
     );
 
     wrapper.find('.publish-button').simulate('click');
-    mockPublish.verify();
-  });
-
-  it('should set error on failure to Publish form', () => {
-    const mockSetError = {
-      setError: () => {
-      },
-    };
-    const mockError = sinon.mock(mockSetError);
-    mockError.expects('setError').once();
-
-    wrapper = mount(
-      <Provider store={getStore()}>
-        <FormDetail
-          formData={formData}
-          // eslint-disable-next-line
-          publishForm={() => { throw { getException: function () {} };} }
-          saveFormResource={() => {}}
-          setError={mockSetError.setError}
-        />
-      </Provider>
-    );
-
-    wrapper.find('.publish-button').simulate('click');
-    mockError.verify();
+    httpInterceptor.post.restore();
   });
 });
