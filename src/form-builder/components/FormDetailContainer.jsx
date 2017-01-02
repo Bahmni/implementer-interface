@@ -16,12 +16,9 @@ class FormDetailContainer extends Component {
     super(props);
     this.state = { formData: undefined, notifications: [] };
     this.setState = this.setState.bind(this);
-    this.saveFormResource = this.saveFormResource.bind(this);
-    this.publishForm = this.publishForm.bind(this);
-    this.onEdit = this.onEdit.bind(this);
-    this.editForm = this.editForm.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
+    this.onEdit = this.onEdit.bind(this);
     this.onPublish = this.onPublish.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
@@ -60,7 +57,7 @@ class FormDetailContainer extends Component {
         dataType: formBuilderConstants.formResourceDataType,
         uuid: formResourceUuid,
       };
-      this.saveFormResource(formJson.uuid, formResource);
+      this._saveFormResource(formJson.uuid, formResource);
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -71,7 +68,7 @@ class FormDetailContainer extends Component {
       const confirmResult = confirm('Edit of the form will allow you to ' +
         'create a new version of form. Do you want to proceed?');
       if (confirmResult) {
-        this.editForm();
+        this._editForm();
       }
     } catch (e) {
       this.setErrorMessage(e.getException());
@@ -81,7 +78,7 @@ class FormDetailContainer extends Component {
   onPublish() {
     try {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      this.publishForm(formUuid);
+      this._publishForm(formUuid);
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -120,18 +117,18 @@ class FormDetailContainer extends Component {
     return (<button className="fr save-button" onClick={ this.onSave }>Save</button>);
   }
 
-  editForm() {
+  _editForm() {
     const formData = this.state.formData;
     formData.editable = true;
     formData.version = '  ';
     this.setState({ formData });
   }
 
-  saveFormResource(uuid, formJson) {
+  _saveFormResource(uuid, formJson) {
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then((response) => {
-        const uuid2 = response.form.uuid;
-        this.context.router.push(`/form-builder/${uuid2}`);
+        const updatedUuid = response.form.uuid;
+        this.context.router.push(`/form-builder/${updatedUuid}`);
         const successNotification = {
           message: commonConstants.saveSuccessMessage,
           type: commonConstants.responseType.success,
@@ -139,12 +136,12 @@ class FormDetailContainer extends Component {
         const notificationsClone = this.state.notifications.splice(0);
         notificationsClone.push(successNotification);
         this.setState({ notifications: notificationsClone,
-          formData: this.formResourceMapper(response) });
+          formData: this._formResourceMapper(response) });
       })
       .catch((error) => this.setErrorMessage(error));
   }
 
-  publishForm(formUuid) {
+  _publishForm(formUuid) {
     httpInterceptor.post(formBuilderConstants.bahmniFormPublishUrl(formUuid))
       .then((response) => {
         const successNotification = {
@@ -153,14 +150,14 @@ class FormDetailContainer extends Component {
         };
         const notificationsClone = this.state.notifications.splice(0);
         notificationsClone.push(successNotification);
-        const publishedFormData = Object.assign({}, this.state.formData);
-        publishedFormData.published = response.published;
+        const publishedFormData = Object.assign({}, this.state.formData,
+          { published: response.published, version: response.version });
         this.setState({ notifications: notificationsClone, formData: publishedFormData });
       })
       .catch((error) => this.setErrorMessage(error));
   }
 
-  formResourceMapper(responseObject) {
+  _formResourceMapper(responseObject) {
     const form = Object.assign({}, responseObject.form);
     const formResource = { name: form.name,
       dataType: responseObject.dataType,
@@ -196,11 +193,8 @@ class FormDetailContainer extends Component {
         <div className="container-content-wrap">
           <div className="container-content">
             <FormDetail
-              editForm={ this.editForm }
               formData={this.state.formData}
-              publishForm={ this.publishForm }
               ref={r => { this.formDetail = r; }}
-              saveFormResource={ this.saveFormResource }
               setError={this.setErrorMessage}
             />
           </div>
