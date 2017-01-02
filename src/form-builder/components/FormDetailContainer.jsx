@@ -37,6 +37,7 @@ class FormDetailContainer extends Component {
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data }))
       .catch((error) => this.setErrorMessage(error));
+    // .then is untested
   }
 
   componentWillUpdate() {
@@ -49,12 +50,13 @@ class FormDetailContainer extends Component {
     try {
       const formJson = this.getFormJson();
       const formName = this.state.formData ? this.state.formData.name : 'FormName';
+      const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
         this.state.formData.resources[0].uuid : '';
       const formResource = {
         form: {
           name: formName,
-          uuid: this.state.formData.uuid,
+          uuid: formUuid,
         },
         valueReference: JSON.stringify(formJson),
         dataType: formBuilderConstants.formResourceDataType,
