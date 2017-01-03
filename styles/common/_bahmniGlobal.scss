@@ -86,6 +86,7 @@ h2.header-title {
   max-width: 300px;
   text-decoration: none;
   font-size: 14px;
+  margin-left: 10px;
   &:hover {
     opacity: 0.8;
   }
@@ -105,7 +106,7 @@ h2.header-title {
     border: 1px solid #88af28;
     color:#fff !important;
     letter-spacing: 0.5px;
-    font-family: $primaryBoldFont;
+    font-family: $primarySemiBoldFont;
     border-radius: 2px;
   }
   &--close{
@@ -156,6 +157,10 @@ input[type="checkbox"]{
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   @include box-shadow-for-section;
+  &.published{
+    pointer-events: none;
+    opacity: 0.8;
+  }
 }
 
 .button-wrapper {
@@ -163,12 +168,6 @@ input[type="checkbox"]{
   clear:both;
   overflow: hidden;
   margin: 0 0 10px;
-}
-
-.save-button {
-  background: $bahmniPrimaryBtnColor;
-  color: white !important;
-  border: $bahmniPrimaryBtnColorHover 1px solid;
 }
 
 ul li a.back-btn, a.back-btn {
@@ -202,4 +201,31 @@ a.back-btn:hover {
   color: #FFFFFF;
   cursor: pointer;
   opacity: 0.8;
+}
+
+.info-view-mode-wrap{
+  @include clearfix;
+  @include box-shadow-for-section;
+  border: 1px $lightGray solid;
+  padding: 10px;
+  font-size: 14px;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #eee;
+  color: #FFA50D;
+  position: relative;
+}
+.info-view-mode{
+  display: table;
+  width: auto;
+  margin: 0 auto;
+  .fa-info-circle{
+    font-size: 28px;
+    padding: 0 5px;
+  }
+  .info-message{
+    display: table;
+    float: left;
+    padding: 5px 0;
+  }
 }

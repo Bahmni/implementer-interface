@@ -2,7 +2,7 @@
   position: fixed;
   top: 52px;
   z-index: 9;
-  background: $lighterGray;
+  background: #fafafa;
   width: 100%;
   left: 0;
   box-shadow: 0px 1px 8px #686666;
@@ -47,7 +47,7 @@
         position: absolute;
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
-        border-left: 5px solid $lighterGray;
+        border-left: 5px solid #fafafa;
       }
       &:first-child {
         padding-left: 0;

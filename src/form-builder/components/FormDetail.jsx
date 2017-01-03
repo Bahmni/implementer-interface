@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import Canvas from 'form-builder/components/Canvas.jsx';
+import classNames from 'classnames';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import { formBuilderConstants } from 'form-builder/constants';
@@ -44,7 +45,7 @@ export default class FormDetail extends Component {
         <div>
           <div className="button-wrapper">
           </div>
-          <div className="container-main">
+          <div className={ classNames('container-main', { published: (published && !editable) }) }>
             <h2 className="header-title">{this.formTitle(name, version, published, editable)}</h2>
             <div className="container-columns">
               <div className="column-side">

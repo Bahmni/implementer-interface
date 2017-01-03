@@ -66,10 +66,11 @@ $largeSpacing: 20px;
 /* _fonts */
 
 $primaryFont: "OpenSans";
-$primaryBoldFont: "OpenSansBold";
 $primaryLightFont: "OpenSansLight";
 $primaryItalicFont: "OpenSansItalic";
 
+$primaryBoldFont: "OpenSansBold";
+$primarySemiBoldFont: "OpenSansSemiBold";
 
 /* _mixins */
 @mixin font-size($sizeValue: 1) {

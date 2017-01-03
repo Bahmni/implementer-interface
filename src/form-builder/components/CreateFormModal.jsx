@@ -43,7 +43,7 @@ export default class CreateFormModal extends Component {
                 />
               </div>
               <div className="button-wrapper fr">
-                <input className="btn--highlight" type="submit" value="Create Form" />
+                <input className="button btn--highlight" type="submit" value="Create Form" />
                 <button className="btn" onClick={this.props.closeModal} type="reset">
                   Cancel
                 </button>

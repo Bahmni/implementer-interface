@@ -22,7 +22,7 @@ export default class FormList extends Component {
     if (rowItem.published) {
       return (
         <Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>
-         <i>VIEW</i>
+            <i className="fa fa-eye"></i>
         </Link>
       );
     }

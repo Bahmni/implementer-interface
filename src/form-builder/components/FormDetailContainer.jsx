@@ -108,13 +108,34 @@ class FormDetailContainer extends Component {
     return null;
   }
 
-  showSaveOrEditButton() {
+  showSaveButton() {
+    const isEditable = this.state.formData ? this.state.formData.editable : false;
+    const isPublished = this.state.formData ? this.state.formData.published : false;
+    if (!isPublished || isEditable) {
+      return (
+          <button className="fr save-button btn--highlight" onClick={ this.onSave }>Save</button>
+      );
+    }
+    return null;
+  }
+  showEditButton() {
     const isEditable = this.state.formData ? this.state.formData.editable : false;
     const isPublished = this.state.formData ? this.state.formData.published : false;
     if (isPublished && !isEditable) {
-      return (<button className="fr edit-button" onClick={ this.onEdit }>Edit</button>);
+      return (
+        <div className="info-view-mode-wrap">
+          <div className="info-view-mode">
+            <i className="fa fa-info-circle fl"></i>
+            <span className="info-message">This
+              <strong>Form</strong> is a <strong>Published</strong> version.
+              For editing click on
+            </span>
+            <button className="fr edit-button" onClick={ this.onEdit }>Edit</button>
+          </div>
+        </div>
+      );
     }
-    return (<button className="fr save-button" onClick={ this.onSave }>Save</button>);
+    return null;
   }
 
   _editForm() {
@@ -186,12 +207,15 @@ class FormDetailContainer extends Component {
             <div className="fl">
               <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
-            {this.showSaveOrEditButton()}
-            {this.showPublishButton()}
+            <div className="fr">
+              {this.showSaveButton()}
+              {this.showPublishButton()}
+            </div>
           </div>
         </div>
         <div className="container-content-wrap">
           <div className="container-content">
+            {this.showEditButton()}
             <FormDetail
               formData={this.state.formData}
               ref={r => { this.formDetail = r; }}
