@@ -10,7 +10,7 @@ import { formBuilderConstants } from 'form-builder/constants';
 
 chai.use(chaiEnzyme());
 
-describe.skip('FormDetailContainer', () => {
+describe('FormDetailContainer', () => {
   let getDesignerComponentStub;
   let getAllDesignerComponentsStub;
   const formData = {
@@ -20,6 +20,17 @@ describe.skip('FormDetailContainer', () => {
     uuid: 'someUuid',
     resources: [],
     published: false,
+  };
+  const formJson = { uuid: 'FID' };
+
+  const formResource = {
+    form: {
+      name: 'someFormName',
+      uuid: 'someUuid',
+    },
+    valueReference: JSON.stringify(formJson),
+    dataType: formBuilderConstants.formResourceDataType,
+    uuid: '',
   };
 
   const params =
@@ -78,16 +89,21 @@ describe.skip('FormDetailContainer', () => {
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
   });
 
-  it('should call the appropriate endpoint to fetch the formData', () => {
+  it('should call the appropriate endpoint to fetch the formData', (done) => {
     sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
-    mount(
+    const wrapper = mount(
       <FormDetailContainer
         {...defaultProps}
       />, { context }
     );
+    const formDetail = wrapper.find('FormDetail');
+    setTimeout(() => {
+      expect(formDetail.prop('formData')).to.eql(formData);
+      httpInterceptor.get.restore();
+      done();
+    }, 500);
 
     sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
-    httpInterceptor.get.restore();
   });
 
   describe('when NOT published', () => {
@@ -103,6 +119,31 @@ describe.skip('FormDetailContainer', () => {
       expect(saveButton).to.have.prop('onClick');
     });
 
+    it('should save form when save button is clicked', (done) => {
+      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      const saveButton = wrapper.find('.save-button');
+
+      setTimeout(() => {
+        saveButton.simulate('click');
+        sinon.assert.calledWith(
+          httpInterceptor.post,
+          formBuilderConstants.bahmniFormResourceUrl,
+          formResource
+        );
+
+        httpInterceptor.post.restore();
+        httpInterceptor.get.restore();
+        done();
+      }, 500);
+    });
+
     it('should show publish button', () => {
       const wrapper = mount(
         <FormDetailContainer
@@ -115,40 +156,63 @@ describe.skip('FormDetailContainer', () => {
       expect(publishButton).to.have.prop('onClick');
     });
 
-    it('should call the save form endpoint when save button is clicked', () => {
+    it('should publish form when the publish button is clicked', (done) => {
+      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
       sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
       const wrapper = mount(
         <FormDetailContainer
           {...defaultProps}
         />, { context }
       );
-      sinon.stub(wrapper.instance(), 'getFormJson', () => ({ uuid: 'FID' }));
-      wrapper.find('.save-button').simulate('click');
-      httpInterceptor.post.restore();
+      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      const publishButton = wrapper.find('.publish-button');
+
+      setTimeout(() => {
+        publishButton.simulate('click');
+        sinon.assert.calledWith(
+          httpInterceptor.post,
+          formBuilderConstants.bahmniFormPublishUrl(formData.uuid)
+        );
+
+        httpInterceptor.post.restore();
+        httpInterceptor.get.restore();
+        done();
+      }, 500);
+    });
+
+    it('should NOT show edit button', (done) => {
+      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      const editButton = wrapper.find('.edit-button');
+
+      setTimeout(() => {
+        expect(editButton.nodes.length).to.equal(0);
+
+        httpInterceptor.get.restore();
+        done();
+      }, 500);
     });
   });
 
-  it('should show save button if the form is NOT published', () => {
-    const wrapper = mount(
-      <FormDetailContainer
-        {...defaultProps}
-      />, { context }
-    );
+  describe('when published', () => {
+    it.only('should NOT show save button', (done) => {
 
-    const saveButton = wrapper.find('.save-button');
-    expect(saveButton.text()).to.equal('Save');
-    expect(saveButton).to.have.prop('onClick');
+    });
   });
-
-  it('should publish form on click of Publish button', () => {
-    sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
-    const wrapper = mount(
-      <FormDetailContainer
-        {...defaultProps}
-      />, { context }
-    );
-
-    wrapper.find('.publish-button').simulate('click');
-    httpInterceptor.post.restore();
-  });
+  //it('should publish form on click of Publish button', () => {
+  //  sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
+  //  const wrapper = mount(
+  //    <FormDetailContainer
+  //      {...defaultProps}
+  //    />, { context }
+  //  );
+  //
+  //  wrapper.find('.publish-button').simulate('click');
+  //  expect(saveButton.text()).to.equal('Save');
+  //  httpInterceptor.post.restore();
+  //});
 });

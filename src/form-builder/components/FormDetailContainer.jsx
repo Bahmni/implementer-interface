@@ -11,7 +11,7 @@ import { deselectControl, removeControlProperties, removeSourceMap }
 import NotificationContainer from 'common/Notification';
 import EditModal from 'form-builder/components/EditModal.jsx';
 
-class FormDetailContainer extends Component {
+export class FormDetailContainer extends Component {
 
   constructor(props) {
     super(props);
