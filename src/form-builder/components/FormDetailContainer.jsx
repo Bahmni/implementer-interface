@@ -10,7 +10,7 @@ import { deselectControl, removeControlProperties, removeSourceMap }
   from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 
-class FormDetailContainer extends Component {
+export class FormDetailContainer extends Component {
 
   constructor(props) {
     super(props);
