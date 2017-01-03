@@ -1,6 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 
 export class Property extends Component {
+
+  componentWillMount() {
+    const { name, value } = this.props;
+    this.props.onPropertyUpdate({ [name]: value });
+  }
+
   updateProperty(e) {
     const { name } = this.props;
     this.props.onPropertyUpdate({ [name]: e.target.checked });

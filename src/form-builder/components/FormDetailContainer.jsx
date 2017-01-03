@@ -130,7 +130,7 @@ class FormDetailContainer extends Component {
             <button className="fr edit-button" onClick={() => this.openFormModal()}>Edit</button>
             <EditModal
               closeModal={() => this.closeFormModal()}
-              editForm={(formData) => this.editForm(this.state.formData)}
+              editForm={() => this.editForm(this.state.formData)}
               showModal={this.state.showModal}
             />
           </div>
