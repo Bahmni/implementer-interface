@@ -7,7 +7,7 @@ module.exports = function (config) {
     files: [
       'test/index.js'
     ],
-    port: 8006,
+    port: 8080,
     captureTimeout: 60000,
     browserNoActivityTimeout: 60000,
     frameworks: ['mocha', 'chai'],
