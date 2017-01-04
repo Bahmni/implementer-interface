@@ -9,22 +9,23 @@ import { connect } from 'react-redux';
 import { deselectControl, removeControlProperties, removeSourceMap }
   from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
+import EditModal from 'form-builder/components/EditModal.jsx';
 
 class FormDetailContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { formData: undefined, notifications: [] };
+    this.state = { formData: undefined, showModal: false, notifications: [] };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
-    this.onEdit = this.onEdit.bind(this);
+    this.openFormModal = this.openFormModal.bind(this);
+    this.closeFormModal = this.closeFormModal.bind(this);
     this.onPublish = this.onPublish.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
   }
-
 
   componentWillMount() {
     const params =
@@ -63,18 +64,6 @@ class FormDetailContainer extends Component {
     }
   }
 
-  onEdit() {
-    try {
-      const confirmResult = confirm('Edit of the form will allow you to ' +
-        'create a new version of form. Do you want to proceed?');
-      if (confirmResult) {
-        this._editForm();
-      }
-    } catch (e) {
-      this.setErrorMessage(e.getException());
-    }
-  }
-
   onPublish() {
     try {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
@@ -96,6 +85,14 @@ class FormDetailContainer extends Component {
     const notificationsClone = this.state.notifications.slice(0);
     notificationsClone.push(errorNotification);
     this.setState({ notifications: notificationsClone });
+  }
+
+  closeFormModal() {
+    this.setState({ showModal: false });
+  }
+
+  openFormModal() {
+    this.setState({ showModal: true });
   }
 
   showPublishButton() {
@@ -126,11 +123,16 @@ class FormDetailContainer extends Component {
         <div className="info-view-mode-wrap">
           <div className="info-view-mode">
             <i className="fa fa-info-circle fl"></i>
-            <span className="info-message">This
-              <strong>Form</strong> is a <strong>Published</strong> version.
+            <span className="info-message">
+              This <strong>Form</strong> is a <strong>Published</strong> version.
               For editing click on
             </span>
-            <button className="fr edit-button" onClick={ this.onEdit }>Edit</button>
+            <button className="fr edit-button" onClick={() => this.openFormModal()}>Edit</button>
+            <EditModal
+              closeModal={() => this.closeFormModal()}
+              editForm={(formData) => this.editForm(this.state.formData)}
+              showModal={this.state.showModal}
+            />
           </div>
         </div>
       );
@@ -138,10 +140,9 @@ class FormDetailContainer extends Component {
     return null;
   }
 
-  _editForm() {
-    const formData = this.state.formData;
-    formData.editable = true;
-    formData.version = '  ';
+  editForm(formData) {
+    this.state.formData.editable = true;
+    this.state.formData.version = '  ';
     this.setState({ formData });
   }
 
