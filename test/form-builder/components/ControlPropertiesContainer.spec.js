@@ -7,6 +7,7 @@ import { getStore } from 'test/utils/storeHelper';
 import { setChangedProperty } from 'form-builder/actions/control';
 import sinon from 'sinon';
 import { ComponentStore } from 'bahmni-form-controls';
+import { formBuilderConstants as constants } from 'form-builder/constants';
 
 chai.use(chaiEnzyme());
 
@@ -41,10 +42,25 @@ describe('ControlPropertiesContainer', () => {
       expect(wrapper).to.not.have.descendants('AutoComplete');
     });
 
-    it('should display autocomplete component when control is selected', () => {
+    it('should display autocomplete component when obs control is selected', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
+      expect(wrapper.find(('AutoComplete')).props()
+        .optionsUrl.includes(constants.supportedObsDataTypes)).to.eql(true);
+      expect(wrapper.find(('AutoComplete')).props()
+        .optionsUrl.includes(constants.supportedObsGroupDataTypes)).to.eql(false);
+    });
+
+    it('should display autocomplete component when obsGroup control is selected', () => {
+      controlMetadata.type = 'obsGroupControl';
+      const state = { controlDetails: { selectedControl: controlMetadata } };
+      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      expect(wrapper).to.have.descendants('AutoComplete');
+      expect(wrapper.find(('AutoComplete')).props()
+        .optionsUrl.includes(constants.supportedObsGroupDataTypes)).to.eql(true);
+      expect(wrapper.find(('AutoComplete')).props()
+        .optionsUrl.includes(constants.supportedObsDataTypes)).to.eql(false);
     });
 
     it('should pass value if present from conceptToControlMap to AutoComplete component', () => {

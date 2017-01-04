@@ -41,7 +41,9 @@ class ControlPropertiesContainer extends Component {
     const { selectedControl, conceptToControlMap } = this.props;
     const value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
     const disableAutoComplete = value !== undefined;
-    const dataTypesQueryParam = `dataTypes=${constants.supportedDataTypes}`;
+    const supportedDataTypes = (selectedControl.type === 'obsControl') ?
+      constants.supportedObsDataTypes : constants.supportedObsGroupDataTypes;
+    const dataTypesQueryParam = `dataTypes=${supportedDataTypes}`;
     const representation = `v=${constants.conceptRepresentation}&name=`;
     const queryParams = `?s=byDataType&${dataTypesQueryParam}&${representation}`;
     const optionsUrl = `${constants.conceptUrl}${queryParams}`;

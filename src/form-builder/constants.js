@@ -15,5 +15,6 @@ export const formBuilderConstants = {
   bahmniFormPublishUrl: (formUuid) => `/openmrs/ws/rest/v1/bahmniIE/publish?formUuid=${formUuid}`,
   formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
-  supportedDataTypes: 'Boolean,Text,Numeric,Coded,N/A,Date,DateTime',
+  supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime',
+  supportedObsGroupDataTypes: 'N/A',
 };
