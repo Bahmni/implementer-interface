@@ -79,10 +79,7 @@ describe('FormDetailContainer', () => {
     );
 
     const formDetail = wrapper.find('FormDetail');
-    expect(formDetail).to.have.prop('editForm');
     expect(formDetail.prop('formData')).to.equal(undefined);
-    expect(formDetail).to.have.prop('publishForm');
-    expect(formDetail).to.have.prop('saveFormResource');
     expect(formDetail).to.have.prop('setError');
 
     const notification = wrapper.find('NotificationContainer');
@@ -148,6 +145,60 @@ describe('FormDetailContainer', () => {
           formBuilderConstants.bahmniFormResourceUrl,
           formResource
         );
+
+        httpInterceptor.post.restore();
+        done();
+      }, 500);
+    });
+
+    it('should show the appropriate notification form is saved', (done) => {
+      const fakePromise = {
+        cb: () => {},
+        then(cb) { this.cb = cb; return this; },
+        catch() { return this; },
+      };
+
+      sinon.stub(httpInterceptor, 'post', () => fakePromise);
+
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context: { router: { push() {} } } }
+      );
+      wrapper.setState({ formData });
+      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      wrapper.instance().onSave();
+
+      const dummyResponse = {
+        form: { id: 1, uuid: 'saveUuid', name: 'F1', published: false, version: '' },
+        name: 'F1',
+        dataType: 'datatype',
+        valueReference: 'valueReference',
+        uuid: 'formUuid',
+      };
+      fakePromise.cb(dummyResponse);
+      const formDetail = wrapper.find('FormDetail');
+      const notificationContainer = wrapper.find('NotificationContainer');
+
+      setTimeout(() => {
+        sinon.assert.calledWith(
+          httpInterceptor.post,
+          formBuilderConstants.bahmniFormResourceUrl,
+          formResource
+        );
+        expect(formDetail.prop('formData').resources).to.have.length(1);
+        expect(formDetail.prop('formData').resources[0]).to.eql({
+          name: 'F1',
+          dataType: 'datatype',
+          valueReference: 'valueReference',
+          uuid: 'formUuid',
+        });
+
+        expect(notificationContainer.prop('notifications')).to.have.length(1);
+        expect(notificationContainer.prop('notifications')[0]).to.eql({
+          message: 'Form Saved Successfully',
+          type: 'success',
+        });
 
         httpInterceptor.post.restore();
         done();
@@ -227,8 +278,7 @@ describe('FormDetailContainer', () => {
       }, 500);
     });
 
-    it('should make the form editable when edit button is clicked', (done) => {
-      sinon.stub(window, 'confirm', () => true);
+    it('should show edit modal', (done) => {
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
@@ -236,13 +286,10 @@ describe('FormDetailContainer', () => {
       );
 
       wrapper.setState({ formData: publishedFormData });
-      const editButton = wrapper.find('.edit-button');
-      const formDetail = wrapper.find('FormDetail');
-      editButton.simulate('click');
+      const editModal = wrapper.find('EditModal');
 
       setTimeout(() => {
-        expect(formDetail.prop('formData').editable).to.equal(true);
-        window.confirm.restore();
+        expect(editModal.prop('showModal')).to.equal(false);
         done();
       }, 1000);
     });
@@ -258,6 +305,24 @@ describe('FormDetailContainer', () => {
 
       setTimeout(() => {
         expect(publishButton.nodes.length).to.equal(0);
+        done();
+      }, 500);
+    });
+
+    it('when edited should set the form in edit mode', (done) => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      wrapper.setState({ formData: publishedFormData });
+      const editModal = wrapper.find('EditModal');
+      editModal.prop('editForm')();
+      const formDetail = wrapper.find('FormDetail');
+
+      setTimeout(() => {
+        expect(formDetail.prop('formData').editable).to.eql(true);
         done();
       }, 500);
     });

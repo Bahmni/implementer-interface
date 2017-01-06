@@ -51,7 +51,6 @@ export class FormDetailContainer extends Component {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
         this.state.formData.resources[0].uuid : '';
-
       const formResource = {
         form: {
           name: formName,
@@ -61,20 +60,7 @@ export class FormDetailContainer extends Component {
         dataType: formBuilderConstants.formResourceDataType,
         uuid: formResourceUuid,
       };
-      this.saveFormResource(formJson.uuid, formResource);
-    } catch (e) {
-      this.setErrorMessage(e.getException());
-    }
-  }
-
-  onEdit() {
-    try {
-      /* eslint-disable no-alert*/
-      const confirmResult = confirm('Edit of the form will allow you to ' +
-        'create a new version of form. Do you want to proceed?');
-      if (confirmResult) {
-        this.editForm();
-      }
+      this._saveFormResource(formJson.uuid, formResource);
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -131,6 +117,7 @@ export class FormDetailContainer extends Component {
     }
     return null;
   }
+
   showEditButton() {
     const isEditable = this.state.formData ? this.state.formData.editable : false;
     const isPublished = this.state.formData ? this.state.formData.published : false;
@@ -146,7 +133,7 @@ export class FormDetailContainer extends Component {
             <button className="fr edit-button" onClick={() => this.openFormModal()}>Edit</button>
             <EditModal
               closeModal={() => this.closeFormModal()}
-              editForm={() => this.editForm(this.state.formData)}
+              editForm={() => this.editForm()}
               showModal={this.state.showModal}
             />
           </div>
@@ -156,10 +143,13 @@ export class FormDetailContainer extends Component {
     return null;
   }
 
-  editForm(formData) {
-    this.state.formData.editable = true;
-    this.state.formData.version = '  ';
-    this.setState({ formData });
+  editForm() {
+    const editableFormData = Object.assign(
+      {}, this.state.formData,
+      { editable: true, version: '  ' }
+    );
+
+    this.setState({ formData: editableFormData });
   }
 
   _saveFormResource(uuid, formJson) {
