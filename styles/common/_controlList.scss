@@ -3,8 +3,8 @@
   padding: 5px 10px;
   border: 1px solid $white;
   &:hover,&:active {
-    background: $lighterGray;
-    border: 1px solid $lightGray;
+    background: $gray300;
+    border: 1px solid $gray400;
   }
 }
 .obs-control-wrap{
@@ -13,7 +13,7 @@
     width:10em;
     display: inline-block;
     text-transform: capitalize;
-    margin: 0.2em 0.8em 0.3em 0em;
+    margin: 0.2em 0.8em 0.3em 0;
     line-height: 1;
     vertical-align: top;
   }

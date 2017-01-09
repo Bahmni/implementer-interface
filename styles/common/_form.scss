@@ -5,7 +5,7 @@
     display: block;
     font-size: 14px;
     .asterisk{
-      color: red;
+      color: $red;
       padding: 0 5px;
     }
   }
@@ -16,12 +16,12 @@
     margin: 2px;
     padding: 8px 10px;
     color: $bahmniTextColor;
-    background-color: #FFF;
-    border: 1px solid #DDD;
+    background-color: $white;
+    border: 1px solid $gray300;
     box-sizing: border-box;
   }
   .form-error{
-    color: red;
+    color: $red;
     font-size: 12px;
   }
 }

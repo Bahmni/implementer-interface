@@ -2,9 +2,9 @@
   width: 100%;
   height: auto;
   padding: 20px;
-  border: 1px solid #699;
+  border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
-  background: #FAFAFA;
+  background: $bahmniPageBg;
   font-size: 12px;
   .canvas-placeholder{
     text-align: center;
@@ -15,14 +15,14 @@
   display: block;
   width: 100%;
   margin:10px 0;
-  border: 1px dotted $darkerGrey;
+  border: 1px dotted $gray500;
 
 }
 .canvas-row{
   display: flex;
   flex-flow: row wrap;
   min-height: 40px;
-  border-bottom: 1px dotted $darkerGrey;
+  border-bottom: 1px dotted $gray500;
   &:last-child{
     border-bottom: none;
   }
@@ -32,7 +32,7 @@
   padding: 5px;
   width:33.33%;
   &.active{
-    border: 1px dotted $darkerGrey;
+    border: 1px dotted $gray500;
   }
   .control-wrapper{
     position: relative;
@@ -44,10 +44,10 @@
       text-align: right;
     }
     input{
-      color: #363463;
+      color: $bahmniTextColor;
       padding: 3px 10px;
       background-color: $white;
-      border: 1px solid $lighterGray;
+      border: 1px solid $gray300;
       width:197px;
     }
     textarea{
@@ -57,7 +57,7 @@
       width: 197px;
       padding: 3px 10px;
       background-color: $white;
-      border: 1px solid $lighterGray;
+      border: 1px solid $gray300;
       vertical-align: middle
     }
     .obs-comment-section-wrap{
@@ -75,7 +75,7 @@
         border-radius: 100%;
         font-size: 20px;
         color: $bahmniSecondaryColor;
-        box-shadow: 1px 1px 1px $lightGray;
+        box-shadow: 1px 1px 1px $gray400;
         background: $white;
         padding: 0;
         margin-left: 5px;
@@ -133,7 +133,7 @@
       .fa-file-o {
         position: relative;
         font-size: 16px;
-        color: $mediumGray;
+        color: $gray600;
         .fa-minus-circle {
           display: none;
         }
@@ -142,7 +142,9 @@
           right: 2px;
           bottom: 2px;
           font-size: 10px;
+          /* stylelint-disable */
           color: green;
+          /* stylelint-enable */
           background: $white;
           border-radius: 8px;
           padding: 0;

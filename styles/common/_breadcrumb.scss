@@ -2,10 +2,10 @@
   position: fixed;
   top: 52px;
   z-index: 9;
-  background: #fafafa;
+  background: $bahmniPageBg;
   width: 100%;
   left: 0;
-  box-shadow: 0px 1px 8px #686666;
+  box-shadow: 0 1px 8px $gray600;
   border-bottom: 1px $bahmniSecondaryColor solid;
   .page-title h1{
     margin:0;
@@ -47,7 +47,7 @@
         position: absolute;
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
-        border-left: 5px solid #fafafa;
+        border-left: 5px solid $bahmniPageBg;
       }
       &:first-child {
         padding-left: 0;

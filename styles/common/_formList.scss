@@ -1,22 +1,22 @@
 .form-list table{
   width: 100%;
-  border: 1px solid #b3b3b3;
+  border: 1px solid $gray500;
   font-size: 13px;
   tr{
     th, td {
       padding:10px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid $gray400;
     }
   }
   thead tr {
-    background: #eee;
+    background: $gray200;
     th{
       width: auto;
       text-align: left;
       word-break: normal;
       font-family: $primaryBoldFont;
       font-size: 14px;
-      color: #666;
+      color: $gray600;
     }
   }
   tbody{
@@ -26,7 +26,7 @@
       i{
         color: $black;
         &:hover{
-          color: #5C8A93;
+          color: $bahmniSecondaryColor;
         }
       }
     }

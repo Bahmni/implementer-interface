@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "color-named": "never",
+    "color-no-hex": true,
+    "unit-no-unknown": true,
+    "length-zero-no-unit": true
+  }
+}

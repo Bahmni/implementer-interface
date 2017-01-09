@@ -32,7 +32,7 @@ a{
   font-size: 14px;
   position: relative;
   @include box-shadow-for-section;
-  border: 1px solid #699;
+  border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   background: $white;
   .section-content{
@@ -42,7 +42,7 @@ a{
 
 h2.header-title {
   background: $bahmniSecondaryColor ;
-  color: $lightestGray;
+  color: $gray200;
   font-size: 16px;
   padding: 10px;
   margin: 0;
@@ -57,7 +57,7 @@ h2.header-title {
       padding:0 20px 0 0;
       display: inline-block;
       a{
-        color: #fff;
+        color: $white;
         font-weight: 400;
       }
       &:hover{
@@ -71,40 +71,15 @@ h2.header-title {
   }
 }
 
-
-@mixin button($tcolor: #FFF, $bcolor: #DDD, $font: $bahmniTextColor) {
-  border-radius: 3px;
-  background: linear-gradient(to bottom, $tcolor, $bcolor);
-  background-color: $bcolor;
-  border: $bcolor 1px solid;
-  padding: 6px 20px 7px;
-  display: inline-block;
-  line-height: 1.2em;
-  color:$bahmniTextColor !important;
-  cursor: pointer;
-  min-width: 0;
-  max-width: 300px;
-  text-decoration: none;
-  font-size: 14px;
-  margin-left: 10px;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:disabled{
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
 .button, button, input[type="button"],input[type="reset"], a.button {
   @include button;
 }
 
 .btn{
   &--highlight , input[type="submit"], button[type="submit"]{
-    background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
-    border: 1px solid #88af28;
-    color:#fff !important;
+    background: linear-gradient(to bottom,$bahmniPrimaryBtnColor,$bahmniPrimaryBtnColorHover) $bahmniPrimaryBtnColorHover;
+    border: 1px solid $bahmniPrimaryBtnColorHover;
+    color:$white !important;
     letter-spacing: 0.5px;
     font-family: $primarySemiBoldFont;
     border-radius: 2px;
@@ -117,8 +92,8 @@ h2.header-title {
 }
 
 input[type="checkbox"]{
-  background-color: #fafafa;
-  border: 1px solid #cacece;
+  background-color: $bahmniPageBg;
+  border: 1px solid $gray400;
   @include box-shadow-for-section;
   padding: 8px !important;
   border-radius: 3px;
@@ -172,8 +147,10 @@ input[type="checkbox"]{
 
 ul li a.back-btn, a.back-btn {
   padding: 4px 10px 5px 10px;
+  /* stylelint-disable */
   border: 1px solid #476b6b;
-  background: linear-gradient(to bottom, #669999, #527a7a);
+  background: linear-gradient(to bottom, $bahmniSecondaryColor, #527a7a);
+  /* stylelint-enable */
 }
 
 ul li a.back-btn i, a.back-btn i {
@@ -188,8 +165,8 @@ a.back-btn {
   display: inline-block;
   text-decoration: none;
   z-index: 1;
-  margin: 6px 6px 0 0px;
-  color: #FFFFFF;
+  margin: 6px 6px 0 0;
+  color:$white;
   border-left: 0;
   float: left;
   font-size: 16px;
@@ -198,7 +175,7 @@ a.back-btn {
 
 a.back-btn:hover {
   text-decoration: none;
-  color: #FFFFFF;
+  color: $white;
   cursor: pointer;
   opacity: 0.8;
 }
@@ -206,13 +183,15 @@ a.back-btn:hover {
 .info-view-mode-wrap{
   @include clearfix;
   @include box-shadow-for-section;
-  border: 1px $lightGray solid;
+  border: 1px $gray400 solid;
   padding: 10px;
   font-size: 14px;
   margin: 0 auto;
   text-align: center;
-  background-color: #eee;
+  background-color: $gray200;
+  /* stylelint-disable */
   color: #FFA50D;
+  /* stylelint-enable */
   position: relative;
 }
 .info-view-mode{

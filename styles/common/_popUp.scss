@@ -1,7 +1,7 @@
 .dialog-wrapper{
   position: fixed;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
   background: rgba(0,0,0,0.4);
@@ -12,11 +12,11 @@
 }
 
 .dialog{
+  @include box-shadow-for-section;
   position: fixed;
   background: $white;
-  color: #444;
-  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.4);
-  border:1px solid $mediumGray;
+  color: $gray800;
+  border:1px solid $gray600;
   left:50%;
   top:50%;
   transform: translate(-50%,-50%);
@@ -40,7 +40,7 @@
   &--no-header{
     -webkit-animation:.5s;
     animation: .5s;
-    background: #f0f0f0;
+    background: $gray100;
     border-radius: 5px;
     line-height: 1.5em;
     padding: 1em;

@@ -6,6 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const srcPath = path.join(__dirname, './src');
 const testPath = path.join(__dirname, './test');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 module.exports = {
   devtool: 'eval',
@@ -42,6 +43,7 @@ module.exports = {
       },
     ], { copyUnmodified: true }
     ),
+      new StyleLintPlugin(),
   ],
   externals: {
     'react/lib/ExecutionEnvironment': true,
