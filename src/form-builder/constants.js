@@ -11,8 +11,8 @@ export const formBuilderConstants = {
   // eslint-disable-next-line
   getFullConceptRepresentation: (conceptName) => `/openmrs/ws/rest/v1/concept?s=byFullySpecifiedName&locale=en&name=${conceptName}&v=bahmni`,
   formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
-  bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniIE/save',
-  bahmniFormPublishUrl: (formUuid) => `/openmrs/ws/rest/v1/bahmniIE/publish?formUuid=${formUuid}`,
+  bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
+  bahmniFormPublishUrl: (formUuid) => `/openmrs/ws/rest/v1/bahmniie/form/publish?formUuid=${formUuid}`,
   formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
   supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime',
