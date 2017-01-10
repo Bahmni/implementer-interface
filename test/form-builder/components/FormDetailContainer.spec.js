@@ -31,13 +31,13 @@ describe('FormDetailContainer', () => {
       name: 'someFormName',
       uuid: 'someUuid',
     },
-    valueReference: JSON.stringify(formJson),
+    value: JSON.stringify(formJson),
     uuid: '',
   };
 
   const params =
     'v=custom:(id,uuid,name,version,published,auditInfo,' +
-    'resources:(valueReference,dataType,uuid))';
+    'resources:(value,dataType,uuid))';
   const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
 
   const defaultProps = {
@@ -172,7 +172,7 @@ describe('FormDetailContainer', () => {
         form: { id: 1, uuid: 'saveUuid', name: 'F1', published: false, version: '' },
         name: 'F1',
         dataType: 'datatype',
-        valueReference: 'valueReference',
+        value: 'value',
         uuid: 'formUuid',
       };
       fakePromise.cb(dummyResponse);
@@ -189,7 +189,7 @@ describe('FormDetailContainer', () => {
         expect(formDetail.prop('formData').resources[0]).to.eql({
           name: 'F1',
           dataType: 'datatype',
-          valueReference: 'valueReference',
+          value: 'value',
           uuid: 'formUuid',
         });
 

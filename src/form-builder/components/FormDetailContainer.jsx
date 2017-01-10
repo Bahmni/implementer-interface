@@ -30,7 +30,7 @@ export class FormDetailContainer extends Component {
   componentWillMount() {
     const params =
       'v=custom:(id,uuid,name,version,published,auditInfo,' +
-      'resources:(valueReference,dataType,uuid))';
+      'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data }))
@@ -56,7 +56,7 @@ export class FormDetailContainer extends Component {
           name: formName,
           uuid: formUuid,
         },
-        valueReference: JSON.stringify(formJson),
+        value: JSON.stringify(formJson),
         uuid: formResourceUuid,
       };
       this._saveFormResource(formJson.uuid, formResource);
@@ -188,7 +188,7 @@ export class FormDetailContainer extends Component {
     const form = Object.assign({}, responseObject.form);
     const formResource = { name: form.name,
       dataType: responseObject.dataType,
-      valueReference: responseObject.valueReference,
+      value: responseObject.value,
       uuid: responseObject.uuid };
     form.resources = [formResource];
     return form;

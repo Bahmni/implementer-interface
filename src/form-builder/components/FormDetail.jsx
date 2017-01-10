@@ -37,7 +37,7 @@ export default class FormDetail extends Component {
       const { name, uuid, id, resources, version, published, editable } = this.props.formData;
       const formResources = filter(resources,
         (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
-      const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
+      const valueReferenceAsString = get(formResources, ['0', 'value']);
       const formResourceControls =
         (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
       const idGenerator = new IDGenerator(formResourceControls);
