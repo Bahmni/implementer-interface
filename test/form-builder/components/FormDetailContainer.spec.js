@@ -32,7 +32,6 @@ describe('FormDetailContainer', () => {
       uuid: 'someUuid',
     },
     valueReference: JSON.stringify(formJson),
-    dataType: formBuilderConstants.formResourceDataType,
     uuid: '',
   };
 

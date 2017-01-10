@@ -57,7 +57,6 @@ export class FormDetailContainer extends Component {
           uuid: formUuid,
         },
         valueReference: JSON.stringify(formJson),
-        dataType: formBuilderConstants.formResourceDataType,
         uuid: formResourceUuid,
       };
       this._saveFormResource(formJson.uuid, formResource);

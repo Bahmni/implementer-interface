@@ -13,7 +13,7 @@ export const formBuilderConstants = {
   formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
   bahmniFormPublishUrl: (formUuid) => `/openmrs/ws/rest/v1/bahmniie/form/publish?formUuid=${formUuid}`,
-  formResourceDataType: 'org.openmrs.customdatatype.datatype.FreeTextDatatype',
+  formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
   supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime',
   supportedObsGroupDataTypes: 'N/A',
