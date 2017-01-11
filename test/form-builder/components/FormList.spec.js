@@ -80,7 +80,7 @@ describe('FormList', () => {
   it('should not display table if there is no data', () => {
     wrapper = shallow(<FormList data={[]} />);
 
-    expect(wrapper.find('div').text()).to.eql('No Forms to Display');
+    expect(wrapper.find('p').text()).to.eql('No Forms to Display');
     expect(wrapper).to.not.have.descendants('table');
   });
 });

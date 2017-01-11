@@ -10,146 +10,18 @@
     text-align: center;
   }
 }
-.grid {
-  @include clearfix();
-  display: block;
-  width: 100%;
-  margin:10px 0;
-  border: 1px dotted $gray500;
 
-}
-.canvas-row{
-  display: flex;
-  flex-flow: row wrap;
-  min-height: 40px;
+.grid {
+   @include clearfix();
+   display: block;
+   width: 100%;
+   margin:10px 0;
+   border: 1px dotted $gray500;
+ }
+
+.form-builder-row{
   border-bottom: 1px dotted $gray500;
   &:last-child{
     border-bottom: none;
-  }
-}
-.gridCell{
-  flex-grow: 1;
-  padding: 5px;
-  width:33.33%;
-  &.active{
-    border: 1px dotted $gray500;
-  }
-  .control-wrapper{
-    position: relative;
-    .label-wrap{
-      padding-right: 10px;
-      display: inline-block;
-      width: 25%;
-      vertical-align: middle;
-      text-align: right;
-    }
-    input{
-      color: $bahmniTextColor;
-      padding: 3px 10px;
-      background-color: $white;
-      border: 1px solid $gray300;
-      width:197px;
-    }
-    textarea{
-      overflow: hidden;
-      resize: horizontal;
-      height: 30px;
-      width: 197px;
-      padding: 3px 10px;
-      background-color: $white;
-      border: 1px solid $gray300;
-      vertical-align: middle
-    }
-    .obs-comment-section-wrap{
-      margin-top: 5px;
-      clear: both;
-    }
-    .concept-tooltip-wrap{
-      .concept-tooltip-trigger {
-        cursor: pointer;
-        display: inline-block;
-        width: 18px;
-        height: 18px;
-        line-height: 18px;
-        text-align: center;
-        border-radius: 100%;
-        font-size: 20px;
-        color: $bahmniSecondaryColor;
-        box-shadow: 1px 1px 1px $gray400;
-        background: $white;
-        padding: 0;
-        margin-left: 5px;
-        z-index: 999;
-        position: relative;
-
-      }
-      .concept-tooltip-description {
-        top:-16px;
-        margin-left: 50px;
-        text-align: left;
-        position: absolute;
-        display:none;
-        .details {
-          display: inline-block;
-          font-size: 12px;
-          padding: 5px;
-          border-radius: 5px;
-          background:$black;
-          color: $white;
-        }
-        i {
-          position: absolute;
-          bottom: -16px;
-          left: 1%;
-          font-size: 20px;
-          color: $black;
-        }
-        p {
-          margin-bottom: 5px;
-          line-height: 1.1;
-        }
-      }
-      &.active{
-        .concept-tooltip-description{
-          display: block;
-        }
-      }
-    }
-    .comment-toggle {
-      padding: 5px;
-      position: absolute;
-      right:0;
-      top:0;
-      &.active {
-        .fa-file-o {
-          .fa-plus-circle {
-            display: none;
-          }
-          .fa-minus-circle {
-            display: block;
-          }
-        }
-      }
-      .fa-file-o {
-        position: relative;
-        font-size: 16px;
-        color: $gray600;
-        .fa-minus-circle {
-          display: none;
-        }
-        .fa-plus-circle, .fa-ok-sign, .fa-plus, .fa-minus-circle {
-          position: absolute;
-          right: 2px;
-          bottom: 2px;
-          font-size: 10px;
-          /* stylelint-disable */
-          color: green;
-          /* stylelint-enable */
-          background: $white;
-          border-radius: 8px;
-          padding: 0;
-        }
-      }
-    }
   }
 }

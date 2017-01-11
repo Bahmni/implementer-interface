@@ -12,7 +12,7 @@ export default class FormList extends Component {
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{this._getFormStatus(rowItem)}</td>
-        <td>{this._editOrReuseIcon(rowItem)}</td>
+        <td className="edit-icon">{this._editOrReuseIcon(rowItem)}</td>
       </tr>
     ));
     return data;
@@ -42,7 +42,7 @@ export default class FormList extends Component {
   }
 
   render() {
-    return (this.props.data.length === 0 ? <div>No Forms to Display</div> :
+    return (this.props.data.length === 0 ? <p className="placeholder-text">No Forms to Display</p> :
       <table>
         <thead>
         <tr>
