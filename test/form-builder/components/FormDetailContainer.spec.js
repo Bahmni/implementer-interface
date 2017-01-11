@@ -7,6 +7,8 @@ import { ComponentStore } from 'bahmni-form-controls';
 import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+
 
 chai.use(chaiEnzyme());
 
@@ -82,8 +84,7 @@ describe('FormDetailContainer', () => {
     expect(formDetail).to.have.prop('setError');
 
     const notification = wrapper.find('NotificationContainer');
-    expect(notification).to.have.prop('notifications');
-    expect(notification).to.have.prop('closeMessage');
+    expect(notification).to.have.prop('notification');
 
     const formBuilderBreadcrumbs = wrapper.find('FormBuilderBreadcrumbs');
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
@@ -193,8 +194,7 @@ describe('FormDetailContainer', () => {
           uuid: 'formUuid',
         });
 
-        expect(notificationContainer.prop('notifications')).to.have.length(1);
-        expect(notificationContainer.prop('notifications')[0]).to.eql({
+        expect(notificationContainer.prop('notification')).to.eql({
           message: 'Form Saved Successfully',
           type: 'success',
         });
@@ -230,7 +230,7 @@ describe('FormDetailContainer', () => {
         publishButton.simulate('click');
         sinon.assert.calledWith(
           httpInterceptor.post,
-          formBuilderConstants.bahmniFormPublishUrl(formData.uuid)
+          new UrlHelper().bahmniFormPublishUrl(formData.uuid)
         );
 
         httpInterceptor.post.restore();

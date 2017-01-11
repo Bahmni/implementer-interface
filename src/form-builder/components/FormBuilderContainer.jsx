@@ -11,7 +11,7 @@ export default class FormBuilderContainer extends Component {
 
   constructor() {
     super();
-    this.state = { data: [], notifications: [] };
+    this.state = { data: [], notification: {} };
     this.setState = this.setState.bind(this);
   }
 
@@ -26,9 +26,10 @@ export default class FormBuilderContainer extends Component {
 
   setErrorMessage(errorMessage) {
     const errorNotification = { message: errorMessage, type: commonConstants.responseType.error };
-    const notificationsClone = this.state.notifications.slice(0);
-    notificationsClone.push(errorNotification);
-    this.setState({ notifications: notificationsClone });
+    this.setState({ notification: errorNotification });
+    setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
   orderFormByVersion(forms) {
     forms.forEach((form) => {
@@ -50,12 +51,6 @@ export default class FormBuilderContainer extends Component {
     }
   }
 
-  closeMessage(id) {
-    const notificationsClone = this.state.notifications.splice(0);
-    notificationsClone.splice(id, 1);
-    this.setState({ notifications: notificationsClone });
-  }
-
   saveForm(form) {
     httpInterceptor
       .post(formBuilderConstants.formUrl, form)
@@ -70,8 +65,7 @@ export default class FormBuilderContainer extends Component {
     return (
     <div>
       <NotificationContainer
-        closeMessage={(id) => this.closeMessage(id)}
-        notifications={this.state.notifications}
+        notification={this.state.notification}
       />
       <FormBuilder
         data={this.state.data}

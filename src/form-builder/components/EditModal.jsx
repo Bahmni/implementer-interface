@@ -33,7 +33,7 @@ export default class EditModal extends Component {
                         <button autoFocus className="button btn--highlight"
                           onClick={(e) => this.editForm(e)} type="submit"
                         >
-                            ok
+                            OK
                         </button>
                         <button className="btn" onClick={this.props.closeModal} type="reset">
                           Cancel

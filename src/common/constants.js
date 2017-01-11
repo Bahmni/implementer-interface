@@ -5,4 +5,5 @@ export const commonConstants = {
   },
   saveSuccessMessage: 'Form Saved Successfully',
   publishSuccessMessage: 'Form Successfully Published',
+  toastTimeout: 4000,
 };

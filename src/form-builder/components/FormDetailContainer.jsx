@@ -10,12 +10,13 @@ import { deselectControl, removeControlProperties, removeSourceMap }
   from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import EditModal from 'form-builder/components/EditModal.jsx';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 
 export class FormDetailContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { formData: undefined, showModal: false, notifications: [] };
+    this.state = { formData: undefined, showModal: false, notification: {} };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -83,9 +84,10 @@ export class FormDetailContainer extends Component {
 
   setErrorMessage(error) {
     const errorNotification = { message: error.message, type: commonConstants.responseType.error };
-    const notificationsClone = this.state.notifications.slice(0);
-    notificationsClone.push(errorNotification);
-    this.setState({ notifications: notificationsClone });
+    this.setState({ notification: errorNotification });
+    setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
 
   closeFormModal() {
@@ -160,26 +162,30 @@ export class FormDetailContainer extends Component {
           message: commonConstants.saveSuccessMessage,
           type: commonConstants.responseType.success,
         };
-        const notificationsClone = this.state.notifications.splice(0);
-        notificationsClone.push(successNotification);
-        this.setState({ notifications: notificationsClone,
+        this.setState({ notification: successNotification,
           formData: this._formResourceMapper(response) });
+
+        setTimeout(() => {
+          this.setState({ notification: {} });
+        }, commonConstants.toastTimeout);
       })
       .catch((error) => this.setErrorMessage(error));
   }
 
   _publishForm(formUuid) {
-    httpInterceptor.post(formBuilderConstants.bahmniFormPublishUrl(formUuid))
+    httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
       .then((response) => {
         const successNotification = {
           message: commonConstants.publishSuccessMessage,
           type: commonConstants.responseType.success,
         };
-        const notificationsClone = this.state.notifications.splice(0);
-        notificationsClone.push(successNotification);
         const publishedFormData = Object.assign({}, this.state.formData,
           { published: response.published, version: response.version });
-        this.setState({ notifications: notificationsClone, formData: publishedFormData });
+        this.setState({ notification: successNotification, formData: publishedFormData });
+
+        setTimeout(() => {
+          this.setState({ notification: {} });
+        }, commonConstants.toastTimeout);
       })
       .catch((error) => this.setErrorMessage(error));
   }
@@ -194,18 +200,11 @@ export class FormDetailContainer extends Component {
     return form;
   }
 
-  closeMessage(id) {
-    const notificationsClone = this.state.notifications.splice(0);
-    notificationsClone.splice(id, 1);
-    this.setState({ notifications: notificationsClone });
-  }
-
   render() {
     return (
       <div>
         <NotificationContainer
-          closeMessage={(id) => this.closeMessage(id)}
-          notifications={this.state.notifications}
+          notification={this.state.notification}
         />
         <FormBuilderHeader />
         <div className="breadcrumb-wrap">

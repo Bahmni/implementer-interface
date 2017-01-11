@@ -9,10 +9,7 @@ export const formBuilderConstants = {
     conceptMissing: 'Please associate Concept to Obs',
   },
   // eslint-disable-next-line
-  getFullConceptRepresentation: (conceptName) => `/openmrs/ws/rest/v1/concept?s=byFullySpecifiedName&locale=en&name=${conceptName}&v=bahmni`,
-  formResourceUrl: (formUuid) => `/openmrs/ws/rest/v1/form/${formUuid}/resource`,
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
-  bahmniFormPublishUrl: (uuid) => `/openmrs/ws/rest/v1/bahmniie/form/publish?formUuid=${uuid}`,
   formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
   supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime',

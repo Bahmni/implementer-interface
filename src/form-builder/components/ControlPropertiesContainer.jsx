@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { selectSource, setChangedProperty } from 'form-builder/actions/control';
 import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 
 class ControlPropertiesContainer extends Component {
   constructor() {
@@ -17,7 +17,7 @@ class ControlPropertiesContainer extends Component {
   onSelect(concept) {
     const conceptName = concept.name.name;
     httpInterceptor
-      .get(formBuilderConstants.getFullConceptRepresentation(conceptName))
+      .get(new UrlHelper().getFullConceptRepresentation(conceptName))
       .then((data) => {
         const result = data.results[0];
         result.display = result.name.name;
@@ -32,9 +32,10 @@ class ControlPropertiesContainer extends Component {
 
   setErrorMessage(error) {
     const errorNotification = { message: error.message, type: commonConstants.responseType.error };
-    const notificationsClone = this.state.notifications.slice(0);
-    notificationsClone.push(errorNotification);
-    this.setState({ notifications: notificationsClone });
+    this.setState({ notification: errorNotification });
+    setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
 
   displayAutoComplete() {
