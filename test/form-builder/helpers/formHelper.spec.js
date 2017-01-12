@@ -12,7 +12,7 @@ describe('formHelper', () => {
     const formData = {
       resources: [{
         dataType: formBuilderConstants.formResourceDataType,
-        valueReference: '{"controls": [{"control1": "value1"}]}',
+        value: '{"controls": [{"control1": "value1"}]}',
       }],
     };
     const controls = FormHelper.getFormResourceControls(formData);

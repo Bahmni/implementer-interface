@@ -219,7 +219,7 @@ describe('FormDetailContainer', () => {
     it('should publish form when the publish button is clicked', (done) => {
       const resources = [{
         dataType: formBuilderConstants.formResourceDataType,
-        valueReference: '{"controls": [{}]}',
+        value: '{"controls": [{}]}',
       }];
       const updatedForm = Object.assign({}, formData, { resources });
       sinon.stub(httpInterceptor, 'post', () => Promise.resolve(updatedForm));

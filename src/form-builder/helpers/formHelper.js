@@ -8,8 +8,8 @@ export default class FormHelper {
       const { resources } = formData;
       const formResources = filter(resources,
         (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
-      const valueReferenceAsString = get(formResources, ['0', 'valueReference']);
-      return (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
+      const valueAsString = get(formResources, ['0', 'value']);
+      return (valueAsString && JSON.parse(valueAsString).controls) || [];
     }
     return [];
   }
