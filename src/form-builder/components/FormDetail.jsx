@@ -28,7 +28,8 @@ export default class FormDetail extends Component {
 
   formTitle(name, version, published, editable) {
     const status = published && !editable ? 'Published' : 'Draft';
-    return `${name} v${version} - ${status}`;
+    const versionNumber = version ? `v${version}` : '';
+    return `${name} ${versionNumber} - ${status}`;
   }
 
   render() {

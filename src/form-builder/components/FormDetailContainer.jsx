@@ -11,6 +11,8 @@ import { deselectControl, removeControlProperties, removeSourceMap }
 import NotificationContainer from 'common/Notification';
 import EditModal from 'form-builder/components/EditModal.jsx';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+import isEmpty from 'lodash/isEmpty';
+import FormHelper from 'form-builder/helpers/formHelper';
 
 export class FormDetailContainer extends Component {
 
@@ -100,9 +102,15 @@ export class FormDetailContainer extends Component {
 
   showPublishButton() {
     const isPublished = this.state.formData ? this.state.formData.published : false;
-    if (!isPublished) {
+    const isEditable = this.state.formData ? this.state.formData.editable : false;
+    const resourceData = FormHelper.getFormResourceControls(this.state.formData);
+    if (!isPublished || isEditable) {
       return (
-        <button className="publish-button" onClick={ this.onPublish }>Publish</button>
+        <button
+          className="publish-button"
+          disabled={ isPublished || isEmpty(resourceData) }
+          onClick={ this.onPublish }
+        >Publish</button>
       );
     }
     return null;
@@ -147,7 +155,7 @@ export class FormDetailContainer extends Component {
   editForm() {
     const editableFormData = Object.assign(
       {}, this.state.formData,
-      { editable: true, version: '  ' }
+      { editable: true, version: '' }
     );
 
     this.setState({ formData: editableFormData });
