@@ -217,14 +217,23 @@ describe('FormDetailContainer', () => {
     });
 
     it('should publish form when the publish button is clicked', (done) => {
-      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
-      const wrapper = mount(
+      const resources = [{
+        dataType: formBuilderConstants.formResourceDataType,
+        valueReference: '{"controls": [{}]}',
+      }];
+      const updatedForm = Object.assign({}, formData, { resources });
+      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(updatedForm));
+      const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
         />, { context }
       );
       sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
-      const publishButton = wrapper.find('.publish-button');
+      let publishButton;
+      wrapper.setState({ formData: updatedForm },
+        () => {
+          publishButton = wrapper.find('.publish-button');
+        });
 
       setTimeout(() => {
         publishButton.simulate('click');

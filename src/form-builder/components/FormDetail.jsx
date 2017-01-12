@@ -4,9 +4,7 @@ import Canvas from 'form-builder/components/Canvas.jsx';
 import classNames from 'classnames';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
-import { formBuilderConstants } from 'form-builder/constants';
-import filter from 'lodash/filter';
-import get from 'lodash/get';
+import FormHelper from 'form-builder/helpers/formHelper';
 
 export default class FormDetail extends Component {
   constructor() {
@@ -35,12 +33,8 @@ export default class FormDetail extends Component {
   render() {
     const { formData } = this.props;
     if (formData) {
-      const { name, uuid, id, resources, version, published, editable } = this.props.formData;
-      const formResources = filter(resources,
-        (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
-      const valueReferenceAsString = get(formResources, ['0', 'value']);
-      const formResourceControls =
-        (valueReferenceAsString && JSON.parse(valueReferenceAsString).controls) || [];
+      const { name, uuid, id, version, published, editable } = this.props.formData;
+      const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
       const idGenerator = new IDGenerator(formResourceControls);
       return (
         <div>

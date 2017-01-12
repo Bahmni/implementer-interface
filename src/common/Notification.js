@@ -13,7 +13,7 @@ const NotificationContainer = (props) => {
 NotificationContainer.propTypes = {
   notification: PropTypes.shape({
     message: PropTypes.string,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.string,
   }).isRequired,
 };
 
