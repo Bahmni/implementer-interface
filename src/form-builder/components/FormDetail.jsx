@@ -73,7 +73,7 @@ export default class FormDetail extends Component {
 
 FormDetail.propTypes = {
   formData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.number,
     name: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     resources: PropTypes.array,

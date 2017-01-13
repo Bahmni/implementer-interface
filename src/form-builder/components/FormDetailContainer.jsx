@@ -62,7 +62,7 @@ export class FormDetailContainer extends Component {
         value: JSON.stringify(formJson),
         uuid: formResourceUuid,
       };
-      this._saveFormResource(formJson.uuid, formResource);
+      this._saveFormResource(formResource);
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -161,7 +161,7 @@ export class FormDetailContainer extends Component {
     this.setState({ formData: editableFormData });
   }
 
-  _saveFormResource(uuid, formJson) {
+  _saveFormResource(formJson) {
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then((response) => {
         const updatedUuid = response.form.uuid;

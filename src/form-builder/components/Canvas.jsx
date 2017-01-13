@@ -71,7 +71,7 @@ class Canvas extends Component {
 
 Canvas.propTypes = {
   dispatch: PropTypes.func,
-  formId: PropTypes.number.isRequired,
+  formId: PropTypes.number,
   formName: PropTypes.string.isRequired,
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
