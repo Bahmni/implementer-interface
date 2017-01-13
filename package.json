@@ -14,7 +14,8 @@
     "posttest": "eslint --ext .js --ext .jsx ./src ./test",
     "eslintFix": "eslint --ext .js --ext .jsx ./src ./test --fix",
     "start": "webpack-dev-server --hot --progress --colors",
-    "ci": "npm run clean && npm run build && npm run compress"
+    "ci": "npm run clean && npm run build && npm run compress",
+    "watch": "webpack --watch"
   },
   "author": "",
   "devDependencies": {

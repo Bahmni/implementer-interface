@@ -29,7 +29,7 @@ class ControlWrapper extends Draggable {
 
   conditionallyAddConcept(newProps) {
     const concept = get(newProps.conceptToControlMap, this.metadata.id);
-    if (concept && !this.metadata.concept) {
+    if (concept && !this.metadata.concept && this.control.injectConceptToMetadata) {
       const newMetadata = this.control.injectConceptToMetadata(
         this.metadata,
         concept,
