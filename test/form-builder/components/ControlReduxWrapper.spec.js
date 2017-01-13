@@ -184,7 +184,7 @@ describe('ControlWrapper', () => {
         store={ store }
       />).shallow();
     const controlWrapper = controlWrapperShallow.instance();
-    sinon.stub(controlWrapper, 'getJsonDefinition', () => undefined);
+    sinon.stub(controlWrapper, 'getJsonDefinition').callsFake(() => undefined);
 
     const newMetadata = controlWrapper.processDragStart();
     expect(newMetadata).to.eql(metadata);

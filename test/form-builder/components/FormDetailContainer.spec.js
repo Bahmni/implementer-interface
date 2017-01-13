@@ -61,9 +61,7 @@ describe('FormDetailContainer', () => {
     });
     getAllDesignerComponentsStub = sinon.stub(
       ComponentStore,
-      'getAllDesignerComponents',
-      () => ({})
-    );
+      'getAllDesignerComponents').callsFake(() => {});
   });
 
   after(() => {
@@ -72,7 +70,7 @@ describe('FormDetailContainer', () => {
   });
 
   it('should render appropriate controls with appropriate props', () => {
-    sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
       <FormDetailContainer
         {...defaultProps}
@@ -92,7 +90,7 @@ describe('FormDetailContainer', () => {
   });
 
   it('should call the appropriate endpoint to fetch the formData', (done) => {
-    sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
       <FormDetailContainer
         {...defaultProps}
@@ -110,7 +108,7 @@ describe('FormDetailContainer', () => {
 
   describe('when NOT published', () => {
     beforeEach(() => {
-      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(formData));
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     });
     afterEach(() => {
       httpInterceptor.get.restore();
@@ -129,13 +127,13 @@ describe('FormDetailContainer', () => {
     });
 
     it('should save form when save button is clicked', (done) => {
-      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(formData));
+      sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
       const wrapper = mount(
         <FormDetailContainer
           {...defaultProps}
         />, { context }
       );
-      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       const saveButton = wrapper.find('.save-button');
 
       setTimeout(() => {
@@ -158,7 +156,7 @@ describe('FormDetailContainer', () => {
         catch() { return this; },
       };
 
-      sinon.stub(httpInterceptor, 'post', () => fakePromise);
+      sinon.stub(httpInterceptor, 'post').callsFake(() => fakePromise);
 
       const wrapper = shallow(
         <FormDetailContainer
@@ -166,7 +164,7 @@ describe('FormDetailContainer', () => {
         />, { context: { router: { push() {} } } }
       );
       wrapper.setState({ formData });
-      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       wrapper.instance().onSave();
 
       const dummyResponse = {
@@ -222,13 +220,13 @@ describe('FormDetailContainer', () => {
         value: '{"controls": [{}]}',
       }];
       const updatedForm = Object.assign({}, formData, { resources });
-      sinon.stub(httpInterceptor, 'post', () => Promise.resolve(updatedForm));
+      sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(updatedForm));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
         />, { context }
       );
-      sinon.stub(wrapper.instance(), 'getFormJson', () => formJson);
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       let publishButton;
       wrapper.setState({ formData: updatedForm },
         () => {
@@ -264,7 +262,7 @@ describe('FormDetailContainer', () => {
 
   describe('when published', () => {
     beforeEach(() => {
-      sinon.stub(httpInterceptor, 'get', () => Promise.resolve(publishedFormData));
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(publishedFormData));
     });
 
     afterEach(() => {
