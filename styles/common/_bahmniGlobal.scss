@@ -79,7 +79,7 @@ h2.header-title {
   &--highlight , input[type="submit"], button[type="submit"]{
     background: linear-gradient(to bottom,$bahmniPrimaryBtnColor,$bahmniPrimaryBtnColorHover) $bahmniPrimaryBtnColorHover;
     border: 1px solid $bahmniPrimaryBtnColorHover;
-    color:$white !important;
+    color:$white;
     letter-spacing: 0.5px;
     font-family: $primarySemiBoldFont;
     border-radius: 2px;
@@ -95,7 +95,7 @@ input[type="checkbox"]{
   background-color: $bahmniPageBg;
   border: 1px solid $gray400;
   @include box-shadow-for-section;
-  padding: 8px !important;
+  padding: 8px;
   border-radius: 3px;
   display: inline-block;
   position: relative;
