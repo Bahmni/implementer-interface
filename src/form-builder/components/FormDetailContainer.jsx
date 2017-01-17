@@ -43,7 +43,6 @@ export class FormDetailContainer extends Component {
 
   componentWillUpdate() {
     this.props.dispatch(deselectControl());
-    this.props.dispatch(removeSourceMap());
     this.props.dispatch(removeControlProperties());
   }
 
