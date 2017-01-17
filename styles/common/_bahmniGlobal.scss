@@ -1,16 +1,16 @@
 //TOP FIXED HEADER
 
-*{
+* {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
-.header-wrap{
+.header-wrap {
   background: $bahmniSecondaryColor;
   position: fixed;
   top: 0;
@@ -21,10 +21,10 @@ a{
   height: 52px;
 }
 
-.header ,.breadcrumb-inner ,.container-content{
+.header, .breadcrumb-inner, .container-content {
   @include clearfix();
-  max-width:$max-page-width ;
-  margin:0 auto;
+  max-width: $max-page-width;
+  margin: 0 auto;
 }
 
 .section-grid {
@@ -35,13 +35,13 @@ a{
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   background: $white;
-  .section-content{
+  .section-content {
     padding: 10px 0;
   }
 }
 
 h2.header-title {
-  background: $bahmniSecondaryColor ;
+  background: $bahmniSecondaryColor;
   color: $gray200;
   font-size: 16px;
   padding: 10px;
@@ -49,21 +49,21 @@ h2.header-title {
   border-radius: 3px 3px 0 0;
 }
 
-.nav{
-  float:left;
+.nav {
+  float: left;
   width: auto;
-  ul{
-    li{
-      padding:0 20px 0 0;
+  ul {
+    li {
+      padding: 0 20px 0 0;
       display: inline-block;
-      a{
+      a {
         color: $white;
         font-weight: 400;
       }
-      &:hover{
+      &:hover {
         opacity: 0.75;
       }
-      &.active{
+      &.active {
         opacity: 0.75;
         font-family: $primaryBoldFont san-serif;
       }
@@ -71,27 +71,27 @@ h2.header-title {
   }
 }
 
-.button, button, input[type="button"],input[type="reset"], a.button {
+.button, button, input[type="button"], input[type="reset"], a.button {
   @include button;
 }
 
-.btn{
-  &--highlight , input[type="submit"], button[type="submit"]{
-    background: linear-gradient(to bottom,$bahmniPrimaryBtnColor,$bahmniPrimaryBtnColorHover) $bahmniPrimaryBtnColorHover;
+.btn {
+  &--highlight, input[type="submit"], button[type="submit"] {
+    background: linear-gradient(to bottom, $bahmniPrimaryBtnColor, $bahmniPrimaryBtnColorHover) $bahmniPrimaryBtnColorHover;
     border: 1px solid $bahmniPrimaryBtnColorHover;
-    color:$white;
+    color: $white;
     letter-spacing: 0.5px;
     font-family: $primarySemiBoldFont;
     border-radius: 2px;
   }
-  &--close{
+  &--close {
     padding: 5px;
     font-size: 12px;
     width: 74px;
   }
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
   background-color: $bahmniPageBg;
   border: 1px solid $gray400;
   @include box-shadow-for-section;
@@ -101,7 +101,7 @@ input[type="checkbox"]{
   position: relative;
 }
 
-.container-content-wrap{
+.container-content-wrap {
   @include clearfix();
   padding-top: 106px;
   margin-bottom: 20px;
@@ -115,8 +115,12 @@ input[type="checkbox"]{
 .column-side {
   width: 255px;
   float: left;
-  margin-right:-100%;
-  position: fixed;
+  margin-right: -100%;
+  &.scrolled {
+    position: fixed;
+    top: 112px;
+  }
+
 }
 
 .container-column-main {
@@ -134,7 +138,7 @@ input[type="checkbox"]{
   border: 1px solid $bahmniSecondaryColor;
   border-radius: 5px 5px 0 0;
   @include box-shadow-for-section;
-  &.published{
+  &.published {
     pointer-events: none;
     opacity: 0.8;
   }
@@ -142,7 +146,7 @@ input[type="checkbox"]{
 
 .button-wrapper {
   // remove
-  clear:both;
+  clear: both;
   overflow: hidden;
   margin: 0 0 10px;
 }
@@ -168,7 +172,7 @@ a.back-btn {
   text-decoration: none;
   z-index: 1;
   margin: 6px 6px 0 0;
-  color:$white;
+  color: $white;
   border-left: 0;
   float: left;
   font-size: 16px;
@@ -182,7 +186,7 @@ a.back-btn:hover {
   opacity: 0.8;
 }
 
-.info-view-mode-wrap{
+.info-view-mode-wrap {
   @include clearfix;
   @include box-shadow-for-section;
   border: 1px $gray400 solid;
@@ -196,15 +200,16 @@ a.back-btn:hover {
   /* stylelint-enable */
   position: relative;
 }
-.info-view-mode{
+
+.info-view-mode {
   display: table;
   width: auto;
   margin: 0 auto;
-  .fa-info-circle{
+  .fa-info-circle {
     font-size: 28px;
     padding: 0 5px;
   }
-  .info-message{
+  .info-message {
     display: table;
     float: left;
     padding: 5px 0;
