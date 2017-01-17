@@ -104,6 +104,7 @@ input[type="checkbox"]{
 .container-content-wrap{
   @include clearfix();
   padding-top: 106px;
+  margin-bottom: 20px;
 }
 
 .container-columns {
