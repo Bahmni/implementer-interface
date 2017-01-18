@@ -16,7 +16,7 @@ export default class FormDetail extends Component {
         const element = document.getElementsByClassName('column-side');
         element[0].className = 'column-side';
       }
-      if (window.scrollY >= 63 && window.scrollY <= 120) {
+      if (window.scrollY >= 63 && window.scrollY <= 500) {
         const element = document.getElementsByClassName('column-side');
         element[0].className = 'column-side scrolled';
       }
