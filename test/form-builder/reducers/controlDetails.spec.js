@@ -52,4 +52,32 @@ describe('controlDetails', () => {
     const state = controlDetails(undefined, action);
     expect(state).to.be.eql({});
   });
+
+  describe('focusControl', () => {
+    beforeEach(() => {
+      action = {
+        type: 'FOCUS_CONTROL',
+        id: 10,
+      };
+      expectedStoreState = { focusedControl: 10 };
+    });
+
+    it('should add focused control id to store', () => {
+      const state = controlDetails({}, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+
+    it('should update seletected control id', () => {
+      const state = controlDetails({ focusedControl: 12 }, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+  });
+
+  describe('blurControl', () => {
+    it('should blur control', () => {
+      action = { type: 'BLUR_CONTROL' };
+      const state = controlDetails({ focusedControl: 12 }, action);
+      expect(state).to.be.eql({ focusedControl: undefined });
+    });
+  });
 });

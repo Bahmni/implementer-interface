@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { selectControl } from 'form-builder/actions/control';
+import { focusControl, selectControl } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
 import { Exception } from 'form-builder/helpers/Exception';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -159,6 +159,19 @@ describe('ControlWrapper', () => {
 
     controlWrapper.instance().onSelected({ stopPropagation: () => {} }, '1');
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('1')));
+  });
+
+  it('should dispatch focused Control id', () => {
+    const store = getStore();
+    const controlWrapper = mount(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />);
+
+    controlWrapper.find('.control-wrapper').simulate('focus');
+    sinon.assert.calledOnce(store.dispatch.withArgs(focusControl('1')));
   });
 
   it('should set the updated metadata as the drag data', () => {

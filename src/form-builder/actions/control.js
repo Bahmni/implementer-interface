@@ -12,3 +12,7 @@ export const setChangedProperty = (property, id) =>
   ({ type: 'SET_CHANGED_PROPERTY', property, id });
 
 export const removeControlProperties = () => ({ type: 'REMOVE_CONTROL_PROPERTIES' });
+
+export const focusControl = (id) => ({ type: 'FOCUS_CONTROL', id });
+
+export const blurControl = () => ({ type: 'BLUR_CONTROL' });

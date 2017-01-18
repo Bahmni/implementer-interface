@@ -26,3 +26,7 @@
     border-bottom: none;
   }
 }
+
+.control-wrapper.control-selected {
+  background-color: $gray400;
+}

@@ -6,7 +6,7 @@ import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
-import { deselectControl, removeControlProperties, removeSourceMap }
+import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
   from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -28,6 +28,7 @@ export class FormDetailContainer extends Component {
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
+    props.dispatch(blurControl());
   }
 
   componentWillMount() {

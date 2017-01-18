@@ -62,4 +62,27 @@ describe('control', () => {
       expect(action.id).to.be.eql('123');
     });
   });
+
+
+  describe('removeControlProperties', () => {
+    it('should return the appropriate action', () => {
+      const action = control.removeControlProperties();
+      expect(action.type).to.be.eql('REMOVE_CONTROL_PROPERTIES');
+    });
+  });
+
+  describe('focusControl', () => {
+    it('should return the focus action and control id', () => {
+      const action = control.focusControl(10);
+      expect(action.type).to.be.eql('FOCUS_CONTROL');
+      expect(action.id).to.be.eql(10);
+    });
+  });
+
+  describe('blurControl', () => {
+    it('should return the blur action', () => {
+      const action = control.blurControl();
+      expect(action.type).to.be.eql('BLUR_CONTROL');
+    });
+  });
 });

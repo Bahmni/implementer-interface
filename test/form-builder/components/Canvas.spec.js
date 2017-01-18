@@ -5,7 +5,7 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { deselectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl } from 'form-builder/actions/control';
 import { IDGenerator } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 
@@ -74,7 +74,7 @@ describe('Canvas', () => {
     expect(grid).to.have.prop('wrapper');
   });
 
-  it('should clear selected id when clicked on canvas', () => {
+  it('should clear selected id and focused Control id when clicked on canvas', () => {
     const idGenerator = new IDGenerator();
     const store = getStore();
 
@@ -90,6 +90,7 @@ describe('Canvas', () => {
       />);
     canvas.find('.form-builder-canvas').simulate('click');
     sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
+    sinon.assert.calledOnce(store.dispatch.withArgs(blurControl()));
   });
 
   it('should pass metadata to controls from Form Resource', () => {

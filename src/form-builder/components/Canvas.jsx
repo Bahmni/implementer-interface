@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import each from 'lodash/each';
 import { connect } from 'react-redux';
-import { deselectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -31,6 +31,7 @@ class Canvas extends Component {
 
   clearSelectedControl() {
     this.props.dispatch(deselectControl());
+    this.props.dispatch(blurControl());
   }
 
   prepareJson() {

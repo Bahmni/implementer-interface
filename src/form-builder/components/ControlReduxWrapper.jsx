@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { selectControl } from 'form-builder/actions/control';
+import { focusControl, selectControl } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
@@ -8,6 +8,8 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { addSourceMap } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import classNames from 'classnames';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -17,14 +19,21 @@ class ControlWrapper extends Draggable {
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
+    this.state = { active: false };
     this.storeChildRef = this.storeChildRef.bind(this);
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
+    this.onFocus = this.onFocus.bind(this);
   }
 
   onSelected(event, metadata) {
     this.props.dispatch(selectControl(metadata));
     event.stopPropagation();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const activeControl = (this.metadata.id === nextProps.focusedControl);
+    this.setState({ active: activeControl });
   }
 
   conditionallyAddConcept(newProps) {
@@ -46,8 +55,10 @@ class ControlWrapper extends Draggable {
       const childMetadata = this.childControl.getJsonDefinition();
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
-      this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
-      this.props.dispatch(selectControl(this.metadata));
+      if (!isEqual(this.metadata.properties, updatedProperties)) {
+        this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
+        this.props.dispatch(selectControl(this.metadata));
+      }
     }
   }
 
@@ -89,14 +100,21 @@ class ControlWrapper extends Draggable {
     }
   }
 
+  onFocus(event) {
+    this.props.dispatch(focusControl(this.metadata.id));
+    event.stopPropagation();
+  }
+
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
     return (
       <div
-        className="control-wrapper"
+        className={classNames('control-wrapper', { 'control-selected': this.state.active })}
         draggable="true"
         onDragEnd={ (e) => onDragEndFunc(e) }
         onDragStart={ this.onDragStart(this.metadata) }
+        onFocus={(e) => this.onFocus(e)}
+        tabIndex="1"
       >
         <this.control
           idGenerator={ this.props.idGenerator}
@@ -123,6 +141,7 @@ function mapStateToProps(state) {
   return {
     conceptToControlMap: state.conceptToControlMap,
     controlProperty: state.controlProperty,
+    focusedControl: state.controlDetails.focusedControl,
   };
 }
 
