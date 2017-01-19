@@ -44,6 +44,7 @@ export class FormDetailContainer extends Component {
 
   componentWillUpdate() {
     this.props.dispatch(deselectControl());
+    this.props.dispatch(blurControl());
     this.props.dispatch(removeControlProperties());
   }
 
