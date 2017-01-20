@@ -77,10 +77,10 @@ class ControlWrapper extends Draggable {
     }
   }
 
-  getJsonDefinition() {
+  getJsonDefinition(isBeingMoved) {
     if (this.childControl) {
       const jsonDefinition = this.childControl.getJsonDefinition();
-      if (jsonDefinition === undefined) {
+      if (jsonDefinition === undefined && !isBeingMoved) {
         const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
         throw new Exception(conceptMissingMessage);
       }
@@ -90,7 +90,7 @@ class ControlWrapper extends Draggable {
   }
 
   processDragStart() {
-    const metadata = this.getJsonDefinition();
+    const metadata = this.getJsonDefinition(true);
     return metadata || this.props.metadata;
   }
 
