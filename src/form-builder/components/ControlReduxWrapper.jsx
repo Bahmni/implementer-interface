@@ -109,7 +109,9 @@ class ControlWrapper extends Draggable {
     const onDragEndFunc = this.onDragEnd(this.metadata);
     return (
       <div
-        className={classNames('control-wrapper', { 'control-selected': this.state.active }, 'clearfix')}
+        className={
+          classNames('control-wrapper', { 'control-selected': this.state.active }, 'clearfix')
+        }
         draggable="true"
         onDragEnd={ (e) => onDragEndFunc(e) }
         onDragStart={ this.onDragStart(this.metadata) }
