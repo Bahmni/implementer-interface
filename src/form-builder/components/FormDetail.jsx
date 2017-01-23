@@ -32,6 +32,14 @@ export default class FormDetail extends Component {
     return null;
   }
 
+  getIdGenerator(formResourceControls) {
+    if (this.previousResources !== this.props.formData.resources) {
+      this.idGenerator = new IDGenerator(formResourceControls);
+      this.previousResources = this.props.formData.resources;
+    }
+    return this.idGenerator;
+  }
+
   canvasRef(ref) {
     this.canvas = ref;
   }
@@ -47,7 +55,7 @@ export default class FormDetail extends Component {
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
-      const idGenerator = new IDGenerator(formResourceControls);
+      const idGenerator = this.getIdGenerator(formResourceControls);
       return (
                 <div>
                     <div className="button-wrapper">
