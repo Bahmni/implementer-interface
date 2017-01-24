@@ -18,6 +18,7 @@ export class FormDetailContainer extends Component {
 
   constructor(props) {
     super(props);
+    this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {} };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
@@ -31,7 +32,7 @@ export class FormDetailContainer extends Component {
     props.dispatch(blurControl());
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const params =
       'v=custom:(id,uuid,name,version,published,auditInfo,' +
       'resources:(value,dataType,uuid))';
@@ -46,6 +47,10 @@ export class FormDetailContainer extends Component {
     this.props.dispatch(deselectControl());
     this.props.dispatch(blurControl());
     this.props.dispatch(removeControlProperties());
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutID);
   }
 
   onSave() {
@@ -174,7 +179,8 @@ export class FormDetailContainer extends Component {
         this.setState({ notification: successNotification,
           formData: this._formResourceMapper(response) });
 
-        setTimeout(() => {
+        clearTimeout(this.timeoutID);
+        this.timeoutID = setTimeout(() => {
           this.setState({ notification: {} });
         }, commonConstants.toastTimeout);
       })
@@ -192,7 +198,8 @@ export class FormDetailContainer extends Component {
           { published: response.published, version: response.version });
         this.setState({ notification: successNotification, formData: publishedFormData });
 
-        setTimeout(() => {
+        clearTimeout(this.timeoutID);
+        this.timeoutID = setTimeout(() => {
           this.setState({ notification: {} });
         }, commonConstants.toastTimeout);
       })

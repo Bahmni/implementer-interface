@@ -15,7 +15,7 @@ export default class FormBuilderContainer extends Component {
     this.setState = this.setState.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
