@@ -260,6 +260,28 @@ describe('FormDetailContainer', () => {
     });
   });
 
+  describe('when component unmounted', () => {
+    beforeEach(() => {
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(publishedFormData));
+    });
+
+    afterEach(() => {
+      httpInterceptor.get.restore();
+    });
+
+    it('should call clearTimeout after component unmounted', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      const spy = sinon.spy(window, 'clearTimeout');
+      wrapper.unmount();
+      sinon.assert.calledOnce(spy);
+      window.clearTimeout.restore();
+    });
+  });
+
   describe('when published', () => {
     beforeEach(() => {
       sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(publishedFormData));
