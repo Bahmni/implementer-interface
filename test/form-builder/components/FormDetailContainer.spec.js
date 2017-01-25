@@ -106,6 +106,19 @@ describe('FormDetailContainer', () => {
     sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
   });
 
+  it('should not show publish button & save button before get formData', () => {
+    const wrapper = mount(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    wrapper.setState({ httpReceived: false });
+    const saveButton = wrapper.find('.save-button');
+    const publishButton = wrapper.find('.publish-button');
+    expect(saveButton).to.have.length(0);
+    expect(publishButton).to.have.length(0);
+  });
+
   describe('when NOT published', () => {
     beforeEach(() => {
       sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
@@ -120,6 +133,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context }
       );
+      wrapper.setState({ httpReceived: true });
 
       const saveButton = wrapper.find('.save-button');
       expect(saveButton.text()).to.equal('Save');
@@ -133,6 +147,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context }
       );
+      wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       const saveButton = wrapper.find('.save-button');
 
@@ -163,7 +178,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context: { router: { push() {} } } }
       );
-      wrapper.setState({ formData });
+      wrapper.setState({ formData, httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       wrapper.instance().onSave();
 
@@ -208,6 +223,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context }
       );
+      wrapper.setState({ httpReceived: true });
 
       const publishButton = wrapper.find('.publish-button');
       expect(publishButton.text()).to.equal('Publish');
@@ -226,6 +242,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context }
       );
+      wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       let publishButton;
       wrapper.setState({ formData: updatedForm },
@@ -251,6 +268,7 @@ describe('FormDetailContainer', () => {
           {...defaultProps}
         />, { context }
       );
+      wrapper.setState({ httpReceived: true });
       const editButton = wrapper.find('.edit-button');
 
       setTimeout(() => {

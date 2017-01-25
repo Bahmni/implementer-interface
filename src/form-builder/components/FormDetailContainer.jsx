@@ -19,7 +19,7 @@ export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
-    this.state = { formData: undefined, showModal: false, notification: {} };
+    this.state = { formData: undefined, showModal: false, notification: {}, httpReceived: false };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -38,7 +38,7 @@ export class FormDetailContainer extends Component {
       'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-      .then((data) => this.setState({ formData: data }))
+      .then((data) => this.setState({ formData: data, httpReceived: true }))
       .catch((error) => this.setErrorMessage(error));
     // .then is untested
   }
@@ -110,7 +110,7 @@ export class FormDetailContainer extends Component {
     const isPublished = this.state.formData ? this.state.formData.published : false;
     const isEditable = this.state.formData ? this.state.formData.editable : false;
     const resourceData = FormHelper.getFormResourceControls(this.state.formData);
-    if (!isPublished || isEditable) {
+    if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
         <button
           className="publish-button"
@@ -142,7 +142,7 @@ export class FormDetailContainer extends Component {
           <div className="info-view-mode">
             <i className="fa fa-info-circle fl"></i>
             <span className="info-message">
-              This <strong>Form</strong> is a <strong>Published</strong> version.
+              This Form is a Published version.
               For editing click on
             </span>
             <button className="fr edit-button" onClick={() => this.openFormModal()}>Edit</button>
