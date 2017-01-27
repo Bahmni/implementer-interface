@@ -48,9 +48,20 @@ describe('CreateFormModal', () => {
       preventDefault: () => {},
     };
 
-    wrapper.find('.form-name').simulate('change', { target: { value: 'Form-1' } });
+    wrapper.find('.form-name').simulate('change', { target: { value: 'Form1' } });
     wrapper.find('.dialog--container').props().onSubmit(event);
     sinon.assert.calledOnce(createFormSpy);
-    sinon.assert.calledWith(createFormSpy, 'Form-1');
+    sinon.assert.calledWith(createFormSpy, 'Form1');
+  });
+
+  it('should trim input before calling createForm', () => {
+    const event = {
+      preventDefault: () => {},
+    };
+
+    wrapper.find('.form-name').simulate('change', { target: { value: 'Form1  ' } });
+    wrapper.find('.dialog--container').props().onSubmit(event);
+    sinon.assert.calledOnce(createFormSpy);
+    sinon.assert.calledWith(createFormSpy, 'Form1');
   });
 });

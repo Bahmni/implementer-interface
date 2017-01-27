@@ -19,7 +19,7 @@ export default class CreateFormModal extends Component {
 
   createForm(e) {
     e.preventDefault();
-    this.props.createForm(this.formName);
+    this.props.createForm(this.formName.trim());
   }
 
   render() {
@@ -36,9 +36,9 @@ export default class CreateFormModal extends Component {
                   autoFocus
                   className="form-name"
                   onChange={(e) => this.setFormName(e.target.value)}
-                  pattern="\S(.*\S)?"
+                  pattern="[^\.\/\-\^\s][^\.\/\-\^]*"
                   required
-                  title="Leading or trailing spaces are not allowed"
+                  title="Leading or trailing spaces and ^/-. are not allowed"
                   type="text"
                 />
               </div>
