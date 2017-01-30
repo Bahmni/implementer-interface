@@ -33,9 +33,8 @@ export default class FormDetail extends Component {
   }
 
   getIdGenerator(formResourceControls) {
-    if (this.previousResources !== this.props.formData.resources) {
+    if (!this.idGenerator) {
       this.idGenerator = new IDGenerator(formResourceControls);
-      this.previousResources = this.props.formData.resources;
     }
     return this.idGenerator;
   }
