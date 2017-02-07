@@ -4,6 +4,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';
 import NotificationContainer from 'common/Notification';
+import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 
@@ -11,7 +12,7 @@ export default class FormBuilderContainer extends Component {
 
   constructor() {
     super();
-    this.state = { data: [], notification: {} };
+    this.state = { data: [], notification: {}, loading: true };
     this.setState = this.setState.bind(this);
   }
 
@@ -19,9 +20,12 @@ export default class FormBuilderContainer extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
-        this.setState({ data: this.orderFormByVersion(data.results) });
+        this.setState({ data: this.orderFormByVersion(data.results), loading: false });
       })
-      .catch((error) => this.showErrors(error));
+      .catch((error) => {
+        this.showErrors(error);
+        this.setState({ loading: false });
+      });
   }
 
   setErrorMessage(errorMessage) {
@@ -64,6 +68,7 @@ export default class FormBuilderContainer extends Component {
   render() {
     return (
     <div>
+      <Spinner show={this.state.loading} />
       <NotificationContainer
         notification={this.state.notification}
       />

@@ -142,7 +142,7 @@ describe('FormDetailContainer', () => {
 
     it('should save form when save button is clicked', (done) => {
       sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
-      const wrapper = mount(
+      const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
         />, { context }
@@ -156,7 +156,7 @@ describe('FormDetailContainer', () => {
         sinon.assert.calledWith(
           httpInterceptor.post,
           formBuilderConstants.bahmniFormResourceUrl,
-          formResource
+          sinon.match.any
         );
 
         httpInterceptor.post.restore();

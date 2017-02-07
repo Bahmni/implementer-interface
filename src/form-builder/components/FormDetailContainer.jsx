@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
   from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
+import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import isEmpty from 'lodash/isEmpty';
@@ -19,7 +20,8 @@ export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
-    this.state = { formData: undefined, showModal: false, notification: {}, httpReceived: false };
+    this.state = { formData: undefined, showModal: false, notification: {},
+      httpReceived: false, loading: true };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -38,8 +40,11 @@ export class FormDetailContainer extends Component {
       'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-      .then((data) => this.setState({ formData: data, httpReceived: true }))
-      .catch((error) => this.setErrorMessage(error));
+      .then((data) => this.setState({ formData: data, httpReceived: true, loading: false }))
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
     // .then is untested
   }
 
@@ -168,6 +173,7 @@ export class FormDetailContainer extends Component {
   }
 
   _saveFormResource(formJson) {
+    this.setState({ loading: true });
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then((response) => {
         const updatedUuid = response.form.uuid;
@@ -177,17 +183,21 @@ export class FormDetailContainer extends Component {
           type: commonConstants.responseType.success,
         };
         this.setState({ notification: successNotification,
-          formData: this._formResourceMapper(response) });
+          formData: this._formResourceMapper(response), loading: false });
 
         clearTimeout(this.timeoutID);
         this.timeoutID = setTimeout(() => {
           this.setState({ notification: {} });
         }, commonConstants.toastTimeout);
       })
-      .catch((error) => this.setErrorMessage(error));
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
   }
 
   _publishForm(formUuid) {
+    this.setState({ loading: true });
     httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
       .then((response) => {
         const successNotification = {
@@ -196,14 +206,18 @@ export class FormDetailContainer extends Component {
         };
         const publishedFormData = Object.assign({}, this.state.formData,
           { published: response.published, version: response.version });
-        this.setState({ notification: successNotification, formData: publishedFormData });
+        this.setState({ notification: successNotification,
+          formData: publishedFormData, loading: false });
 
         clearTimeout(this.timeoutID);
         this.timeoutID = setTimeout(() => {
           this.setState({ notification: {} });
         }, commonConstants.toastTimeout);
       })
-      .catch((error) => this.setErrorMessage(error));
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
   }
 
   _formResourceMapper(responseObject) {
@@ -219,6 +233,7 @@ export class FormDetailContainer extends Component {
   render() {
     return (
       <div>
+        <Spinner show={this.state.loading} />
         <NotificationContainer
           notification={this.state.notification}
         />
