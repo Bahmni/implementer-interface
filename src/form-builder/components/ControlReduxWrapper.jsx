@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { focusControl, selectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
@@ -24,10 +25,17 @@ class ControlWrapper extends Draggable {
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
     this.onFocus = this.onFocus.bind(this);
+    this.deSelected = this.deSelected.bind(this);
   }
 
   onSelected(event, metadata) {
     this.props.dispatch(selectControl(metadata));
+    event.stopPropagation();
+  }
+
+  deSelected(event) {
+    this.props.dispatch(deselectControl());
+    this.props.dispatch(blurControl());
     event.stopPropagation();
   }
 
@@ -119,10 +127,13 @@ class ControlWrapper extends Draggable {
         tabIndex="1"
       >
         <this.control
+          deSelect={ this.deSelected}
+          deleteControl={ this.props.deleteControl }
           idGenerator={ this.props.idGenerator}
           metadata={ this.metadata }
           onSelect={ this.onSelected }
-          ref={this.storeChildRef}
+          ref={ this.storeChildRef }
+          showDeleteButton={ this.props.showDeleteButton }
           wrapper={ this.props.wrapper }
         />
       </div>
@@ -135,7 +146,9 @@ ControlWrapper.propTypes = {
     id: PropTypes.string,
     property: PropTypes.object,
   }),
+  deleteControl: PropTypes.func,
   metadata: PropTypes.object,
+  showDeleteButton: PropTypes.bool,
   wrapper: PropTypes.func,
 };
 

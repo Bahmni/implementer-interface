@@ -78,6 +78,7 @@ class Canvas extends Component {
           controls={ formResourceControls || [] }
           idGenerator={ this.props.idGenerator }
           ref={ this.gridReference }
+          showDeleteButton
           wrapper={ ControlWrapper }
         />
       </div>
