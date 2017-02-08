@@ -11,7 +11,8 @@ class Canvas extends Component {
     super(props);
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
-    this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls) };
+    this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls),
+      formName: this.props.formName };
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
   }
@@ -50,6 +51,10 @@ class Canvas extends Component {
     }
   }
 
+  formNameChange(e) {
+    this.setState({ formName: e.target.value });
+  }
+
   render() {
     const { formResourceControls } = this.props;
     return (
@@ -58,6 +63,13 @@ class Canvas extends Component {
         onClick={this.clearSelectedControl}
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
+        <form onSubmit={ () => {this.props.updateFormName(this.state.formName); }}>
+          <input
+            onChange={ (e) => { this.formNameChange(e); } }
+            type="text"
+            value={this.state.formName}
+          />
+        </form>
         <Grid
           className="bahmni-grid"
           controls={ formResourceControls || [] }
@@ -77,6 +89,7 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
+  updateFormName: PropTypes.func.isRequired,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);

@@ -21,7 +21,7 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
-      httpReceived: false, loading: true };
+      httpReceived: false, loading: true, originFormName: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -40,7 +40,8 @@ export class FormDetailContainer extends Component {
       'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-      .then((data) => this.setState({ formData: data, httpReceived: true, loading: false }))
+      .then((data) => this.setState({ formData: data, httpReceived: true,
+        loading: false, originFormName: data.name }))
       .catch((error) => {
         this.setErrorMessage(error);
         this.setState({ loading: false });
@@ -73,7 +74,13 @@ export class FormDetailContainer extends Component {
         value: JSON.stringify(formJson),
         uuid: formResourceUuid,
       };
-      this._saveFormResource(formResource);
+
+      if (this.state.formData.name === this.state.originFormName) {
+        this._saveFormResource(formResource);
+      } else {
+        this.updateFormName(formResource);
+      }
+
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -230,6 +237,27 @@ export class FormDetailContainer extends Component {
     return form;
   }
 
+  updateFormName(formResource) {
+    const form = {
+      name: this.state.formData.name,
+      version: this.state.formData.version,
+      published: this.state.published,
+    };
+
+    httpInterceptor
+      .post(`${formBuilderConstants.formUrl}/${this.state.formData.uuid}`, form)
+      .then(() => {
+        this._saveFormResource(formResource);
+      })
+      .catch((error) => this.showErrors(error));
+  }
+
+  updateTempFormName(formName) {
+    // TODO: Need to check if name is existed?
+    const newFormData = Object.assign({}, this.state.formData, { name: formName });
+    this.setState({ formData: newFormData });
+  }
+
   render() {
     return (
       <div>
@@ -256,6 +284,7 @@ export class FormDetailContainer extends Component {
               formData={this.state.formData}
               ref={r => { this.formDetail = r; }}
               setError={this.setErrorMessage}
+              updateFormName = {(formName) => this.updateTempFormName(formName)}
             />
           </div>
         </div>

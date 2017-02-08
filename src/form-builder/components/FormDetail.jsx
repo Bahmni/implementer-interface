@@ -80,6 +80,7 @@ export default class FormDetail extends Component {
                                       formUuid={ uuid }
                                       idGenerator={idGenerator}
                                       ref={this.canvasRef}
+                                      updateFormName={this.props.updateFormName}
                                     />
                                 </div>
                             </div>
@@ -103,4 +104,5 @@ FormDetail.propTypes = {
     editable: PropTypes.bool,
   }),
   setError: PropTypes.func.isRequired,
+  updateFormName: PropTypes.func.isRequired,
 };
