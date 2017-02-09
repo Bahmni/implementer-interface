@@ -21,7 +21,7 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
-      httpReceived: false, loading: true };
+      httpReceived: false, loading: true, formList: [], originFormName: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -40,12 +40,15 @@ export class FormDetailContainer extends Component {
       'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-      .then((data) => this.setState({ formData: data, httpReceived: true, loading: false }))
+      .then((data) => this.setState({ formData: data, httpReceived: true,
+        loading: false, originFormName: data.name }))
       .catch((error) => {
         this.setErrorMessage(error);
         this.setState({ loading: false });
       });
     // .then is untested
+
+    this.getFormList();
   }
 
   componentWillUpdate() {
@@ -166,7 +169,7 @@ export class FormDetailContainer extends Component {
   editForm() {
     const editableFormData = Object.assign(
       {}, this.state.formData,
-      { editable: true, version: '' }
+      { editable: true }
     );
 
     this.setState({ formData: editableFormData });
@@ -230,6 +233,43 @@ export class FormDetailContainer extends Component {
     return form;
   }
 
+  getFormList() {
+    httpInterceptor
+      .get(formBuilderConstants.formUrl)
+      .then((response) => {
+        this.setState({ formList: response.results });
+      })
+      .catch((error) => this.showErrors(error));
+  }
+
+  updateFormName(formName) {
+    let currentFormName = formName;
+    const existForms = this.state.formList.filter(
+      form => form.display === formName && this.state.originFormName !== formName);
+    if (existForms.length > 0) {
+      this.setErrorMessage({ message: 'Form with same name already exists' });
+      currentFormName = this.state.originFormName;
+    }
+    const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });
+    this.setState({ formData: newFormData });
+    return currentFormName;
+  }
+
+  cloneFormResource() {
+    const form = {
+      name: this.state.formData.name,
+      version: this.state.formData.version,
+      published: this.state.formData.published,
+    };
+    httpInterceptor
+      .post(formBuilderConstants.formUrl, form)
+      .then((response) => {
+        const newFormData = Object.assign({}, this.state.formData, { uuid: response.uuid });
+        this.setState({ formData: newFormData });
+      })
+      .catch((error) => this.showErrors(error));
+  }
+
   render() {
     return (
       <div>
@@ -256,6 +296,7 @@ export class FormDetailContainer extends Component {
               formData={this.state.formData}
               ref={r => { this.formDetail = r; }}
               setError={this.setErrorMessage}
+              updateFormName={(formName) => this.updateFormName(formName)}
             />
           </div>
         </div>
