@@ -66,7 +66,7 @@ class Canvas extends Component {
         onClick={this.clearSelectedControl}
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <div className="canvas-placeholder">
+        <div className="canvas-rename">
           <form onSubmit={() => this.updateFormName() }>
             <input
               onChange={(e) => this.setState({ formName: e.target.value })}

@@ -138,8 +138,9 @@ export class FormDetailContainer extends Component {
       return (
           <button
             className="fr save-button btn--highlight"
-            onClick={ this.state.originFormName === this.state.formData.name ?
-              this.onSave : this.cloneFormResource }
+            onClick={ this.state.formData &&
+              this.state.originFormName !== this.state.formData.name ?
+              this.cloneFormResource : this.onSave }
           >Save</button>
       );
     }
