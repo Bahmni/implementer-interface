@@ -25,7 +25,9 @@ class ControlWrapper extends Draggable {
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
     this.onFocus = this.onFocus.bind(this);
-    this.deSelected = this.deSelected.bind(this);
+    this.clearSelectedControl = this.clearSelectedControl.bind(this);
+    this.clearControlProperties = this.clearControlProperties.bind(this);
+    // this.confirmDelete = this.confirmDelete.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -33,7 +35,7 @@ class ControlWrapper extends Draggable {
     event.stopPropagation();
   }
 
-  deSelected(event) {
+  clearSelectedControl(event) {
     this.props.dispatch(deselectControl());
     this.props.dispatch(blurControl());
     event.stopPropagation();
@@ -113,6 +115,16 @@ class ControlWrapper extends Draggable {
     event.stopPropagation();
   }
 
+  clearControlProperties() {
+    this.props.dispatch(deselectControl());
+  }
+
+  // confirmDelete() {
+  //   if(confirmed) {
+  //     this.props.deleteControl();
+  //   }
+  // }
+
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
     return (
@@ -127,13 +139,14 @@ class ControlWrapper extends Draggable {
         tabIndex="1"
       >
         <this.control
-          deSelect={ this.deSelected}
+          clearSelectedControl={ this.clearSelectedControl}
           deleteControl={ this.props.deleteControl }
+          dispatch={this.clearControlProperties}
           idGenerator={ this.props.idGenerator}
           metadata={ this.metadata }
           onSelect={ this.onSelected }
           ref={ this.storeChildRef }
-          showDeleteButton={ this.props.showDeleteButton }
+          showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
         />
       </div>
