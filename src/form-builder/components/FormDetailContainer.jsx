@@ -28,6 +28,7 @@ export class FormDetailContainer extends Component {
     this.openFormModal = this.openFormModal.bind(this);
     this.closeFormModal = this.closeFormModal.bind(this);
     this.onPublish = this.onPublish.bind(this);
+    this.cloneFormResource = this.cloneFormResource.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -135,7 +136,11 @@ export class FormDetailContainer extends Component {
     const isPublished = this.state.formData ? this.state.formData.published : false;
     if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
-          <button className="fr save-button btn--highlight" onClick={ this.onSave }>Save</button>
+          <button
+            className="fr save-button btn--highlight"
+            onClick={ this.state.originFormName === this.state.formData.name ?
+              this.onSave : this.cloneFormResource }
+          >Save</button>
       );
     }
     return null;
@@ -256,16 +261,21 @@ export class FormDetailContainer extends Component {
   }
 
   cloneFormResource() {
+    const newVersion = '1';
+    const isPublished = false;
     const form = {
       name: this.state.formData.name,
-      version: this.state.formData.version,
-      published: this.state.formData.published,
+      version: newVersion,
+      published: isPublished,
     };
     httpInterceptor
       .post(formBuilderConstants.formUrl, form)
       .then((response) => {
-        const newFormData = Object.assign({}, this.state.formData, { uuid: response.uuid });
+        const newFormData = Object.assign({}, this.state.formData,
+          { uuid: response.uuid, id: response.id, published: isPublished,
+            version: newVersion, resources: [] });
         this.setState({ formData: newFormData });
+        this.onSave();
       })
       .catch((error) => this.showErrors(error));
   }
