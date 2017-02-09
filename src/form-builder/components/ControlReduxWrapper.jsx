@@ -11,6 +11,7 @@ import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
+import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -20,14 +21,15 @@ class ControlWrapper extends Draggable {
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
-    this.state = { active: false };
+    this.state = { active: false, showDeleteModal: false };
     this.storeChildRef = this.storeChildRef.bind(this);
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
     this.clearControlProperties = this.clearControlProperties.bind(this);
-    // this.confirmDelete = this.confirmDelete.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
+    this.closeDeleteModal = this.closeDeleteModal.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -119,11 +121,26 @@ class ControlWrapper extends Draggable {
     this.props.dispatch(deselectControl());
   }
 
-  // confirmDelete() {
-  //   if(confirmed) {
-  //     this.props.deleteControl();
-  //   }
-  // }
+  confirmDelete() {
+    this.setState({ showDeleteModal: true });
+  }
+
+  closeDeleteModal() {
+    this.setState({ showDeleteModal: false });
+  }
+
+  showDeleteControlModal() {
+    if (this.state.showDeleteModal) {
+      return (
+            <DeleteControlModal
+              closeModal={() => this.closeDeleteModal()}
+              controlName={this.props.metadata.name}
+              deleteControl={this.props.deleteControl}
+            />
+      );
+    }
+    return null;
+  }
 
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
@@ -140,7 +157,7 @@ class ControlWrapper extends Draggable {
       >
         <this.control
           clearSelectedControl={ this.clearSelectedControl}
-          deleteControl={ this.props.deleteControl }
+          deleteControl={ this.confirmDelete }
           dispatch={this.clearControlProperties}
           idGenerator={ this.props.idGenerator}
           metadata={ this.metadata }
@@ -149,6 +166,7 @@ class ControlWrapper extends Draggable {
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
         />
+        { this.showDeleteControlModal() }
       </div>
     );
   }
