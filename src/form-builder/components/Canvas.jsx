@@ -89,7 +89,7 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
-  updateFormName: PropTypes.func.isRequired,
+  updateFormName: PropTypes.func,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);

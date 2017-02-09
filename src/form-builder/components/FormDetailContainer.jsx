@@ -241,7 +241,7 @@ export class FormDetailContainer extends Component {
     const form = {
       name: this.state.formData.name,
       version: this.state.formData.version,
-      published: this.state.published,
+      published: this.state.formData.published,
     };
 
     httpInterceptor
@@ -253,7 +253,7 @@ export class FormDetailContainer extends Component {
   }
 
   updateTempFormName(formName) {
-    // TODO: Need to check if name is existed?
+    // TODO: Need to check if name is existed
     const newFormData = Object.assign({}, this.state.formData, { name: formName });
     this.setState({ formData: newFormData });
   }
