@@ -61,6 +61,7 @@ describe('Canvas', () => {
         formUuid="someFormUuid"
         formVersion="1"
         idGenerator={idGenerator}
+        showDeleteButton
         store={getStore()}
       />);
 
@@ -71,13 +72,13 @@ describe('Canvas', () => {
     expect(grid).to.have.prop('idGenerator');
     expect(grid.prop('idGenerator')).to.eql(idGenerator); // reference equality
 
+    expect(grid.prop('showDeleteButton')).to.eql(true);
     expect(grid).to.have.prop('wrapper');
   });
 
   it('should clear selected id and focused Control id when clicked on canvas', () => {
     const idGenerator = new IDGenerator();
     const store = getStore();
-
     const canvas = mount(
       <Canvas
         formId={1}

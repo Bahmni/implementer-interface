@@ -203,6 +203,22 @@ describe('ControlWrapper', () => {
     expect(newMetadata).to.eql(metadata);
   });
 
+  it('should show the delete confirm box if the state showDeleteModal equal true', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        deleteControl={() => {}}
+        metadata={ metadata }
+        showDeleteButton
+        store={ store }
+      />).shallow();
+
+    expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('DeleteControlModal');
+    controlWrapper.setState({ showDeleteModal: true });
+    controlWrapper.instance().forceUpdate();
+    expect(controlWrapper.find('.control-wrapper')).to.have.descendants('DeleteControlModal');
+  });
+
   it('getJsonDefinition should return json if present', () => {
     const store = getStore();
     const controlWrapper = shallow(
