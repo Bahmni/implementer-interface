@@ -2,16 +2,8 @@ import React, { Component, PropTypes } from 'react';
 
 export default class DeleteControlModal extends Component {
 
-  constructor() {
-    super();
-    this.getName = this.getName.bind(this);
-  }
-
-  getName() {
-    if (this.props.controlName) {
-      return this.props.controlName;
-    }
-    return 'Controls';
+  constructor(props) {
+    super(props);
   }
 
   deleteControl(e) {
@@ -30,10 +22,10 @@ export default class DeleteControlModal extends Component {
     return (
           <div onKeyUp={(e) => this.handleEsc(e)}>
               <div className="dialog-wrapper" onClick={this.props.closeModal}></div>
-              <div className="dialog dialog--no-header">
+              <div className="dialog">
+                <h2 className="header-title">Delete</h2>
                   <div className="dialog--container">
-                      Delete {this.getName()} from canvas.
-                      Do you want to proceed?
+                     Are you sure want to delete this control?
                   </div>
                   <div className="button-wrapper fr">
                       <button autoFocus className="button btn--highlight"
@@ -44,7 +36,7 @@ export default class DeleteControlModal extends Component {
                       <button className="btn" onClick={this.props.closeModal} type="reset">
                         Cancel
                       </button>
-                  </div>
+                </div>
               </div>
           </div>
     );
