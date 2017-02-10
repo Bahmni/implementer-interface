@@ -5,6 +5,7 @@ import { blurControl, deselectControl } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
+import TitleDetail from './TitleDetail';
 
 class Canvas extends Component {
   constructor(props) {
@@ -51,8 +52,8 @@ class Canvas extends Component {
     }
   }
 
-  updateFormName() {
-    const newName = this.props.updateFormName(this.state.formName);
+  updateFormName(value) {
+    const newName = this.props.updateFormName(value);
     if (newName.length > 0) {
       this.setState({ formName: newName });
     }
@@ -66,14 +67,11 @@ class Canvas extends Component {
         onClick={this.clearSelectedControl}
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
-        <div className="canvas-rename">
-          <form onSubmit={() => this.updateFormName() }>
-            <input
-              onChange={(e) => this.setState({ formName: e.target.value })}
-              type="text"
-              value={this.state.formName}
-            />
-          </form>
+        <div className="canvas-title">
+          <TitleDetail
+            updateValue={(value) => this.updateFormName(value)}
+            value={this.state.formName}
+          />
         </div>
         <Grid
           className="bahmni-grid"
