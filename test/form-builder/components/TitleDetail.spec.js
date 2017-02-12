@@ -1,7 +1,7 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
-import chai, {expect} from 'chai';
+import chai, { expect } from 'chai';
 import TitleDetail from 'form-builder/components/TitleDetail';
 
 chai.use(chaiEnzyme());
@@ -10,7 +10,7 @@ describe('TitleDetail', () => {
   const value = 'Test';
   it('should return label element with given title', () => {
     const wrapper = shallow(
-      <TitleDetail value={value}/>
+      <TitleDetail value={value} />
     );
     expect(wrapper.find('label').text()).to.eql(value);
   });
@@ -28,7 +28,8 @@ describe('TitleDetail', () => {
   it('should become not editable when blur', () => {
     const wrapper = shallow(
       <TitleDetail updateValue={() => {
-      }} value={value}/>
+      }} value={value}
+      />
     );
     wrapper.setState({ isEditable: true });
     const input = wrapper.find('input');
@@ -41,7 +42,8 @@ describe('TitleDetail', () => {
   it('should become not editable when press enter', () => {
     const wrapper = shallow(
       <TitleDetail updateValue={() => {
-      }} value={value}/>
+      }} value={value}
+      />
     );
     wrapper.setState({ isEditable: true });
     const input = wrapper.find('input');

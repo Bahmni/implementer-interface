@@ -21,7 +21,7 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
-      httpReceived: false, loading: true, formList: [], originFormName: undefined };
+      httpReceived: false, loading: true, formList: [], originalFormName: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -42,7 +42,7 @@ export class FormDetailContainer extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
       .then((data) => this.setState({ formData: data, httpReceived: true,
-        loading: false, originFormName: data.name }))
+        loading: false, originalFormName: data.name }))
       .catch((error) => {
         this.setErrorMessage(error);
         this.setState({ loading: false });
@@ -107,6 +107,15 @@ export class FormDetailContainer extends Component {
     }, commonConstants.toastTimeout);
   }
 
+  getFormList() {
+    httpInterceptor
+      .get(formBuilderConstants.formUrl)
+      .then((response) => {
+        this.setState({ formList: response.results });
+      })
+      .catch((error) => this.showErrors(error));
+  }
+
   closeFormModal() {
     this.setState({ showModal: false });
   }
@@ -139,7 +148,7 @@ export class FormDetailContainer extends Component {
           <button
             className="fr save-button btn--highlight"
             onClick={ this.state.formData &&
-              this.state.originFormName !== this.state.formData.name ?
+              this.state.originalFormName !== this.state.formData.name ?
               this.cloneFormResource : this.onSave }
           >Save</button>
       );
@@ -239,22 +248,13 @@ export class FormDetailContainer extends Component {
     return form;
   }
 
-  getFormList() {
-    httpInterceptor
-      .get(formBuilderConstants.formUrl)
-      .then((response) => {
-        this.setState({ formList: response.results });
-      })
-      .catch((error) => this.showErrors(error));
-  }
-
   updateFormName(formName) {
     let currentFormName = formName;
     const existForms = this.state.formList.filter(
-      form => form.display === formName && this.state.originFormName !== formName);
+      form => form.display === formName && this.state.originalFormName !== formName);
     if (existForms.length > 0) {
       this.setErrorMessage({ message: 'Form with same name already exists' });
-      currentFormName = this.state.originFormName;
+      currentFormName = this.state.originalFormName;
     }
     const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });
     this.setState({ formData: newFormData });

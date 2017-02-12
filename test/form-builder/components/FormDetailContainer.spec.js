@@ -28,15 +28,6 @@ describe('FormDetailContainer', () => {
 
   const formJson = { uuid: 'FID' };
 
-  const formResource = {
-    form: {
-      name: 'someFormName',
-      uuid: 'someUuid',
-    },
-    value: JSON.stringify(formJson),
-    uuid: '',
-  };
-
   const params =
     'v=custom:(id,uuid,name,version,published,auditInfo,' +
     'resources:(value,dataType,uuid))';
@@ -119,6 +110,57 @@ describe('FormDetailContainer', () => {
     expect(publishButton).to.have.length(0);
   });
 
+  it('should call the appropriate endpoint to post formData', (done) => {
+    sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    wrapper.setState({ formData });
+    setTimeout(() => {
+      wrapper.instance().cloneFormResource();
+      sinon.assert.calledWith(
+        httpInterceptor.post,
+        formBuilderConstants.formUrl,
+        sinon.match.any
+      );
+
+      httpInterceptor.post.restore();
+      done();
+    }, 500);
+  });
+
+  it('should call the cloneFormResource when name changed and click save button', () => {
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    const instance = wrapper.instance();
+    const spy = sinon.spy(instance, 'cloneFormResource');
+    wrapper.setState({ formData, originalFormName: 'TestForRename', httpReceived: true });
+    const saveButton = wrapper.find('.save-button');
+    saveButton.simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should return NewName if formName changed', () => {
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    wrapper.setState({
+      formList: [{ display: 'A' }, { display: 'B' }],
+      originalFormName: 'TestUpdateNameMethod',
+    });
+    const instance = wrapper.instance();
+    const newName = instance.updateFormName('NewName');
+    expect(newName).to.equal('NewName');
+  });
+
+
   describe('when NOT published', () => {
     beforeEach(() => {
       sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
@@ -197,7 +239,7 @@ describe('FormDetailContainer', () => {
         sinon.assert.calledWith(
           httpInterceptor.post,
           formBuilderConstants.bahmniFormResourceUrl,
-          formResource
+          sinon.match.any
         );
         expect(formDetail.prop('formData').resources).to.have.length(1);
         expect(formDetail.prop('formData').resources[0]).to.eql({
