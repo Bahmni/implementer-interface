@@ -4,7 +4,7 @@ const Spinner = (props) => {
   if (props.show) {
     return (<div className="overlay"></div>);
   }
-  return (<div></div>);
+  return null;
 };
 
 Spinner.propTypes = {
