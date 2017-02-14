@@ -94,6 +94,28 @@ describe('Canvas', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(blurControl()));
   });
 
+  it('should change the name when updateFormName called', () => {
+    const idGenerator = new IDGenerator();
+    const store = getStore();
+
+    const canvas = shallow(
+      <Canvas
+        formId={1}
+        formName="formName"
+        formResourceControls={[]}
+        formUuid="someFormUuid"
+        formVersion="1"
+        idGenerator={idGenerator}
+        store={store}
+        updateFormName={ (name) => name }
+      />).shallow();
+    const instance = canvas.instance();
+
+    instance.updateFormName('testName');
+
+    expect(canvas.state('formName')).to.eql('testName');
+  });
+
   it('should pass metadata to controls from Form Resource', () => {
     const idGenerator = new IDGenerator();
     const store = getStore();
