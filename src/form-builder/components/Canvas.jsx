@@ -5,13 +5,15 @@ import { blurControl, deselectControl } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
+import TitleDetail from './TitleDetail';
 
 class Canvas extends Component {
   constructor(props) {
     super(props);
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
-    this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls) };
+    this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls),
+      formName: props.formName };
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
   }
@@ -50,6 +52,13 @@ class Canvas extends Component {
     }
   }
 
+  updateFormName(value) {
+    const newName = this.props.updateFormName(value);
+    if (newName.length > 0) {
+      this.setState({ formName: newName });
+    }
+  }
+
   render() {
     const { formResourceControls } = this.props;
     return (
@@ -58,6 +67,12 @@ class Canvas extends Component {
         onClick={this.clearSelectedControl}
       >
         <div className="canvas-placeholder">Drag & Drop controls to create a form</div>
+        <div className="canvas-title">
+          <TitleDetail
+            updateValue={(value) => this.updateFormName(value)}
+            value={this.state.formName}
+          />
+        </div>
         <Grid
           className="bahmni-grid"
           controls={ formResourceControls || [] }
@@ -77,6 +92,7 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
+  updateFormName: PropTypes.func,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);
