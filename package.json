@@ -8,6 +8,7 @@
     "clean": "rimraf dist/*",
     "copy": "copyfiles -f ./index.html ./dist",
     "build": "yarn run copy && webpack",
+    "build-dev": "yarn run copy && webpack --config webpack.dev.config.js",
     "compress": "cd dist && zip -r ./implementer_interface.zip *",
     "test": "karma start",
     "test:watch": "karma start --autoWatch=true --singleRun=false",
