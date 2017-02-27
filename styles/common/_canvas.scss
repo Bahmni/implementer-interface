@@ -29,7 +29,24 @@
     border-bottom: none;
   }
 }
+.control-wrapper {
+  position: relative;
+  &.control-selected {
+    background-color: $gray300;
+  }
+  .remove-control-button {
+    position: absolute;
+    right: -9px;
+    top: -7px;
+    padding: 4px;
+    outline: none;
+    background: $white;
+    border-radius: 100%;
+    border: 1px solid $gray600;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    box-sizing: border-box;
 
-.control-wrapper.control-selected {
-  background-color: $gray300;
+  }
 }
