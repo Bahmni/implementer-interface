@@ -779,9 +779,9 @@ backo2@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
 
-bahmni-form-controls@0.89.x:
-  version "0.89.1"
-  resolved "https://registry.yarnpkg.com/bahmni-form-controls/-/bahmni-form-controls-0.89.1.tgz#dfa4245e2cb2bd406780034b577879712ec7e9e2"
+bahmni-form-controls@^0.89.6:
+  version "0.89.6"
+  resolved "https://registry.yarnpkg.com/bahmni-form-controls/-/bahmni-form-controls-0.89.6.tgz#4e650a7774bfd805befeb3fda6dc7b1f61e5f51c"
   dependencies:
     classnames "^2.2.5"
     immutable "3.8.1"
