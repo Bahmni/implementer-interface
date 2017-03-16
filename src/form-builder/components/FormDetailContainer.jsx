@@ -14,7 +14,7 @@ import EditModal from 'form-builder/components/EditModal.jsx';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
-import formHelper from "../helpers/formHelper";
+import formHelper from '../helpers/formHelper';
 
 export class FormDetailContainer extends Component {
 

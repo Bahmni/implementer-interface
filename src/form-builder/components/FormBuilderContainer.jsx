@@ -7,7 +7,7 @@ import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import formHelper from "../helpers/formHelper";
+import formHelper from '../helpers/formHelper';
 
 export default class FormBuilderContainer extends Component {
 
@@ -57,7 +57,6 @@ export default class FormBuilderContainer extends Component {
   }
 
   saveForm(form) {
-
     if (formHelper.validateFormName(form.name)) {
       httpInterceptor
         .post(formBuilderConstants.formUrl, form)
