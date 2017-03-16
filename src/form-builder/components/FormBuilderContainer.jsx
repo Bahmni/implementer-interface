@@ -7,6 +7,7 @@ import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
+import formHelper from "../helpers/formHelper";
 
 export default class FormBuilderContainer extends Component {
 
@@ -56,13 +57,19 @@ export default class FormBuilderContainer extends Component {
   }
 
   saveForm(form) {
-    httpInterceptor
-      .post(formBuilderConstants.formUrl, form)
-      .then((response) => {
-        const uuid = response.uuid;
-        this.context.router.push(`/form-builder/${uuid}`);
-      })
-      .catch((error) => this.showErrors(error));
+
+    if (formHelper.validateFormName(form.name)) {
+      httpInterceptor
+        .post(formBuilderConstants.formUrl, form)
+        .then((response) => {
+          const uuid = response.uuid;
+          this.context.router.push(`/form-builder/${uuid}`);
+        })
+        .catch((error) => this.showErrors(error));
+    } else {
+      const message = 'Leading or trailing spaces and ^/-. are not allowed';
+      this.setErrorMessage(message);
+    }
   }
 
   render() {

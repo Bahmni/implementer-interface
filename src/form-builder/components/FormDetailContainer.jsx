@@ -14,6 +14,7 @@ import EditModal from 'form-builder/components/EditModal.jsx';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
+import formHelper from "../helpers/formHelper";
 
 export class FormDetailContainer extends Component {
 
@@ -250,10 +251,15 @@ export class FormDetailContainer extends Component {
 
   updateFormName(formName) {
     let currentFormName = formName;
-    const existForms = this.state.formList.filter(
-      form => form.display === formName && this.state.originalFormName !== formName);
-    if (existForms.length > 0) {
-      this.setErrorMessage({ message: 'Form with same name already exists' });
+    if (formHelper.validateFormName(formName)) {
+      const existForms = this.state.formList.filter(
+        form => form.display === formName && this.state.originalFormName !== formName);
+      if (existForms.length > 0) {
+        this.setErrorMessage({ message: 'Form with same name already exists' });
+        currentFormName = this.state.originalFormName;
+      }
+    } else {
+      this.setErrorMessage({ message: 'Leading or trailing spaces and ^/-. are not allowed' });
       currentFormName = this.state.originalFormName;
     }
     const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });

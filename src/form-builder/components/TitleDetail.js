@@ -8,27 +8,22 @@ export default class TitleDetail extends Component {
     this.input = props.value;
   }
 
-  onKeyUp(e) {
-    if (e.keyCode === 13) {
-      this.updateValue();
-    }
-  }
-
-  updateValue() {
-    this.props.updateValue(this.input);
+  updateValue(value) {
+    this.props.updateValue(value);
     this.setState({ isEditable: false });
   }
-
   render() {
     if (this.state.isEditable) {
       return (
-        <input
-          defaultValue={this.props.value}
-          onBlur={() => this.updateValue()}
-          onChange={(e) => (this.input = e.target.value)}
-          onKeyUp={(e) => this.onKeyUp(e)}
-          type="text"
-        />
+        <form onSubmit={() => this.updateValue(this.input)}>
+          <input
+            autoFocus
+            defaultValue={this.props.value}
+            onChange={(e) => (this.input = e.target.value)}
+            onBlur={() => this.updateValue(this.input)}
+            type="text"
+          />
+        </form>
       );
     }
     return (
