@@ -145,7 +145,7 @@ describe('FormDetailContainer', () => {
     sinon.assert.calledOnce(spy);
   });
 
-  it('should return NewName if formName changed', () => {
+  it('should return newName when given new formName', () => {
     const wrapper = shallow(
       <FormDetailContainer
         {...defaultProps}
@@ -155,11 +155,62 @@ describe('FormDetailContainer', () => {
       formList: [{ display: 'A' }, { display: 'B' }],
       originalFormName: 'TestUpdateNameMethod',
     });
-    const instance = wrapper.instance();
-    const newName = instance.updateFormName('NewName');
-    expect(newName).to.equal('NewName');
+
+    const updatedName = wrapper.instance().updateFormName('newName');
+
+    expect(updatedName).to.equal('newName');
   });
 
+  it('should return original name when given formName with ^', () => {
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    const originalFormName = 'TestUpdateNameMethod';
+    wrapper.setState({
+      formList: [{ display: 'A' }, { display: 'B' }],
+      originalFormName,
+    });
+
+    const updatedName = wrapper.instance().updateFormName('NewName^');
+
+    expect(updatedName).to.equal(originalFormName);
+  });
+
+  it('should return original name when given formName with /', () => {
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    const originalFormName = 'TestUpdateNameMethod';
+    wrapper.setState({
+      formList: [{ display: 'A' }, { display: 'B' }],
+      originalFormName,
+    });
+
+    const updatedName = wrapper.instance().updateFormName('NewName/');
+
+    expect(updatedName).to.equal(originalFormName);
+  });
+
+  it('should return original name when given formName with empty', () => {
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    const originalFormName = 'TestUpdateNameMethod';
+    wrapper.setState({
+      formList: [{ display: 'A' }, { display: 'B' }],
+      originalFormName,
+    });
+
+    const updatedName = wrapper.instance().updateFormName('');
+
+    expect(updatedName).to.equal(originalFormName);
+  });
 
   describe('when NOT published', () => {
     beforeEach(() => {
