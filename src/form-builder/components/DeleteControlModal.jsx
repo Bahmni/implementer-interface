@@ -21,7 +21,7 @@ export default class DeleteControlModal extends Component {
               <div className="dialog">
                 <h2 className="header-title">Delete</h2>
                   <div className="dialog--container">
-                     Are you sure want to delete this control?
+                      Are you sure you want to delete this control?
                   </div>
                   <div className="button-wrapper fr">
                       <button autoFocus className="button btn--highlight"
