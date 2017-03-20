@@ -212,6 +212,26 @@ describe('FormDetailContainer', () => {
     expect(updatedName).to.equal(originalFormName);
   });
 
+  it('should update original name when clone form success', (done) => {
+    sinon.stub(httpInterceptor, 'post')
+      .callsFake(() => Promise.resolve(formData));
+
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    wrapper.setState({ formData, originalFormName: 'original name' });
+
+    wrapper.instance().cloneFormResource();
+
+    setTimeout(() => {
+      expect(wrapper.state().originalFormName).to.equal(formData.name);
+      httpInterceptor.post.restore();
+      done();
+    }, 500);
+  });
+
   describe('when NOT published', () => {
     beforeEach(() => {
       sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
