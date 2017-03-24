@@ -13,4 +13,9 @@ export default class FormHelper {
     }
     return [];
   }
+
+  static validateFormName(formName) {
+    const pattern = /^[^\.\/\-\^\s][^\.\/\-\^]*$/;
+    return pattern.test(formName);
+  }
 }

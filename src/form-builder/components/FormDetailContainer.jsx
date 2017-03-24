@@ -14,6 +14,9 @@ import EditModal from 'form-builder/components/EditModal.jsx';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
+import formHelper from '../helpers/formHelper';
+import get from 'lodash/get';
+
 
 export class FormDetailContainer extends Component {
 
@@ -250,15 +253,31 @@ export class FormDetailContainer extends Component {
 
   updateFormName(formName) {
     let currentFormName = formName;
-    const existForms = this.state.formList.filter(
-      form => form.display === formName && this.state.originalFormName !== formName);
-    if (existForms.length > 0) {
-      this.setErrorMessage({ message: 'Form with same name already exists' });
+    if (formHelper.validateFormName(formName)) {
+      const existForms = this.state.formList.filter(
+        form => form.display === formName && this.state.originalFormName !== formName);
+      if (existForms.length > 0) {
+        this.setErrorMessage({ message: 'Form with same name already exists' });
+        currentFormName = this.state.originalFormName;
+      }
+    } else {
+      this.setErrorMessage({ message: 'Leading or trailing spaces and ^/-. are not allowed' });
       currentFormName = this.state.originalFormName;
     }
     const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });
     this.setState({ formData: newFormData });
     return currentFormName;
+  }
+
+  showErrors(error) {
+    if (error.response) {
+      error.response.json().then((data) => {
+        const message = get(data, 'error.globalErrors[0].message') || error.message;
+        this.setErrorMessage({ message });
+      });
+    } else {
+      this.setErrorMessage({ message: error.message });
+    }
   }
 
   cloneFormResource() {
@@ -275,7 +294,7 @@ export class FormDetailContainer extends Component {
         const newFormData = Object.assign({}, this.state.formData,
           { uuid: response.uuid, id: response.id, published: isPublished,
             version: newVersion, resources: [] });
-        this.setState({ formData: newFormData });
+        this.setState({ formData: newFormData, originalFormName: newFormData.name });
         this.onSave();
       })
       .catch((error) => this.showErrors(error));

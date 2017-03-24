@@ -23,6 +23,7 @@ export default class TitleDetail extends Component {
     if (this.state.isEditable) {
       return (
         <input
+          autoFocus
           defaultValue={this.props.value}
           onBlur={() => this.updateValue()}
           onChange={(e) => (this.input = e.target.value)}
