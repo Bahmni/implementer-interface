@@ -40,6 +40,7 @@ export default class CreateFormModal extends Component {
                   required
                   title="Leading or trailing spaces and ^/-. are not allowed"
                   type="text"
+                  maxLength="50"
                 />
               </div>
               <div className="button-wrapper fr">
