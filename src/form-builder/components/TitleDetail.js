@@ -29,6 +29,7 @@ export default class TitleDetail extends Component {
           onChange={(e) => (this.input = e.target.value)}
           onKeyUp={(e) => this.onKeyUp(e)}
           type="text"
+          maxLength="50"
         />
       );
     }

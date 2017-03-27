@@ -37,6 +37,7 @@ export default class CreateFormModal extends Component {
                   className="form-name"
                   onChange={(e) => this.setFormName(e.target.value)}
                   type="text"
+                  maxLength="50"
                 />
               </div>
               <div className="button-wrapper fr">
