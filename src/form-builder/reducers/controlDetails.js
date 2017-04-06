@@ -12,7 +12,9 @@ const controlDetails = (store = {}, action) => {
       return Object.assign({}, store, { focusedControl: undefined });
     case 'SOURCE_CHANGED':
       store.selectedControl.events.onValueChange = action.source;
-      return cloneDeep(store);
+      let cloned = cloneDeep(store);
+      console.log(cloned.selectedControl.events.onValueChange);
+      return cloned;
     default:
       return store;
   }
