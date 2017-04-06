@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { AutoComplete } from 'bahmni-form-controls';
 import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
-import { selectSource, setChangedProperty } from 'form-builder/actions/control';
+import { selectSource, setChangedProperty, sourceChangedProperty } from 'form-builder/actions/control';
 import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { commonConstants } from 'common/constants';
@@ -12,6 +12,7 @@ class ControlPropertiesContainer extends Component {
   constructor() {
     super();
     this.onSelect = this.onSelect.bind(this);
+    this.onScriptChanged = this.onScriptChanged.bind(this);
   }
 
   onSelect(concept) {
@@ -85,11 +86,24 @@ class ControlPropertiesContainer extends Component {
     return null;
   }
 
+  onScriptChanged(event) {
+    this.props.dispatch(sourceChangedProperty(event.target.value));
+  }
+
   render() {
+    let script ="";
+    if(this.props.selectedControl && this.props.selectedControl.events) {
+      script = this.props.selectedControl.events.onValueChange;
+    }
+
     return (
       <div className="section-grid">
         <h2 className="header-title">Control Properties</h2>
         {this.displayControlPropertyDetails()}
+        <textarea
+          value= {script}
+          onChange={this.onScriptChanged}
+        />
       </div>
     );
   }

@@ -67,10 +67,10 @@ class ControlWrapper extends Draggable {
       const childMetadata = this.childControl.getJsonDefinition();
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
-      if (!isEqual(this.metadata.properties, updatedProperties)) {
-        this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
+      // if (!isEqual(this.metadata.properties, updatedProperties)) {
+        this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties, events: newProps.metadata.events});
         this.props.dispatch(selectControl(this.metadata));
-      }
+      // }
     }
   }
 

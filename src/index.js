@@ -12,7 +12,7 @@ import FormDetailContainer from 'form-builder/components/FormDetailContainer.jsx
 import 'bahmni-form-controls';
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
-const store = createStore(implementerInterface);
+const store = createStore(implementerInterface, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 ReactDOM.render(
   <Provider store={store}>
