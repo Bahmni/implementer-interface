@@ -314,34 +314,34 @@ export class FormDetailContainer extends Component {
     render() {
         return (
             <div>
-              <Spinner show={this.state.loading} />
-              <NotificationContainer
-                  notification={this.state.notification}
-              />
-              <FormBuilderHeader />
-              <div className="breadcrumb-wrap">
-                <div className="breadcrumb-inner">
-                  <div className="fl">
-                    <FormBuilderBreadcrumbs routes={this.props.routes} />
-                  </div>
-                  <div className="fr">
-                      {this.showSaveButton()}
-                      {this.showPublishButton()}
-                  </div>
+                <Spinner show={this.state.loading} />
+                <NotificationContainer
+                    notification={this.state.notification}
+                />
+                <FormBuilderHeader />
+                <div className="breadcrumb-wrap">
+                    <div className="breadcrumb-inner">
+                        <div className="fl">
+                            <FormBuilderBreadcrumbs routes={this.props.routes} />
+                        </div>
+                        <div className="fr">
+                            {this.showSaveButton()}
+                            {this.showPublishButton()}
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div className="container-content-wrap">
-                <div className="container-content">
-                    {this.showEditButton()}
-                  <FormDetail
-                      formData={this.state.formData}
-                      ref={r => { this.formDetail = r; }}
-                      setError={this.setErrorMessage}
-                      updateFormName={(formName) => this.updateFormName(formName)}
-                      validateNameLength={(formName) => this.validateNameLength(formName)}
-                  />
+                <div className="container-content-wrap">
+                    <div className="container-content">
+                        {this.showEditButton()}
+                        <FormDetail
+                            formData={this.state.formData}
+                            ref={r => { this.formDetail = r; }}
+                            setError={this.setErrorMessage}
+                            updateFormName={(formName) => this.updateFormName(formName)}
+                            validateNameLength={(formName) => this.validateNameLength(formName)}
+                        />
+                    </div>
                 </div>
-              </div>
             </div>
         );
     }
