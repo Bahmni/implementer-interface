@@ -81,6 +81,7 @@ export default class FormDetail extends Component {
                                       idGenerator={idGenerator}
                                       ref={this.canvasRef}
                                       updateFormName = {this.props.updateFormName}
+                                      validateNameLength = {this.props.validateNameLength}
                                     />
                                 </div>
                             </div>
@@ -105,4 +106,5 @@ FormDetail.propTypes = {
   }),
   setError: PropTypes.func.isRequired,
   updateFormName: PropTypes.func,
+  validateNameLength: PropTypes.func
 };
