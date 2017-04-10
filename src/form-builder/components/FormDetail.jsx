@@ -106,5 +106,5 @@ FormDetail.propTypes = {
   }),
   setError: PropTypes.func.isRequired,
   updateFormName: PropTypes.func,
-  validateNameLength: PropTypes.func
+  validateNameLength: PropTypes.func,
 };

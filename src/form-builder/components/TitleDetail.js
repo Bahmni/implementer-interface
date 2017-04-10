@@ -1,70 +1,70 @@
-import React, {Component, PropTypes} from 'react';
-import {commonConstants} from 'common/constants';
+import React, { Component, PropTypes } from 'react';
 import NotificationContainer from 'common/Notification';
 import classNames from 'classnames';
 
 
 export default class TitleDetail extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {isEditable: false, red: false, notification: {}};
-        this.input = props.value;
-    }
+  constructor(props) {
+    super(props);
+    this.state = { isEditable: false, red: false, notification: {} };
+    this.input = props.value;
+  }
 
-    onKeyUp(e) {
-        if (e.keyCode === 13) {
-            this.updateValue();
-        }
+  onKeyUp(e) {
+    if (e.keyCode === 13) {
+      this.updateValue();
     }
+  }
 
-    updateValue() {
-        this.props.updateValue(this.input);
-        this.setState({isEditable: false});
+  setFormName(formName) {
+    this.input = formName;
+  }
+
+  validateNameLength(value) {
+    if (this.props.validateNameLength(value)) {
+      this.setState({ red: true });
+    } else {
+      this.setState({ red: false });
     }
+  }
 
-    validateNameLength(value) {
-        if(this.props.validateNameLength(value)){
-            this.setState({red: true});
-        }else {
-            this.setState({red: false});
-        }
-    }
+  updateValue() {
+    this.props.updateValue(this.input);
+    this.setState({ isEditable: false });
+  }
 
-    setFormName(formName) {
-        this.input = formName;
-    }
-
-    render() {
-        if (this.state.isEditable) {
-            return (
+  render() {
+    if (this.state.isEditable) {
+      return (
                 <div>
                     <NotificationContainer
-                        notification={this.state.notification}
+                      notification={this.state.notification}
                     />
                     <input
-                        className={ classNames({'is-red': this.state.red})}
-                        defaultValue={this.props.value}
-                        onBlur={() => this.updateValue()}
-                        onChange={(e) => this.setFormName(e.target.value)}
-                        onKeyUp={(e) => this.onKeyUp(e)}
-                        type="text"
-                        maxLength="50"
-                        onKeyPress={(e) => this.validateNameLength(e.target.value)}
+                      className={ classNames({ 'is-red': this.state.red })}
+                      defaultValue={this.props.value}
+                      maxLength="50"
+                      onBlur={() => this.updateValue()}
+                      onChange={(e) => this.setFormName(e.target.value)}
+                      onKeyPress={(e) => this.validateNameLength(e.target.value)}
+                      onKeyUp={(e) => this.onKeyUp(e)}
+                      type="text"
                     />
                 </div>
-            );
-        }
-        return (
-            <label onDoubleClick={() => (this.setState({isEditable: true}))}>
+      );
+    }
+    return (
+            <label onDoubleClick={() => (this.setState({ isEditable: true }))}>
                 {this.props.value}
             </label>
-        );
-    }
+    );
+  }
 }
 
 TitleDetail.propTypes = {
-    updateValue: PropTypes.func,
-    value: PropTypes.string.isRequired,
+  updateValue: PropTypes.func,
+  validateNameLength: PropTypes.func,
+  value: PropTypes.string.isRequired,
 };
 

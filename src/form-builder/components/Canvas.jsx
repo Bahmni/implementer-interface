@@ -95,6 +95,7 @@ Canvas.propTypes = {
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
   updateFormName: PropTypes.func,
+  validateNameLength: PropTypes.func,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);
