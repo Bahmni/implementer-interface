@@ -23,35 +23,12 @@ export default class TitleDetail extends Component {
         this.setState({isEditable: false});
     }
 
-    validateName(value) {
-        if (value.length > 50) {
-            this.setState({red: true})
-            this.setErrorMessage('Form name shall not exceed 50 characters');
-        } else {
-            this.setState({red: false})
-        }
-    }
-
     validateNameLength(value) {
-        if (value.length == 50) {
-            this.setState({red: true})
-            this.setErrorMessage('Form name shall not exceed 50 characters');
-        } else {
-            this.setState({red: false})
-        }
-    }
-
-    setErrorMessage(errorMessage) {
-        const errorNotification = {message: errorMessage, type: commonConstants.responseType.error};
-        this.setState({notification: errorNotification});
-        setTimeout(() => {
-            this.setState({notification: {}});
-        }, commonConstants.toastTimeout);
+        this.props.validateNameLength(value);
     }
 
     setFormName(formName) {
         this.input = formName;
-        this.validateName(formName);
     }
 
     render() {

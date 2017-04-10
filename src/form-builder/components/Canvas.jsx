@@ -70,6 +70,7 @@ class Canvas extends Component {
         <div className="canvas-title">
           <TitleDetail
             updateValue={(value) => this.updateFormName(value)}
+            validateNameLength = {this.props.validateNameLength}
             value={this.state.formName}
           />
         </div>
