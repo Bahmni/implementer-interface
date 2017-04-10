@@ -64,10 +64,4 @@ describe('CreateFormModal', () => {
     sinon.assert.calledOnce(createFormSpy);
     sinon.assert.calledWith(createFormSpy, 'Form1');
   });
-
-  it('should accept only correct input based on pattern', () => {
-    const pattern = wrapper.find('.form-name').props().pattern;
-
-    expect(pattern).to.eql('[^\\.\\/\\-\\^\\s][^\\.\\/\\-\\^]*');
-  });
 });

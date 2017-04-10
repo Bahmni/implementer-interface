@@ -16,6 +16,9 @@ import EditModal from 'form-builder/components/EditModal.jsx';
 import {UrlHelper} from 'form-builder/helpers/UrlHelper';
 import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
+import formHelper from '../helpers/formHelper';
+import get from 'lodash/get';
+
 
 export class FormDetailContainer extends Component {
 
@@ -103,14 +106,6 @@ export class FormDetailContainer extends Component {
             return this.formDetail.getFormJson();
         }
         return null;
-    }
-
-    setErrorMessage(error) {
-        const errorNotification = {message: error.message, type: commonConstants.responseType.error};
-        this.setState({notification: errorNotification});
-        setTimeout(() => {
-            this.setState({notification: {}});
-        }, commonConstants.toastTimeout);
     }
 
     getFormList() {
@@ -262,14 +257,19 @@ export class FormDetailContainer extends Component {
 
     updateFormName(formName) {
         let currentFormName = formName;
-        const existForms = this.state.formList.filter(
-            form => form.display === formName && this.state.originalFormName !== formName);
-        if (existForms.length > 0) {
-            this.setErrorMessage({message: 'Form with same name already exists'});
+        if (formHelper.validateFormName(formName)) {
+            const existForms = this.state.formList.filter(
+                form => form.display === formName && this.state.originalFormName !== formName);
+            if (existForms.length > 0) {
+                this.setErrorMessage({ message: 'Form with same name already exists' });
+                currentFormName = this.state.originalFormName;
+            }
+        } else {
+            this.setErrorMessage({ message: 'Leading or trailing spaces and ^/-. are not allowed' });
             currentFormName = this.state.originalFormName;
         }
-        const newFormData = Object.assign({}, this.state.formData, {name: currentFormName});
-        this.setState({formData: newFormData});
+        const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });
+        this.setState({ formData: newFormData });
         return currentFormName;
     }
 
@@ -282,12 +282,15 @@ export class FormDetailContainer extends Component {
         }
     }
 
-    setErrorMessage(errorMessage) {
-        const errorNotification = {message: errorMessage, type: commonConstants.responseType.error};
-        this.setState({notification: errorNotification});
-        setTimeout(() => {
-            this.setState({notification: {}});
-        }, commonConstants.toastTimeout);
+    showErrors(error) {
+        if (error.response) {
+            error.response.json().then((data) => {
+                const message = get(data, 'error.globalErrors[0].message') || error.message;
+                this.setErrorMessage({ message });
+            });
+        } else {
+            this.setErrorMessage({ message: error.message });
+        }
     }
 
     cloneFormResource() {
@@ -302,14 +305,20 @@ export class FormDetailContainer extends Component {
             .post(formBuilderConstants.formUrl, form)
             .then((response) => {
                 const newFormData = Object.assign({}, this.state.formData,
-                    {
-                        uuid: response.uuid, id: response.id, published: isPublished,
-                        version: newVersion, resources: []
-                    });
-                this.setState({formData: newFormData});
+                    { uuid: response.uuid, id: response.id, published: isPublished,
+                        version: newVersion, resources: [] });
+                this.setState({ formData: newFormData, originalFormName: newFormData.name });
                 this.onSave();
             })
             .catch((error) => this.showErrors(error));
+    }
+
+    setErrorMessage(error) {
+        const errorNotification = {message: error.message, type: commonConstants.responseType.error};
+        this.setState({notification: errorNotification});
+        setTimeout(() => {
+            this.setState({notification: {}});
+        }, commonConstants.toastTimeout);
     }
 
     render() {
