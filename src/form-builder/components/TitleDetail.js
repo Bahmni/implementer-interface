@@ -24,7 +24,11 @@ export default class TitleDetail extends Component {
     }
 
     validateNameLength(value) {
-        this.props.validateNameLength(value);
+        if(this.props.validateNameLength(value)){
+            this.setState({red: true});
+        }else {
+            this.setState({red: false});
+        }
     }
 
     setFormName(formName) {
