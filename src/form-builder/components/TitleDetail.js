@@ -24,7 +24,16 @@ export default class TitleDetail extends Component {
     }
 
     validateName(value) {
-        if (value.length >= 50) {
+        if (value.length > 50) {
+            this.setState({red: true})
+            this.setErrorMessage('Form name shall not exceed 50 characters');
+        } else {
+            this.setState({red: false})
+        }
+    }
+
+    validateNameLength(value) {
+        if (value.length == 50) {
             this.setState({red: true})
             this.setErrorMessage('Form name shall not exceed 50 characters');
         } else {
@@ -60,7 +69,7 @@ export default class TitleDetail extends Component {
                         onKeyUp={(e) => this.onKeyUp(e)}
                         type="text"
                         maxLength="50"
-                        onKeyDown={(e) => this.validateName(e.target.value)}
+                        onKeyPress={(e) => this.validateNameLength(e.target.value)}
                     />
                 </div>
             );

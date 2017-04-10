@@ -66,7 +66,6 @@ export default class CreateFormModal extends Component {
                                         required
                                         title="Leading or trailing spaces and ^/-. are not allowed"
                                         type="text"
-                                        onKeyDown={(e) => this.validateName(e.target.value)}
                                     />
                                 </div>
                                 <div className="button-wrapper fr">
