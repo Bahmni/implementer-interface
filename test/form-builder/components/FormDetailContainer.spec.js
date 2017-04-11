@@ -212,6 +212,32 @@ describe('FormDetailContainer', () => {
     expect(updatedName).to.equal(originalFormName);
   });
 
+  it('should return true when try to update after original name length has equal 50', () => {
+    const wrapper = shallow(
+          <FormDetailContainer
+            {...defaultProps}
+          />, { context }
+      );
+    const updatedFormName = '12345678901234567890123456789012345678901234567890';
+
+    const isError = wrapper.instance().validateNameLength(updatedFormName);
+
+    expect(isError).to.equal(true);
+  });
+
+  it('should return false when try to update after original name length less than 50', () => {
+    const wrapper = shallow(
+          <FormDetailContainer
+            {...defaultProps}
+          />, { context }
+      );
+    const updatedFormName = '1234567890';
+
+    const isError = wrapper.instance().validateNameLength(updatedFormName);
+
+    expect(isError).to.equal(false);
+  });
+
   it('should update original name when clone form success', (done) => {
     sinon.stub(httpInterceptor, 'post')
       .callsFake(() => Promise.resolve(formData));

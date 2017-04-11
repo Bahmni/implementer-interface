@@ -19,6 +19,7 @@ export default class CreateFormModal extends Component {
   setErrorMessage(errorMessage) {
     const errorNotification = { message: errorMessage, type: commonConstants.responseType.error };
     this.setState({ notification: errorNotification });
+
     setTimeout(() => {
       this.setState({ notification: {} });
     }, commonConstants.toastTimeout);
