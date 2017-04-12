@@ -9,7 +9,7 @@ export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false };
+    this.state = { showModal: false, exportDisabled: true};
     this.setState = this.setState.bind(this);
   }
 
@@ -30,6 +30,12 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
+  updateExportStatus(isChecked, index) {
+    this.props.data[index].checked = isChecked;
+    const checkedItems = this.props.data.filter(item => item.checked);
+    this.setState({ exportDisabled: (checkedItems.length <= 0) });
+  }
+
   render() {
     return (
       <div>
@@ -43,7 +49,7 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
-            <button className="highlight fr">
+            <button className="highlight fr" disabled={this.state.exportDisabled}>
               Export
             </button>
           </div>
@@ -57,7 +63,7 @@ export default class FormBuilder extends Component {
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data} />
+              <FormList data={this.props.data} isChecked={(isChecked, index) => this.updateExportStatus(isChecked, index)}/>
             </div>
           </div>
       </div>

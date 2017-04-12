@@ -11,9 +11,11 @@ export default class FormList extends Component {
   }
 
   getRows() {
-    const data = _.map(this.props.data, (rowItem) => (
+    const data = _.map(this.props.data, (rowItem, index) => (
       <tr key={rowItem.id}>
-        <td><input type="checkbox" disabled={!rowItem.published} checked={this.state.selectAll && rowItem.published}/></td>
+        <td><input type="checkbox" disabled={!rowItem.published}
+                   checked={rowItem.checked}
+                   onClick={(e) => this.isChecked(e.target.checked, index)}/></td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
@@ -22,6 +24,12 @@ export default class FormList extends Component {
       </tr>
     ));
     return data;
+  }
+
+  isChecked(checked, index){
+    if (this.props.isChecked) {
+      this.props.isChecked(checked, index);
+    }
   }
 
   _editOrReuseIcon(rowItem) {
@@ -48,7 +56,13 @@ export default class FormList extends Component {
   }
 
   onSelectAll() {
-    this.setState({ selectAll: !this.state.selectAll });
+    const isSelectAll = !this.state.selectAll;
+    this.props.data.forEach((item, index) => {
+      if (item.published) {
+        this.isChecked(isSelectAll, index);
+      }
+    });
+    this.setState({ selectAll: isSelectAll });
   }
 
   render() {
@@ -72,4 +86,5 @@ export default class FormList extends Component {
 
 FormList.propTypes = {
   data: PropTypes.array.isRequired,
+  isChecked: PropTypes.func,
 };

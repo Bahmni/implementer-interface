@@ -109,14 +109,11 @@ describe('FormList', () => {
    });
 
    it('should select all published items when click select all', () => {
-     wrapper = mount(<FormList data={data}/>);
+     wrapper = mount(<FormList data={data} isChecked={() => {}}/>);
 
      expect(wrapper.state().selectAll).to.eql(false);
      getHeader(0).find('input').simulate('click');
 
      expect(wrapper.state().selectAll).to.eql(true);
-     expect(getItem(0).at(0).find('input').props().checked).to.eql(undefined);
-     expect(getItem(1).at(0).find('input').props().checked).to.eql(true);
-     expect(getItem(2).at(0).find('input').props().checked).to.eql(true);
    });
 });
