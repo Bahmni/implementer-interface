@@ -8,7 +8,7 @@ export default class FormList extends Component {
   getRows() {
     const data = _.map(this.props.data, (rowItem) => (
       <tr key={rowItem.id}>
-        <td><input type="checkbox"></input></td>
+        <td><input type="checkbox" disabled={!rowItem.published} /></td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
@@ -47,7 +47,7 @@ export default class FormList extends Component {
       <table>
         <thead>
         <tr>
-          <th><input type="checkbox" disabled="true"></input></th>
+          <th><input type="checkbox" /></th>
           <th>Name</th>
           <th>Version</th>
           <th>Created On</th>

@@ -42,11 +42,15 @@ describe('FormList', () => {
   ];
 
   function getData(row, column) {
-    return wrapper.find('table').find('tbody').find('tr').at(row).find('td').at(column).text();
+    return getItem(row).at(column).text();
   }
 
   function getLinkAt(row) {
     return wrapper.find('Link').at(row);
+  }
+
+  function getItem(row) {
+    return wrapper.find('table').find('tbody').find('tr').at(row).find('td');
   }
 
   it('should render form list in table', () => {
@@ -54,20 +58,20 @@ describe('FormList', () => {
 
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
-    expect(getData(0, 0)).to.have.string('Vitals');
-    expect(getData(0, 1)).to.eql('1.1');
-    expect(getData(0, 2)).to.eql('10 Oct 10');
-    expect(getData(0, 3)).to.eql('Draft');
+    expect(getData(0, 1)).to.have.string('Vitals');
+    expect(getData(0, 2)).to.eql('1.1');
+    expect(getData(0, 3)).to.eql('10 Oct 10');
+    expect(getData(0, 4)).to.eql('Draft');
 
-    expect(getData(1, 0)).to.eql('BP');
-    expect(getData(1, 1)).to.eql('1.2');
-    expect(getData(1, 2)).to.eql('09 Aug 10');
-    expect(getData(1, 3)).to.eql('Published');
+    expect(getData(1, 1)).to.eql('BP');
+    expect(getData(1, 2)).to.eql('1.2');
+    expect(getData(1, 3)).to.eql('09 Aug 10');
+    expect(getData(1, 4)).to.eql('Published');
 
-    expect(getData(2, 0)).to.eql('Pulse');
-    expect(getData(2, 1)).to.eql('1.1');
-    expect(getData(2, 2)).to.eql('09 Aug 10');
-    expect(getData(2, 3)).to.eql('Published');
+    expect(getData(2, 1)).to.eql('Pulse');
+    expect(getData(2, 2)).to.eql('1.1');
+    expect(getData(2, 3)).to.eql('09 Aug 10');
+    expect(getData(2, 4)).to.eql('Published');
 
     expect(wrapper.find('table').find('.fa-pencil')).to.have.exactly(1).descendants('i');
     expect(wrapper.find('table').find('.fa-file-text-o')).to.have.exactly(3).descendants('i');
@@ -83,4 +87,20 @@ describe('FormList', () => {
     expect(wrapper.find('p').text()).to.eql('No Forms to Display');
     expect(wrapper).to.not.have.descendants('table');
   });
+
+   it('should enable checkbox when this form published', () => {
+     wrapper = mount(<FormList data={data}/>);
+
+     const publishedItem = getItem(2).at(0);
+     expect(publishedItem.find('input').props().type).to.eql('checkbox');
+     expect(publishedItem.find('input').props().disabled).to.eql(false);
+   });
+
+   it('should disable checkbox when this form not published', () => {
+     wrapper = mount(<FormList data={data}/>);
+
+     const draftItem = getItem(0).at(0);
+     expect(draftItem.find('input').props().type).to.eql('checkbox');
+     expect(draftItem.find('input').props().disabled).to.eql(true);
+   });
 });
