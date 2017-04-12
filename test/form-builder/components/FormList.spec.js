@@ -49,6 +49,10 @@ describe('FormList', () => {
     return wrapper.find('Link').at(row);
   }
 
+  function getHeader(row) {
+    return wrapper.find('table').find('thead').find('tr').at(row).find('th');
+  }
+
   function getItem(row) {
     return wrapper.find('table').find('tbody').find('tr').at(row).find('td');
   }
@@ -102,5 +106,17 @@ describe('FormList', () => {
      const draftItem = getItem(0).at(0);
      expect(draftItem.find('input').props().type).to.eql('checkbox');
      expect(draftItem.find('input').props().disabled).to.eql(true);
+   });
+
+   it('should select all published items when click select all', () => {
+     wrapper = mount(<FormList data={data}/>);
+
+     expect(wrapper.state().selectAll).to.eql(false);
+     getHeader(0).find('input').simulate('click');
+
+     expect(wrapper.state().selectAll).to.eql(true);
+     expect(getItem(0).at(0).find('input').props().checked).to.eql(undefined);
+     expect(getItem(1).at(0).find('input').props().checked).to.eql(true);
+     expect(getItem(2).at(0).find('input').props().checked).to.eql(true);
    });
 });
