@@ -4,6 +4,10 @@ import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 
+import fileDownload from 'react-file-download';
+import {httpInterceptor} from "../../common/utils/httpInterceptor";
+import {formBuilderConstants} from "../constants";
+
 
 export default class FormBuilder extends Component {
 
@@ -30,6 +34,25 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
+  downloadFile() {
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
+
+    this.props.data.forEach((item) => {
+      if(item.checked) {
+        httpInterceptor
+          .get(`${formBuilderConstants.formUrl}/${item.uuid}?${params}`)
+          .then((data) => {
+            fileDownload(JSON.stringify(data), `${data.name}_${data.version}.json`);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  }
+
   updateExportStatus(isChecked, index) {
     this.props.data[index].checked = isChecked;
     const checkedItems = this.props.data.filter(item => item.checked);
@@ -49,7 +72,7 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
-            <button className="highlight fr" disabled={this.state.exportDisabled}>
+            <button className="highlight fr" disabled={this.state.exportDisabled} onClick={() => {this.downloadFile()}} >
               Export
             </button>
           </div>
