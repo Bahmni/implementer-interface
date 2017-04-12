@@ -20,6 +20,12 @@ describe('FormBuilder', () => {
     expect(wrapper).to.have.exactly(1).descendants('FormList');
   });
 
+  it('should render export button', () => {
+    expect(wrapper).to.have.exactly(2).descendants('button');
+
+    expect(wrapper.find('button').at(1).text()).to.eql('Export');
+  });
+
   it('should render create form modal', () => {
     expect(wrapper).to.have.exactly(1).descendants('CreateFormModal');
   });
@@ -27,7 +33,8 @@ describe('FormBuilder', () => {
   it('should set state of showModal as true when create a form option is clicked', () => {
     const instance = wrapper.instance();
     expect(instance.state.showModal).to.eql(false);
-    wrapper.find('button').simulate('click');
+
+    wrapper.find('button').first().simulate('click');
     expect(instance.state.showModal).to.eql(true);
   });
 
@@ -63,4 +70,5 @@ describe('FormBuilder', () => {
     sinon.assert.calledOnce(saveFormSpy);
     sinon.assert.calledWith(saveFormSpy, expectedFormJson);
   });
+
 });

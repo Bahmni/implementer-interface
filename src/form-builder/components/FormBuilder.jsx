@@ -43,6 +43,9 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
+            <button className="highlight fr">
+              Export
+            </button>
           </div>
         </div>
           <CreateFormModal
