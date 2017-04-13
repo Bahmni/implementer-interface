@@ -3,18 +3,16 @@ import FormList from 'form-builder/components/FormList.jsx';
 import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
-
-import fileDownload from 'react-file-download';
-import {httpInterceptor} from "../../common/utils/httpInterceptor";
-import {formBuilderConstants} from "../constants";
+import { DownloadForms } from "../helpers/downloadForms";
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false, exportDisabled: true};
+    this.state = { showModal: false, exportDisabled: true };
     this.setState = this.setState.bind(this);
+    this.downloads = {};
   }
 
   openFormModal() {
@@ -34,23 +32,16 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  downloadFile() {
-    const params =
-      'v=custom:(id,uuid,name,version,published,auditInfo,' +
-      'resources:(value,dataType,uuid))';
+  downloadDone(downloadResults) {
 
-    this.props.data.forEach((item) => {
-      if(item.checked) {
-        httpInterceptor
-          .get(`${formBuilderConstants.formUrl}/${item.uuid}?${params}`)
-          .then((data) => {
-            fileDownload(JSON.stringify(data), `${data.name}_${data.version}.json`);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    });
+  }
+
+  downloadFiles() {
+    const downloadItems = this.props.data.filter(item => item.checked);
+    if (downloadItems.length > 0) {
+
+      new DownloadForms(downloadItems, this.downloadDone).start();
+    }
   }
 
   updateExportStatus(isChecked, index) {
@@ -72,9 +63,11 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
-            <button className="highlight fr" disabled={this.state.exportDisabled} onClick={() => {this.downloadFile()}} >
-              Export
-            </button>
+            <button
+              className="highlight fr"
+              disabled={this.state.exportDisabled}
+              onClick={() => {this.downloadFiles()}}
+            >Export</button>
           </div>
         </div>
           <CreateFormModal
