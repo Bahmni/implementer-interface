@@ -17,7 +17,7 @@ export class DownloadForms {
 
   completed(fileName, success) {
     if (this.downloads[fileName]) {
-      this.downloads[fileName] = {completed: true, success};
+      this.downloads[fileName] = {completed: true, success, name: fileName};
       const uncompletedFiles = filter(this.downloads, file => !file.completed);
       if (uncompletedFiles.length <= 0) {
         this.completedFunc(this.downloads);

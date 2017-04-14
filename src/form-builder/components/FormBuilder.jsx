@@ -4,14 +4,18 @@ import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { DownloadForms } from "../helpers/downloadForms";
+import MessageBoxContainer from '../../common/MessageBox';
+import {commonConstants} from "../../common/constants";
+import { size, filter } from 'lodash';
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false, exportDisabled: true };
+    this.state = { showModal: false, exportDisabled: true, message: {} };
     this.setState = this.setState.bind(this);
+    this.downloadDone = this.downloadDone.bind(this);
     this.downloads = {};
   }
 
@@ -33,13 +37,20 @@ export default class FormBuilder extends Component {
   }
 
   downloadDone(downloadResults) {
-
+    let results = filter(downloadResults, item => item.success);
+    if(results.length <= 0){
+      const text = `Export ${size(downloadResults)} Forms(.json) Successfully`;
+      this.showMessageBox(text, commonConstants.responseType.error, results, true);
+    }else {
+      this.showMessageBox('Error', commonConstants.responseType.error, results);
+    }
   }
 
   downloadFiles() {
+    this.openFormModal();
     const downloadItems = this.props.data.filter(item => item.checked);
     if (downloadItems.length > 0) {
-
+      this.showMessageBox('Exporting...', commonConstants.responseType.success);
       new DownloadForms(downloadItems, this.downloadDone).start();
     }
   }
@@ -48,6 +59,16 @@ export default class FormBuilder extends Component {
     this.props.data[index].checked = isChecked;
     const checkedItems = this.props.data.filter(item => item.checked);
     this.setState({ exportDisabled: (checkedItems.length <= 0) });
+  }
+
+  showMessageBox(text, type, failedForms, timeout) {
+    this.setState({ message: { text, type, failedForms }});
+
+    if (timeout) {
+      setTimeout(() => {
+        this.setState({ message: {} });
+      }, commonConstants.toastTimeout);
+    }
   }
 
   render() {
@@ -70,6 +91,9 @@ export default class FormBuilder extends Component {
             >Export</button>
           </div>
         </div>
+        <MessageBoxContainer
+          message={this.state.message}
+        />
           <CreateFormModal
             closeModal={() => this.closeFormModal()}
             createForm={(formName) => this.createForm(formName)}
