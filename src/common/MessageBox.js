@@ -20,15 +20,22 @@ const ErrorContainer = (props) => {
 
 const MessageBoxContainer = (props) => {
   const messageType = `notification--${props.message.type}`;
-
-  return (
-    <div className="notification">
-      <div className={ messageType }>
-        <div className="message">{ props.message.text }</div>
+  if (props.message.text) {
+    return (
+      <div>
+        <div className="dialog-wrapper" onClick={() => {}}></div>;
+        <div className="notification">
+          <div className={ messageType }>
+            <div className="message">{ props.message.text }</div>
+          </div>
+          <ErrorContainer type={props.message.type} failedForms={props.message.failedForms}
+                          closeModal={props.closeModal}/>
+        </div>
       </div>
-      <ErrorContainer type={props.message.type} failedForms={props.message.failedForms} closeModal={props.closeModal}/>
-    </div>
-  );
+    );
+  }
+
+  return null;
 };
 
 MessageBoxContainer.propTypes = {

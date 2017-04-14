@@ -37,17 +37,16 @@ export default class FormBuilder extends Component {
   }
 
   downloadDone(downloadResults) {
-    let results = filter(downloadResults, item => item.success);
+    let results = filter(downloadResults, item => !item.success);
     if(results.length <= 0){
       const text = `Export ${size(downloadResults)} Forms(.json) Successfully`;
-      this.showMessageBox(text, commonConstants.responseType.error, results, true);
+      this.showMessageBox(text, commonConstants.responseType.success, results, true);
     }else {
       this.showMessageBox('Error', commonConstants.responseType.error, results);
     }
   }
 
   downloadFiles() {
-    this.openFormModal();
     const downloadItems = this.props.data.filter(item => item.checked);
     if (downloadItems.length > 0) {
       this.showMessageBox('Exporting...', commonConstants.responseType.success);
@@ -93,6 +92,7 @@ export default class FormBuilder extends Component {
         </div>
         <MessageBoxContainer
           message={this.state.message}
+          closeModal={() => this.setState({message: {}})}
         />
           <CreateFormModal
             closeModal={() => this.closeFormModal()}
