@@ -7,7 +7,7 @@ import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
 import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
-  from 'form-builder/actions/control';
+    from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -40,17 +40,17 @@ export class FormDetailContainer extends Component {
 
   componentDidMount() {
     const params =
-      'v=custom:(id,uuid,name,version,published,auditInfo,' +
-      'resources:(value,dataType,uuid))';
+            'v=custom:(id,uuid,name,version,published,auditInfo,' +
+            'resources:(value,dataType,uuid))';
     httpInterceptor
-      .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-      .then((data) => this.setState({ formData: data, httpReceived: true,
-        loading: false, originalFormName: data.name }))
-      .catch((error) => {
-        this.setErrorMessage(error);
-        this.setState({ loading: false });
-      });
-    // .then is untested
+            .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
+            .then((data) => this.setState({ formData: data, httpReceived: true,
+              loading: false, originalFormName: data.name }))
+            .catch((error) => {
+              this.setErrorMessage(error);
+              this.setState({ loading: false });
+            });
+        // .then is untested
 
     this.getFormList();
   }
@@ -71,7 +71,7 @@ export class FormDetailContainer extends Component {
       const formName = this.state.formData ? this.state.formData.name : 'FormName';
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
-        this.state.formData.resources[0].uuid : '';
+                this.state.formData.resources[0].uuid : '';
       const formResource = {
         form: {
           name: formName,
@@ -112,11 +112,11 @@ export class FormDetailContainer extends Component {
 
   getFormList() {
     httpInterceptor
-      .get(formBuilderConstants.formUrl)
-      .then((response) => {
-        this.setState({ formList: response.results });
-      })
-      .catch((error) => this.showErrors(error));
+            .get(formBuilderConstants.formUrl)
+            .then((response) => {
+              this.setState({ formList: response.results });
+            })
+            .catch((error) => this.showErrors(error));
   }
 
   closeFormModal() {
@@ -133,11 +133,11 @@ export class FormDetailContainer extends Component {
     const resourceData = FormHelper.getFormResourceControls(this.state.formData);
     if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
-        <button
-          className="publish-button"
-          disabled={ isPublished || isEmpty(resourceData) }
-          onClick={ this.onPublish }
-        >Publish</button>
+                <button
+                  className="publish-button"
+                  disabled={ isPublished || isEmpty(resourceData) }
+                  onClick={ this.onPublish }
+                >Publish</button>
       );
     }
     return null;
@@ -148,12 +148,12 @@ export class FormDetailContainer extends Component {
     const isPublished = this.state.formData ? this.state.formData.published : false;
     if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
-          <button
-            className="fr save-button btn--highlight"
-            onClick={ this.state.formData &&
-              this.state.originalFormName !== this.state.formData.name ?
-              this.cloneFormResource : this.onSave }
-          >Save</button>
+                <button
+                  className="fr save-button btn--highlight"
+                  onClick={ this.state.formData &&
+                    this.state.originalFormName !== this.state.formData.name ?
+                        this.cloneFormResource : this.onSave }
+                >Save</button>
       );
     }
     return null;
@@ -164,21 +164,23 @@ export class FormDetailContainer extends Component {
     const isPublished = this.state.formData ? this.state.formData.published : false;
     if (isPublished && !isEditable) {
       return (
-        <div className="info-view-mode-wrap">
-          <div className="info-view-mode">
-            <i className="fa fa-info-circle fl"></i>
-            <span className="info-message">
+                <div className="info-view-mode-wrap">
+                  <div className="info-view-mode">
+                    <i className="fa fa-info-circle fl"></i>
+                    <span className="info-message">
               This Form is a Published version.
               For editing click on
             </span>
-            <button className="fr edit-button" onClick={() => this.openFormModal()}>Edit</button>
-            <EditModal
-              closeModal={() => this.closeFormModal()}
-              editForm={() => this.editForm()}
-              showModal={this.state.showModal}
-            />
-          </div>
-        </div>
+                    <button className="fr edit-button"
+                      onClick={() => this.openFormModal()}
+                    >Edit</button>
+                    <EditModal
+                      closeModal={() => this.closeFormModal()}
+                      editForm={() => this.editForm()}
+                      showModal={this.state.showModal}
+                    />
+                  </div>
+                </div>
       );
     }
     return null;
@@ -186,9 +188,9 @@ export class FormDetailContainer extends Component {
 
   editForm() {
     const editableFormData = Object.assign(
-      {}, this.state.formData,
-      { editable: true }
-    );
+            {}, this.state.formData,
+            { editable: true }
+        );
 
     this.setState({ formData: editableFormData });
   }
@@ -196,49 +198,49 @@ export class FormDetailContainer extends Component {
   _saveFormResource(formJson) {
     this.setState({ loading: true });
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-      .then((response) => {
-        const updatedUuid = response.form.uuid;
-        this.context.router.push(`/form-builder/${updatedUuid}`);
-        const successNotification = {
-          message: commonConstants.saveSuccessMessage,
-          type: commonConstants.responseType.success,
-        };
-        this.setState({ notification: successNotification,
-          formData: this._formResourceMapper(response), loading: false });
+            .then((response) => {
+              const updatedUuid = response.form.uuid;
+              this.context.router.push(`/form-builder/${updatedUuid}`);
+              const successNotification = {
+                message: commonConstants.saveSuccessMessage,
+                type: commonConstants.responseType.success,
+              };
+              this.setState({ notification: successNotification,
+                formData: this._formResourceMapper(response), loading: false });
 
-        clearTimeout(this.timeoutID);
-        this.timeoutID = setTimeout(() => {
-          this.setState({ notification: {} });
-        }, commonConstants.toastTimeout);
-      })
-      .catch((error) => {
-        this.setErrorMessage(error);
-        this.setState({ loading: false });
-      });
+              clearTimeout(this.timeoutID);
+              this.timeoutID = setTimeout(() => {
+                this.setState({ notification: {} });
+              }, commonConstants.toastTimeout);
+            })
+            .catch((error) => {
+              this.setErrorMessage(error);
+              this.setState({ loading: false });
+            });
   }
 
   _publishForm(formUuid) {
     this.setState({ loading: true });
     httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
-      .then((response) => {
-        const successNotification = {
-          message: commonConstants.publishSuccessMessage,
-          type: commonConstants.responseType.success,
-        };
-        const publishedFormData = Object.assign({}, this.state.formData,
-          { published: response.published, version: response.version });
-        this.setState({ notification: successNotification,
-          formData: publishedFormData, loading: false });
+            .then((response) => {
+              const successNotification = {
+                message: commonConstants.publishSuccessMessage,
+                type: commonConstants.responseType.success,
+              };
+              const publishedFormData = Object.assign({}, this.state.formData,
+                    { published: response.published, version: response.version });
+              this.setState({ notification: successNotification,
+                formData: publishedFormData, loading: false });
 
-        clearTimeout(this.timeoutID);
-        this.timeoutID = setTimeout(() => {
-          this.setState({ notification: {} });
-        }, commonConstants.toastTimeout);
-      })
-      .catch((error) => {
-        this.setErrorMessage(error);
-        this.setState({ loading: false });
-      });
+              clearTimeout(this.timeoutID);
+              this.timeoutID = setTimeout(() => {
+                this.setState({ notification: {} });
+              }, commonConstants.toastTimeout);
+            })
+            .catch((error) => {
+              this.setErrorMessage(error);
+              this.setState({ loading: false });
+            });
   }
 
   _formResourceMapper(responseObject) {
@@ -255,7 +257,7 @@ export class FormDetailContainer extends Component {
     let currentFormName = formName;
     if (formHelper.validateFormName(formName)) {
       const existForms = this.state.formList.filter(
-        form => form.display === formName && this.state.originalFormName !== formName);
+                form => form.display === formName && this.state.originalFormName !== formName);
       if (existForms.length > 0) {
         this.setErrorMessage({ message: 'Form with same name already exists' });
         currentFormName = this.state.originalFormName;
@@ -280,6 +282,15 @@ export class FormDetailContainer extends Component {
     }
   }
 
+  validateNameLength(value) {
+    if (value.length === 50) {
+      this.setErrorMessage({ message: 'Form name shall not exceed 50 characters' });
+      return true;
+    }
+
+    return false;
+  }
+
   cloneFormResource() {
     const newVersion = '1';
     const isPublished = false;
@@ -289,48 +300,49 @@ export class FormDetailContainer extends Component {
       published: isPublished,
     };
     httpInterceptor
-      .post(formBuilderConstants.formUrl, form)
-      .then((response) => {
-        const newFormData = Object.assign({}, this.state.formData,
-          { uuid: response.uuid, id: response.id, published: isPublished,
-            version: newVersion, resources: [] });
-        this.setState({ formData: newFormData, originalFormName: newFormData.name });
-        this.onSave();
-      })
-      .catch((error) => this.showErrors(error));
+            .post(formBuilderConstants.formUrl, form)
+            .then((response) => {
+              const newFormData = Object.assign({}, this.state.formData,
+                { uuid: response.uuid, id: response.id, published: isPublished,
+                  version: newVersion, resources: [] });
+              this.setState({ formData: newFormData, originalFormName: newFormData.name });
+              this.onSave();
+            })
+            .catch((error) => this.showErrors(error));
   }
 
   render() {
     return (
-      <div>
-        <Spinner show={this.state.loading} />
-        <NotificationContainer
-          notification={this.state.notification}
-        />
-        <FormBuilderHeader />
-        <div className="breadcrumb-wrap">
-          <div className="breadcrumb-inner">
-            <div className="fl">
-              <FormBuilderBreadcrumbs routes={this.props.routes} />
+            <div>
+              <Spinner show={this.state.loading} />
+              <NotificationContainer
+                notification={this.state.notification}
+              />
+              <FormBuilderHeader />
+              <div className="breadcrumb-wrap">
+                <div className="breadcrumb-inner">
+                  <div className="fl">
+                    <FormBuilderBreadcrumbs routes={this.props.routes} />
+                  </div>
+                  <div className="fr">
+                      {this.showSaveButton()}
+                      {this.showPublishButton()}
+                  </div>
+                </div>
+              </div>
+              <div className="container-content-wrap">
+                <div className="container-content">
+                    {this.showEditButton()}
+                  <FormDetail
+                    formData={this.state.formData}
+                    ref={r => { this.formDetail = r; }}
+                    setError={this.setErrorMessage}
+                    updateFormName={(formName) => this.updateFormName(formName)}
+                    validateNameLength={(formName) => this.validateNameLength(formName)}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="fr">
-              {this.showSaveButton()}
-              {this.showPublishButton()}
-            </div>
-          </div>
-        </div>
-        <div className="container-content-wrap">
-          <div className="container-content">
-            {this.showEditButton()}
-            <FormDetail
-              formData={this.state.formData}
-              ref={r => { this.formDetail = r; }}
-              setError={this.setErrorMessage}
-              updateFormName={(formName) => this.updateFormName(formName)}
-            />
-          </div>
-        </div>
-      </div>
     );
   }
 }

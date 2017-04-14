@@ -70,6 +70,7 @@ class Canvas extends Component {
         <div className="canvas-title">
           <TitleDetail
             updateValue={(value) => this.updateFormName(value)}
+            validateNameLength = {this.props.validateNameLength}
             value={this.state.formName}
           />
         </div>
@@ -94,6 +95,7 @@ Canvas.propTypes = {
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
   updateFormName: PropTypes.func,
+  validateNameLength: PropTypes.func,
 };
 
 export default connect(null, null, null, { withRef: true })(Canvas);
