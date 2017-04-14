@@ -15,17 +15,13 @@ export class DownloadForms {
     });
   }
 
-  isCompletedAll() {
-    const uncompletedFiles = filter(this.downloads, file => !file.completed);
-    if (uncompletedFiles.length <= 0) {
-      this.completedFunc(this.downloads);
-    }
-  }
-
   completed(fileName, success) {
     if (this.downloads[fileName]) {
-      this.downloads[fileName] = {completed: true, success}
-      this.isCompletedAll();
+      this.downloads[fileName] = {completed: true, success};
+      const completedFiles = filter(this.downloads, file => !file.completed);
+      if (completedFiles.length <= 0) {
+        this.completedFunc(this.downloads);
+      }
     }
   }
 
