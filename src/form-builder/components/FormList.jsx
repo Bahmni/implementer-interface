@@ -10,12 +10,22 @@ export default class FormList extends Component {
     this.state = { selectAll: false };
   }
 
+  onSelectAll() {
+    const isSelectAll = !this.state.selectAll;
+    this.props.data.forEach((item, index) => {
+      if (item.published) {
+        this.isChecked(isSelectAll, index);
+      }
+    });
+    this.setState({ selectAll: isSelectAll });
+  }
+
   getRows() {
     const data = _.map(this.props.data, (rowItem, index) => (
       <tr key={rowItem.id}>
-        <td><input type="checkbox" disabled={!rowItem.published}
-          checked={rowItem.checked}
+        <td><input checked={rowItem.checked} disabled={!rowItem.published}
           onClick={(e) => this.isChecked(e.target.checked, index)}
+          type="checkbox"
         /></td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
@@ -56,22 +66,12 @@ export default class FormList extends Component {
     return 'Draft';
   }
 
-  onSelectAll() {
-    const isSelectAll = !this.state.selectAll;
-    this.props.data.forEach((item, index) => {
-      if (item.published) {
-        this.isChecked(isSelectAll, index);
-      }
-    });
-    this.setState({ selectAll: isSelectAll });
-  }
-
   render() {
     return (this.props.data.length === 0 ? <p className="placeholder-text">No Forms to Display</p> :
       <table>
         <thead>
         <tr>
-          <th><input type="checkbox" onClick={() => (this.onSelectAll())} /></th>
+          <th><input onClick={() => (this.onSelectAll())} type="checkbox" /></th>
           <th>Name</th>
           <th>Version</th>
           <th>Created On</th>

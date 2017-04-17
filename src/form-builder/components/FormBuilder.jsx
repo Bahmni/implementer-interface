@@ -91,8 +91,8 @@ export default class FormBuilder extends Component {
           </div>
         </div>
         <MessageBoxContainer
-          message={this.state.message}
           closeModal={() => this.setState({ message: {} })}
+          message={this.state.message}
         />
           <CreateFormModal
             closeModal={() => this.closeFormModal()}
@@ -103,7 +103,9 @@ export default class FormBuilder extends Component {
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data} isChecked={(isChecked, index) => this.updateExportStatus(isChecked, index)} />
+              <FormList data={this.props.data}
+                isChecked={(isChecked, index) => this.updateExportStatus(isChecked, index)}
+              />
             </div>
           </div>
       </div>

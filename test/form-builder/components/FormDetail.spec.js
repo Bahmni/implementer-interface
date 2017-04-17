@@ -69,6 +69,20 @@ describe('FormDetails', () => {
     expect(wrapper).to.be.blank();
   });
 
+  it('should return null when canvas is false', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          formData={formData}
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>
+    );
+
+  });
+
   it('should create the idGenerator and pass it as props to required children', () => {
     wrapper = mount(
       <Provider store={getStore()}>

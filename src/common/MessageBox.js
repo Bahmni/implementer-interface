@@ -28,8 +28,8 @@ const MessageBoxContainer = (props) => {
           <div className={ messageType }>
             <div className="message">{ props.message.text }</div>
           </div>
-          <ErrorContainer type={props.message.type} failedForms={props.message.failedForms}
-            closeModal={props.closeModal}
+          <ErrorContainer closeModal={props.closeModal}
+            failedForms={props.message.failedForms} type={props.message.type}
           />
         </div>
       </div>

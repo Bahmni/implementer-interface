@@ -479,6 +479,21 @@ describe('FormDetailContainer', () => {
       }, 1000);
     });
 
+    it('should set state of showModal as true when click edit button', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      const instance = wrapper.instance();
+      expect(instance.state.showModal).to.eql(false);
+
+      instance.openFormModal();
+
+      expect(instance.state.showModal).to.eql(true);
+    });
+
     it('should NOT show publish button', (done) => {
       const wrapper = shallow(
         <FormDetailContainer

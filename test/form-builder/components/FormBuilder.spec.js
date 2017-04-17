@@ -14,130 +14,130 @@ describe('FormBuilder', () => {
 
   const data = [
     {
-      "auditInfo": {
-        "changedBy": null,
-        "creator": {
-          "display": "superman",
-          "links": [
+      auditInfo: {
+        changedBy: null,
+        creator: {
+          display: 'superman',
+          links: [
             {
-              "rel": "self",
-              "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-            }
+              rel: 'self',
+              uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+            },
           ],
-          "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+          uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
         },
-        "dateChanged": null,
-        "dateCreated": "2017-04-10T06:31:06.000+0000"
+        dateChanged: null,
+        dateCreated: '2017-04-10T06:31:06.000+0000',
       },
-      "id": 4,
-      "name": "123",
-      "published": false,
-      "uuid": "bb3c33e6-dd00-4e65-b132-fd85c9f408d0",
-      "version": 1
+      id: 4,
+      name: '123',
+      published: false,
+      uuid: 'bb3c33e6-dd00-4e65-b132-fd85c9f408d0',
+      version: 1,
     },
     {
-      "auditInfo": {
-        "changedBy": {
-          "display": "superman",
-          "links": [
+      auditInfo: {
+        changedBy: {
+          display: 'superman',
+          links: [
             {
-              "rel": "self",
-              "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-            }
+              rel: 'self',
+              uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+            },
           ],
-          "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+          uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
         },
-        "creator": {
-          "display": "superman",
-          "links": [
+        creator: {
+          display: 'superman',
+          links: [
             {
-              "rel": "self",
-              "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-            }
+              rel: 'self',
+              uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+            },
           ],
-          "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+          uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
         },
-        "dateChanged": "2017-04-10T06:17:06.000+0000",
-        "dateCreated": "2017-04-10T06:15:56.000+0000"
+        dateChanged: '2017-04-10T06:17:06.000+0000',
+        dateCreated: '2017-04-10T06:15:56.000+0000',
       },
-      "id": 2,
-      "name": "12345678901234567890123456789012345678901234567890",
-      "published": true,
-      "uuid": "9de09979-a8fa-4747-a22b-c047bf639ef2",
-      "version": 1
+      id: 2,
+      name: '12345678901234567890123456789012345678901234567890',
+      published: true,
+      uuid: '9de09979-a8fa-4747-a22b-c047bf639ef2',
+      version: 1,
     },
     {
-      "auditInfo": {
-        "changedBy": {
-          "display": "superman",
-          "links": [
+      auditInfo: {
+        changedBy: {
+          display: 'superman',
+          links: [
             {
-              "rel": "self",
-              "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-            }
+              rel: 'self',
+              uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+            },
           ],
-          "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+          uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
         },
-        "creator": {
-          "display": "superman",
-          "links": [
+        creator: {
+          display: 'superman',
+          links: [
             {
-              "rel": "self",
-              "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-            }
+              rel: 'self',
+              uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+            },
           ],
-          "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+          uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
         },
-        "dateChanged": "2017-04-10T06:52:16.000+0000",
-        "dateCreated": "2017-04-10T06:51:44.000+0000"
+        dateChanged: '2017-04-10T06:52:16.000+0000',
+        dateCreated: '2017-04-10T06:51:44.000+0000',
       },
-      "id": 6,
-      "name": "qqq11111qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
-      "published": true,
-      "uuid": "e912dee3-b5c9-4eaf-b30f-f67a06f3d83b",
-      "version": 1
+      id: 6,
+      name: 'qqq11111qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq',
+      published: true,
+      uuid: 'e912dee3-b5c9-4eaf-b30f-f67a06f3d83b',
+      version: 1,
     },
   ];
 
   const routes = [
     {
-      "childRoutes": [
+      childRoutes: [
         {
-          "childRoutes": [
+          childRoutes: [
             {
-              "name": "Form Details",
-              "path": ":formUuid"
-            }
+              name: 'Form Details',
+              path: ':formUuid',
+            },
           ],
-          "indexRoute": {
-            "name": "Form Builder"
+          indexRoute: {
+            name: 'Form Builder',
           },
-          "name": "Form Builder",
-          "path": "form-builder"
-        }
+          name: 'Form Builder',
+          path: 'form-builder',
+        },
       ],
-      "indexRoute": {
-        "name": "Dashboard"
+      indexRoute: {
+        name: 'Dashboard',
       },
-      "name": "Dashboard",
-      "path": "/"
+      name: 'Dashboard',
+      path: '/',
     },
     {
-      "childRoutes": [
+      childRoutes: [
         {
-          "name": "Form Details",
-          "path": ":formUuid"
-        }
+          name: 'Form Details',
+          path: ':formUuid',
+        },
       ],
-      "indexRoute": {
-        "name": "Form Builder"
+      indexRoute: {
+        name: 'Form Builder',
       },
-      "name": "Form Builder",
-      "path": "form-builder"
+      name: 'Form Builder',
+      path: 'form-builder',
     },
     {
-      "name": "Form Builder"
-    }
+      name: 'Form Builder',
+    },
   ];
 
   beforeEach(() => {
@@ -199,8 +199,7 @@ describe('FormBuilder', () => {
   });
 
   it('should enable export-button when check a form', () => {
-    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
-    const instance = wrapper.instance();
+    const instance = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />).instance();
     instance.updateExportStatus(true, 2);
 
     expect(instance.state.exportDisabled).to.eql(false);
@@ -220,8 +219,7 @@ describe('FormBuilder', () => {
   });
 
   it('should show exporting message when export forms success', () => {
-    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
-    const instance = wrapper.instance();
+    const instance = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />).instance();
     const showMessageBox = sinon.spy(instance, 'showMessageBox');
     instance.updateExportStatus(true, 2);
     const downloadResults = { file1: { success: true } };
@@ -233,8 +231,7 @@ describe('FormBuilder', () => {
   });
 
   it('should show exporting message when export forms success', () => {
-    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
-    const instance = wrapper.instance();
+    const instance = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />).instance();
     instance.updateExportStatus(true, 2);
     const downloadResults = { file1: { success: false } };
 

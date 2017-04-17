@@ -41,6 +41,10 @@ describe('FormList', () => {
     },
   ];
 
+  function getItem(row) {
+    return wrapper.find('table').find('tbody').find('tr').at(row).find('td');
+  }
+
   function getData(row, column) {
     return getItem(row).at(column).text();
   }
@@ -51,10 +55,6 @@ describe('FormList', () => {
 
   function getHeader(row) {
     return wrapper.find('table').find('thead').find('tr').at(row).find('th');
-  }
-
-  function getItem(row) {
-    return wrapper.find('table').find('tbody').find('tr').at(row).find('td');
   }
 
   it('should render form list in table', () => {
