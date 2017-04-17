@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
@@ -21,6 +21,7 @@ describe('FormBuilder', () => {
         dateCreated: '2010-10-10T15:21:17.000+0530',
       },
       uuid: 'someUuid-1',
+      published: false,
       checked: undefined,
     },
     {
@@ -105,12 +106,60 @@ describe('FormBuilder', () => {
     sinon.assert.calledWith(saveFormSpy, expectedFormJson);
   });
 
-  it('should can click export button when check a form', () => {
+  it('should enable export-button when check a form', () => {
     const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
     const instance = wrapper.instance();
     instance.updateExportStatus(true, 2);
 
     expect(instance.state.exportDisabled).to.eql(false);
     expect(data[2].checked).to.eql(true);
+  });
+
+  it('should download forms when click export button', (done) => {
+    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
+    const instance = wrapper.instance();
+    const downloadDone = sinon.spy(instance, 'downloadDone');
+    instance.updateExportStatus(true, 2);
+    wrapper.find('button').at(1).simulate('click');
+    setTimeout(() => {
+      sinon.assert.calledOnce(downloadDone);
+      done();
+    }, 500);
+  });
+
+  it('should show exporting message when export forms success', () => {
+    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
+    const instance = wrapper.instance();
+    const showMessageBox = sinon.spy(instance, 'showMessageBox');
+    instance.updateExportStatus(true, 2);
+    const downloadResults = {'file1': {success: true}};
+
+    instance.downloadDone(downloadResults);
+
+    sinon.assert.calledOnce(showMessageBox);
+    expect(instance.state.message.type).to.eql('success');
+  });
+
+  it('should show exporting message when export forms success', () => {
+    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
+    const instance = wrapper.instance();
+    instance.updateExportStatus(true, 2);
+    const downloadResults = {'file1': {success: false}};
+
+    instance.downloadDone(downloadResults);
+
+    expect(instance.state.message.type).to.eql('error');
+  });
+
+  it('should call closeModal function on click of close button', () => {
+    const wrapper = mount(<FormBuilder data={data} saveForm={saveFormSpy} />);
+    const instance = wrapper.instance();
+    const closeFormModalSpy = sinon.spy(instance, 'closeFormModal');
+    const results = [{'file1': {name: 'file1'}}];
+
+    instance.showMessageBox('Test', 'error', results);
+    wrapper.find('.btn').simulate('click');
+
+    sinon.assert.calledOnce(closeFormModalSpy);
   });
 });

@@ -11,11 +11,11 @@ const ErrorContainer = (props) => {
           ))}
         </fieldset>
 
-        <button onClick={props.closeModal}>Close</button>
+        <button className="btn" onClick={props.closeModal}>Close</button>
       </div>
     );
   }
-  return (<div></div>);
+  return null;
 };
 
 const MessageBoxContainer = (props) => {
