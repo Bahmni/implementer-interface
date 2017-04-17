@@ -92,28 +92,28 @@ describe('FormList', () => {
     expect(wrapper).to.not.have.descendants('table');
   });
 
-   it('should enable checkbox when this form published', () => {
-     wrapper = mount(<FormList data={data}/>);
+  it('should enable checkbox when this form published', () => {
+    wrapper = mount(<FormList data={data} />);
 
-     const publishedItem = getItem(2).at(0);
-     expect(publishedItem.find('input').props().type).to.eql('checkbox');
-     expect(publishedItem.find('input').props().disabled).to.eql(false);
-   });
+    const publishedItem = getItem(2).at(0);
+    expect(publishedItem.find('input').props().type).to.eql('checkbox');
+    expect(publishedItem.find('input').props().disabled).to.eql(false);
+  });
 
-   it('should disable checkbox when this form not published', () => {
-     wrapper = mount(<FormList data={data}/>);
+  it('should disable checkbox when this form not published', () => {
+    wrapper = mount(<FormList data={data} />);
 
-     const draftItem = getItem(0).at(0);
-     expect(draftItem.find('input').props().type).to.eql('checkbox');
-     expect(draftItem.find('input').props().disabled).to.eql(true);
-   });
+    const draftItem = getItem(0).at(0);
+    expect(draftItem.find('input').props().type).to.eql('checkbox');
+    expect(draftItem.find('input').props().disabled).to.eql(true);
+  });
 
-   it('should select all published items when click select all', () => {
-     wrapper = mount(<FormList data={data} isChecked={() => {}}/>);
+  it('should select all published items when click select all', () => {
+    wrapper = mount(<FormList data={data} isChecked={() => {}} />);
 
-     expect(wrapper.state().selectAll).to.eql(false);
-     getHeader(0).find('input').simulate('click');
+    expect(wrapper.state().selectAll).to.eql(false);
+    getHeader(0).find('input').simulate('click');
 
-     expect(wrapper.state().selectAll).to.eql(true);
-   });
+    expect(wrapper.state().selectAll).to.eql(true);
+  });
 });

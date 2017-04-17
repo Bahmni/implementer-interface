@@ -7,15 +7,16 @@ export default class FormList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {selectAll: false};
+    this.state = { selectAll: false };
   }
 
   getRows() {
     const data = _.map(this.props.data, (rowItem, index) => (
       <tr key={rowItem.id}>
         <td><input type="checkbox" disabled={!rowItem.published}
-                   checked={rowItem.checked}
-                   onClick={(e) => this.isChecked(e.target.checked, index)}/></td>
+          checked={rowItem.checked}
+          onClick={(e) => this.isChecked(e.target.checked, index)}
+        /></td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
@@ -26,7 +27,7 @@ export default class FormList extends Component {
     return data;
   }
 
-  isChecked(checked, index){
+  isChecked(checked, index) {
     if (this.props.isChecked) {
       this.props.isChecked(checked, index);
     }
@@ -70,7 +71,7 @@ export default class FormList extends Component {
       <table>
         <thead>
         <tr>
-          <th><input type="checkbox" onClick={() => (this.onSelectAll())}/></th>
+          <th><input type="checkbox" onClick={() => (this.onSelectAll())} /></th>
           <th>Name</th>
           <th>Version</th>
           <th>Created On</th>

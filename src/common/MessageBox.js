@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 const ErrorContainer = (props) => {
   if (props.type === 'error') {
@@ -11,7 +11,7 @@ const ErrorContainer = (props) => {
           ))}
         </fieldset>
 
-        <button className="btn" onClick={props.closeModal}>Close</button>
+        <button className="btn--close" onClick={props.closeModal}>Close</button>
       </div>
     );
   }
@@ -29,7 +29,8 @@ const MessageBoxContainer = (props) => {
             <div className="message">{ props.message.text }</div>
           </div>
           <ErrorContainer type={props.message.type} failedForms={props.message.failedForms}
-                          closeModal={props.closeModal}/>
+            closeModal={props.closeModal}
+          />
         </div>
       </div>
     );
