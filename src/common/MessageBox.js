@@ -1,22 +1,29 @@
 import React, { PropTypes } from 'react';
 
-const ErrorContainer = (props) => {
-  if (props.type === 'error') {
+const ErrorContainer = ({ type, failedForms, closeModal }) => {
+  if (type === 'error') {
     return (
       <div>
         <span>Export Forms Successfully, Forms failed. Failed Forms: </span>
         <fieldset>
-          {props.failedForms.map((f, key) => (
+          {failedForms.map((f, key) => (
             <ul key={key}>{f.name}</ul>
           ))}
         </fieldset>
 
-        <button className="btn--close" onClick={props.closeModal}>Close</button>
+        <button className="btn--close" onClick={closeModal}>Close</button>
       </div>
     );
   }
   return null;
 };
+
+ErrorContainer.propTypes = {
+  closeModal: PropTypes.func,
+  failedForms: PropTypes.array,
+  type: PropTypes.string,
+};
+
 
 const MessageBoxContainer = (props) => {
   const messageType = `notification--${props.message.type}`;
@@ -35,11 +42,11 @@ const MessageBoxContainer = (props) => {
       </div>
     );
   }
-
   return null;
 };
 
 MessageBoxContainer.propTypes = {
+  closeModal: PropTypes.func,
   message: PropTypes.shape({
     text: PropTypes.string,
     type: PropTypes.string,

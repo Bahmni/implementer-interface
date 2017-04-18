@@ -80,7 +80,6 @@ describe('FormDetails', () => {
         />
       </Provider>
     );
-
   });
 
   it('should create the idGenerator and pass it as props to required children', () => {

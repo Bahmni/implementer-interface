@@ -207,11 +207,11 @@ describe('FormBuilder', () => {
   });
 
   it('should download forms when click export button', (done) => {
-    const wrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
-    const instance = wrapper.instance();
+    const updatedWrapper = shallow(<FormBuilder data={data} saveForm={saveFormSpy} />);
+    const instance = updatedWrapper.instance();
     const downloadDone = sinon.spy(instance, 'downloadDone');
     instance.updateExportStatus(true, 2);
-    wrapper.find('button').at(1).simulate('click');
+    updatedWrapper.find('button').at(1).simulate('click');
     setTimeout(() => {
       sinon.assert.calledOnce(downloadDone);
       done();
@@ -241,12 +241,13 @@ describe('FormBuilder', () => {
   });
 
   it('should update message to null on click of close button', () => {
-    const wrapper = mount(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy} />);
-    const instance = wrapper.instance();
+    const updatedWrapper = mount(
+        <FormBuilder data={data} routes={routes} saveForm={saveFormSpy} />);
+    const instance = updatedWrapper.instance();
     const results = [{ file1: { name: 'file1' } }];
 
     instance.showMessageBox('Test', 'error', results);
-    wrapper.find('.btn--close').simulate('click');
+    updatedWrapper.find('.btn--close').simulate('click');
 
     expect(instance.state.message).to.eql({});
   });
