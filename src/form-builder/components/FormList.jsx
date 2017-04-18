@@ -23,10 +23,14 @@ export default class FormList extends Component {
   getRows() {
     const data = _.map(this.props.data, (rowItem, index) => (
       <tr key={rowItem.id}>
-        <td><input checked={rowItem.checked} disabled={!rowItem.published}
-          onClick={(e) => this.isChecked(e.target.checked, index)}
-          type="checkbox"
-        /></td>
+        <td>
+          <input
+            checked={rowItem.checked}
+            disabled={!rowItem.published}
+            onClick={(e) => this.isChecked(e.target.checked, index)}
+            type="checkbox"
+          />
+        </td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>

@@ -23,7 +23,7 @@ const MessageBoxContainer = (props) => {
   if (props.message.text) {
     return (
       <div>
-        <div className="dialog-wrapper" onClick={() => {}}></div>;
+        <div className="dialog-wrapper"></div>;
         <div className="notification">
           <div className={ messageType }>
             <div className="message">{ props.message.text }</div>
