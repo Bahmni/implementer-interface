@@ -22,10 +22,12 @@ export default class FormList extends Component {
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{this._getFormStatus(rowItem)}</td>
-        <td className="edit-icon">{this._editOrReuseIcon(rowItem)}</td>
-        <td><a hidden={!rowItem.published}
-          onClick={() => this.downloadFile(index)}
-        >Export</a></td>
+        <td>
+          <b className="edit-icon">{this._editOrReuseIcon(rowItem)} </b>
+          <a hidden={!rowItem.published}
+            onClick={() => this.downloadFile(index)}
+          >Export</a>
+        </td>
       </tr>
     ));
     return data;
@@ -83,9 +85,9 @@ export default class FormList extends Component {
 
   render() {
     return (this.props.data.length === 0 ? <p className="placeholder-text">No Forms to Display</p> :
-      <div>
-        <NotificationContainer notification={this.state.notification} />
-        <table>
+        <div>
+          <NotificationContainer notification={this.state.notification} />
+          <table>
             <thead>
             <tr>
               <th>Name</th>
@@ -93,12 +95,11 @@ export default class FormList extends Component {
               <th>Created On</th>
               <th>Status</th>
               <th>Action</th>
-              <th>...</th>
             </tr>
             </thead>
             <tbody>{this.getRows()}</tbody>
           </table>
-      </div>
+        </div>
     );
   }
 }

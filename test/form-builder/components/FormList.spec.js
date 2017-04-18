@@ -91,16 +91,16 @@ describe('FormList', () => {
   it('should render Export when form published', () => {
     wrapper = shallow(<FormList data={data} />);
 
-    expect(getItem(0, 5).find('a').prop('hidden')).to.eql(true);
-    expect(getItem(1, 5).find('a').prop('hidden')).to.eql(false);
-    expect(getItem(1, 5).find('a').text()).to.eql('Export');
+    expect(getItem(0, 4).find('a').prop('hidden')).to.eql(true);
+    expect(getItem(1, 4).find('a').prop('hidden')).to.eql(false);
+    expect(getItem(1, 4).find('a').text()).to.eql('Export');
   });
 
   it('should call downloadFile when export be clicked', () => {
     wrapper = shallow(<FormList data={data} />);
     const spy = sinon.spy(wrapper.instance(), 'downloadFile');
 
-    const exportElement = getItem(1, 5).find('a');
+    const exportElement = getItem(1, 4).find('a');
     exportElement.simulate('click');
 
     sinon.assert.calledOnce(spy);
@@ -116,7 +116,7 @@ describe('FormList', () => {
     wrapper = shallow(<FormList data={data} />);
     const spy = sinon.spy(wrapper.instance(), 'setMessage');
 
-    const exportElement = getItem(1, 5).find('a');
+    const exportElement = getItem(1, 4).find('a');
     exportElement.simulate('click');
 
     setTimeout(() => {
