@@ -1,16 +1,21 @@
 import React, { PropTypes } from 'react';
+import { size, filter } from 'lodash';
 
-const ErrorContainer = ({ type, failedForms, closeModal }) => {
+const ErrorContainer = ({ type, downloadResults, closeModal }) => {
   if (type === 'error') {
+    const failedForms = filter(downloadResults, item => !item.success);
+    const failedCount = size(failedForms);
+    const successCount = size(downloadResults) - failedCount;
+    const title = `Export ${successCount} Forms Successfully, ${failedCount} Forms failed.`;
     return (
       <div>
-        <span>Export Forms Successfully, Forms failed. Failed Forms: </span>
-        <fieldset>
+        <p>{title}</p>
+        <p>Failed Forms:</p>
+        <ol>
           {failedForms.map((f, key) => (
-            <ul key={key}>{f.name}</ul>
+            <li key={key}>{f.name}</li>
           ))}
-        </fieldset>
-
+        </ol>
         <button className="btn--close" onClick={closeModal}>Close</button>
       </div>
     );
@@ -20,7 +25,7 @@ const ErrorContainer = ({ type, failedForms, closeModal }) => {
 
 ErrorContainer.propTypes = {
   closeModal: PropTypes.func,
-  failedForms: PropTypes.array,
+  downloadResults: PropTypes.object,
   type: PropTypes.string,
 };
 
@@ -36,7 +41,8 @@ const MessageBoxContainer = (props) => {
             <div className="message">{ props.message.text }</div>
           </div>
           <ErrorContainer closeModal={props.closeModal}
-            failedForms={props.message.failedForms} type={props.message.type}
+            downloadResults={props.message.downloadResults}
+            type={props.message.type}
           />
         </div>
       </div>
@@ -50,7 +56,7 @@ MessageBoxContainer.propTypes = {
   message: PropTypes.shape({
     text: PropTypes.string,
     type: PropTypes.string,
-    failedForms: PropTypes.array,
+    downloadResults: PropTypes.object,
   }).isRequired,
 };
 

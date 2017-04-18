@@ -244,7 +244,7 @@ describe('FormBuilder', () => {
     const updatedWrapper = mount(
         <FormBuilder data={data} routes={routes} saveForm={saveFormSpy} />);
     const instance = updatedWrapper.instance();
-    const results = [{ file1: { name: 'file1' } }];
+    const results = { file1: { name: 'file1' } };
 
     instance.showMessageBox('Test', 'error', results);
     updatedWrapper.find('.btn--close').simulate('click');

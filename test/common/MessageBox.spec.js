@@ -24,16 +24,19 @@ describe('MessageBox', () => {
   });
 
   it('should render with errors when message type is error', () => {
-    const message = { text: 'Test', type: 'error', failedForms: [{ file1: { name: 'file1' } }] };
+    const message = { text: 'Test', type: 'error', downloadResults: { file1: { name: 'file1' } } };
     const wrapper = mount(<MessageBoxContainer message={message} />);
 
-    expect(wrapper.find('fieldset')).to.have.length(1);
+    expect(wrapper.find('ol')).to.have.length(1);
   });
 
   it('should not render errors when message type is success', () => {
-    const message = { text: 'Test', type: 'success', failedForms: [{ file1: { name: 'file1' } }] };
+    const message = {
+      text: 'Test', type: 'success',
+      downloadResults: { file1: { name: 'file1' } },
+    };
     const wrapper = mount(<MessageBoxContainer message={message} />);
 
-    expect(wrapper.find('fieldset')).to.have.length(0);
+    expect(wrapper.find('ol')).to.have.length(0);
   });
 });

@@ -40,9 +40,9 @@ export default class FormBuilder extends Component {
     const results = filter(downloadResults, item => !item.success);
     if (results.length <= 0) {
       const text = `Export ${size(downloadResults)} Forms(.json) Successfully`;
-      this.showMessageBox(text, commonConstants.responseType.success, results, true);
+      this.showMessageBox(text, commonConstants.responseType.success, downloadResults, true);
     } else {
-      this.showMessageBox('Error', commonConstants.responseType.error, results);
+      this.showMessageBox('Error', commonConstants.responseType.error, downloadResults);
     }
   }
 
@@ -60,8 +60,8 @@ export default class FormBuilder extends Component {
     this.setState({ exportDisabled: (checkedItems.length <= 0) });
   }
 
-  showMessageBox(text, type, failedForms, timeout) {
-    this.setState({ message: { text, type, failedForms } });
+  showMessageBox(text, type, downloadResults, timeout) {
+    this.setState({ message: { text, type, downloadResults } });
 
     if (timeout) {
       setTimeout(() => {
