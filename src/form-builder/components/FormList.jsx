@@ -13,6 +13,7 @@ export default class FormList extends Component {
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{this._getFormStatus(rowItem)}</td>
         <td className="edit-icon">{this._editOrReuseIcon(rowItem)}</td>
+        <td>{rowItem.published && 'Export'}</td>
       </tr>
     ));
     return data;
@@ -51,6 +52,7 @@ export default class FormList extends Component {
           <th>Created On</th>
           <th>Status</th>
           <th>Action</th>
+          <th>...</th>
         </tr>
         </thead>
         <tbody>{this.getRows()}</tbody>

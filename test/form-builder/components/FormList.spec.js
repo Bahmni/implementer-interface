@@ -83,4 +83,11 @@ describe('FormList', () => {
     expect(wrapper.find('p').text()).to.eql('No Forms to Display');
     expect(wrapper).to.not.have.descendants('table');
   });
+
+  it('should render Export when form published', () => {
+    wrapper = shallow(<FormList data={data} />);
+
+    expect(getData(0,5)).to.eql('');
+    expect(getData(1,5)).to.eql('Export');
+  });
 });
