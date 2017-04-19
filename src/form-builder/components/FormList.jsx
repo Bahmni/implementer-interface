@@ -33,7 +33,6 @@ export default class FormList extends Component {
     );
   }
 
-
   _getFormStatus(rowItem) {
     if (rowItem.published) {
       return 'Published';
