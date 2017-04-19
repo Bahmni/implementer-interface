@@ -52,7 +52,8 @@ export default class FormList extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${form.uuid}?${params}`)
       .then((data) => {
-        fileDownload(JSON.stringify(data), `${fileName}.json`);
+        const value = JSON.parse(data.resources[0].value);
+        fileDownload(JSON.stringify(value), `${fileName}.json`);
         this.setMessage('Export Successfully', commonConstants.responseType.success);
       })
       .catch(() => {
