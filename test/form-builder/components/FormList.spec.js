@@ -1,9 +1,9 @@
 import React from 'react';
-
 import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormList from 'form-builder/components/FormList.jsx';
+import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
@@ -41,8 +41,12 @@ describe('FormList', () => {
     },
   ];
 
+  function getItem(row, column) {
+    return wrapper.find('table').find('tbody').find('tr').at(row).find('td').at(column);
+  }
+
   function getData(row, column) {
-    return wrapper.find('table').find('tbody').find('tr').at(row).find('td').at(column).text();
+    return getItem(row, column).text();
   }
 
   function getLinkAt(row) {
@@ -83,4 +87,42 @@ describe('FormList', () => {
     expect(wrapper.find('p').text()).to.eql('No Forms to Display');
     expect(wrapper).to.not.have.descendants('table');
   });
+
+  it('should render Export when form published', () => {
+    wrapper = shallow(<FormList data={data} />);
+
+    expect(getItem(0, 4).find('a').prop('hidden')).to.eql(true);
+    expect(getItem(1, 4).find('a').prop('hidden')).to.eql(false);
+    expect(getItem(1, 4).find('a').text()).to.eql('Export');
+  });
+
+  it('should call downloadFile when export be clicked', () => {
+    wrapper = shallow(<FormList data={data} />);
+    const spy = sinon.spy(wrapper.instance(), 'downloadFile');
+
+    const exportElement = getItem(1, 4).find('a');
+    exportElement.simulate('click');
+
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should render notification container', () => {
+    wrapper = shallow(<FormList data={data} />);
+
+    expect(wrapper.find('NotificationContainer')).to.have.length(1);
+  });
+
+  it('should call setMessage when download done', (done) => {
+    wrapper = shallow(<FormList data={data} />);
+    const spy = sinon.spy(wrapper.instance(), 'setMessage');
+
+    const exportElement = getItem(1, 4).find('a');
+    exportElement.simulate('click');
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(spy);
+      done();
+    }, 500);
+  });
 });
+
