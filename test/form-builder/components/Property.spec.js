@@ -24,4 +24,19 @@ describe('Property', () => {
     wrapper.find('input').props().onChange({ target: { checked: true } });
     sinon.assert.calledWith(spy, { mandatory: true });
   });
+
+  it('should render button when given property with button type', () => {
+    const value = 'Editor';
+    const type = 'button';
+
+    wrapper = shallow(<Property
+      name="control Event"
+      onPropertyUpdate={() => {}}
+      type={type}
+      value={value}
+    />);
+
+    expect(wrapper.find('input').props().type).to.eql(type);
+    expect(wrapper.find('input').props().value).to.eql(value);
+  });
 });

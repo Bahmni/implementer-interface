@@ -15,6 +15,7 @@ export class PropertyEditor extends Component {
           key={index}
           name={name}
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
+          type={attribute.elementType}
           value={value}
         />
       );
