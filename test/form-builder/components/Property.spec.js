@@ -39,4 +39,20 @@ describe('Property', () => {
     expect(wrapper.find('input').props().type).to.eql(type);
     expect(wrapper.find('input').props().value).to.eql(value);
   });
+
+  it('should call show script editor once click the editor button', () => {
+    const spy = sinon.spy();
+
+    wrapper = shallow(<Property
+      name="control Event"
+      onPropertyUpdate={() => {}}
+      showScriptEditor={spy}
+      type='button'
+      value='Editor'
+    />);
+
+    wrapper.find('input').simulate('click');
+
+    sinon.assert.calledOnce(spy);
+  });
 });

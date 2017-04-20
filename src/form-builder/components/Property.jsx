@@ -19,9 +19,10 @@ export class Property extends Component {
       <div>
         <label>{name}</label>
         {this.props.type ?
-          <input type={this.props.type} value={value} /> :
+          <input onClick={() => this.props.showScriptEditor()}
+                 type={this.props.type} value={value} /> :
           <input checked={value} className="fr"
-            onChange={(e) => this.updateProperty(e)} type="checkbox"
+                 onChange={(e) => this.updateProperty(e)} type="checkbox"
           />
         }
       </div>
@@ -32,5 +33,6 @@ export class Property extends Component {
 Property.propTypes = {
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
+  showScriptEditor: PropTypes.func,
   type: PropTypes.string,
 };
