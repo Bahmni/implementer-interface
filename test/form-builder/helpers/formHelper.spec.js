@@ -19,5 +19,17 @@ describe('formHelper', () => {
 
     expect(controls).to.be.eql([{ control1: 'value1' }]);
   });
+
+  it('should return correct locale data when locale data is not empty', () => {
+    const formData = {
+      resources: [{
+        dataType: formBuilderConstants.formResourceDataType,
+        value: '{"locale":{"en":{"LABEL_1":"label"}},"controls": [{"control1": "value1"}]}',
+      }],
+    };
+    const locale = FormHelper.getFormResourceLocaleData(formData);
+
+    expect(locale).to.be.eql({ en: { LABEL_1: 'label' } });
+  });
 });
 

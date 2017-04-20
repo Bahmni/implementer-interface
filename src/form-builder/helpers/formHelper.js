@@ -18,4 +18,15 @@ export default class FormHelper {
     const pattern = /^[^\.\/\-\^\s][^\.\/\-\^]*$/;
     return pattern.test(formName);
   }
+
+  static getFormResourceLocaleData(formData) {
+    if (formData) {
+      const { resources } = formData;
+      const formResources = filter(resources,
+        (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
+      const valueAsString = get(formResources, ['0', 'value']);
+      return (valueAsString && JSON.parse(valueAsString).locale) || {};
+    }
+    return {};
+  }
 }

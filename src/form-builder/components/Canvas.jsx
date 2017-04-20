@@ -43,6 +43,7 @@ class Canvas extends Component {
       id: this.props.formId,
       uuid: this.props.formUuid,
       controls,
+      locale: this.props.locale,
     };
   }
 
@@ -93,6 +94,7 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
+  locale: PropTypes.object,
   updateFormName: PropTypes.func,
 };
 

@@ -54,6 +54,7 @@ export default class FormDetail extends Component {
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
+      const locale = FormHelper.getFormResourceLocaleData(this.props.formData);
       const idGenerator = this.getIdGenerator(formResourceControls);
       return (
                 <div>
@@ -79,6 +80,7 @@ export default class FormDetail extends Component {
                                       formResourceControls={formResourceControls}
                                       formUuid={ uuid }
                                       idGenerator={idGenerator}
+                                      locale={locale}
                                       ref={this.canvasRef}
                                       updateFormName = {this.props.updateFormName}
                                     />
