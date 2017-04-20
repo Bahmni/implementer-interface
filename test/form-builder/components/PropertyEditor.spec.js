@@ -122,4 +122,22 @@ describe('Property Editor', () => {
 
     sinon.assert.calledWith(spy, { allowDecimal: true });
   });
+
+  it('should render Property with type when given elementType', () => {
+    const attributeWithElementType = [
+      {
+        name: 'control Event',
+        dataType: 'boolean',
+        defaultValue: 'Editor',
+        elementType: 'button',
+      },
+    ];
+    ComponentStore.registerDesignerComponent('obsControl',
+      controlDescriptor(attributeWithElementType));
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    expect(wrapper.find('Property').at(0).props().name).to.eql('control Event');
+    expect(wrapper.find('Property').at(0).props().type).to.eql('button');
+    expect(wrapper.find('Property').at(0).props().value).to.eql('Editor');
+  });
 });
