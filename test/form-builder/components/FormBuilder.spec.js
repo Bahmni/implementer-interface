@@ -63,4 +63,9 @@ describe('FormBuilder', () => {
     sinon.assert.calledOnce(saveFormSpy);
     sinon.assert.calledWith(saveFormSpy, expectedFormJson);
   });
+
+  it('should render input file', () => {
+    expect(wrapper).to.have.exactly(1).descendants('input');
+    expect(wrapper.find('input').prop('type')).to.eql('file');
+  });
 });
