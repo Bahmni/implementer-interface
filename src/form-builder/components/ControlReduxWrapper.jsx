@@ -12,6 +12,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
+import ScriptEditorModal from './ScriptEditorModal';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -142,9 +143,9 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
-  updateScript(id) {
+  updateScript(script, id) {
     this.props.dispatch(selectControl(this.metadata));
-    this.props.dispatch(sourceChangedProperty(this.script));
+    this.props.dispatch(sourceChangedProperty(script));
     this.closeScriptEditorDialog(id);
   }
 
@@ -161,29 +162,13 @@ class ControlWrapper extends Draggable {
 
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
-    if (properties.property && properties.property.controlEvent) {
+    if (properties && properties.property && properties.property.controlEvent) {
       return (
-        <div>
-          <div className="dialog-wrapper"></div>
-          <div className="dialog">
-            <h2 className="header-title">Editor</h2>
-            <textarea autoFocus className="editor-wrapper"
-                      onChange={(e) => {this.script = e.target.value}}
-                      defaultValue={this.getScript() || ''}>
-            </textarea>
-            <div className="button-wrapper fr">
-              <button className="button btn--highlight"
-                      type="submit"
-                      onClick={() => this.updateScript(properties.id)}>
-                Save
-              </button>
-              <button className="btn" type="reset"
-                      onClick={() => this.closeScriptEditorDialog(properties.id)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <ScriptEditorModal
+          script={this.getScript()}
+          updateScript={(script) => this.updateScript(script, properties.id)}
+          close={() => this.closeScriptEditorDialog(properties.id)}
+        />
       );
     }
   }

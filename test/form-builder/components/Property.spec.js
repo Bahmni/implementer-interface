@@ -32,8 +32,9 @@ describe('Property', () => {
     wrapper = shallow(<Property
       name="control Event"
       onPropertyUpdate={() => {}}
-      type={type}
-      value={value}
+      value={false}
+      elementType={type}
+      elementName={value}
     />);
 
     expect(wrapper.find('input').props().type).to.eql(type);
@@ -44,14 +45,15 @@ describe('Property', () => {
     const spy = sinon.spy();
 
     wrapper = shallow(<Property
-      name="control Event"
+      name="controlEvent"
       onPropertyUpdate={spy}
-      type='button'
-      value='Editor'
+      elementType='button'
+      elementName='Editor'
+      value={true}
     />);
 
     wrapper.find('input').props().onClick({ target: { checked: true } });
 
-    sinon.assert.calledWith(spy, { 'control Event': true });
+    sinon.assert.calledWith(spy, { 'controlEvent': true });
   });
 });
