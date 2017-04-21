@@ -40,19 +40,18 @@ describe('Property', () => {
     expect(wrapper.find('input').props().value).to.eql(value);
   });
 
-  it('should call show script editor once click the editor button', () => {
+  it('should call property update once click the editor button', () => {
     const spy = sinon.spy();
 
     wrapper = shallow(<Property
       name="control Event"
-      onPropertyUpdate={() => {}}
-      showScriptEditor={spy}
+      onPropertyUpdate={spy}
       type='button'
       value='Editor'
     />);
 
-    wrapper.find('input').simulate('click');
+    wrapper.find('input').props().onClick({ target: { checked: true } });
 
-    sinon.assert.calledOnce(spy);
+    sinon.assert.calledWith(spy, { 'control Event': true });
   });
 });

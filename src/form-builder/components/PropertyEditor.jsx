@@ -15,7 +15,6 @@ export class PropertyEditor extends Component {
           key={index}
           name={name}
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
-          showScriptEditor={() => this.props.showScriptEditor()}
           type={attribute.elementType}
           value={value}
         />
@@ -54,5 +53,4 @@ PropertyEditor.propTypes = {
     type: PropTypes.string.isRequired,
   }).isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
-  showScriptEditor: PropTypes.func.isRequired,
 };

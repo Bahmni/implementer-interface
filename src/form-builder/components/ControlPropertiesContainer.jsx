@@ -66,7 +66,6 @@ class ControlPropertiesContainer extends Component {
         <PropertyEditor
           metadata={selectedControl}
           onPropertyUpdate={(property) => this.onPropertyUpdate(property, id)}
-          showScriptEditor={() => this.showScriptEditor()}
         />
       );
     }
@@ -84,10 +83,6 @@ class ControlPropertiesContainer extends Component {
       );
     }
     return null;
-  }
-
-  showScriptEditor() {
-
   }
 
   render() {
