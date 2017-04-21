@@ -6,6 +6,7 @@ import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBread
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
+import {commonConstants} from "../../common/constants";
 
 
 export default class FormBuilder extends Component {
@@ -33,9 +34,25 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
+  createExistedForm(formName, formResource) {
+    const version = this.getFormVersion(formName).toString();
+    const form = {
+      name: formName,
+      version: version,
+      published: true,
+    };
+    httpInterceptor
+      .post(formBuilderConstants.formUrl, form)
+      .then(() => {
+        this.saveFormResource(formResource);
+      });
+  }
+
   validateFile(file){
-    var reader = new FileReader();
-    const fileJson = reader.readAsDataURL(file[0]);
+    const self = this;
+    const reader = new FileReader();
+    let formJson = null;
+
     const formName = file[0].name.split('_')[0];
     const form = {
       name: formName,
@@ -43,25 +60,32 @@ export default class FormBuilder extends Component {
       published: true,
     };
 
-    if (formHelper.validateFormName(formName)) {
-      httpInterceptor
-        .post(formBuilderConstants.formUrl, form)
-        .then((response) => {
-          const uuid = response.uuid;
-          this.context.router.push(`/form-builder/${uuid}`);
-        })
-        .catch(() => this.createExistedForm(formName));
-    }
-  }
+    reader.onload = function(){
+      formJson = reader.result;
+      const value = JSON.parse(formJson).resources[0].value;
+      const formResource = {
+        form: {
+          name: formName,
+          uuid: JSON.parse(value).uuid
+        },
+        value: value,
+        // uuid: JSON.parse(formJson).resources[0].uuid,
+        uuid: '',
+      };
 
-  createExistedForm(formName) {
-    const version = this.getFormVersion(formName).toString();
-    const form = {
-      name: formName,
-      version: version,
-      published: true,
+      if (formHelper.validateFormName(formName)) {
+        httpInterceptor
+          .post(formBuilderConstants.formUrl, form)
+          .then(() => {
+            self.saveFormResource(formResource);
+          })
+          .catch(() => {
+            self.createExistedForm(formName, formResource)
+        });
+      }
     };
-    this.props.saveForm(form);
+
+    reader.readAsText(file[0]);
   }
 
   getFormVersion(formName) {
@@ -74,6 +98,13 @@ export default class FormBuilder extends Component {
     });
 
     return version + 1;
+  }
+
+  saveFormResource(formJson) {
+    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+      .catch((error) => {
+        console.log('111111111111111' + error);
+      });
   }
 
   render() {
