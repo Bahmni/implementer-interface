@@ -6,7 +6,7 @@ import {Draggable} from 'bahmni-form-controls';
 import {ComponentStore} from 'bahmni-form-controls';
 import {Exception} from 'form-builder/helpers/Exception';
 import {formBuilderConstants} from 'form-builder/constants';
-import {addSourceMap, setChangedProperty} from 'form-builder/actions/control';
+import {addSourceMap, setChangedProperty, sourceChangedProperty} from 'form-builder/actions/control';
 import {getConceptFromMetadata} from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -142,8 +142,21 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
+  updateScript(id) {
+    this.props.dispatch(selectControl(this.metadata));
+    this.props.dispatch(sourceChangedProperty(this.script));
+    this.closeScriptEditorDialog(id);
+  }
+
   closeScriptEditorDialog(id) {
     this.props.dispatch(setChangedProperty({controlEvent: false}, id));
+  }
+
+  getScript() {
+    const selectedControl = this.props.selectedControl;
+    if (selectedControl) {
+      return selectedControl.events && selectedControl.events.onValueChange;
+    }
   }
 
   showScriptEditorDialog() {
@@ -154,12 +167,14 @@ class ControlWrapper extends Draggable {
           <div className="dialog-wrapper"></div>
           <div className="dialog">
             <h2 className="header-title">Editor</h2>
-            <textarea autoFocus className="editor-wrapper">
+            <textarea autoFocus className="editor-wrapper"
+                      onChange={(e) => {this.script = e.target.value}}
+                      defaultValue={this.getScript() || ''}>
             </textarea>
             <div className="button-wrapper fr">
               <button className="button btn--highlight"
                       type="submit"
-              >
+                      onClick={() => this.updateScript(properties.id)}>
                 Save
               </button>
               <button className="btn" type="reset"
@@ -220,6 +235,7 @@ function mapStateToProps(state) {
     conceptToControlMap: state.conceptToControlMap,
     controlProperty: state.controlProperty,
     focusedControl: state.controlDetails.focusedControl,
+    selectedControl: state.controlDetails.selectedControl,
   };
 }
 
