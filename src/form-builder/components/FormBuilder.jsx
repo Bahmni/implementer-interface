@@ -39,13 +39,15 @@ export default class FormBuilder extends Component {
     const form = {
       name: formName,
       version: version,
-      published: true,
+      published: false,
     };
-    httpInterceptor
-      .post(formBuilderConstants.formUrl, form)
-      .then(() => {
-        this.saveFormResource(formResource);
-      });
+    // httpInterceptor
+    //   .post(formBuilderConstants.formUrl, form)
+    //   .then(() => {
+    //     this.saveFormResource(formResource);
+    //   });
+
+    this.saveFormResource(formResource);
   }
 
   validateFile(file){
@@ -57,29 +59,39 @@ export default class FormBuilder extends Component {
     const form = {
       name: formName,
       version: '1',
-      published: true,
+      published: false,
     };
 
     reader.onload = function(){
       formJson = reader.result;
       const value = JSON.parse(formJson).resources[0].value;
-      const formResource = {
-        form: {
-          name: formName,
-          uuid: JSON.parse(value).uuid
-        },
-        value: value,
-        // uuid: JSON.parse(formJson).resources[0].uuid,
-        uuid: '',
-      };
 
       if (formHelper.validateFormName(formName)) {
         httpInterceptor
           .post(formBuilderConstants.formUrl, form)
-          .then(() => {
+          .then((response) => {
+            let updatedValue = JSON.parse(value);
+            updatedValue.uuid = response.uuid;
+            const formResource = {
+              form: {
+                name: formName,
+                uuid: updatedValue.uuid,
+              },
+              value: JSON.stringify(updatedValue),
+              uuid: '',
+            };
             self.saveFormResource(formResource);
           })
           .catch(() => {
+            const formResource = {
+              form: {
+                name: formName,
+                uuid: JSON.parse(value).uuid
+              },
+              value: value,
+              uuid: JSON.parse(formJson).resources[0].uuid,
+            };
+
             self.createExistedForm(formName, formResource)
         });
       }
@@ -102,6 +114,9 @@ export default class FormBuilder extends Component {
 
   saveFormResource(formJson) {
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+      .then(function (response) {
+        console.log('222222222' + response);
+      })
       .catch((error) => {
         console.log('111111111111111' + error);
       });
