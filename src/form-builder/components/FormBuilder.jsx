@@ -34,22 +34,6 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  createExistedForm(formName, formResource) {
-    const version = this.getFormVersion(formName).toString();
-    const form = {
-      name: formName,
-      version: version,
-      published: false,
-    };
-    // httpInterceptor
-    //   .post(formBuilderConstants.formUrl, form)
-    //   .then(() => {
-    //     this.saveFormResource(formResource);
-    //   });
-
-    this.saveFormResource(formResource);
-  }
-
   validateFile(file){
     const self = this;
     const reader = new FileReader();
@@ -63,41 +47,61 @@ export default class FormBuilder extends Component {
     };
 
     reader.onload = function(){
-      formJson = reader.result;
-      const value = JSON.parse(formJson).resources[0].value;
+      formJson = JSON.parse(reader.result);
+      const value = JSON.parse(formJson.resources[0].value);
 
       if (formHelper.validateFormName(formName)) {
-        httpInterceptor
-          .post(formBuilderConstants.formUrl, form)
+        httpInterceptor.post(formBuilderConstants.formUrl, form)
           .then((response) => {
-            let updatedValue = JSON.parse(value);
-            updatedValue.uuid = response.uuid;
+            value.uuid = response.uuid;
             const formResource = {
               form: {
                 name: formName,
-                uuid: updatedValue.uuid,
+                uuid: response.uuid,
               },
-              value: JSON.stringify(updatedValue),
+              value: JSON.stringify(value),
               uuid: '',
             };
-            self.saveFormResource(formResource);
+            self.props.saveFormResource(formResource);
           })
           .catch(() => {
-            const formResource = {
-              form: {
-                name: formName,
-                uuid: JSON.parse(value).uuid
-              },
-              value: value,
-              uuid: JSON.parse(formJson).resources[0].uuid,
-            };
-
-            self.createExistedForm(formName, formResource)
+            const formUuid = self.getFormUuid(formName);
+            value.uuid = formUuid;
+            const params =
+              'v=custom:(id,uuid,name,version,published,auditInfo,' +
+              'resources:(value,dataType,uuid))';
+            httpInterceptor
+              .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+              .then((data) => {
+                  const formResource = {
+                    form: {
+                      name: formName,
+                      uuid: formUuid
+                    },
+                    value: JSON.stringify(value),
+                    uuid: data.resources[0].uuid,
+                  };
+                  self.props.saveFormResource(formResource);
+              }).catch((error) => {
+                console.log(error);
+            });
         });
       }
     };
 
     reader.readAsText(file[0]);
+  }
+
+  getFormUuid(formName){
+    const version = this.getFormVersion(formName);
+    let uuid = '';
+    this.props.data.forEach(form => {
+      if(form.name === formName && form.version === version){
+        uuid = form.uuid;
+      }
+    });
+
+    return uuid;
   }
 
   getFormVersion(formName) {
@@ -109,17 +113,7 @@ export default class FormBuilder extends Component {
       }
     });
 
-    return version + 1;
-  }
-
-  saveFormResource(formJson) {
-    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-      .then(function (response) {
-        console.log('222222222' + response);
-      })
-      .catch((error) => {
-        console.log('111111111111111' + error);
-      });
+    return version;
   }
 
   render() {
@@ -160,4 +154,5 @@ FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
+  saveFormResource: PropTypes.func,
 };

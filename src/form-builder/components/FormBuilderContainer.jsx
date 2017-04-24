@@ -8,6 +8,8 @@ import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+
 
 export default class FormBuilderContainer extends Component {
 
@@ -18,14 +20,18 @@ export default class FormBuilderContainer extends Component {
   }
 
   componentDidMount() {
+    this.getFormData();
+  }
+
+  getFormData() {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
-        this.setState({ data: this.orderFormByVersion(data.results), loading: false });
+        this.setState({data: this.orderFormByVersion(data.results), loading: false});
       })
       .catch((error) => {
         this.showErrors(error);
-        this.setState({ loading: false });
+        this.setState({loading: false});
       });
   }
 
@@ -36,6 +42,7 @@ export default class FormBuilderContainer extends Component {
       this.setState({ notification: {} });
     }, commonConstants.toastTimeout);
   }
+
   orderFormByVersion(forms) {
     forms.forEach((form) => {
       // eslint-disable-next-line
@@ -71,6 +78,30 @@ export default class FormBuilderContainer extends Component {
     }
   }
 
+  publishForm(formUuid) {
+    const self = this;
+    httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
+      .then(function () {
+        self.getFormData();
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setErrorMessage(error);
+      });
+  }
+
+  saveFormResource(formJson) {
+    const self = this;
+    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+      .then(function () {
+        self.publishForm(formJson.form.uuid);
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setErrorMessage('Error');
+      });
+  }
+
   render() {
     return (
     <div>
@@ -82,6 +113,7 @@ export default class FormBuilderContainer extends Component {
         data={this.state.data}
         routes={this.props.routes}
         saveForm={(formName) => this.saveForm(formName)}
+        saveFormResource={(formJson) => this.saveFormResource(formJson)}
       />
     </div>
     );
