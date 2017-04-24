@@ -35,8 +35,8 @@ export default class FormBuilderContainer extends Component {
       });
   }
 
-  setErrorMessage(errorMessage) {
-    const errorNotification = { message: errorMessage, type: commonConstants.responseType.error };
+  setMessage(message, type) {
+    const errorNotification = { message: message, type: type };
     this.setState({ notification: errorNotification });
     setTimeout(() => {
       this.setState({ notification: {} });
@@ -56,10 +56,10 @@ export default class FormBuilderContainer extends Component {
     if (error.response) {
       error.response.json().then((data) => {
         const message = get(data, 'error.globalErrors[0].message') || error.message;
-        this.setErrorMessage(message);
+        this.setMessage(message, commonConstants.responseType.error);
       });
     } else {
-      this.setErrorMessage(error.message);
+      this.setMessage(error.message, commonConstants.responseType.error);
     }
   }
 
@@ -74,7 +74,7 @@ export default class FormBuilderContainer extends Component {
         .catch((error) => this.showErrors(error));
     } else {
       const message = 'Leading or trailing spaces and ^/-. are not allowed';
-      this.setErrorMessage(message);
+      this.setMessage(message, commonConstants.responseType.error);
     }
   }
 
@@ -83,10 +83,10 @@ export default class FormBuilderContainer extends Component {
     httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
       .then(function () {
         self.getFormData();
+        self.setMessage('Imported and Published Successfully', commonConstants.responseType.success);
       })
-      .catch((error) => {
-        console.log(error);
-        this.setErrorMessage(error);
+      .catch(() => {
+        this.setMessage('Error', commonConstants.responseType.error);
       });
   }
 
@@ -94,11 +94,11 @@ export default class FormBuilderContainer extends Component {
     const self = this;
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then(function () {
+        self.setMessage('Importing...', commonConstants.responseType.success);
         self.publishForm(formJson.form.uuid);
       })
-      .catch((error) => {
-        console.log(error);
-        this.setErrorMessage('Error');
+      .catch(() => {
+        this.setMessage('Error', commonConstants.responseType.error);
       });
   }
 
