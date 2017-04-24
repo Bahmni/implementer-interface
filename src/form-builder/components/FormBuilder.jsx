@@ -90,6 +90,7 @@ export default class FormBuilder extends Component {
     };
 
     reader.readAsText(file[0]);
+
   }
 
   getFormUuid(formName){
@@ -129,7 +130,10 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
-            <a className="importBtn fr"><input type="file" accept=".json" onChange={(e) => this.validateFile(e.target.files)}/>Import</a>
+            <a className="importBtn fr"><input type="file" accept=".json" onChange={(e) => this.validateFile(e.target.files)}
+              onClick={(event)=> {
+                event.target.value = null
+            }}/>Import</a>
           </div>
         </div>
           <CreateFormModal
