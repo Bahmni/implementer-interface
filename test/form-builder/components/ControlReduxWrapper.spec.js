@@ -9,6 +9,7 @@ import { focusControl, selectControl } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
 import { Exception } from 'form-builder/helpers/Exception';
 import { ComponentStore } from 'bahmni-form-controls';
+import {eventsChanged, sourceChangedProperty} from "../../../src/form-builder/actions/control";
 
 chai.use(chaiEnzyme());
 
@@ -217,6 +218,85 @@ describe('ControlWrapper', () => {
     controlWrapper.setState({ showDeleteModal: true });
     controlWrapper.instance().forceUpdate();
     expect(controlWrapper.find('.control-wrapper')).to.have.descendants('DeleteControlModal');
+  });
+
+  it('should show script editor if the property controlEvent equal true', () => {
+    const store = getStore();
+    const controlProperty = {id: '1', property: {controlEvent: true}};
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+
+    expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
+
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    controlWrapper.setProps({ controlProperty, selectedControl: { events: { onValueChange: '' } } });
+
+    expect(controlWrapper.find('.control-wrapper')).to.have.descendants('ScriptEditorModal');
+  });
+
+  it('should show script editor if the property formEvent equal true', () => {
+    const store = getStore();
+    const controlProperty = {property: {formEvent: true}};
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+
+    expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
+
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    controlWrapper.setProps({ controlProperty, formDetails: { events: { onFormInit: '' } } });
+
+    expect(controlWrapper.find('.control-wrapper')).to.have.descendants('ScriptEditorModal');
+  });
+
+  it('should close script editor after updating script', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    const closeSpy = sinon.spy(instance, 'closeScriptEditorDialog');
+
+    instance.updateScript('', '1');
+
+    sinon.assert.calledOnce(closeSpy);
+  });
+
+  it('should dispatch eventsChanged when update script with empty id', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+
+    instance.updateScript('');
+
+    sinon.assert.calledWith(store.dispatch, eventsChanged(''));
+  });
+
+  it('should dispatch sourceChangedProperty when update script with non-empty id', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+
+    instance.updateScript('', '1');
+
+    sinon.assert.calledWith(store.dispatch, sourceChangedProperty(''));
   });
 
   it('getJsonDefinition should return json if present', () => {

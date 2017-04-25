@@ -85,4 +85,24 @@ describe('control', () => {
       expect(action.type).to.be.eql('BLUR_CONTROL');
     });
   });
+
+  describe('sourceChangedProperty', () => {
+    it('should return the action and changed source', () => {
+      const source = 'any thing';
+      const action = control.sourceChangedProperty(source);
+
+      expect(action.type).to.eql('SOURCE_CHANGED');
+      expect(action.source).to.eql(source);
+    });
+  });
+
+  describe('eventsChanged', () => {
+    it('should return the action and changed events', () => {
+      const events = 'any thing';
+      const action = control.eventsChanged(events);
+
+      expect(action.type).to.eql('EVENT_CHANGED');
+      expect(action.events).to.eql(events);
+    });
+  });
 });
