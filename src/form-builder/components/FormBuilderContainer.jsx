@@ -93,9 +93,9 @@ export default class FormBuilderContainer extends Component {
   saveFormResource(formJson) {
     const self = this;
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-      .then(function () {
+      .then(function (response) {
         self.setMessage('Importing...', commonConstants.responseType.success);
-        self.publishForm(formJson.form.uuid);
+        self.publishForm(response.form.uuid);
       })
       .catch(() => {
         this.setMessage('Error', commonConstants.responseType.error);

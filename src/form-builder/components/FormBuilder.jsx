@@ -90,7 +90,6 @@ export default class FormBuilder extends Component {
     };
 
     reader.readAsText(file[0]);
-
   }
 
   getFormUuid(formName){
