@@ -16,6 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
+import {eventsChanged} from "../actions/control";
 
 
 export class FormDetailContainer extends Component {
@@ -59,6 +60,12 @@ export class FormDetailContainer extends Component {
     this.props.dispatch(deselectControl());
     this.props.dispatch(blurControl());
     this.props.dispatch(removeControlProperties());
+
+    const updatedFormEvents = this.getFormEvents();
+    if (updatedFormEvents && this.formEvents !== updatedFormEvents) {
+      this.props.dispatch(eventsChanged(updatedFormEvents));
+      this.formEvents = updatedFormEvents;
+    }
   }
 
   componentWillUnmount() {
@@ -101,6 +108,13 @@ export class FormDetailContainer extends Component {
       return this.formDetail.getFormJson();
     }
     return null;
+  }
+
+  getFormEvents() {
+    if (this.state.formData) {
+      const formDetail = JSON.parse(this.state.formData.resources[0].value);
+      return formDetail.events && formDetail.events.onFormInit;
+    }
   }
 
   setErrorMessage(error) {
