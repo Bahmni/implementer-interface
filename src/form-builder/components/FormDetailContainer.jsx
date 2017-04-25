@@ -24,7 +24,7 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
-      httpReceived: false, loading: true, formList: [], originalFormName: undefined };
+      httpReceived: false, loading: true, formList: [], originalFormName: undefined, formEvents: {} };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -67,7 +67,8 @@ export class FormDetailContainer extends Component {
 
   onSave() {
     try {
-      const formJson = this.getFormJson();
+      let formJson = this.getFormJson();
+      formJson.events = this.state.formEvents;
       const formName = this.state.formData ? this.state.formData.name : 'FormName';
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
@@ -271,6 +272,10 @@ export class FormDetailContainer extends Component {
     return currentFormName;
   }
 
+  updateFormEvents(events) {
+    this.setState({ formEvents: events });
+  }
+
   showErrors(error) {
     if (error.response) {
       error.response.json().then((data) => {
@@ -338,6 +343,7 @@ export class FormDetailContainer extends Component {
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
                     updateFormName={(formName) => this.updateFormName(formName)}
+                    updateFormEvents={(events) => this.updateFormEvents(events)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}
                   />
                 </div>

@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {focusControl, selectControl} from 'form-builder/actions/control';
-import {blurControl, deselectControl} from 'form-builder/actions/control';
+import {blurControl, deselectControl, eventsChanged} from 'form-builder/actions/control';
 import {Draggable} from 'bahmni-form-controls';
 import {ComponentStore} from 'bahmni-form-controls';
 import {Exception} from 'form-builder/helpers/Exception';
@@ -144,13 +144,18 @@ class ControlWrapper extends Draggable {
   }
 
   updateScript(script, id) {
-    this.props.dispatch(selectControl(this.metadata));
-    this.props.dispatch(sourceChangedProperty(script));
+    if (id) {
+      this.props.dispatch(selectControl(this.metadata));
+      this.props.dispatch(sourceChangedProperty(script));
+    } else {
+      this.props.dispatch(eventsChanged(script));
+    }
     this.closeScriptEditorDialog(id);
   }
 
   closeScriptEditorDialog(id) {
     this.props.dispatch(setChangedProperty({controlEvent: false}, id));
+    this.props.dispatch(setChangedProperty({formEvent: false}, id));
   }
 
   getScript() {
@@ -162,7 +167,8 @@ class ControlWrapper extends Draggable {
 
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
-    if (properties && properties.property && properties.property.controlEvent) {
+    if (properties && properties.property &&
+      (properties.property.controlEvent || properties.property.formEvent)) {
       return (
         <ScriptEditorModal
           script={this.getScript()}
