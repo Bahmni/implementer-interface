@@ -16,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
-import {eventsChanged} from "../actions/control";
+import { eventsChanged } from '../actions/control';
 
 
 export class FormDetailContainer extends Component {
@@ -74,7 +74,7 @@ export class FormDetailContainer extends Component {
 
   onSave() {
     try {
-      let formJson = this.getFormJson();
+      const formJson = this.getFormJson();
       formJson.events = this.state.formEvents;
       const formName = this.state.formData ? this.state.formData.name : 'FormName';
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;

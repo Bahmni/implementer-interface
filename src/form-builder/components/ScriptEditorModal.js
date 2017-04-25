@@ -14,17 +14,20 @@ export default class ScriptEditorModal extends Component {
         <div className="dialog">
           <h2 className="header-title">Editor</h2>
           <textarea autoFocus className="editor-wrapper"
-                    onChange={(e) => {this.setState({ script: e.target.value })}}
-                    defaultValue={this.state.script}>
+            onChange={(e) => {this.setState({ script: e.target.value });}}
+            defaultValue={this.state.script}
+          >
             </textarea>
           <div className="button-wrapper fr">
             <button className="button btn--highlight"
-                    type="submit"
-                    onClick={() => this.props.updateScript(this.state.script)}>
+              type="submit"
+              onClick={() => this.props.updateScript(this.state.script)}
+            >
               Save
             </button>
             <button className="btn" type="reset"
-                    onClick={() => this.props.close()}>
+              onClick={() => this.props.close()}
+            >
               Cancel
             </button>
           </div>
@@ -32,7 +35,7 @@ export default class ScriptEditorModal extends Component {
       </div>
     );
   }
-};
+}
 
 ScriptEditorModal.propTypes = {
   script: PropTypes.string,

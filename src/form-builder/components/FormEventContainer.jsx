@@ -1,12 +1,12 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {setChangedProperty} from "../actions/control";
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { setChangedProperty } from '../actions/control';
 
 class FormEventContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {events: {}};
+    this.state = { events: {} };
   }
 
   componentWillUpdate(newProps) {
@@ -18,7 +18,7 @@ class FormEventContainer extends Component {
   }
 
   updateProperty() {
-    const properties = {'formEvent' : true};
+    const properties = { formEvent: true };
     this.props.dispatch(setChangedProperty(properties));
   }
 
@@ -44,6 +44,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(FormEventContainer);
-
-
 
