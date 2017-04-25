@@ -6,7 +6,6 @@ import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBread
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
-import {commonConstants} from "../../common/constants";
 
 
 export default class FormBuilder extends Component {
@@ -15,6 +14,30 @@ export default class FormBuilder extends Component {
     super();
     this.state = { showModal: false };
     this.setState = this.setState.bind(this);
+  }
+
+  getFormVersion(formName) {
+    let version = 1;
+    this.props.data.forEach(form => {
+      if (form.name === formName) {
+        const exitedFormMaxVersion = parseInt(form.version);
+        version = exitedFormMaxVersion > version ? exitedFormMaxVersion : version;
+      }
+    });
+
+    return version;
+  }
+
+  getFormUuid(formName) {
+    const version = this.getFormVersion(formName);
+    let uuid = '';
+    this.props.data.forEach(form => {
+      if (form.name === formName && form.version === version) {
+        uuid = form.uuid;
+      }
+    });
+
+    return uuid;
   }
 
   openFormModal() {
@@ -34,7 +57,7 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  validateFile(file){
+  validateFile(file) {
     const self = this;
     const reader = new FileReader();
     let formJson = null;
@@ -46,7 +69,7 @@ export default class FormBuilder extends Component {
       published: false,
     };
 
-    reader.onload = function(){
+    reader.onload = function () {
       formJson = JSON.parse(reader.result);
       const value = JSON.parse(formJson.resources[0].value);
 
@@ -73,47 +96,21 @@ export default class FormBuilder extends Component {
             httpInterceptor
               .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
               .then((data) => {
-                  const formResource = {
-                    form: {
-                      name: formName,
-                      uuid: formUuid
-                    },
-                    value: JSON.stringify(value),
-                    uuid: data.resources[0].uuid,
-                  };
-                  self.props.saveFormResource(formResource);
-              }).catch((error) => {
-                console.log(error);
-            });
-        });
+                const formResource = {
+                  form: {
+                    name: formName,
+                    uuid: formUuid,
+                  },
+                  value: JSON.stringify(value),
+                  uuid: data.resources[0].uuid,
+                };
+                self.props.saveFormResource(formResource);
+              });
+          });
       }
     };
 
     reader.readAsText(file[0]);
-  }
-
-  getFormUuid(formName){
-    const version = this.getFormVersion(formName);
-    let uuid = '';
-    this.props.data.forEach(form => {
-      if(form.name === formName && form.version === version){
-        uuid = form.uuid;
-      }
-    });
-
-    return uuid;
-  }
-
-  getFormVersion(formName) {
-    let version = 1;
-    this.props.data.forEach(form => {
-      if (form.name === formName) {
-        const exitedFormMaxVersion = parseInt(form.version);
-        version = exitedFormMaxVersion > version ? exitedFormMaxVersion : version;
-      }
-    });
-
-    return version;
   }
 
   render() {
@@ -129,10 +126,12 @@ export default class FormBuilder extends Component {
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
             >Create a Form</button>
-            <a className="importBtn fr"><input type="file" accept=".json" onChange={(e) => this.validateFile(e.target.files)}
-              onClick={(event)=> {
-                event.target.value = null
-            }}/>Import</a>
+            <a className="importBtn fr">
+              <input accept=".json" onChange={(e) => this.validateFile(e.target.files)}
+                onClick={(e) => {
+                  e.target.value = null;
+                }} type="file"
+              />Import</a>
           </div>
         </div>
           <CreateFormModal

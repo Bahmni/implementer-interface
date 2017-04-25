@@ -27,16 +27,16 @@ export default class FormBuilderContainer extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
-        this.setState({data: this.orderFormByVersion(data.results), loading: false});
+        this.setState({ data: this.orderFormByVersion(data.results), loading: false });
       })
       .catch((error) => {
         this.showErrors(error);
-        this.setState({loading: false});
+        this.setState({ loading: false });
       });
   }
 
   setMessage(message, type) {
-    const errorNotification = { message: message, type: type };
+    const errorNotification = { message, type };
     this.setState({ notification: errorNotification });
     setTimeout(() => {
       this.setState({ notification: {} });
@@ -81,9 +81,10 @@ export default class FormBuilderContainer extends Component {
   publishForm(formUuid) {
     const self = this;
     httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
-      .then(function () {
+      .then(() => {
         self.getFormData();
-        self.setMessage('Imported and Published Successfully', commonConstants.responseType.success);
+        self.setMessage('Imported and Published Successfully',
+          commonConstants.responseType.success);
       })
       .catch(() => {
         this.setMessage('Error', commonConstants.responseType.error);
@@ -93,7 +94,7 @@ export default class FormBuilderContainer extends Component {
   saveFormResource(formJson) {
     const self = this;
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-      .then(function (response) {
+      .then((response) => {
         self.setMessage('Importing...', commonConstants.responseType.success);
         self.publishForm(response.form.uuid);
       })
