@@ -325,7 +325,7 @@ describe('FormDetailContainer', () => {
         form: { id: 1, uuid: 'saveUuid', name: 'F1', published: false, version: '' },
         name: 'F1',
         dataType: 'datatype',
-        value: 'value',
+        value: '{}',
         uuid: 'formUuid',
       };
       fakePromise.cb(dummyResponse);
@@ -342,7 +342,7 @@ describe('FormDetailContainer', () => {
         expect(formDetail.prop('formData').resources[0]).to.eql({
           name: 'F1',
           dataType: 'datatype',
-          value: 'value',
+          value: '{}',
           uuid: 'formUuid',
         });
 
