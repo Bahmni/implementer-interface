@@ -10,9 +10,10 @@ class FormEventContainer extends Component {
   }
 
   componentWillUpdate(newProps) {
-    if (newProps.events && this.state.events !== newProps.events) {
-      this.setState({ events: newProps.events });
-      this.props.updateFormEvents(newProps.events);
+    const updatedEvents = newProps.formDetails && newProps.formDetails.events;
+    if (updatedEvents && this.state.events !== updatedEvents) {
+      this.setState({ events: updatedEvents });
+      this.props.updateFormEvents(updatedEvents);
     }
   }
 
@@ -34,12 +35,12 @@ class FormEventContainer extends Component {
 
 FormEventContainer.propTypes = {
   dispatch: PropTypes.func,
-  events: PropTypes.object,
+  formDetails: PropTypes.object,
   updateFormEvents: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
-  events: state.formDetails.events,
+  formDetails: state.formDetails,
 });
 
 export default connect(mapStateToProps)(FormEventContainer);

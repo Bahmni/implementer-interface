@@ -111,9 +111,12 @@ export class FormDetailContainer extends Component {
   }
 
   getFormEvents() {
-    if (this.state.formData) {
-      const formDetail = JSON.parse(this.state.formData.resources[0].value);
-      return formDetail.events && formDetail.events.onFormInit;
+    if (this.state.formData && this.state.formData.resources) {
+      const resource = this.state.formData.resources[0];
+      if (resource && resource.value) {
+        const formDetail = JSON.parse(resource.value);
+        return formDetail && formDetail.events && formDetail.events.onFormInit;
+      }
     }
   }
 
