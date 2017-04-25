@@ -3,6 +3,7 @@ import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import classNames from 'classnames';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
+import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import FormHelper from 'form-builder/helpers/formHelper';
 
@@ -70,6 +71,7 @@ export default class FormDetail extends Component {
                                   idGenerator={idGenerator}
                                 />
                                 <ControlPropertiesContainer />
+                                <FormEventContainer updateFormEvents={this.props.updateFormEvents} />
                             </div>
                             <div className="container-column-main">
                                 <div className="column-main">
@@ -106,5 +108,6 @@ FormDetail.propTypes = {
   }),
   setError: PropTypes.func.isRequired,
   updateFormName: PropTypes.func,
+  updateFormEvents: PropTypes.func,
   validateNameLength: PropTypes.func,
 };
