@@ -1,14 +1,13 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
-import chai, {expect} from 'chai';
+import chai, { expect } from 'chai';
 import ScriptEditorModal from '../../../src/form-builder/components/ScriptEditorModal';
 import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
 
 describe('ScriptEditorModal', () => {
-
   let wrapper;
   let updateScriptSpy;
   let closeSpy;
@@ -29,7 +28,7 @@ describe('ScriptEditorModal', () => {
   });
 
   it('should update script', () => {
-    wrapper.find('.editor-wrapper').simulate('change', {target: {value: 'value change'}});
+    wrapper.find('.editor-wrapper').simulate('change', { target: { value: 'value change' } });
 
     expect(wrapper.state().script).to.eql('value change');
   });
@@ -49,5 +48,4 @@ describe('ScriptEditorModal', () => {
     expect(saveButton.text()).to.eql('Save');
     sinon.assert.calledOnce(updateScriptSpy);
   });
-
 });
