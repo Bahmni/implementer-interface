@@ -154,21 +154,29 @@ class ControlWrapper extends Draggable {
   }
 
   closeScriptEditorDialog(id) {
-    this.props.dispatch(setChangedProperty({controlEvent: false}, id));
-    this.props.dispatch(setChangedProperty({formEvent: false}, id));
+    if (id) {
+      this.props.dispatch(setChangedProperty({controlEvent: false}, id));
+    } else {
+      this.props.dispatch(setChangedProperty({formEvent: false}));
+    }
   }
 
   getScript() {
     const selectedControl = this.props.selectedControl;
     if (selectedControl) {
       return selectedControl.events && selectedControl.events.onValueChange;
+    } else {
+      const formDetails = this.props.formDetails;
+      return formDetails.events && formDetails.events.onFormInit;
     }
   }
 
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
     if (properties && properties.property &&
-      (properties.property.controlEvent || properties.property.formEvent)) {
+      (properties.id && properties.property.controlEvent ||
+      !properties.id && properties.property.formEvent)) {
+
       return (
         <ScriptEditorModal
           script={this.getScript()}
@@ -216,6 +224,9 @@ ControlWrapper.propTypes = {
     property: PropTypes.object,
   }),
   deleteControl: PropTypes.func,
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
   metadata: PropTypes.object,
   showDeleteButton: PropTypes.bool,
   wrapper: PropTypes.func,
@@ -225,6 +236,7 @@ function mapStateToProps(state) {
   return {
     conceptToControlMap: state.conceptToControlMap,
     controlProperty: state.controlProperty,
+    formDetails: state.formDetails,
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
   };

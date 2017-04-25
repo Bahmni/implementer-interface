@@ -71,7 +71,9 @@ export default class FormDetail extends Component {
                                   idGenerator={idGenerator}
                                 />
                                 <ControlPropertiesContainer />
-                                <FormEventContainer updateFormEvents={this.props.updateFormEvents} />
+                                <FormEventContainer
+                                  updateFormEvents={this.props.updateFormEvents}
+                                />
                             </div>
                             <div className="container-column-main">
                                 <div className="column-main">
