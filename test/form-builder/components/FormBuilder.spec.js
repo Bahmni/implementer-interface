@@ -307,27 +307,26 @@ describe('Import form', () => {
     expect(uuid).to.eql(data[1].uuid);
   });
 
-  // it('should call saveFormResource when import form', (done) => {
-  //
-  //   const json = JSON.stringify(formJson);
-  //
-  //   let loadStub = sinon.stub(FileReader.prototype, 'readAsText', function() {
-  //     this.onload({ target: { result: json }});
-  //   });
-  //
-  //   sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
-  //
-  //   const wrapper = shallow(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
-  //                                saveFormResource={saveFormResourceSpy}/>);
-  //
-  //   wrapper.instance().validateFile(file);
-  //
-  //   setTimeout(() => {
-  //     sinon.assert.calledOnce(saveFormResourceSpy);
-  //
-  //     httpInterceptor.post.restore();
-  //     loadStub.restore();
-  //     done();
-  //   }, 500);
-  // });
+  it('should call saveFormResource when import form', (done) => {
+    const json = JSON.stringify(formJson);
+
+    sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
+    let loadStub = sinon.stub(FileReader.prototype, 'readAsText', function() {
+      this.result = json;
+      this.onload();
+    });
+
+    const wrapper = shallow(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
+                                 saveFormResource={saveFormResourceSpy}/>);
+
+    wrapper.instance().validateFile(file);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(saveFormResourceSpy);
+
+      httpInterceptor.post.restore();
+      loadStub.restore();
+      done();
+    }, 500);
+  });
 });
