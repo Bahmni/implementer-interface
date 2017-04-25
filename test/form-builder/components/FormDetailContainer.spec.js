@@ -463,6 +463,19 @@ describe('FormDetailContainer', () => {
       }, 500);
     });
 
+    it('should show modal equal true when click edit button', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+
+      wrapper.find('.edit-button').simulate('click');
+
+      expect(wrapper.state().showModal).to.equal(true);
+    });
+
     it('should show edit modal', (done) => {
       const wrapper = shallow(
         <FormDetailContainer

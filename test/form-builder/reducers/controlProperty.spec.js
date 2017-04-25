@@ -27,4 +27,12 @@ describe('propertyDetails', () => {
     const state = controlProperty(undefined, action);
     expect(state).to.be.eql({});
   });
+
+  it('should return empty object when REMOVE_CONTROL_PROPERTIES be triggered', () => {
+    action.type = 'REMOVE_CONTROL_PROPERTIES';
+
+    const state = controlProperty(undefined, action);
+
+    expect(state).to.be.eql({});
+  });
 });
