@@ -5,7 +5,7 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
-import {httpInterceptor} from "../../../src/common/utils/httpInterceptor";
+import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
 
 chai.use(chaiEnzyme());
 
@@ -96,42 +96,56 @@ describe('Import form', () => {
   };
 
   const formJson = {
-    "auditInfo": {
-      "changedBy": {
-        "display": "superman",
-        "links": [
+    auditInfo: {
+      changedBy: {
+        display: 'superman',
+        links: [
           {
-            "rel": "self",
-            "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-          }
+            rel: 'self',
+            uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+          },
         ],
-        "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+        uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
       },
-      "creator": {
-        "display": "superman",
-        "links": [
+      creator: {
+        display: 'superman',
+        links: [
           {
-            "rel": "self",
-            "uri": "http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75"
-          }
+            rel: 'self',
+            uri: 'http://192.168.33.10/openmrs/ws/rest/v1/user/c1c21e11-3f10-11e4-adec-0800271c1b75',
+          },
         ],
-        "uuid": "c1c21e11-3f10-11e4-adec-0800271c1b75"
+        uuid: 'c1c21e11-3f10-11e4-adec-0800271c1b75',
       },
-      "dateChanged": "2017-04-25T02:12:13.000+0000",
-      "dateCreated": "2017-04-25T02:12:13.000+0000"
+      dateChanged: '2017-04-25T02:12:13.000+0000',
+      dateCreated: '2017-04-25T02:12:13.000+0000',
     },
-    "id": 193,
-    "name": "1",
-    "published": true,
-    "resources": [
+    id: 193,
+    name: '1',
+    published: true,
+    resources: [
       {
-        "dataType": "org.bahmni.customdatatype.datatype.FileSystemStorageDatatype",
-        "uuid": "d2eae4e8-aa36-4617-9d96-1b623555715f",
-        "value": "{\"name\":\"1\",\"id\":52,\"uuid\":\"b916b78f-bc34-40b3-ab4d-b7df6c73b2a5\",\"controls\":[{\"type\":\"obsControl\",\"label\":{\"type\":\"label\",\"value\":\"WEIGHT\"},\"properties\":{\"mandatory\":false,\"notes\":false,\"addMore\":false,\"hideLabel\":false,\"location\":{\"column\":0,\"row\":0}},\"id\":\"1\",\"concept\":{\"name\":\"WEIGHT\",\"uuid\":\"5089AAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"description\":[],\"datatype\":\"Numeric\",\"answers\":[],\"properties\":{\"allowDecimal\":false}},\"units\":null,\"hiNormal\":null,\"lowNormal\":null,\"hiAbsolute\":null,\"lowAbsolute\":null},{\"type\":\"obsControl\",\"label\":{\"type\":\"label\",\"value\":\"HEIGHT\"},\"properties\":{\"mandatory\":false,\"notes\":false,\"addMore\":false,\"hideLabel\":false,\"location\":{\"column\":0,\"row\":1}},\"id\":\"2\",\"concept\":{\"name\":\"HEIGHT\",\"uuid\":\"5090AAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"description\":[],\"datatype\":\"Numeric\",\"answers\":[],\"properties\":{\"allowDecimal\":false}},\"units\":null,\"hiNormal\":null,\"lowNormal\":null,\"hiAbsolute\":null,\"lowAbsolute\":null}]}"
-      }
+        dataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
+        uuid: 'd2eae4e8-aa36-4617-9d96-1b623555715f',
+        value: '{"name":"1","id":52,"uuid":"b916b78f-bc34-40b3-ab4d-b7df6c73b2a5",' +
+        '"controls":[{"type":"obsControl","label":{"type":"label","value":"WEIGHT"},' +
+        '"properties":{"mandatory":false,"notes":false,"addMore":false,"hideLabel":false,' +
+        '"location":{"column":0,"row":0}},"id":"1",' +
+        '"concept":{"name":"WEIGHT","uuid":"5089AAAAAAAAAAAAAAAAAAAAAAAAAAAA",' +
+        '"description":[],"datatype":"Numeric","answers":[],' +
+        '"properties":{"allowDecimal":false}},"units":null,"hiNormal":null,"lowNormal":null,' +
+        '"hiAbsolute":null,"lowAbsolute":null},' +
+        '{"type":"obsControl","label":{"type":"label","value":"HEIGHT"},' +
+        '"properties":{"mandatory":false,"notes":false,"addMore":false,"hideLabel":false,' +
+        '"location":{"column":0,"row":1}},"id":"2","' +
+        'concept":{"name":"HEIGHT","uuid":"5090AAAAAAAAAAAAAAAAAAAAAAAAAAAA",' +
+        '"description":[],"datatype":"Numeric",' +
+        '"answers":[],"properties":{"allowDecimal":false}},"units":null,' +
+        '"hiNormal":null,"lowNormal":null,"hiAbsolute":null,"lowAbsolute":null}]}',
+      },
     ],
-    "uuid": "b916b78f-bc34-40b3-ab4d-b7df6c73b2a5",
-    "version": "1"
+    uuid: 'b916b78f-bc34-40b3-ab4d-b7df6c73b2a5',
+    version: '1',
   };
 
   const routes = [
@@ -311,15 +325,16 @@ describe('Import form', () => {
     const json = JSON.stringify(formJson);
 
     sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
-    let loadStub = sinon.stub(FileReader.prototype, 'readAsText', function() {
+    const loadStub = sinon.stub(FileReader.prototype, 'readAsText', function () {
       this.result = json;
       this.onload();
     });
 
-    const wrapper = shallow(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
-                                 saveFormResource={saveFormResourceSpy}/>);
+    const importWrapper = shallow(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
+      saveFormResource={saveFormResourceSpy}
+    />);
 
-    wrapper.instance().validateFile(file);
+    importWrapper.instance().validateFile(file);
 
     setTimeout(() => {
       sinon.assert.calledOnce(saveFormResourceSpy);
