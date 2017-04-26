@@ -174,7 +174,7 @@ class ControlWrapper extends Draggable {
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
     if (properties && properties.property &&
-      (properties.id && properties.property.controlEvent ||
+      (properties.id === this.metadata.id && properties.property.controlEvent ||
       !properties.id && properties.property.formEvent)) {
       return (
         <ScriptEditorModal
