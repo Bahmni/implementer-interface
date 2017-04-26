@@ -12,6 +12,6 @@ export const formBuilderConstants = {
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
   formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
-  supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime',
+  supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime,Complex',
   supportedObsGroupDataTypes: 'N/A',
 };
