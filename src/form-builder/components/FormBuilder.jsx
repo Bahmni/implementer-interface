@@ -20,6 +20,7 @@ export default class FormBuilder extends Component {
     let version = 1;
     this.props.data.forEach(form => {
       if (form.name === formName) {
+        // eslint-disable-next-line
         const exitedFormMaxVersion = parseInt(form.version);
         version = exitedFormMaxVersion > version ? exitedFormMaxVersion : version;
       }
@@ -104,6 +105,7 @@ export default class FormBuilder extends Component {
                   value: JSON.stringify(value),
                   uuid: data.resources[0].uuid,
                 };
+
                 self.props.saveFormResource(formResource);
               });
           });
@@ -129,6 +131,7 @@ export default class FormBuilder extends Component {
             <a className="importBtn fr">
               <input accept=".json" onChange={(e) => this.validateFile(e.target.files)}
                 onClick={(e) => {
+                  // eslint-disable-next-line
                   e.target.value = null;
                 }} type="file"
               />Import</a>

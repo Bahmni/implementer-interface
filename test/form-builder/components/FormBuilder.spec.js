@@ -290,6 +290,16 @@ describe('Import form', () => {
     />);
   });
 
+  afterEach(() => {
+    if (httpInterceptor.post.restore !== undefined) {
+      httpInterceptor.post.restore();
+    }
+
+    if (httpInterceptor.get.restore !== undefined) {
+      httpInterceptor.get.restore();
+    }
+  });
+
   it('should call validate file when click import button', () => {
     const spy = sinon.spy(wrapper.instance(), 'validateFile');
     wrapper.find('.importBtn').find('input').simulate('change', { target: { files: file } });
@@ -339,7 +349,6 @@ describe('Import form', () => {
     setTimeout(() => {
       sinon.assert.calledOnce(saveFormResourceSpy);
 
-      httpInterceptor.post.restore();
       loadStub.restore();
       done();
     }, 500);
