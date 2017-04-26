@@ -17,8 +17,8 @@ describe('ScriptEditorModal', () => {
     closeSpy = sinon.spy();
     wrapper = shallow(
       <ScriptEditorModal
-        updateScript={updateScriptSpy}
         close={closeSpy}
+        updateScript={updateScriptSpy}
       />);
   });
 

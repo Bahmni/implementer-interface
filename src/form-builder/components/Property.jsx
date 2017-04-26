@@ -33,6 +33,9 @@ export class Property extends Component {
 }
 
 Property.propTypes = {
+  elementName: PropTypes.string,
+  elementType: PropTypes.string,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
+  value: PropTypes.bool.isRequired,
 };

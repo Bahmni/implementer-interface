@@ -4,12 +4,11 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import FormEventContainer from 'form-builder/components/FormEventContainer.jsx'
+import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 
 chai.use(chaiEnzyme());
 
 describe('FormEventContainer', () => {
-
   let wrapper;
   let updateSpy;
 
@@ -22,7 +21,7 @@ describe('FormEventContainer', () => {
         updateFormEvents={updateSpy}
       />).shallow();
 
-    wrapper.setProps({formDetails: {events: {}}});
+    wrapper.setProps({ formDetails: { events: {} } });
   });
 
   it('should render', () => {
@@ -39,11 +38,9 @@ describe('FormEventContainer', () => {
   });
 
   it('should call updateFormEvents once props events changed', () => {
-    const events = {onFormInit: 'test'};
-    wrapper.setProps({formDetails: {events}});
+    const events = { onFormInit: 'test' };
+    wrapper.setProps({ formDetails: { events } });
 
     sinon.assert.calledWith(updateSpy, events);
   });
-
-
 });

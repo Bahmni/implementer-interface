@@ -25,7 +25,8 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
-      httpReceived: false, loading: true, formList: [], originalFormName: undefined, formEvents: {} };
+      httpReceived: false, loading: true, formList: [],
+      originalFormName: undefined, formEvents: {} };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -118,6 +119,7 @@ export class FormDetailContainer extends Component {
         return formDetail && formDetail.events && formDetail.events.onFormInit;
       }
     }
+    return null;
   }
 
   setErrorMessage(error) {
@@ -359,8 +361,8 @@ export class FormDetailContainer extends Component {
                     formData={this.state.formData}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
-                    updateFormName={(formName) => this.updateFormName(formName)}
                     updateFormEvents={(events) => this.updateFormEvents(events)}
+                    updateFormName={(formName) => this.updateFormName(formName)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}
                   />
                 </div>
