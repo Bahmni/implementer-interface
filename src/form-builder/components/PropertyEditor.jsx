@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { Property } from 'form-builder/components/Property.jsx';
 import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
+import remove from 'lodash/remove';
+import find from 'lodash/find';
 import { ComponentStore } from 'bahmni-form-controls';
 
 export class PropertyEditor extends Component {
@@ -33,7 +35,11 @@ export class PropertyEditor extends Component {
     datatype = concept.set ? 'obsGroupControl' : datatype;
     const descriptorsByType = this.getPropertyDescriptor(type);
     const descriptorsByConceptType = this.getPropertyDescriptor(datatype);
+    const disabledDescriptors = descriptorsByConceptType.filter((d) => d.disabled);
     const allPropertyDescriptors = descriptorsByType.concat(descriptorsByConceptType);
+    remove(allPropertyDescriptors, (propertyDescriptor) =>
+      find(disabledDescriptors, (disabledDescriptor) =>
+      disabledDescriptor.name === propertyDescriptor.name));
     return uniqBy(allPropertyDescriptors, 'name');
   }
 

@@ -108,6 +108,24 @@ describe('Property Editor', () => {
     expect(wrapper.find('Property').at(2).props().value).to.eql(true);
   });
 
+  it('should remove property from conceptType (mandatory) with disabled property', () => {
+    ComponentStore.deRegisterDesignerComponent('text');
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
+    ComponentStore.registerDesignerComponent('text',
+      controlDescriptor([
+        { name: 'mandatory', dataType: 'boolean', defaultValue: false, disabled: true },
+        { name: 'child', dataType: 'boolean', defaultValue: true }]));
+
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    expect(wrapper).to.have.exactly(2).descendants('Property');
+    expect(wrapper.find('Property').at(0).props().name).to.eql('allowDecimal');
+    expect(wrapper.find('Property').at(0).props().value).to.eql(true);
+
+    expect(wrapper.find('Property').at(1).props().name).to.eql('child');
+    expect(wrapper.find('Property').at(1).props().value).to.eql(true);
+  });
+
   it('should not render Property if there are no property attributes', () => {
     ComponentStore.registerDesignerComponent('obsControl', controlDescriptor([]));
     wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
