@@ -109,7 +109,7 @@ FormDetail.propTypes = {
     editable: PropTypes.bool,
   }),
   setError: PropTypes.func.isRequired,
-  updateFormName: PropTypes.func,
   updateFormEvents: PropTypes.func,
+  updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
 };

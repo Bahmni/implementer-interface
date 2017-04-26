@@ -6,7 +6,8 @@ import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
-import { addSourceMap, setChangedProperty, sourceChangedProperty } from 'form-builder/actions/control';
+import { addSourceMap, setChangedProperty,
+  sourceChangedProperty } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -165,10 +166,9 @@ class ControlWrapper extends Draggable {
     const selectedControl = this.props.selectedControl;
     if (selectedControl) {
       return selectedControl.events && selectedControl.events.onValueChange;
-    } else {
-      const formDetails = this.props.formDetails;
-      return formDetails.events && formDetails.events.onFormInit;
     }
+    const formDetails = this.props.formDetails;
+    return formDetails.events && formDetails.events.onFormInit;
   }
 
   showScriptEditorDialog() {
@@ -178,12 +178,13 @@ class ControlWrapper extends Draggable {
       !properties.id && properties.property.formEvent)) {
       return (
         <ScriptEditorModal
+          close={() => this.closeScriptEditorDialog(properties.id)}
           script={this.getScript()}
           updateScript={(script) => this.updateScript(script, properties.id)}
-          close={() => this.closeScriptEditorDialog(properties.id)}
         />
       );
     }
+    return null;
   }
 
   render() {

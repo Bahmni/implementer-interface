@@ -30,11 +30,11 @@ describe('Property', () => {
     const type = 'button';
 
     wrapper = shallow(<Property
+      elementName={value}
+      elementType={type}
       name="control Event"
       onPropertyUpdate={() => {}}
       value={false}
-      elementType={type}
-      elementName={value}
     />);
 
     expect(wrapper.find('input').props().type).to.eql(type);
@@ -45,10 +45,10 @@ describe('Property', () => {
     const spy = sinon.spy();
 
     wrapper = shallow(<Property
+      elementName="Editor"
+      elementType="button"
       name="controlEvent"
       onPropertyUpdate={spy}
-      elementType="button"
-      elementName="Editor"
       value
     />);
 

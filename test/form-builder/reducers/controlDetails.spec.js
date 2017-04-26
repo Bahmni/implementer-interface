@@ -85,9 +85,9 @@ describe('controlDetails', () => {
     it('should change the source', () => {
       action = { type: 'SOURCE_CHANGED', source: 'test' };
 
-      const state = controlDetails({selectedControl: {}}, action);
+      const state = controlDetails({ selectedControl: {} }, action);
 
-      expect(state.selectedControl.events).to.eql({onValueChange: 'test'});
+      expect(state.selectedControl.events).to.eql({ onValueChange: 'test' });
     });
   });
 });
