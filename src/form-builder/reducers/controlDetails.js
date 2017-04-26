@@ -10,6 +10,7 @@ const controlDetails = (store = {}, action) => {
     case 'BLUR_CONTROL':
       return Object.assign({}, store, { focusedControl: undefined });
     case 'SOURCE_CHANGED':
+      // eslint-disable-next-line
       store.selectedControl.events = { onValueChange: action.source };
       return cloneDeep(store);
     default:
