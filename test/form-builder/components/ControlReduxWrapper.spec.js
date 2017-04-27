@@ -276,6 +276,27 @@ describe('ControlWrapper', () => {
     expect(controlWrapper.find('.control-wrapper')).to.have.descendants('ScriptEditorModal');
   });
 
+  it('should show form init script if the form event equal true', () => {
+    const store = getStore();
+    const controlProperty = { property: { formEvent: true } };
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        store={ store }
+      />).shallow();
+
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    controlWrapper.setProps({
+      controlProperty,
+      formDetails: { events: { onFormInit: '1' } },
+      selectedControl: { events: { onValueChange: '2' } },
+    });
+
+    expect(instance.getScript()).equal('1');
+    expect(instance.getScript('someId')).equal('2');
+  });
+
   it('should close script editor after updating script', () => {
     const store = getStore();
     const controlWrapper = shallow(

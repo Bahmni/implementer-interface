@@ -162,9 +162,9 @@ class ControlWrapper extends Draggable {
     }
   }
 
-  getScript() {
+  getScript(id) {
     const selectedControl = this.props.selectedControl;
-    if (selectedControl) {
+    if (id && selectedControl) {
       return selectedControl.events && selectedControl.events.onValueChange;
     }
     const formDetails = this.props.formDetails;
@@ -179,7 +179,7 @@ class ControlWrapper extends Draggable {
       return (
         <ScriptEditorModal
           close={() => this.closeScriptEditorDialog(properties.id)}
-          script={this.getScript()}
+          script={this.getScript(properties.id)}
           updateScript={(script) => this.updateScript(script, properties.id)}
         />
       );
