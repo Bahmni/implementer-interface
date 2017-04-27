@@ -191,6 +191,15 @@ em {
   margin: 5px
 }
 
+.area-height {
+  &--dialog{
+    height: 400px;
+  }
+  &--textarea{
+    height: 300px;
+  }
+}
+
 input[type="checkbox"]{
   @include check-box;
 }

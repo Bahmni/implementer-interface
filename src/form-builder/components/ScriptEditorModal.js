@@ -11,9 +11,9 @@ export default class ScriptEditorModal extends Component {
     return (
       <div>
         <div className="dialog-wrapper"></div>
-        <div className="dialog">
+        <div className="dialog area-height--dialog">
           <h2 className="header-title">Editor</h2>
-          <textarea autoFocus className="editor-wrapper"
+          <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.state.script}
             onChange={(e) => {this.setState({ script: e.target.value });}}
           >
