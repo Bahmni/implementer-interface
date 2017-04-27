@@ -1,19 +1,21 @@
-import React, { Component, PropTypes } from 'react';
-import FormList from 'form-builder/components/FormList.jsx';
-import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
-import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
-import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { formBuilderConstants } from 'form-builder/constants';
-import formHelper from '../helpers/formHelper';
+import React, {Component, PropTypes} from "react";
+import FormList from "form-builder/components/FormList.jsx";
+import CreateFormModal from "form-builder/components/CreateFormModal.jsx";
+import FormBuilderHeader from "form-builder/components/FormBuilderHeader.jsx";
+import {FormBuilderBreadcrumbs} from "form-builder/components/FormBuilderBreadcrumbs.jsx";
+import {httpInterceptor} from "common/utils/httpInterceptor";
+import {formBuilderConstants} from "form-builder/constants";
+import formHelper from "../helpers/formHelper";
+import jsonpath from "jsonpath/jsonpath";
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false };
+    this.state = {showModal: false};
     this.setState = this.setState.bind(this);
+    this.validationErrors = [];
   }
 
   getFormVersion(formName) {
@@ -42,11 +44,11 @@ export default class FormBuilder extends Component {
   }
 
   openFormModal() {
-    this.setState({ showModal: true });
+    this.setState({showModal: true});
   }
 
   closeFormModal() {
-    this.setState({ showModal: false });
+    this.setState({showModal: false});
   }
 
   createForm(formName) {
@@ -75,8 +77,14 @@ export default class FormBuilder extends Component {
       const value = JSON.parse(formJson.resources[0].value);
 
       if (formHelper.validateFormName(formName)) {
-        httpInterceptor.post(formBuilderConstants.formUrl, form)
-          .then((response) => {
+        self.fixuuid(value).catch(() => {
+          self.props.onValidationError(self.validationErrors);
+          console.log(self.validationErrors);
+          return false;
+        }).then((validationPassed) => {
+          if(!validationPassed) return;
+
+          return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
             value.uuid = response.uuid;
             const formResource = {
               form: {
@@ -88,32 +96,91 @@ export default class FormBuilder extends Component {
             };
             self.props.saveFormResource(formResource);
           })
-          .catch(() => {
-            const formUuid = self.getFormUuid(formName);
-            value.uuid = formUuid;
-            const params =
-              'v=custom:(id,uuid,name,version,published,auditInfo,' +
-              'resources:(value,dataType,uuid))';
-            httpInterceptor
-              .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
-              .then((data) => {
-                const formResource = {
-                  form: {
-                    name: formName,
-                    uuid: formUuid,
-                  },
-                  value: JSON.stringify(value),
-                  uuid: data.resources[0].uuid,
-                };
+            .catch(() => {
+              console.log("Catch");
+              const formUuid = self.getFormUuid(formName);
+              value.uuid = formUuid;
+              const params =
+                'v=custom:(id,uuid,name,version,published,auditInfo,' +
+                'resources:(value,dataType,uuid))';
+              httpInterceptor
+                .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+                .then((data) => {
+                  const formResource = {
+                    form: {
+                      name: formName,
+                      uuid: formUuid,
+                    },
+                    value: JSON.stringify(value),
+                    uuid: data.resources[0].uuid,
+                  };
 
-                self.props.saveFormResource(formResource);
-              });
-          });
+                  self.props.saveFormResource(formResource);
+                });
+            })
+        })
       }
     };
 
     reader.readAsText(file[0]);
   }
+
+  fixuuid(value) {
+    let checkPromises = [];
+    this.validationErrors = [];
+    let concepts = jsonpath.query(value, "$..concept");
+
+    concepts.forEach((concept) => {
+      const name = this.getConceptNameWithoutUnit(concept);
+      console.log("Concept", name);
+      let conceptCheckPromise = httpInterceptor.get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`).then((response) => {
+          if (response.results.length >= 1) {
+            concept.uuid = response.results[0].uuid;
+            return true;
+          }
+          else {
+            let msg = "Concept name not found " + name;
+            this.validationErrors.push(msg);
+            throw new Error(msg);
+          }
+        }
+      );
+
+      checkPromises.push(conceptCheckPromise);
+    });
+
+    let setMembers = jsonpath.query(value, "$..setMembers");
+    setMembers.forEach((setMember) => {
+      setMember.forEach((member) => {
+        const name = this.getConceptNameWithoutUnit(member);
+        console.log("Member:", name);
+        let memberCheckPromise = httpInterceptor.get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`).then((response) => {
+            if (response.results.length >= 1) {
+              member.uuid = response.results[0].uuid;
+            }
+            else {
+              let msg = "Concept name not found " + name;
+              this.validationErrors.push(msg);
+              throw new Error(msg);
+            }
+          }
+        );
+
+        checkPromises.push(memberCheckPromise);
+      });
+    });
+
+    return Promise.all(checkPromises);
+  }
+
+  getConceptNameWithoutUnit(concept) {
+    if (concept.units != null) {
+      return concept.name.replace(`(${concept.units})`, '');
+    }
+
+    return concept.name;
+  }
+
 
   render() {
     return (
@@ -122,34 +189,35 @@ export default class FormBuilder extends Component {
         <div className="breadcrumb-wrap">
           <div className="breadcrumb-inner">
             <div className="fl">
-              <FormBuilderBreadcrumbs routes={this.props.routes} />
+              <FormBuilderBreadcrumbs routes={this.props.routes}/>
             </div>
             <button
               accessKey="n" className="btn--highlight fr"
               onClick={() => this.openFormModal()}
-            >Create a Form</button>
+            >Create a Form
+            </button>
             <a className="importBtn fr">
               <input accept=".json" onChange={(e) => this.validateFile(e.target.files)}
-                onClick={(e) => {
-                  // eslint-disable-next-line
-                  e.target.value = null;
-                }} type="file"
+                     onClick={(e) => {
+                       // eslint-disable-next-line
+                       e.target.value = null;
+                     }} type="file"
               />Import</a>
           </div>
         </div>
-          <CreateFormModal
-            closeModal={() => this.closeFormModal()}
-            createForm={(formName) => this.createForm(formName)}
-            showModal={this.state.showModal}
-          />
-      <div className="container-content-wrap">
+        <CreateFormModal
+          closeModal={() => this.closeFormModal()}
+          createForm={(formName) => this.createForm(formName)}
+          showModal={this.state.showModal}
+        />
+        <div className="container-content-wrap">
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data} />
+              <FormList data={this.props.data}/>
             </div>
           </div>
-      </div>
+        </div>
       </div>
     );
   }
@@ -160,4 +228,5 @@ FormBuilder.propTypes = {
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
   saveFormResource: PropTypes.func,
+  onValidationError: PropTypes.func
 };

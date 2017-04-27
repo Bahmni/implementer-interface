@@ -1,21 +1,21 @@
-import React, { Component, PropTypes } from 'react';
-import FormBuilder from 'form-builder/components/FormBuilder.jsx';
-import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { formBuilderConstants } from 'form-builder/constants';
-import { commonConstants } from 'common/constants';
-import NotificationContainer from 'common/Notification';
-import Spinner from 'common/Spinner';
-import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
-import formHelper from '../helpers/formHelper';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+import React, {Component, PropTypes} from "react";
+import FormBuilder from "form-builder/components/FormBuilder.jsx";
+import {httpInterceptor} from "common/utils/httpInterceptor";
+import {formBuilderConstants} from "form-builder/constants";
+import {commonConstants} from "common/constants";
+import NotificationContainer from "common/Notification";
+import Spinner from "common/Spinner";
+import get from "lodash/get";
+import sortBy from "lodash/sortBy";
+import formHelper from "../helpers/formHelper";
+import {UrlHelper} from "form-builder/helpers/UrlHelper";
 
 
 export default class FormBuilderContainer extends Component {
 
   constructor() {
     super();
-    this.state = { data: [], notification: {}, loading: true };
+    this.state = {data: [], notification: {}, loading: true};
     this.setState = this.setState.bind(this);
   }
 
@@ -27,19 +27,19 @@ export default class FormBuilderContainer extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
-        this.setState({ data: this.orderFormByVersion(data.results), loading: false });
+        this.setState({data: this.orderFormByVersion(data.results), loading: false});
       })
       .catch((error) => {
         this.showErrors(error);
-        this.setState({ loading: false });
+        this.setState({loading: false});
       });
   }
 
   setMessage(message, type) {
-    const errorNotification = { message, type };
-    this.setState({ notification: errorNotification });
+    const errorNotification = {message, type};
+    this.setState({notification: errorNotification});
     setTimeout(() => {
-      this.setState({ notification: {} });
+      this.setState({notification: {}});
     }, commonConstants.toastTimeout);
   }
 
@@ -103,20 +103,25 @@ export default class FormBuilderContainer extends Component {
       });
   }
 
+  onValidationError(messages) {
+    this.setMessage('Concept validation error: \n' + messages.join("\n"), commonConstants.responseType.error);
+  }
+
   render() {
     return (
-    <div>
-      <Spinner show={this.state.loading} />
-      <NotificationContainer
-        notification={this.state.notification}
-      />
-      <FormBuilder
-        data={this.state.data}
-        routes={this.props.routes}
-        saveForm={(formName) => this.saveForm(formName)}
-        saveFormResource={(formJson) => this.saveFormResource(formJson)}
-      />
-    </div>
+      <div>
+        <Spinner show={this.state.loading}/>
+        <NotificationContainer
+          notification={this.state.notification}
+        />
+        <FormBuilder
+          data={this.state.data}
+          routes={this.props.routes}
+          saveForm={(formName) => this.saveForm(formName)}
+          saveFormResource={(formJson) => this.saveFormResource(formJson)}
+          onValidationError={(messages) => this.onValidationError(messages)}
+        />
+      </div>
     );
   }
 }
