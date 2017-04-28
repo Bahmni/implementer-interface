@@ -1,19 +1,19 @@
-import React, {Component, PropTypes} from "react";
-import FormList from "form-builder/components/FormList.jsx";
-import CreateFormModal from "form-builder/components/CreateFormModal.jsx";
-import FormBuilderHeader from "form-builder/components/FormBuilderHeader.jsx";
-import {FormBuilderBreadcrumbs} from "form-builder/components/FormBuilderBreadcrumbs.jsx";
-import {httpInterceptor} from "common/utils/httpInterceptor";
-import {formBuilderConstants} from "form-builder/constants";
-import formHelper from "../helpers/formHelper";
-import jsonpath from "jsonpath/jsonpath";
+import React, { Component, PropTypes } from 'react';
+import FormList from 'form-builder/components/FormList.jsx';
+import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
+import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
+import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from 'form-builder/constants';
+import formHelper from '../helpers/formHelper';
+import jsonpath from 'jsonpath/jsonpath';
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = {showModal: false};
+    this.state = { showModal: false };
     this.setState = this.setState.bind(this);
     this.validationErrors = [];
   }
@@ -43,12 +43,20 @@ export default class FormBuilder extends Component {
     return uuid;
   }
 
+  getConceptNameWithoutUnit(concept) {
+    if (concept.units !== null) {
+      return concept.name.replace(`(${concept.units})`, '');
+    }
+
+    return concept.name;
+  }
+
   openFormModal() {
-    this.setState({showModal: true});
+    this.setState({ showModal: true });
   }
 
   closeFormModal() {
-    this.setState({showModal: false});
+    this.setState({ showModal: false });
   }
 
   createForm(formName) {
@@ -72,6 +80,7 @@ export default class FormBuilder extends Component {
       published: false,
     };
 
+    // eslint-disable-next-line
     reader.onload = function () {
       formJson = JSON.parse(reader.result);
       const value = JSON.parse(formJson.resources[0].value);
@@ -79,12 +88,11 @@ export default class FormBuilder extends Component {
       if (formHelper.validateFormName(formName)) {
         self.fixuuid(value).catch(() => {
           self.props.onValidationError(self.validationErrors);
-          console.log(self.validationErrors);
           return false;
         }).then((validationPassed) => {
-          if(!validationPassed) return;
+          if (!validationPassed) return;
 
-          return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
+          httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
             value.uuid = response.uuid;
             const formResource = {
               form: {
@@ -97,7 +105,6 @@ export default class FormBuilder extends Component {
             self.props.saveFormResource(formResource);
           })
             .catch(() => {
-              console.log("Catch");
               const formUuid = self.getFormUuid(formName);
               value.uuid = formUuid;
               const params =
@@ -117,8 +124,8 @@ export default class FormBuilder extends Component {
 
                   self.props.saveFormResource(formResource);
                 });
-            })
-        })
+            });
+        });
       }
     };
 
@@ -126,20 +133,22 @@ export default class FormBuilder extends Component {
   }
 
   fixuuid(value) {
-    let checkPromises = [];
+    const checkPromises = [];
     this.validationErrors = [];
-    let concepts = jsonpath.query(value, "$..concept");
+    const concepts = jsonpath.query(value, '$..concept');
 
     concepts.forEach((concept) => {
       const name = this.getConceptNameWithoutUnit(concept);
-      console.log("Concept", name);
-      let conceptCheckPromise = httpInterceptor.get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`).then((response) => {
+      const conceptCheckPromise = httpInterceptor
+        .get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`)
+        .then((response) => {
           if (response.results.length >= 1) {
+            // eslint-disable-next-line
             concept.uuid = response.results[0].uuid;
             return true;
-          }
-          else {
-            let msg = "Concept name not found " + name;
+            // eslint-disable-next-line
+          } else {
+            const msg = `Concept name not found ${name}`;
             this.validationErrors.push(msg);
             throw new Error(msg);
           }
@@ -149,17 +158,18 @@ export default class FormBuilder extends Component {
       checkPromises.push(conceptCheckPromise);
     });
 
-    let setMembers = jsonpath.query(value, "$..setMembers");
+    const setMembers = jsonpath.query(value, '$..setMembers');
     setMembers.forEach((setMember) => {
       setMember.forEach((member) => {
         const name = this.getConceptNameWithoutUnit(member);
-        console.log("Member:", name);
-        let memberCheckPromise = httpInterceptor.get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`).then((response) => {
+        const memberCheckPromise = httpInterceptor
+          .get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`)
+          .then((response) => {
             if (response.results.length >= 1) {
+              // eslint-disable-next-line
               member.uuid = response.results[0].uuid;
-            }
-            else {
-              let msg = "Concept name not found " + name;
+            } else {
+              const msg = `Concept name not found ${name}`;
               this.validationErrors.push(msg);
               throw new Error(msg);
             }
@@ -173,15 +183,6 @@ export default class FormBuilder extends Component {
     return Promise.all(checkPromises);
   }
 
-  getConceptNameWithoutUnit(concept) {
-    if (concept.units != null) {
-      return concept.name.replace(`(${concept.units})`, '');
-    }
-
-    return concept.name;
-  }
-
-
   render() {
     return (
       <div>
@@ -189,7 +190,7 @@ export default class FormBuilder extends Component {
         <div className="breadcrumb-wrap">
           <div className="breadcrumb-inner">
             <div className="fl">
-              <FormBuilderBreadcrumbs routes={this.props.routes}/>
+              <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
             <button
               accessKey="n" className="btn--highlight fr"
@@ -198,10 +199,10 @@ export default class FormBuilder extends Component {
             </button>
             <a className="importBtn fr">
               <input accept=".json" onChange={(e) => this.validateFile(e.target.files)}
-                     onClick={(e) => {
+                onClick={(e) => {
                        // eslint-disable-next-line
                        e.target.value = null;
-                     }} type="file"
+                }} type="file"
               />Import</a>
           </div>
         </div>
@@ -214,7 +215,7 @@ export default class FormBuilder extends Component {
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data}/>
+              <FormList data={this.props.data} />
             </div>
           </div>
         </div>
@@ -225,8 +226,8 @@ export default class FormBuilder extends Component {
 
 FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
+  onValidationError: PropTypes.func,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
   saveFormResource: PropTypes.func,
-  onValidationError: PropTypes.func
 };
