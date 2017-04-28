@@ -73,17 +73,16 @@ export default class FormBuilder extends Component {
     const reader = new FileReader();
     let formJson = null;
 
-    const formName = file[0].name.split('_')[0];
-    const form = {
-      name: formName,
-      version: '1',
-      published: false,
-    };
-
     // eslint-disable-next-line
     reader.onload = function () {
       formJson = JSON.parse(reader.result);
+      const formName = formJson.name;
       const value = JSON.parse(formJson.resources[0].value);
+      const form = {
+        name: formName,
+        version: '1',
+        published: false,
+      };
 
       if (formHelper.validateFormName(formName)) {
         self.fixuuid(value).catch(() => {
