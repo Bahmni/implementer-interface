@@ -212,6 +212,32 @@ describe('FormDetailContainer', () => {
     expect(updatedName).to.equal(originalFormName);
   });
 
+  it('should return true when try to update after original name length has equal 50', () => {
+    const wrapper = shallow(
+          <FormDetailContainer
+            {...defaultProps}
+          />, { context }
+      );
+    const updatedFormName = '12345678901234567890123456789012345678901234567890';
+
+    const isError = wrapper.instance().validateNameLength(updatedFormName);
+
+    expect(isError).to.equal(true);
+  });
+
+  it('should return false when try to update after original name length less than 50', () => {
+    const wrapper = shallow(
+          <FormDetailContainer
+            {...defaultProps}
+          />, { context }
+      );
+    const updatedFormName = '1234567890';
+
+    const isError = wrapper.instance().validateNameLength(updatedFormName);
+
+    expect(isError).to.equal(false);
+  });
+
   it('should update original name when clone form success', (done) => {
     sinon.stub(httpInterceptor, 'post')
       .callsFake(() => Promise.resolve(formData));
@@ -299,7 +325,7 @@ describe('FormDetailContainer', () => {
         form: { id: 1, uuid: 'saveUuid', name: 'F1', published: false, version: '' },
         name: 'F1',
         dataType: 'datatype',
-        value: 'value',
+        value: '{}',
         uuid: 'formUuid',
       };
       fakePromise.cb(dummyResponse);
@@ -316,7 +342,7 @@ describe('FormDetailContainer', () => {
         expect(formDetail.prop('formData').resources[0]).to.eql({
           name: 'F1',
           dataType: 'datatype',
-          value: 'value',
+          value: '{}',
           uuid: 'formUuid',
         });
 
@@ -435,6 +461,19 @@ describe('FormDetailContainer', () => {
         expect(editButton.text()).to.equal('Edit');
         done();
       }, 500);
+    });
+
+    it('should show modal equal true when click edit button', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+
+      wrapper.find('.edit-button').simulate('click');
+
+      expect(wrapper.state().showModal).to.equal(true);
     });
 
     it('should show edit modal', (done) => {

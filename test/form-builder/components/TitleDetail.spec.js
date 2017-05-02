@@ -52,4 +52,32 @@ describe('TitleDetail', () => {
     input.simulate('keyUp', { keyCode: 13 });
     expect(wrapper.state('isEditable')).to.equal(false);
   });
+
+  it('should show red when enter some value after form name length has equal 50', () => {
+    const wrapper = shallow(
+          <TitleDetail updateValue={() => {
+          }} validateNameLength={() => true} value={value}
+          />
+      );
+    const label = wrapper.find('label');
+    label.simulate('doubleclick');
+    const input = wrapper.find('input');
+    input.simulate('keyPress', { keyCode: 13, target: {
+      value: '12345678901234567890123456789012345678901234567890a' } });
+
+    expect(wrapper.state('red')).to.equal(true);
+  });
+
+  it('should not show red when enter some value after form name length less than 50', () => {
+    const wrapper = shallow(
+          <TitleDetail updateValue={() => {
+          }} validateNameLength={() => false} value={value}
+          />
+      );
+    const label = wrapper.find('label');
+    label.simulate('doubleclick');
+    wrapper.instance().validateNameLength('1234567890a');
+
+    expect(wrapper.state('red')).to.equal(false);
+  });
 });

@@ -80,4 +80,14 @@ describe('controlDetails', () => {
       expect(state).to.be.eql({ focusedControl: undefined });
     });
   });
+
+  describe('sourceChanged', () => {
+    it('should change the source', () => {
+      action = { type: 'SOURCE_CHANGED', source: 'test' };
+
+      const state = controlDetails({ selectedControl: {} }, action);
+
+      expect(state.selectedControl.events).to.eql({ onValueChange: 'test' });
+    });
+  });
 });

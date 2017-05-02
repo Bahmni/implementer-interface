@@ -18,6 +18,7 @@ export class PropertyEditor extends Component {
           name={name}
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
           value={value}
+          { ...attribute }
         />
       );
     });

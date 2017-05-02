@@ -1,17 +1,19 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { focusControl, selectControl } from 'form-builder/actions/control';
-import { blurControl, deselectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl, eventsChanged } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
-import { addSourceMap } from 'form-builder/actions/control';
+import { addSourceMap, setChangedProperty,
+  sourceChangedProperty } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
+import ScriptEditorModal from './ScriptEditorModal';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -132,11 +134,54 @@ class ControlWrapper extends Draggable {
   showDeleteControlModal() {
     if (this.state.showDeleteModal) {
       return (
-            <DeleteControlModal
-              closeModal={() => this.closeDeleteModal()}
-              controlName={this.props.metadata.name}
-              deleteControl={this.props.deleteControl}
-            />
+        <DeleteControlModal
+          closeModal={() => this.closeDeleteModal()}
+          controlName={this.props.metadata.name}
+          deleteControl={this.props.deleteControl}
+        />
+      );
+    }
+    return null;
+  }
+
+  updateScript(script, id) {
+    if (id) {
+      this.props.dispatch(selectControl(this.metadata));
+      this.props.dispatch(sourceChangedProperty(script));
+    } else {
+      this.props.dispatch(eventsChanged(script));
+    }
+    this.closeScriptEditorDialog(id);
+  }
+
+  closeScriptEditorDialog(id) {
+    if (id) {
+      this.props.dispatch(setChangedProperty({ controlEvent: false }, id));
+    } else {
+      this.props.dispatch(setChangedProperty({ formEvent: false }));
+    }
+  }
+
+  getScript(id) {
+    const selectedControl = this.props.selectedControl;
+    if (id && selectedControl) {
+      return selectedControl.events && selectedControl.events.onValueChange;
+    }
+    const formDetails = this.props.formDetails;
+    return formDetails.events && formDetails.events.onFormInit;
+  }
+
+  showScriptEditorDialog() {
+    const properties = this.props.controlProperty;
+    if (properties && properties.property &&
+      (properties.id === this.metadata.id && properties.property.controlEvent ||
+      !properties.id && properties.property.formEvent)) {
+      return (
+        <ScriptEditorModal
+          close={() => this.closeScriptEditorDialog(properties.id)}
+          script={this.getScript(properties.id)}
+          updateScript={(script) => this.updateScript(script, properties.id)}
+        />
       );
     }
     return null;
@@ -167,6 +212,7 @@ class ControlWrapper extends Draggable {
           wrapper={ this.props.wrapper }
         />
         { this.showDeleteControlModal() }
+        { this.showScriptEditorDialog() }
       </div>
     );
   }
@@ -178,6 +224,9 @@ ControlWrapper.propTypes = {
     property: PropTypes.object,
   }),
   deleteControl: PropTypes.func,
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
   metadata: PropTypes.object,
   showDeleteButton: PropTypes.bool,
   wrapper: PropTypes.func,
@@ -187,7 +236,9 @@ function mapStateToProps(state) {
   return {
     conceptToControlMap: state.conceptToControlMap,
     controlProperty: state.controlProperty,
+    formDetails: state.formDetails,
     focusedControl: state.controlDetails.focusedControl,
+    selectedControl: state.controlDetails.selectedControl,
   };
 }
 

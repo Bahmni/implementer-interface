@@ -8,6 +8,8 @@ import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+
 
 export default class FormBuilderContainer extends Component {
 
@@ -18,6 +20,15 @@ export default class FormBuilderContainer extends Component {
   }
 
   componentDidMount() {
+    this.getFormData();
+  }
+
+  onValidationError(messages) {
+    this.setMessage(`Concept validation error: \n${messages.join('\n')}`,
+      commonConstants.responseType.error);
+  }
+
+  getFormData() {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
@@ -29,13 +40,14 @@ export default class FormBuilderContainer extends Component {
       });
   }
 
-  setErrorMessage(errorMessage) {
-    const errorNotification = { message: errorMessage, type: commonConstants.responseType.error };
+  setMessage(message, type) {
+    const errorNotification = { message, type };
     this.setState({ notification: errorNotification });
     setTimeout(() => {
       this.setState({ notification: {} });
     }, commonConstants.toastTimeout);
   }
+
   orderFormByVersion(forms) {
     forms.forEach((form) => {
       // eslint-disable-next-line
@@ -49,10 +61,10 @@ export default class FormBuilderContainer extends Component {
     if (error.response) {
       error.response.json().then((data) => {
         const message = get(data, 'error.globalErrors[0].message') || error.message;
-        this.setErrorMessage(message);
+        this.setMessage(message, commonConstants.responseType.error);
       });
     } else {
-      this.setErrorMessage(error.message);
+      this.setMessage(error.message, commonConstants.responseType.error);
     }
   }
 
@@ -67,23 +79,50 @@ export default class FormBuilderContainer extends Component {
         .catch((error) => this.showErrors(error));
     } else {
       const message = 'Leading or trailing spaces and ^/-. are not allowed';
-      this.setErrorMessage(message);
+      this.setMessage(message, commonConstants.responseType.error);
     }
+  }
+
+  publishForm(formUuid) {
+    const self = this;
+    httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
+      .then(() => {
+        self.getFormData();
+        self.setMessage('Imported and Published Successfully',
+          commonConstants.responseType.success);
+      })
+      .catch(() => {
+        this.setMessage('Error', commonConstants.responseType.error);
+      });
+  }
+
+  saveFormResource(formJson) {
+    const self = this;
+    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+      .then((response) => {
+        self.setMessage('Importing...', commonConstants.responseType.success);
+        self.publishForm(response.form.uuid);
+      })
+      .catch(() => {
+        this.setMessage('Error', commonConstants.responseType.error);
+      });
   }
 
   render() {
     return (
-    <div>
-      <Spinner show={this.state.loading} />
-      <NotificationContainer
-        notification={this.state.notification}
-      />
-      <FormBuilder
-        data={this.state.data}
-        routes={this.props.routes}
-        saveForm={(formName) => this.saveForm(formName)}
-      />
-    </div>
+      <div>
+        <Spinner show={this.state.loading} />
+        <NotificationContainer
+          notification={this.state.notification}
+        />
+        <FormBuilder
+          data={this.state.data}
+          onValidationError={(messages) => this.onValidationError(messages)}
+          routes={this.props.routes}
+          saveForm={(formName) => this.saveForm(formName)}
+          saveFormResource={(formJson) => this.saveFormResource(formJson)}
+        />
+      </div>
     );
   }
 }

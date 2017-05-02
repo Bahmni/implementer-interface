@@ -24,5 +24,40 @@
     color: $red;
     font-size: 12px;
   }
+  .is-red {
+    outline-color: $red;
+  }
 }
+
+.importBtn{
+  padding: 4px 25px;
+  height: 32px;
+  line-height: 20px;
+  position: relative;
+  cursor: pointer;
+  color: $black;
+  background: $bahmniPageBg;
+  border: 2px solid $gray300;
+  border-radius: 1px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.importBtn input{
+  position: absolute;
+  font-size: 109px;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  cursor: pointer
+}
+
+.importBtn hover{
+  color: $gray800;
+  background: $gray200;
+  border-color: $gray400;
+  text-decoration: none
+}
+
 

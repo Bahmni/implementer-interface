@@ -11,6 +11,10 @@ export const addSourceMap = (sourceMap) => ({ type: 'ADD_SOURCE_MAP', sourceMap 
 export const setChangedProperty = (property, id) =>
   ({ type: 'SET_CHANGED_PROPERTY', property, id });
 
+export const sourceChangedProperty = (source) => ({ type: 'SOURCE_CHANGED', source });
+
+export const eventsChanged = (events) => ({ type: 'EVENT_CHANGED', events });
+
 export const removeControlProperties = () => ({ type: 'REMOVE_CONTROL_PROPERTIES' });
 
 export const focusControl = (id) => ({ type: 'FOCUS_CONTROL', id });
