@@ -26,7 +26,7 @@ export default class CreateFormModal extends Component {
   }
 
   validateName(value) {
-    if (value.length > 50) {
+    if (value.length >= 50) {
       this.setState({ red: true, buttonDisable: true });
       this.setErrorMessage('Form name shall not exceed 50 characters');
     } else {
@@ -65,6 +65,7 @@ export default class CreateFormModal extends Component {
                                       autoFocus
                                       className={ classNames('form-name',
                                             { 'is-red': this.state.red })}
+                                      maxLength="50"
                                       onChange={(e) => this.setFormName(e.target.value)}
                                       pattern="[^\.\/\-\^\s][^\.\/\-\^]*"
                                       required
