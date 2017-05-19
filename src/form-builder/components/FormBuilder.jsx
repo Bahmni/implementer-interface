@@ -192,17 +192,19 @@ export default class FormBuilder extends Component {
               <FormBuilderBreadcrumbs routes={this.props.routes} />
             </div>
             <button
-              accessKey="n" className="btn--highlight fr"
+              accessKey="n" className="btn--highlight openFormModal fr"
               onClick={() => this.openFormModal()}
             >Create a Form
             </button>
-            <a className="importBtn fr">
-              <input accept=".json" onChange={(e) => this.validateFile(e.target.files)}
+            <button className="importBtn">
+              <label htmlFor="formImportBtn" >Import
+              <input accept=".json" id="formImportBtn"
+                onChange={(e) => this.validateFile(e.target.files)}
                 onClick={(e) => {
                        // eslint-disable-next-line
                        e.target.value = null;
                 }} type="file"
-              />Import</a>
+              /></label></button>
           </div>
         </div>
         <CreateFormModal

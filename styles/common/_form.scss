@@ -29,28 +29,27 @@
   }
 }
 
-.importBtn{
-  padding: 4px 25px;
-  height: 32px;
-  line-height: 20px;
-  position: relative;
-  cursor: pointer;
-  color: $black;
-  background: $bahmniPageBg;
-  border: 2px solid $gray300;
-  border-radius: 1px;
-  overflow: hidden;
-  display: inline-block;
-}
 
-.importBtn input{
-  position: absolute;
-  font-size: 109px;
-  right: 0;
-  top: 0;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  cursor: pointer
+
+.importBtn {
+  float: right;
+  width: 100px;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  label {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    padding: 6px;
+    cursor: pointer;
+  }
+  input {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+  }
 }
 
 .importBtn hover{

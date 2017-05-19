@@ -23,10 +23,12 @@ export default class FormList extends Component {
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
         <td>{this._getFormStatus(rowItem)}</td>
         <td>
-          <b className="edit-icon">{this._editOrReuseIcon(rowItem)} </b>
+          <b className="edit-icon">{this._editOrReuseIcon(rowItem)} hidden={rowItem.published}</b>
           <a hidden={!rowItem.published}
             onClick={() => this.downloadFile(index)}
-          >Export</a>
+          >
+            <i aria-hidden="true" className="fa fa-download"></i>
+            Export</a>
         </td>
       </tr>
     ));

@@ -28,7 +28,7 @@ describe('FormBuilder', () => {
   it('should set state of showModal as true when create a form option is clicked', () => {
     const instance = wrapper.instance();
     expect(instance.state.showModal).to.eql(false);
-    wrapper.find('button').simulate('click');
+    wrapper.find('button.openFormModal').simulate('click');
     expect(instance.state.showModal).to.eql(true);
   });
 
