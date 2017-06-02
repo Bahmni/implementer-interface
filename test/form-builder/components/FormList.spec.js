@@ -93,7 +93,7 @@ describe('FormList', () => {
 
     expect(getItem(0, 4).find('a').prop('hidden')).to.eql(true);
     expect(getItem(1, 4).find('a').prop('hidden')).to.eql(false);
-    expect(getItem(1, 4).find('a').text()).to.eql('Export');
+    expect(getItem(1, 4).find('a').find('i').prop('className')).to.eql('fa fa-download');
   });
 
   it('should call downloadFile when export be clicked', () => {

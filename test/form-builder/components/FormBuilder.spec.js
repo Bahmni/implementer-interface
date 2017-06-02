@@ -6,6 +6,7 @@ import chai, { expect } from 'chai';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
 import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
+import jsonpath from 'jsonpath/jsonpath';
 
 chai.use(chaiEnzyme());
 
@@ -236,6 +237,10 @@ describe('Import form', () => {
     if (httpInterceptor.get.restore !== undefined) {
       httpInterceptor.get.restore();
     }
+
+    if (jsonpath.query.restore !== undefined) {
+      jsonpath.query.restore();
+    }
   });
 
   it('should call validate file when click import button', () => {
@@ -267,5 +272,37 @@ describe('Import form', () => {
     const uuid = wrapper.instance().getFormUuid(sameName);
 
     expect(uuid).to.eql(data[1].uuid);
+  });
+
+  it('should throw error if concept not present', (done) => {
+    sinon.stub(httpInterceptor, 'get')
+      .callsFake(() => Promise.resolve({ results: [] }));
+    sinon.stub(jsonpath, 'query')
+      .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
+      .onSecondCall().returns([]);
+    const newInstance = wrapper.instance();
+    newInstance.fixuuid('formName').catch(() => {
+      expect(newInstance.validationErrors[0]).to.eql('Concept name not found Pulse');
+      done();
+    });
+  });
+
+  it('should success callback', (done) => {
+    const concept = [{
+      name: { name: 'Pulse' },
+      uuid: 'someUuid',
+      setMembers: [{ name: { name: 'Abnormal' }, uuid: 'randomUuid' }],
+    }];
+    sinon.stub(httpInterceptor, 'get')
+      .onFirstCall().returns(Promise.resolve({ results: concept }))
+      .onSecondCall().returns(Promise.resolve({ results: concept[0].setMembers }));
+    sinon.stub(jsonpath, 'query')
+      .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
+      .onSecondCall().returns([[{ name: 'Abnormal', uuid: 'randomUuid' }]]);
+    const newInstance = wrapper.instance();
+    newInstance.fixuuid('formName').then((validated) => {
+      expect(validated).to.eql([true, true]);
+      done();
+    });
   });
 });

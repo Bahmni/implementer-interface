@@ -7,6 +7,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
 import jsonpath from 'jsonpath/jsonpath';
+import find from 'lodash/find';
 
 
 export default class FormBuilder extends Component {
@@ -131,51 +132,41 @@ export default class FormBuilder extends Component {
     reader.readAsText(file[0]);
   }
 
+  validateConcept(concept, checkPromises) {
+    const name = this.getConceptNameWithoutUnit(concept);
+    const params = `?q=${name}&source=byFullySpecifiedName&v=custom:(uuid,name:(name))`;
+    const conceptCheckPromise = httpInterceptor
+      .get(`${formBuilderConstants.conceptUrl}${params}`)
+      .then((response) => {
+        const result = find(response.results,
+            (res) => res.name && res.name.name === name);
+        if (result) {
+            // eslint-disable-next-line
+            concept.uuid = result.uuid;
+          return true;
+        }
+        const msg = `Concept name not found ${name}`;
+        this.validationErrors.push(msg);
+        throw new Error(msg);
+      }
+      );
+
+    checkPromises.push(conceptCheckPromise);
+  }
+
   fixuuid(value) {
     const checkPromises = [];
     this.validationErrors = [];
     const concepts = jsonpath.query(value, '$..concept');
+    const setMembers = jsonpath.query(value, '$..setMembers');
 
     concepts.forEach((concept) => {
-      const name = this.getConceptNameWithoutUnit(concept);
-      const conceptCheckPromise = httpInterceptor
-        .get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`)
-        .then((response) => {
-          if (response.results.length >= 1) {
-            // eslint-disable-next-line
-            concept.uuid = response.results[0].uuid;
-            return true;
-            // eslint-disable-next-line
-          } else {
-            const msg = `Concept name not found ${name}`;
-            this.validationErrors.push(msg);
-            throw new Error(msg);
-          }
-        }
-      );
-
-      checkPromises.push(conceptCheckPromise);
+      this.validateConcept(concept, checkPromises);
     });
 
-    const setMembers = jsonpath.query(value, '$..setMembers');
     setMembers.forEach((setMember) => {
       setMember.forEach((member) => {
-        const name = this.getConceptNameWithoutUnit(member);
-        const memberCheckPromise = httpInterceptor
-          .get(`${formBuilderConstants.conceptUrl}?q=${name}&source=byFullySpecifiedName`)
-          .then((response) => {
-            if (response.results.length >= 1) {
-              // eslint-disable-next-line
-              member.uuid = response.results[0].uuid;
-            } else {
-              const msg = `Concept name not found ${name}`;
-              this.validationErrors.push(msg);
-              throw new Error(msg);
-            }
-          }
-        );
-
-        checkPromises.push(memberCheckPromise);
+        this.validateConcept(member, checkPromises);
       });
     });
 

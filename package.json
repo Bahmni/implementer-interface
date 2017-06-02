@@ -76,7 +76,7 @@
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.1",
-    "bahmni-form-controls": "0.90.x",
+    "bahmni-form-controls": "^0.90.x",
     "classnames": "^2.2.5",
     "core-js": "^2.4.1",
     "history": "^2.1.2",
