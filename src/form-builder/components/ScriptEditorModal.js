@@ -1,15 +1,41 @@
-
 import React, { Component, PropTypes } from 'react';
+import NotificationContainer from 'common/Notification';
+import { commonConstants } from 'common/constants';
+
 
 export default class ScriptEditorModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { script: this.props.script };
+    this.validateScript = this.validateScript.bind(this);
+    this.state = { script: this.props.script, notification: {} };
   }
+
+  validateScript() {
+    try {
+      const script = this.state.script.trim();
+      /* eslint-disable no-eval*/
+      if (script.trim().length > 0) eval(`(${script})`);
+      this.props.updateScript(script);
+    } catch (ex) {
+      const errorNotification = {
+        message: 'Please Enter valid javascript function',
+        type: commonConstants.responseType.error,
+      };
+      this.setState({ notification: errorNotification });
+
+      setTimeout(() => {
+        this.setState({ notification: {} });
+      }, commonConstants.toastTimeout);
+    }
+  }
+
 
   render() {
     return (
       <div>
+        <NotificationContainer
+          notification={this.state.notification}
+        />
         <div className="dialog-wrapper"></div>
         <div className="dialog area-height--dialog">
           <h2 className="header-title">Editor</h2>
@@ -20,7 +46,7 @@ export default class ScriptEditorModal extends Component {
           </textarea>
           <div className="button-wrapper fr">
             <button className="button btn--highlight"
-              onClick={() => this.props.updateScript(this.state.script)}
+              onClick={() => this.validateScript(this.state.script)}
               type="submit"
             >
               Save

@@ -3,13 +3,15 @@ import { Property } from 'form-builder/components/Property.jsx';
 import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
 import remove from 'lodash/remove';
+import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
 import { ComponentStore } from 'bahmni-form-controls';
 
 export class PropertyEditor extends Component {
   getProperties(attributes) {
     const { metadata: { properties } } = this.props;
-    return attributes.map((attribute, index) => {
+    const sortedAttributes = sortBy(attributes, (a) => a.elementName !== undefined);
+    return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;
       const value = get(properties, name, attribute.defaultValue);
       return (

@@ -1,13 +1,17 @@
 import React, { PropTypes } from 'react';
 
 const NotificationContainer = (props) => {
-  const notificationType = `notification--${props.notification.type}`;
-  return (
-        <div className="notification">
-          <div className={ notificationType }>
-            <div className="message">{ props.notification.message }</div>
-          </div>
-        </div>);
+  const { message, type } = props.notification;
+  const notificationType = `notification--${type}`;
+  if (type && message) {
+    return (
+      <div className="notification">
+        <div className={ notificationType }>
+          <div className="message">{ message }</div>
+        </div>
+      </div>);
+  }
+  return null;
 };
 
 NotificationContainer.propTypes = {
