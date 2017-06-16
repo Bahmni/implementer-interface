@@ -26,19 +26,17 @@ describe('Property', () => {
   });
 
   it('should render button when given property with button type', () => {
-    const value = 'Editor';
     const type = 'button';
 
     wrapper = shallow(<Property
-      elementName={value}
       elementType={type}
       name="control Event"
       onPropertyUpdate={() => {}}
       value={false}
     />);
 
-    expect(wrapper.find('input').props().type).to.eql(type);
-    expect(wrapper.find('input').props().value).to.eql(value);
+    expect(wrapper).to.have.exactly(1).descendants('button');
+    expect(wrapper.find('button').props().className).to.eql('control-event-button');
   });
 
   it('should call property update once click the editor button', () => {
@@ -52,7 +50,7 @@ describe('Property', () => {
       value
     />);
 
-    wrapper.find('input').props().onClick({ target: { checked: true } });
+    wrapper.find('button').props().onClick({ target: { checked: true } });
 
     sinon.assert.calledWith(spy, { controlEvent: true });
   });

@@ -25,14 +25,14 @@ describe('FormEventContainer', () => {
   });
 
   it('should render', () => {
-    expect(wrapper.find('.section-grid')).to.have.descendants('label');
-    expect(wrapper.find('.section-grid')).to.have.descendants('button');
+    expect(wrapper.find('.form-event-container')).to.have.descendants('label');
+    expect(wrapper.find('.form-event-container')).to.have.descendants('button');
   });
 
   it('should call updateProperty once click the editor button', () => {
     const spy = sinon.spy(wrapper.instance(), 'updateProperty');
 
-    wrapper.find('.section-grid').find('button').simulate('click');
+    wrapper.find('.form-event-container').find('button').simulate('click');
 
     sinon.assert.calledOnce(spy);
   });

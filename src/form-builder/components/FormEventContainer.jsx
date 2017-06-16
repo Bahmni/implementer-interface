@@ -25,9 +25,11 @@ class FormEventContainer extends Component {
   render() {
     const name = 'Form Event';
     return (
-      <div className="section-grid">
+      <div className="form-event-container">
         <label>{name}</label>
-        <button onClick={() => this.updateProperty()}>Editor</button>
+        <button onClick={() => this.updateProperty()}>
+          <i aria-hidden="true" className="fa fa-code" />
+        </button>
       </div>
     );
   }

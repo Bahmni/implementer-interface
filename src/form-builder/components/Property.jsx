@@ -19,10 +19,11 @@ export class Property extends Component {
       <div>
         <label>{name}</label>
         {this.props.elementType ?
-          <input checked={value}
+          <button
+            checked={value}
+            className="control-event-button"
             onClick={() => this.updateProperty({ target: { checked: true } })}
-            type={this.props.elementType} value={this.props.elementName}
-          /> :
+          ><i aria-hidden="true" className="fa fa-code" /></button> :
           <input checked={value} className="fr"
             onChange={(e) => this.updateProperty(e)} type="checkbox"
           />
