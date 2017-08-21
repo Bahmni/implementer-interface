@@ -51,7 +51,7 @@ class ControlPropertiesContainer extends Component {
     return (
       <AutoComplete
         autofocus
-        disabled={disableAutoComplete}
+        enabled={!disableAutoComplete}
         onValueChange={this.onSelect}
         optionsUrl={optionsUrl}
         value={value}
