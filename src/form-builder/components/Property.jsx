@@ -4,30 +4,64 @@ export class Property extends Component {
 
   componentWillMount() {
     const { name, value } = this.props;
-    this.props.onPropertyUpdate({ [name]: value });
+    setTimeout(() => {
+      this.props.onPropertyUpdate({ [name]: value });
+    }, 0);
   }
 
-  updateProperty(e) {
+  getElement(elementType) {
+    switch (elementType) {
+      case 'button':
+        return (<button
+          checked={this.props.value}
+          className="control-event-button"
+          onClick={() => this.updateProperty({ target: { checked: true } })}
+        ><i aria-hidden="true" className="fa fa-code" /></button>);
+      case 'dropdown':
+        return (
+          <select
+            defaultValue={this.props.value}
+            key={`${this.props.name}:${this.props.id}`}
+            onChange={(e) => this.updateProperty(e, elementType)}
+          >
+          {
+            this.props.options.map((option, index) =>
+              <option key={index} value={option}>{option}</option>
+            )
+          }
+        </select>);
+      case 'text':
+        return (<input
+          defaultValue={this.props.value}
+          key={`${this.props.name}:${this.props.id}`}
+          onChange={(e) => this.updateProperty(e, elementType)}
+          type="text"
+        />);
+      default:
+        return (<input
+          checked={this.props.value}
+          className="fr"
+          onChange={(e) => this.updateProperty(e)}
+          type="checkbox"
+        />);
+    }
+  }
+
+  updateProperty(e, elementType) {
     const { name } = this.props;
-    this.props.onPropertyUpdate({ [name]: e.target.checked });
+    if (elementType === 'text' || elementType === 'dropdown') {
+      this.props.onPropertyUpdate({ [name]: e.target.value });
+    } else {
+      this.props.onPropertyUpdate({ [name]: e.target.checked });
+    }
   }
 
   render() {
-    const { name, value } = this.props;
-
+    const { name, elementType } = this.props;
     return (
       <div>
         <label>{name}</label>
-        {this.props.elementType ?
-          <button
-            checked={value}
-            className="control-event-button"
-            onClick={() => this.updateProperty({ target: { checked: true } })}
-          ><i aria-hidden="true" className="fa fa-code" /></button> :
-          <input checked={value} className="fr"
-            onChange={(e) => this.updateProperty(e)} type="checkbox"
-          />
-        }
+        {this.getElement(elementType)}
       </div>
     );
   }
@@ -36,7 +70,9 @@ export class Property extends Component {
 Property.propTypes = {
   elementName: PropTypes.string,
   elementType: PropTypes.string,
+  id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
-  value: PropTypes.bool.isRequired,
+  options: PropTypes.array,
+  value: PropTypes.any.isRequired,
 };

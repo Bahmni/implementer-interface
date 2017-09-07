@@ -79,6 +79,7 @@ class Canvas extends Component {
           controls={ formResourceControls || [] }
           idGenerator={ this.props.idGenerator }
           ref={ this.gridReference }
+          setError={this.props.setError}
           showDeleteButton
           wrapper={ ControlWrapper }
         />
@@ -94,6 +95,7 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
+  setError: PropTypes.func,
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
 };

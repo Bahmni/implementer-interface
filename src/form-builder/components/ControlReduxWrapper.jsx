@@ -208,6 +208,7 @@ class ControlWrapper extends Draggable {
           metadata={ this.metadata }
           onSelect={ this.onSelected }
           ref={ this.storeChildRef }
+          setError={this.props.setError}
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
         />
@@ -228,6 +229,7 @@ ControlWrapper.propTypes = {
     events: PropTypes.object,
   }),
   metadata: PropTypes.object,
+  setError: PropTypes.func,
   showDeleteButton: PropTypes.bool,
   wrapper: PropTypes.func,
 };

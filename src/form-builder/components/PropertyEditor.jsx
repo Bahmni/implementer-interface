@@ -9,13 +9,14 @@ import { ComponentStore } from 'bahmni-form-controls';
 
 export class PropertyEditor extends Component {
   getProperties(attributes) {
-    const { metadata: { properties } } = this.props;
+    const { metadata: { id, properties } } = this.props;
     const sortedAttributes = sortBy(attributes, (a) => a.elementName !== undefined);
     return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;
       const value = get(properties, name, attribute.defaultValue);
       return (
         <Property
+          id={id}
           key={index}
           name={name}
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
@@ -35,11 +36,14 @@ export class PropertyEditor extends Component {
   getAllPropertyDescriptors() {
     const { metadata: { type, concept } } = this.props;
     let { metadata: { concept: { datatype } } } = this.props;
+    const { conceptHandler } = concept;
     datatype = concept.set ? 'obsGroupControl' : datatype;
     const descriptorsByType = this.getPropertyDescriptor(type);
     const descriptorsByConceptType = this.getPropertyDescriptor(datatype);
-    const disabledDescriptors = descriptorsByConceptType.filter((d) => d.disabled);
-    const allPropertyDescriptors = descriptorsByType.concat(descriptorsByConceptType);
+    const descriptorsByHandler = conceptHandler ? this.getPropertyDescriptor(conceptHandler) : [];
+    const allPropertyDescriptors =
+      descriptorsByType.concat(descriptorsByConceptType).concat(descriptorsByHandler);
+    const disabledDescriptors = allPropertyDescriptors.filter((d) => d.disabled);
     remove(allPropertyDescriptors, (propertyDescriptor) =>
       find(disabledDescriptors, (disabledDescriptor) =>
       disabledDescriptor.name === propertyDescriptor.name));
@@ -57,6 +61,7 @@ PropertyEditor.propTypes = {
     concept: PropTypes.shape({
       datatype: PropTypes.string.isRequired,
     }).isRequired,
+    id: PropTypes.number.isReqyuired,
     properties: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired,

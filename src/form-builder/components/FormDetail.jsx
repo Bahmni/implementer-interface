@@ -84,6 +84,7 @@ export default class FormDetail extends Component {
                                       formUuid={ uuid }
                                       idGenerator={idGenerator}
                                       ref={this.canvasRef}
+                                      setError={this.props.setError}
                                       updateFormName = {this.props.updateFormName}
                                       validateNameLength = {this.props.validateNameLength}
                                     />

@@ -54,4 +54,65 @@ describe('Property', () => {
 
     sinon.assert.calledWith(spy, { controlEvent: true });
   });
+
+  it('should render text box when given property with text type', () => {
+    const type = 'text';
+
+    wrapper = shallow(<Property
+      elementType={type}
+      name="control Event"
+      onPropertyUpdate={() => {}}
+      value={'someText'}
+    />);
+
+    expect(wrapper).to.have.exactly(1).descendants('input');
+    expect(wrapper.find('input').props().type).to.eql('text');
+    expect(wrapper.find('input').props().defaultValue).to.eql('someText');
+  });
+
+  it('should call update property on change of text box', () => {
+    const spy = sinon.spy();
+    const type = 'text';
+
+    wrapper = shallow(<Property
+      elementType={type}
+      name="someProperty"
+      onPropertyUpdate={spy}
+      value={false}
+    />);
+    wrapper.find('input').props().onChange({ target: { value: 'someText' } }, type);
+    sinon.assert.calledWith(spy, { someProperty: 'someText' });
+  });
+
+  it('should render select dropdown when given property with dropdown', () => {
+    const type = 'dropdown';
+
+    wrapper = shallow(<Property
+      elementType={type}
+      name="control Event"
+      onPropertyUpdate={() => {}}
+      options={['one', 'two']}
+      value={'one'}
+    />);
+
+    expect(wrapper).to.have.exactly(1).descendants('select');
+    expect(wrapper.find('option').at(0).text()).to.eql('one');
+    expect(wrapper.find('option').at(1).text()).to.eql('two');
+    expect(wrapper.find('select').props().defaultValue).to.eql('one');
+  });
+
+  it('should call update property on change of select dropdown', () => {
+    const spy = sinon.spy();
+    const type = 'dropdown';
+
+    wrapper = shallow(<Property
+      elementType={type}
+      name="someProperty"
+      onPropertyUpdate={spy}
+      options={['one', 'two']}
+      value={'one'}
+    />);
+    wrapper.find('select').props().onChange({ target: { value: 'two' } }, type);
+    sinon.assert.calledWith(spy, { someProperty: 'two' });
+  });
 });
