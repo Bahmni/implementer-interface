@@ -10,7 +10,7 @@
 .obs-control-wrap{
   padding: 10px;
   label{
-    width:10em;
+    width:auto;
     display: inline-block;
     text-transform: capitalize;
     margin: 0.2em 0.8em 0.3em 0;
@@ -20,7 +20,7 @@
   .form-properties{
     margin:10px 0 0;
     div{
-      margin-bottom: 5px;
+      margin-bottom: 7px;
     }
   }
 }

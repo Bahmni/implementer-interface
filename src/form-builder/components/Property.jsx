@@ -20,6 +20,7 @@ export class Property extends Component {
       case 'dropdown':
         return (
           <select
+            className="fr"
             defaultValue={this.props.value}
             key={`${this.props.name}:${this.props.id}`}
             onChange={(e) => this.updateProperty(e, elementType)}
@@ -32,6 +33,7 @@ export class Property extends Component {
         </select>);
       case 'text':
         return (<input
+          className="fr"
           defaultValue={this.props.value}
           key={`${this.props.name}:${this.props.id}`}
           onChange={(e) => this.updateProperty(e, elementType)}
@@ -70,7 +72,7 @@ export class Property extends Component {
 Property.propTypes = {
   elementName: PropTypes.string,
   elementType: PropTypes.string,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.any.isRequired,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
   options: PropTypes.array,
