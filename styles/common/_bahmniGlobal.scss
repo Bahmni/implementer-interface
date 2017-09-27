@@ -139,8 +139,11 @@ input[type="checkbox"] {
   border-radius: 5px 5px 0 0;
   @include box-shadow-for-section;
   &.published {
-    pointer-events: none;
     opacity: 0.8;
+    cursor: not-allowed;
+    .container-columns {
+      pointer-events: none;
+    }
   }
 }
 
