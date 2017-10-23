@@ -21,6 +21,16 @@ describe('httpInterceptor', () => {
         });
     });
 
+    it('should not try to parse response if responseType is text', (done) => {
+      fetchMock.mock('/someUrl', 'text response');
+      httpInterceptor.get('/someUrl', 'text')
+        .then(res => {
+          expect(fetchMock.calls().matched.length).to.eql(1);
+          expect(res).to.eql('text response');
+          done();
+        });
+    });
+
     it('should throw an error when status is not 2xx', (done) => {
       fetchMock.mock('/someUrl', 404);
       httpInterceptor.get('/someUrl')

@@ -105,4 +105,14 @@ describe('control', () => {
       expect(action.events).to.eql(events);
     });
   });
+
+  describe('setDefaultLocale', () => {
+    it('should set the default locale', () => {
+      const defaultLocale = 'en';
+      const action = control.setDefaultLocale(defaultLocale);
+
+      expect(action.type).to.eql('SET_DEFAULT_LOCALE');
+      expect(action.locale).to.eql(defaultLocale);
+    });
+  });
 });

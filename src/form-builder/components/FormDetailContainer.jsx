@@ -358,6 +358,7 @@ export class FormDetailContainer extends Component {
                 <div className="container-content">
                     {this.showEditButton()}
                   <FormDetail
+                    defaultLocale={this.props.defaultLocale}
                     formData={this.state.formData}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
@@ -373,6 +374,7 @@ export class FormDetailContainer extends Component {
 }
 
 FormDetailContainer.propTypes = {
+  defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
   params: PropTypes.object.isRequired,
   routes: PropTypes.array,
@@ -382,5 +384,10 @@ FormDetailContainer.contextTypes = {
   router: React.PropTypes.object.isRequired,
 };
 
+function mapStateToProps(state) {
+  return {
+    defaultLocale: state.formDetails && state.formDetails.defaultLocale,
+  };
+}
 
-export default connect()(FormDetailContainer);
+export default connect(mapStateToProps)(FormDetailContainer);

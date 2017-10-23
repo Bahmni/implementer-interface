@@ -42,6 +42,7 @@ class Canvas extends Component {
       name: this.props.formName,
       id: this.props.formId,
       uuid: this.props.formUuid,
+      defaultLocale: this.props.defaultLocale,
       controls,
     };
   }
@@ -89,6 +90,7 @@ class Canvas extends Component {
 }
 
 Canvas.propTypes = {
+  defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
   formId: PropTypes.number,
   formName: PropTypes.string.isRequired,

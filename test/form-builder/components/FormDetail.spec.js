@@ -59,6 +59,25 @@ describe('FormDetails', () => {
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
+  it('should pass the given defaultLocale to Canvas', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          defaultLocale= "en"
+          formData={formData}
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>
+    );
+    expect(wrapper).to.have.exactly(1).descendants('Canvas');
+    expect(wrapper.find('.header-title').at(0).text()).to.eql('someFormName v1 - Draft');
+    const canvas = wrapper.find('Canvas').props();
+    expect(canvas.formUuid).to.eql('someUuid');
+    expect(canvas.defaultLocale).to.equal('en');
+  });
+
   it('should render nothing when form data is not preset', () => {
     wrapper = shallow(
       <FormDetail

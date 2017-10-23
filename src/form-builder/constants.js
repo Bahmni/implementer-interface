@@ -14,4 +14,5 @@ export const formBuilderConstants = {
   formUrl: '/openmrs/ws/rest/v1/form',
   supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime,Complex',
   supportedObsGroupDataTypes: 'N/A',
+  defaultLocaleUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=default_locale',
 };

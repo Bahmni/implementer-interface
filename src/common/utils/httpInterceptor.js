@@ -1,11 +1,11 @@
 import 'whatwg-fetch';
 
 export const httpInterceptor = {
-  get: (url) =>
+  get: (url, responseType) =>
     fetch(url, { credentials: 'same-origin', Accept: 'application/json' })
       .then((response) => {
         if (response.status >= 200 && response.status < 300) {
-          return response.json();
+          return responseType === 'text' ? response.text() : response.json();
         } else if (response.status === 401 || response.status === 403) {
           window.location.pathname = '/home';
           return null;

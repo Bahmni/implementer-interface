@@ -8,6 +8,7 @@ import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+import { getStore } from 'test/utils/storeHelper';
 
 
 chai.use(chaiEnzyme());
@@ -36,7 +37,9 @@ describe('FormDetailContainer', () => {
   const defaultProps = {
     params: { formUuid: 'FID' },
     routes: [],
+    defaultLocale: 'en',
     dispatch: () => {},
+    store: getStore(),
   };
   const context = { router: {} };
 

@@ -20,3 +20,5 @@ export const removeControlProperties = () => ({ type: 'REMOVE_CONTROL_PROPERTIES
 export const focusControl = (id) => ({ type: 'FOCUS_CONTROL', id });
 
 export const blurControl = () => ({ type: 'BLUR_CONTROL' });
+
+export const setDefaultLocale = (locale) => ({ type: 'SET_DEFAULT_LOCALE', locale });

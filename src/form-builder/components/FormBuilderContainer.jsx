@@ -9,9 +9,11 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+import { connect } from 'react-redux';
+import { setDefaultLocale } from '../actions/control';
 
 
-export default class FormBuilderContainer extends Component {
+export class FormBuilderContainer extends Component {
 
   constructor() {
     super();
@@ -20,7 +22,9 @@ export default class FormBuilderContainer extends Component {
   }
 
   componentDidMount() {
-    this.getFormData();
+    this.getFormData().then(() => {
+      this.getDefaultLocale();
+    });
   }
 
   onValidationError(messages) {
@@ -29,10 +33,23 @@ export default class FormBuilderContainer extends Component {
   }
 
   getFormData() {
-    httpInterceptor
+    return httpInterceptor
       .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
       .then((data) => {
         this.setState({ data: this.orderFormByVersion(data.results), loading: false });
+      })
+      .catch((error) => {
+        this.showErrors(error);
+        this.setState({ loading: false });
+      });
+  }
+
+  getDefaultLocale() {
+    httpInterceptor
+      .get(`${formBuilderConstants.defaultLocaleUrl}`, 'text')
+      .then((data) => {
+        this.props.dispatch(setDefaultLocale(data));
+        this.setState({ loading: false });
       })
       .catch((error) => {
         this.showErrors(error);
@@ -132,5 +149,8 @@ FormBuilderContainer.contextTypes = {
 };
 
 FormBuilderContainer.propTypes = {
+  dispatch: PropTypes.func,
   routes: PropTypes.array,
 };
+
+export default connect()(FormBuilderContainer);

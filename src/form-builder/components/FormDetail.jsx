@@ -51,7 +51,7 @@ export default class FormDetail extends Component {
   }
 
   render() {
-    const { formData } = this.props;
+    const { formData, defaultLocale } = this.props;
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
@@ -78,6 +78,7 @@ export default class FormDetail extends Component {
                             <div className="container-column-main">
                                 <div className="column-main">
                                     <Canvas
+                                      defaultLocale={defaultLocale}
                                       formId={id}
                                       formName={name}
                                       formResourceControls={formResourceControls}
@@ -100,6 +101,7 @@ export default class FormDetail extends Component {
 }
 
 FormDetail.propTypes = {
+  defaultLocale: PropTypes.string,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
