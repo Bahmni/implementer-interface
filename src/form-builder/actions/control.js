@@ -22,3 +22,7 @@ export const focusControl = (id) => ({ type: 'FOCUS_CONTROL', id });
 export const blurControl = () => ({ type: 'BLUR_CONTROL' });
 
 export const setDefaultLocale = (locale) => ({ type: 'SET_DEFAULT_LOCALE', locale });
+
+export const generateTranslations = (control) => ({ type: 'GENERATE_TRANSLATIONS', control });
+
+export const clearTranslations = () => ({ type: 'CLEAR_TRANSLATIONS' });

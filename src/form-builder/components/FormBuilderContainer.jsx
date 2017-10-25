@@ -49,6 +49,7 @@ export class FormBuilderContainer extends Component {
       .get(`${formBuilderConstants.defaultLocaleUrl}`, 'text')
       .then((data) => {
         this.props.dispatch(setDefaultLocale(data));
+        localStorage.setItem('openmrsDefaultLocale', data);
         this.setState({ loading: false });
       })
       .catch((error) => {

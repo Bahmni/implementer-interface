@@ -16,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
-import { eventsChanged } from '../actions/control';
+import { clearTranslations, eventsChanged } from '../actions/control';
 
 
 export class FormDetailContainer extends Component {
@@ -38,6 +38,7 @@ export class FormDetailContainer extends Component {
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
     props.dispatch(blurControl());
+    props.dispatch(clearTranslations());
   }
 
   componentDidMount() {
@@ -46,8 +47,11 @@ export class FormDetailContainer extends Component {
             'resources:(value,dataType,uuid))';
     httpInterceptor
             .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-            .then((data) => this.setState({ formData: data, httpReceived: true,
-              loading: false, originalFormName: data.name }))
+            .then((data) => {
+              this.setState({ formData: data, httpReceived: true,
+                loading: false, originalFormName: data.name });
+              this.getFormJson();
+            })
             .catch((error) => {
               this.setErrorMessage(error);
               this.setState({ loading: false });
@@ -98,7 +102,9 @@ export class FormDetailContainer extends Component {
   onPublish() {
     try {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      this._publishForm(formUuid);
+      const { translations, defaultLocale } = this.props;
+      const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
+      this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -137,6 +143,11 @@ export class FormDetailContainer extends Component {
               this.setState({ formList: response.results });
             })
             .catch((error) => this.showErrors(error));
+  }
+
+  _createTranslationReqObject(container, locale) {
+    const { version, name } = this.state.formData;
+    return Object.assign({}, container, { version, locale }, { formName: name });
   }
 
   closeFormModal() {
@@ -211,7 +222,7 @@ export class FormDetailContainer extends Component {
             {}, this.state.formData,
             { editable: true }
         );
-
+    this.props.dispatch(clearTranslations());
     this.setState({ formData: editableFormData });
   }
 
@@ -239,28 +250,31 @@ export class FormDetailContainer extends Component {
             });
   }
 
-  _publishForm(formUuid) {
+  _saveTranslationsAndPublishForm(formUuid, translations) {
     this.setState({ loading: true });
-    httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
-            .then((response) => {
-              const successNotification = {
-                message: commonConstants.publishSuccessMessage,
-                type: commonConstants.responseType.success,
-              };
-              const publishedFormData = Object.assign({}, this.state.formData,
-                    { published: response.published, version: response.version });
-              this.setState({ notification: successNotification,
-                formData: publishedFormData, loading: false });
+    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations).then(() => {
+      httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
+        .then((response) => {
+          const successNotification = {
+            message: commonConstants.publishSuccessMessage,
+            type: commonConstants.responseType.success,
+          };
+          const publishedFormData = Object.assign({}, this.state.formData,
+            { published: response.published, version: response.version });
+          this.setState({
+            notification: successNotification,
+            formData: publishedFormData, loading: false,
+          });
 
-              clearTimeout(this.timeoutID);
-              this.timeoutID = setTimeout(() => {
-                this.setState({ notification: {} });
-              }, commonConstants.toastTimeout);
-            })
-            .catch((error) => {
-              this.setErrorMessage(error);
-              this.setState({ loading: false });
-            });
+          clearTimeout(this.timeoutID);
+          this.timeoutID = setTimeout(() => {
+            this.setState({ notification: {} });
+          }, commonConstants.toastTimeout);
+        });
+    }).catch((error) => {
+      this.setErrorMessage(error);
+      this.setState({ loading: false });
+    });
   }
 
   _formResourceMapper(responseObject) {
@@ -336,6 +350,7 @@ export class FormDetailContainer extends Component {
   }
 
   render() {
+    const defaultLocale = this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
     return (
             <div>
               <Spinner show={this.state.loading} />
@@ -358,7 +373,7 @@ export class FormDetailContainer extends Component {
                 <div className="container-content">
                     {this.showEditButton()}
                   <FormDetail
-                    defaultLocale={this.props.defaultLocale}
+                    defaultLocale={defaultLocale}
                     formData={this.state.formData}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
@@ -378,6 +393,7 @@ FormDetailContainer.propTypes = {
   dispatch: PropTypes.func,
   params: PropTypes.object.isRequired,
   routes: PropTypes.array,
+  translations: PropTypes.object,
 };
 
 FormDetailContainer.contextTypes = {
@@ -387,6 +403,7 @@ FormDetailContainer.contextTypes = {
 function mapStateToProps(state) {
   return {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
+    translations: state.translations,
   };
 }
 

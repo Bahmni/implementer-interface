@@ -9,6 +9,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
+import { clearTranslations } from 'form-builder/actions/control';
 
 
 chai.use(chaiEnzyme());
@@ -80,6 +81,27 @@ describe('FormDetailContainer', () => {
 
     const formBuilderBreadcrumbs = wrapper.find('FormBuilderBreadcrumbs');
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
+    httpInterceptor.get.restore();
+  });
+
+  it('should get defaultLocale from local storage if its not present in props', () => {
+    window.localStorage = {
+      getItem: sinon.stub(),
+    };
+    localStorage.getItem.returns('en');
+    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
+    const wrapper = mount(
+      <FormDetailContainer
+        {...defaultProps}
+        defaultLocale={undefined}
+      />, { context }
+    );
+
+    const formDetail = wrapper.find('FormDetail');
+    expect(formDetail.prop('formData')).to.equal(undefined);
+    expect(formDetail).to.have.prop('setError');
+    expect(formDetail).to.have.prop('defaultLocale').to.equal('en');
+    sinon.assert.calledOnce(localStorage.getItem.withArgs('openmrsDefaultLocale'));
     httpInterceptor.get.restore();
   });
 
@@ -378,7 +400,9 @@ describe('FormDetailContainer', () => {
         value: '{"controls": [{}]}',
       }];
       const updatedForm = Object.assign({}, formData, { resources });
-      sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(updatedForm));
+      const postStub = sinon.stub(httpInterceptor, 'post');
+      postStub.onFirstCall().returns(Promise.resolve({}))
+        .onSecondCall(1).returns(Promise.resolve(updatedForm));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
@@ -386,20 +410,20 @@ describe('FormDetailContainer', () => {
       );
       wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
-      let publishButton;
+      let publishButton = undefined;
       wrapper.setState({ formData: updatedForm },
         () => {
           publishButton = wrapper.find('.publish-button');
         });
-
+      publishButton.simulate('click');
       setTimeout(() => {
-        publishButton.simulate('click');
-        sinon.assert.calledWith(
-          httpInterceptor.post,
-          new UrlHelper().bahmniFormPublishUrl(formData.uuid)
+        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.callOrder(
+          postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
+            { formName: 'someFormName', locale: 'en', version: '1' }),
+          postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
-
-        httpInterceptor.post.restore();
+        postStub.restore();
         done();
       }, 500);
     });
@@ -467,9 +491,11 @@ describe('FormDetailContainer', () => {
     });
 
     it('should show modal equal true when click edit button', () => {
+      const dispatch = sinon.spy();
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
+          dispatch={dispatch}
         />, { context, store: {} }
       );
       wrapper.setState({ formData: publishedFormData });
@@ -477,6 +503,10 @@ describe('FormDetailContainer', () => {
       wrapper.find('.edit-button').simulate('click');
 
       expect(wrapper.state().showModal).to.equal(true);
+
+      const instance = wrapper.instance();
+      instance.editForm();
+      sinon.assert.calledTwice(dispatch.withArgs(clearTranslations()));
     });
 
     it('should show edit modal', (done) => {

@@ -7,7 +7,7 @@ import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
 import { addSourceMap, setChangedProperty,
-  sourceChangedProperty } from 'form-builder/actions/control';
+  sourceChangedProperty, generateTranslations } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -98,6 +98,7 @@ class ControlWrapper extends Draggable {
         const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
         throw new Exception(conceptMissingMessage);
       }
+      this.props.dispatch(generateTranslations(jsonDefinition));
       return jsonDefinition;
     }
     return undefined;
