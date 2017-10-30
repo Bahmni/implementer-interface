@@ -428,6 +428,47 @@ describe('FormDetailContainer', () => {
       }, 500);
     });
 
+    it('should pick defaultLocale from local storage when its not present in' +
+        ' props during form publish', (done) => {
+      window.localStorage = {
+        getItem: sinon.stub(),
+      };
+      localStorage.getItem.returns('fr');
+
+      const resources = [{
+        dataType: formBuilderConstants.formResourceDataType,
+        value: '{"controls": [{}]}',
+      }];
+      const updatedForm = Object.assign({}, formData, { resources });
+      const postStub = sinon.stub(httpInterceptor, 'post');
+      postStub.onFirstCall().returns(Promise.resolve({}))
+        .onSecondCall(1).returns(Promise.resolve(updatedForm));
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+          defaultLocale={undefined}
+        />, { context }
+      );
+      wrapper.setState({ httpReceived: true });
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
+      let publishButton = undefined;
+      wrapper.setState({ formData: updatedForm },
+        () => {
+          publishButton = wrapper.find('.publish-button');
+        });
+      publishButton.simulate('click');
+      setTimeout(() => {
+        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.callOrder(
+          postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
+            { formName: 'someFormName', locale: 'fr', version: '1' }),
+          postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
+        );
+        postStub.restore();
+        done();
+      }, 500);
+    });
+
     it('should NOT show edit button', (done) => {
       const wrapper = mount(
         <FormDetailContainer

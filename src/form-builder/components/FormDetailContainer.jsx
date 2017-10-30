@@ -102,7 +102,9 @@ export class FormDetailContainer extends Component {
   onPublish() {
     try {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      const { translations, defaultLocale } = this.props;
+      const { translations } = this.props;
+      const defaultLocale = this.props.defaultLocale ||
+          localStorage.getItem('openmrsDefaultLocale');
       const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
     } catch (e) {
