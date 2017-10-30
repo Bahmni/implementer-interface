@@ -74,8 +74,46 @@ describe('translations', () => {
     };
 
     const action = { control, type: 'GENERATE_TRANSLATIONS' };
-    const expectedStoreState = { concepts: { POSTURE_1: 'Posture',
-      SITTING_1: 'Sitting', SUPINE_1: 'Supine' } };
+    const expectedStoreState = {
+      concepts: { POSTURE_1: 'Posture', SITTING_1: 'Sitting', SUPINE_1: 'Supine' },
+      labels: {},
+    };
+    const state = translations({}, action);
+    expect(state).to.be.eql(expectedStoreState);
+  });
+
+  it('should store boolean concept translations', () => {
+    const control = {
+      type: 'obsControl',
+      label: {
+        translationKey: 'SMOKING_HISTORY_1',
+        id: '1',
+        type: 'label',
+        value: 'Smoking History',
+      },
+      id: '1',
+      options: [
+        {
+          name: 'Yes',
+          value: true,
+          translationKey: 'BOOLEAN_YES',
+        },
+        {
+          name: 'No',
+          translationKey: 'BOOLEAN_NO',
+        },
+      ],
+      concept: {
+        name: 'Smoking History',
+        uuid: 'someUuid',
+      },
+    };
+
+    const action = { control, type: 'GENERATE_TRANSLATIONS' };
+    const expectedStoreState = {
+      concepts: { SMOKING_HISTORY_1: 'Smoking History' },
+      labels: { BOOLEAN_YES: 'Yes', BOOLEAN_NO: 'No' },
+    };
 
     const state = translations({}, action);
     expect(state).to.be.eql(expectedStoreState);

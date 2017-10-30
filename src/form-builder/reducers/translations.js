@@ -19,6 +19,14 @@ const getConceptTranslations = (conceptTranslations, data) => {
   return concepts;
 };
 
+const getBooleanValueTranslations = (labelTranslations, data) => {
+  const labels = labelTranslations || {};
+  each(data.options, (option) => {
+    labels[option.translationKey] = option.name;
+  });
+  return labels;
+};
+
 const translations = (store = {}, action) => {
   switch (action.type) {
     case 'GENERATE_TRANSLATIONS': {
@@ -28,7 +36,10 @@ const translations = (store = {}, action) => {
           { labels: getLabelTranslations(store.labels, (label || action.control)) });
       }
       return Object.assign({}, store,
-        { concepts: getConceptTranslations(store.concepts, action.control) });
+        {
+          concepts: getConceptTranslations(store.concepts, action.control),
+          labels: getBooleanValueTranslations(store.labels, action.control),
+        });
     }
 
     case 'CLEAR_TRANSLATIONS': {
