@@ -9,6 +9,7 @@ import App from 'common/App';
 import Dashboard from 'common/Dashboard';
 import FormBuilderContainer from 'form-builder/components/FormBuilderContainer.jsx';
 import FormDetailContainer from 'form-builder/components/FormDetailContainer.jsx';
+import FormTranslationsContainer from 'form-builder/components/FormTranslationsContainer.jsx';
 import 'bahmni-form-controls';
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
@@ -22,6 +23,9 @@ ReactDOM.render(
         <Route name="Form Builder" path="form-builder">
           <IndexRoute component={FormBuilderContainer} name="Form Builder" />
           <Route component={FormDetailContainer} name="Form Details" path=":formUuid" />
+          <Route component={FormTranslationsContainer} name="Form Translation"
+            path=":formUuid/translate"
+          />
         </Route>
       </Route>
     </Router>

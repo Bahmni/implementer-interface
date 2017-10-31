@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import map from 'lodash/map';
 import { dateUtils } from 'common/utils/dateUtils';
 import { Link } from 'react-router';
 import { httpInterceptor } from '../../common/utils/httpInterceptor';
@@ -16,7 +16,7 @@ export default class FormList extends Component {
   }
 
   getRows() {
-    const data = _.map(this.props.data, (rowItem, index) => (
+    return map(this.props.data, (rowItem, index) => (
       <tr key={rowItem.id}>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
@@ -29,10 +29,11 @@ export default class FormList extends Component {
           >
             <i className="fa fa-download" />
           </a>
+          <b className="translate-icon" hidden={!rowItem.published}>
+            {this._translateIcon(rowItem)}</b>
         </td>
       </tr>
     ));
-    return data;
   }
 
   setMessage(messageText, type) {
@@ -81,6 +82,16 @@ export default class FormList extends Component {
     return (
       <Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>
         <i className="fa fa-pencil"></i>
+      </Link>
+    );
+  }
+
+  _translateIcon(rowItem) {
+    return (
+      <Link
+        to={{ pathname: `form-builder/${rowItem.uuid}/translate` }}
+      >
+        Translate
       </Link>
     );
   }

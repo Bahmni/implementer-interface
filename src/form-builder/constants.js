@@ -12,9 +12,12 @@ export const formBuilderConstants = {
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
   formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
+  formTranslationUrl: '/openmrs/ws/rest/v1/bahmniie/form/translate',
   supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime,Complex',
   supportedObsGroupDataTypes: 'N/A',
   defaultLocaleUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=default_locale',
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
   translationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/translations',
+  allowedLocalesUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?' +
+  'property=locale.allowed.list',
 };
