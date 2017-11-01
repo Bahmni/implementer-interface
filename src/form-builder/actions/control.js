@@ -26,5 +26,7 @@ export const setDefaultLocale = (locale) => ({ type: 'SET_DEFAULT_LOCALE', local
 export const generateTranslations = (control) => ({ type: 'GENERATE_TRANSLATIONS', control });
 
 export const updateTranslations = (control) => ({ type: 'UPDATE_TRANSLATIONS', control });
+export const removeLocaleTranslation =
+  (locale) => ({ type: 'REMOVE_LOCALE_TRANSLATIONS', locale });
 
 export const clearTranslations = () => ({ type: 'CLEAR_TRANSLATIONS' });

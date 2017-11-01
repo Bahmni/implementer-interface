@@ -8,7 +8,8 @@ import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBread
 import { formBuilderConstants } from 'form-builder/constants';
 import FormTranslationsGrid from 'form-builder/components/FormTranslationsGrid.jsx';
 import { connect } from 'react-redux';
-import { clearTranslations, updateTranslations } from 'form-builder/actions/control';
+import { clearTranslations, removeLocaleTranslation, updateTranslations }
+  from 'form-builder/actions/control';
 import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import split from 'lodash/split';
@@ -28,6 +29,7 @@ class FormTranslationsContainer extends Component {
     };
     this.name = undefined;
     this.version = undefined;
+    this.selectedLocale = undefined;
     this._updateStore = this._updateStore.bind(this);
     this._saveTranslations = this._saveTranslations.bind(this);
     this._createTranslationReqObject = this._createTranslationReqObject.bind(this);
@@ -57,14 +59,32 @@ class FormTranslationsContainer extends Component {
   }
 
   _getTranslations(name, version, locale) {
+    this.setState({ loading: true });
     httpInterceptor
       .get(new UrlHelper().bahmniFormTranslateUrl(name, version, locale))
       .then((translations) => {
         this._createInitialValue(translations, locale);
-        this.setState({ translationData: translations, loading: false });
+        const { translationData } = this.state;
+        const data = this._getTranslationsInfo(locale, translations, translationData);
+        this.setState({ translationData: data, loading: false });
       }).catch(() => {
         this.setState({ loading: false });
       });
+  }
+
+  _getTranslationsInfo(locale, selectedTranslations) {
+    const headers = ['Translation Key', 'Default Locale'];
+    if (localStorage.getItem('openmrsDefaultLocale') !== locale) {
+      headers.push(locale);
+    }
+    const { translationData } = this.state;
+    let data = translationData.data;
+    if (data && data.length) {
+      data[1] = selectedTranslations;
+    } else {
+      data = [selectedTranslations];
+    }
+    return Object.assign({}, { headers, data });
   }
 
   _createInitialValue(translations, locale) {
@@ -75,8 +95,8 @@ class FormTranslationsContainer extends Component {
 
   _updateStore(translations, type, locale) {
     forEach(translations[type], (values, key) => {
-      this.props.dispatch(updateTranslations(Object.assign({}, { value: values[0] }, { type },
-        { translationKey: key }, { locale })));
+      this.props.dispatch(updateTranslations(Object.assign({}, { value: values[0], type,
+        translationKey: key, locale })));
     });
   }
 
@@ -84,7 +104,6 @@ class FormTranslationsContainer extends Component {
     return httpInterceptor
       .get(formBuilderConstants.allowedLocalesUrl, 'text');
   }
-
 
   _showSaveButton() {
     return (
@@ -95,10 +114,13 @@ class FormTranslationsContainer extends Component {
   }
 
   _saveTranslations() {
+    this.setState({ loading: true });
     const { translations } = this.props;
 
     httpInterceptor.post(formBuilderConstants.saveTranslationsUrl,
-      this._createTranslationReqObject(translations)).then(() => {}).catch(() => {
+      this._createTranslationReqObject(translations)).then(() => {
+        this.setState({ loading: false });
+      }).catch(() => {
         this.setState({ loading: false });
       });
   }
@@ -113,7 +135,9 @@ class FormTranslationsContainer extends Component {
   }
 
   _generateTranslation(element) {
-    this._getTranslations(this.name, this.version, element.target.value);
+    this.props.dispatch(removeLocaleTranslation(this.selectedLocale));
+    this.selectedLocale = element.target.value;
+    this._getTranslations(this.name, this.version, this.selectedLocale);
   }
 
   _createLocaleOptions(allowedLocales) {

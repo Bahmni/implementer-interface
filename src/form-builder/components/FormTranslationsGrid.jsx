@@ -13,29 +13,45 @@ class FormTranslationsGrid extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
-  onChange(value, type, translationKey) {
-    const { dispatch, translationData } = this.props;
-    dispatch(updateTranslations(Object.assign({}, value, { type },
-      { translationKey }, { locale: translationData.locale })));
+  onChange(value, type, translationKey, locale) {
+    const { dispatch } = this.props;
+    dispatch(updateTranslations(Object.assign({}, value, { type, translationKey, locale })));
   }
 
   getRows(type) {
-    const { translationData } = this.props;
-
-    return map(translationData[type], (rowItem, key) => (
-      <tr key={key}>
-        <td>{key}</td>
-        <td>{this._displayFreeTextAutoComplete(rowItem, type, key)}</td>
-      </tr>
-    ));
+    const { data } = this.props.translationData;
+    if (!data) {
+      return [];
+    }
+    const defaultTranslation = data[0];
+    return map(defaultTranslation[type], (value, key) => this._createRow(data, key, type));
   }
 
-  _displayFreeTextAutoComplete(options, type, key) {
+  _createRow(translations, key, type) {
+    return (
+      <tr key={key}>
+        <td>{key}</td>
+        {
+          map(translations, (translation) =>
+            <td >{this._displayFreeTextAutoComplete(
+              translation[type][key], type, key, translation.locale)}</td>
+          )
+        }
+      </tr>
+    );
+  }
+
+  _displayFreeTextAutoComplete(options, type, key, locale) {
     const updateOptions = map(options, (option) => ({ label: option, value: option }));
-    return (<FreeTextAutoComplete onChange={this.onChange} options={updateOptions}
+    return (<FreeTextAutoComplete locale={locale} onChange={this.onChange} options={updateOptions}
       translationKey={key} type={type} value={updateOptions[0].value}
     />);
   }
+
+  _getHeaders(headers) {
+    return map(headers, (header) => <th key={header}>{header}</th>);
+  }
+
 
   render() {
     return (
@@ -43,8 +59,7 @@ class FormTranslationsGrid extends Component {
           <table>
             <thead>
             <tr>
-              <th>Translations Key</th>
-              <th>Default Value</th>
+              {this._getHeaders(this.props.translationData.headers)}
             </tr>
             </thead>
             <tbody>{this.getRows('concepts')}</tbody>

@@ -78,9 +78,15 @@ describe('FormList', () => {
     expect(wrapper.find('table').find('.fa-pencil')).to.have.exactly(1).descendants('i');
     expect(wrapper.find('table').find('.fa-file-text-o')).to.have.exactly(3).descendants('i');
 
+    expect(getItem(0, 4).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(1, 4).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(2, 4).find('.translate-icon').prop('hidden')).to.eql(false);
     expect(getLinkAt(0).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1' });
-    expect(getLinkAt(1).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2' });
-    expect(getLinkAt(2).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-3' });
+    expect(getLinkAt(1).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1/translate' });
+    expect(getLinkAt(2).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2' });
+    expect(getLinkAt(3).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2/translate' });
+    expect(getLinkAt(4).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-3' });
+    expect(getLinkAt(5).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-3/translate' });
   });
 
   it('should not display table if there is no data', () => {
