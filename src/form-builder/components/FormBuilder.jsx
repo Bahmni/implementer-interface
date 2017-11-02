@@ -72,60 +72,66 @@ export default class FormBuilder extends Component {
   validateFile(file) {
     const self = this;
     const reader = new FileReader();
-    let formJson = null;
+    let formData = null;
 
     // eslint-disable-next-line
     reader.onload = function () {
-      formJson = JSON.parse(reader.result);
-      const formName = formJson.name;
-      const value = JSON.parse(formJson.resources[0].value);
-      const form = {
-        name: formName,
-        version: '1',
-        published: false,
-      };
+      try {
+        formData = JSON.parse(reader.result);
+        const { formJson, translations } = formData;
+        const formName = formJson.name;
+        const value = JSON.parse(formJson.resources[0].value);
+        const form = {
+          name: formName,
+          version: '1',
+          published: false,
+        };
 
-      if (formHelper.validateFormName(formName)) {
-        self.fixuuid(value).catch(() => {
-          self.props.onValidationError(self.validationErrors);
-          return false;
-        }).then((validationPassed) => {
-          if (!validationPassed) return;
+        if (formHelper.validateFormName(formName)) {
+          self.fixuuid(value).catch(() => {
+            const message = `Concept validation error: \n${self.validationErrors.join('\n')}`;
+            self.props.onValidationError(message);
+            return false;
+          }).then((validationPassed) => {
+            if (!validationPassed) return;
 
-          httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
-            value.uuid = response.uuid;
-            const formResource = {
-              form: {
-                name: formName,
-                uuid: response.uuid,
-              },
-              value: JSON.stringify(value),
-              uuid: '',
-            };
-            self.props.saveFormResource(formResource);
-          })
-            .catch(() => {
-              const formUuid = self.getFormUuid(formName);
-              value.uuid = formUuid;
-              const params =
-                'v=custom:(id,uuid,name,version,published,auditInfo,' +
-                'resources:(value,dataType,uuid))';
-              httpInterceptor
-                .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
-                .then((data) => {
-                  const formResource = {
-                    form: {
-                      name: formName,
-                      uuid: formUuid,
-                    },
-                    value: JSON.stringify(value),
-                    uuid: data.resources[0].uuid,
-                  };
+            httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
+              value.uuid = response.uuid;
+              const formResource = {
+                form: {
+                  name: formName,
+                  uuid: response.uuid,
+                },
+                value: JSON.stringify(value),
+                uuid: '',
+              };
+              self.props.saveFormResource(formResource, translations);
+            })
+              .catch(() => {
+                const formUuid = self.getFormUuid(formName);
+                value.uuid = formUuid;
+                const params =
+                  'v=custom:(id,uuid,name,version,published,auditInfo,' +
+                  'resources:(value,dataType,uuid))';
+                httpInterceptor
+                  .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+                  .then((data) => {
+                    const formResource = {
+                      form: {
+                        name: formName,
+                        uuid: formUuid,
+                      },
+                      value: JSON.stringify(value),
+                      uuid: data.resources[0].uuid,
+                    };
 
-                  self.props.saveFormResource(formResource);
-                });
-            });
-        });
+                    self.props.saveFormResource(formResource, translations);
+                  });
+              });
+          });
+        }
+      } catch (error) {
+        self.props.onValidationError('Error Importing.. Please import a valid form');
       }
     };
 

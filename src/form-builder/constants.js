@@ -16,4 +16,5 @@ export const formBuilderConstants = {
   supportedObsGroupDataTypes: 'N/A',
   defaultLocaleUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=default_locale',
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
+  translationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/translations',
 };

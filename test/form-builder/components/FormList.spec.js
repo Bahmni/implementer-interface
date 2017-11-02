@@ -4,6 +4,8 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormList from 'form-builder/components/FormList.jsx';
 import sinon from 'sinon';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from '../../../src/form-builder/constants';
 
 chai.use(chaiEnzyme());
 
@@ -96,14 +98,29 @@ describe('FormList', () => {
     expect(getItem(1, 4).find('a').find('i').prop('className')).to.eql('fa fa-download');
   });
 
-  it('should call downloadFile when export be clicked', () => {
+  it('should call downloadFile when export be clicked', (done) => {
+    const getStub = sinon.stub(httpInterceptor, 'get');
+    getStub.onFirstCall().returns(Promise.resolve({ name: 'Vitals', version: '1' }))
+      .onSecondCall(1).returns(Promise.resolve([]));
+
     wrapper = shallow(<FormList data={data} />);
-    const spy = sinon.spy(wrapper.instance(), 'downloadFile');
-
-    const exportElement = getItem(1, 4).find('a');
+    const exportElement = getItem(0, 4).find('a');
     exportElement.simulate('click');
-
-    sinon.assert.calledOnce(spy);
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
+    const formUrl = `${formBuilderConstants.formUrl}/someUuid-1?${params}`;
+    const translationParams = 'formName=Vitals&formVersion=1.1';
+    const translationUrl = `${formBuilderConstants.translationsUrl}?${translationParams}`;
+    setTimeout(() => {
+      sinon.assert.calledTwice(httpInterceptor.get);
+      sinon.assert.callOrder(
+        getStub.withArgs(formUrl),
+        getStub.withArgs(translationUrl)
+      );
+      getStub.restore();
+      done();
+    }, 500);
   });
 
   it('should render notification container', () => {
