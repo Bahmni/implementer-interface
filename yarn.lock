@@ -783,14 +783,15 @@ backo2@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
 
-bahmni-form-controls@^0.90.x:
-  version "0.90.7"
-  resolved "https://registry.yarnpkg.com/bahmni-form-controls/-/bahmni-form-controls-0.90.7.tgz#5e4443a61792d283a53298e6b00636c23896fa71"
+bahmni-form-controls@^0.90.19:
+  version "0.90.19"
+  resolved "https://registry.yarnpkg.com/bahmni-form-controls/-/bahmni-form-controls-0.90.19.tgz#7baae5d42c10151c925586ea80500fae37ddea50"
   dependencies:
     base64-inline-loader "^1.1.0"
     classnames "^2.2.5"
     immutable "3.8.1"
     lodash "^4.17.4"
+    react-intl "2.2.3"
     react-select "^1.0.0-rc.2"
     react-textarea-autosize "^4.0.5"
     sinon-as-promised "^4.0.3"
@@ -3219,7 +3220,27 @@ interpret@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.0.1.tgz#d579fb7f693b858004947af39fa0db49f795602c"
 
-invariant@^2.0.0, invariant@^2.2.0, invariant@^2.2.1:
+intl-format-cache@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-2.0.5.tgz#b484cefcb9353f374f25de389a3ceea1af18d7c9"
+
+intl-messageformat-parser@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-1.2.0.tgz#5906b7f953ab7470e0dc8549097b648b991892ff"
+
+intl-messageformat@1.3.0, intl-messageformat@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-1.3.0.tgz#f7d926aded7a3ab19b2dc601efd54e99a4bd4eae"
+  dependencies:
+    intl-messageformat-parser "1.2.0"
+
+intl-relativeformat@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/intl-relativeformat/-/intl-relativeformat-1.3.0.tgz#893dc7076fccd380cf091a2300c380fa57ace45b"
+  dependencies:
+    intl-messageformat "1.3.0"
+
+invariant@^2.0.0, invariant@^2.1.1, invariant@^2.2.0, invariant@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
   dependencies:
@@ -5502,6 +5523,15 @@ react-hot-loader@^1.3.0:
 react-input-autosize@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-1.1.0.tgz#3fe1ac832387d8abab85f6051ceab1c9e5570853"
+
+react-intl@2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.2.3.tgz#8eebb03cddc38b337ed22fab78037ab53a594270"
+  dependencies:
+    intl-format-cache "^2.0.5"
+    intl-messageformat "^1.3.0"
+    intl-relativeformat "^1.3.0"
+    invariant "^2.1.1"
 
 react-redux@^4.4.5:
   version "4.4.6"

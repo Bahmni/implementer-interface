@@ -6,9 +6,9 @@ import { commonConstants } from 'common/constants';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import get from 'lodash/get';
+import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { connect } from 'react-redux';
 import { setDefaultLocale } from '../actions/control';
 
@@ -27,8 +27,8 @@ export class FormBuilderContainer extends Component {
     });
   }
 
-  onValidationError(messages) {
-    this.setMessage(`Concept validation error: \n${messages.join('\n')}`,
+  onValidationError(message) {
+    this.setMessage(message,
       commonConstants.responseType.error);
   }
 
@@ -101,28 +101,34 @@ export class FormBuilderContainer extends Component {
     }
   }
 
-  publishForm(formUuid) {
+  saveTranslations(translations) {
     const self = this;
-    httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
+    self.setMessage('Importing Translations...', commonConstants.responseType.success);
+    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations || [])
       .then(() => {
         self.getFormData();
-        self.setMessage('Imported and Published Successfully',
+        self.setMessage('Imported Successfully',
           commonConstants.responseType.success);
       })
       .catch(() => {
-        this.setMessage('Error', commonConstants.responseType.error);
+        this.setMessage('Error Importing Translations', commonConstants.responseType.error);
       });
   }
 
-  saveFormResource(formJson) {
+  saveFormResource(formJson, formTranslations) {
     const self = this;
+    self.setMessage('Importing Form...', commonConstants.responseType.success);
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-      .then((response) => {
-        self.setMessage('Importing...', commonConstants.responseType.success);
-        self.publishForm(response.form.uuid);
+      .then((form) => {
+        const updatedTranslations = map(formTranslations, (translation) => {
+          const formTranslation = translation;
+          formTranslation.version = form.form.version || translation.version;
+          return formTranslation;
+        });
+        self.saveTranslations(updatedTranslations);
       })
       .catch(() => {
-        this.setMessage('Error', commonConstants.responseType.error);
+        this.setMessage('Error Importing Form', commonConstants.responseType.error);
       });
   }
 
@@ -138,7 +144,8 @@ export class FormBuilderContainer extends Component {
           onValidationError={(messages) => this.onValidationError(messages)}
           routes={this.props.routes}
           saveForm={(formName) => this.saveForm(formName)}
-          saveFormResource={(formJson) => this.saveFormResource(formJson)}
+          saveFormResource={(formJson, translations) =>
+            this.saveFormResource(formJson, translations)}
         />
       </div>
     );
