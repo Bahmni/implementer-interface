@@ -8,11 +8,14 @@ import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBread
 import { formBuilderConstants } from 'form-builder/constants';
 import FormTranslationsGrid from 'form-builder/components/FormTranslationsGrid.jsx';
 import { connect } from 'react-redux';
-import { clearTranslations, removeLocaleTranslation, updateTranslations }
+import {
+  clearTranslations, removeLocaleTranslation, updateTranslations,
+}
   from 'form-builder/actions/control';
 import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
+import { commonConstants } from 'common/constants';
 
 
 class FormTranslationsContainer extends Component {
@@ -47,19 +50,29 @@ class FormTranslationsContainer extends Component {
       });
       this.setState({ allowedLocales });
       httpInterceptor
-          .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
-          .then((data) => {
-            const { name, version } = data;
-            this.name = name;
-            this.version = version;
-            const locale = localStorage.getItem('openmrsDefaultLocale');
-            this._getTranslations(name, version, locale);
-          }).catch(() => {
-            this.setState({ loading: false });
-          });
+        .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
+        .then((data) => {
+          const { name, version } = data;
+          this.name = name;
+          this.version = version;
+          const locale = localStorage.getItem('openmrsDefaultLocale');
+          this._getTranslations(name, version, locale);
+        }).catch(() => {
+          this.setErrorMessage('Failed to fetch form information');
+          this.setState({ loading: false });
+        });
     }).catch(() => {
+      this.setErrorMessage('Failed to fetch locales information');
       this.setState({ loading: false });
     });
+  }
+
+  setErrorMessage(message) {
+    const errorNotification = { message, type: commonConstants.responseType.error };
+    this.setState({ notification: errorNotification });
+    setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
 
   _getTranslations(name, version, locale) {
@@ -72,6 +85,9 @@ class FormTranslationsContainer extends Component {
         const data = this._getTranslationsInfo(locale, translations, allowedLocales);
         this.setState({ translationData: data, loading: false });
       }).catch(() => {
+        const { allowedLocales } = this.state;
+        this.setErrorMessage('Failed to fetch translation for [' +
+        `${allowedLocales[locale] || locale}] locale`);
         this.setState({ loading: false });
       });
   }
@@ -112,8 +128,10 @@ class FormTranslationsContainer extends Component {
 
   _updateStore(translations, type, locale) {
     forEach(translations[type], (values, key) => {
-      this.props.dispatch(updateTranslations(Object.assign({}, { value: values[0], type,
-        translationKey: key, locale })));
+      this.props.dispatch(updateTranslations(Object.assign({}, {
+        value: values[0], type,
+        translationKey: key, locale,
+      })));
     });
   }
 
@@ -138,6 +156,7 @@ class FormTranslationsContainer extends Component {
       this._createTranslationReqObject(translations)).then(() => {
         this.setState({ loading: false });
       }).catch(() => {
+        this.setErrorMessage('Failed to save translations');
         this.setState({ loading: false });
       });
   }
@@ -177,26 +196,27 @@ class FormTranslationsContainer extends Component {
   render() {
     const { translationData } = this.state;
     return (<div>
-            <Spinner show={this.state.loading} />
-            <NotificationContainer
-              notification={this.state.notification}
-            />
-            <FormBuilderHeader />
-            <div className="breadcrumb-wrap">
-                <div className="breadcrumb-inner">
-                    <div className="fl">
-                        <FormBuilderBreadcrumbs routes={this.props.routes} />
-                    </div>
-                  <div className="fr">
-                    {this._showSaveButton()}
-                  </div>
-                  <div>{this._createLocaleOptions(this.state.allowedLocales)}</div>
-                </div>
-            </div>
-          <div className="container-content-wrap">
-            <FormTranslationsGrid translationData={translationData} />
+      <Spinner show={this.state.loading} />
+      <NotificationContainer
+        notification={this.state.notification}
+      />
+      <FormBuilderHeader />
+      <div className="breadcrumb-wrap">
+        <div className="breadcrumb-inner">
+          <div className="fl">
+            <FormBuilderBreadcrumbs routes={this.props.routes} />
           </div>
-        </div>);
+          <div className="fr">
+            {this._showSaveButton()}
+          </div>
+          <div id="locale-options">
+            {this._createLocaleOptions(this.state.allowedLocales)}</div>
+        </div>
+      </div>
+      <div className="container-content-wrap">
+        <FormTranslationsGrid translationData={translationData} />
+      </div>
+    </div>);
   }
 }
 
@@ -205,10 +225,6 @@ FormTranslationsContainer.propTypes = {
   params: PropTypes.object.isRequired,
   routes: PropTypes.array,
   translations: PropTypes.object,
-};
-
-FormTranslationsContainer.contextTypes = {
-  router: React.PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

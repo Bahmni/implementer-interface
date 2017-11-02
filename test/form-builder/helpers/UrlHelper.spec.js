@@ -16,4 +16,11 @@ describe('UrlHelper', () => {
         's=byFullySpecifiedName&locale=en&name=someConcept&v=bahmni';
     expect(conceptRepresentation).to.eql(expectedUrl);
   });
+
+  it('should return full form translate url', () => {
+    const conceptRepresentation = urlHelper.bahmniFormTranslateUrl('name', 'version', 'locale');
+    const expectedUrl = '/openmrs/ws/rest/v1/bahmniie/form/translate?' +
+        'formName=name&formVersion=version&locale=locale';
+    expect(conceptRepresentation).to.eql(expectedUrl);
+  });
 });

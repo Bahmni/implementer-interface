@@ -118,4 +118,144 @@ describe('translations', () => {
     const state = translations({}, action);
     expect(state).to.be.eql(expectedStoreState);
   });
+
+  describe('Update Translations', () => {
+    it('should update the translations', () => {
+      const action = {
+        type: 'UPDATE_TRANSLATIONS', control: {
+          value: 'severe undernutrition',
+          type: 'concepts', translationKey: 'SEVERE_UNDERNUTRITION_13', locale: 'en',
+        },
+      };
+      const expectedStoreState = {
+        en: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+          },
+        },
+      };
+
+      const state = translations({}, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+
+    it('should update the translations for different locale', () => {
+      const action = {
+        type: 'UPDATE_TRANSLATIONS', control: {
+          value: 'severe undernutrition fr',
+          type: 'concepts', translationKey: 'SEVERE_UNDERNUTRITION_13', locale: 'fr',
+        },
+      };
+      const store = {
+        en: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+          },
+        },
+      };
+      const expectedStoreState = Object.assign({}, store, {
+        fr: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13:
+              'severe undernutrition fr',
+          },
+        },
+      });
+
+      const state = translations(store, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+
+    it('should update concept translations for a locale, which is already present in store', () => {
+      const action = {
+        type: 'UPDATE_TRANSLATIONS', control: {
+          value: 'headache fr',
+          type: 'concepts', translationKey: 'HEADACHE_23', locale: 'fr',
+        },
+      };
+      const store = {
+        en: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+          },
+        },
+        fr: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition fr',
+          },
+        },
+      };
+      const expectedStoreState = Object.assign({}, store, {
+        fr: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition fr',
+            HEADACHE_23: 'headache fr',
+          },
+        },
+      });
+
+      const state = translations(store, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+
+    it('should update label translations for a locale, which is already present in store', () => {
+      const action = {
+        type: 'UPDATE_TRANSLATIONS', control: {
+          value: 'headache fr',
+          type: 'labels', translationKey: 'HEADACHE_23', locale: 'fr',
+        },
+      };
+      const store = {
+        en: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+          },
+        },
+        fr: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition fr',
+          },
+        },
+      };
+      const expectedStoreState = Object.assign({}, store, {
+        fr: {
+          concepts: {
+            SEVERE_UNDERNUTRITION_13: 'severe undernutrition fr',
+          },
+          labels: {
+            HEADACHE_23: 'headache fr',
+          },
+        },
+      });
+
+      const state = translations(store, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+  });
+
+  it('should remove translations from store for given locale', () => {
+    const action = { locale: 'fr', type: 'REMOVE_LOCALE_TRANSLATIONS' };
+    const expectedStoreState = {
+      en: {
+        concepts: {
+          SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+        },
+      },
+    };
+    const store = {
+      en: {
+        concepts: {
+          SEVERE_UNDERNUTRITION_13: 'severe undernutrition',
+        },
+      },
+      fr: {
+        concepts: {
+          SEVERE_UNDERNUTRITION_13: 'severe undernutrition fr',
+        },
+      },
+    };
+
+    const state = translations(store, action);
+    expect(state).to.be.eql(expectedStoreState);
+  });
 });
