@@ -33,7 +33,7 @@ class FormTranslationsGrid extends Component {
         <td>{key}</td>
         {
           map(translations, (translation) =>
-            <td >{this._displayFreeTextAutoComplete(
+            <td key={`${key}_${translation.locale}`}>{this._displayFreeTextAutoComplete(
               translation[type][key], type, key, translation.locale)}</td>
           )
         }
