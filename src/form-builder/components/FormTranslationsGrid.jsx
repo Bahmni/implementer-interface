@@ -55,8 +55,8 @@ class FormTranslationsGrid extends Component {
 
   render() {
     return (
-        <div>
-          <table>
+        <div className="translations-table-container">
+          <table className="translations-table">
             <thead>
             <tr>
               {this._getHeaders(this.props.translationData.headers)}

@@ -180,8 +180,9 @@ class FormTranslationsContainer extends Component {
     const defaultLocale = localStorage.getItem('openmrsDefaultLocale');
     const locales = omit(allowedLocales, defaultLocale);
     return (
+        <div className="locale-selector">
+      <label>Locales</label>
       <select
-        className="fr"
         onChange={this._generateTranslation}
       >
         <option key={defaultLocale} value={defaultLocale}>{allowedLocales[defaultLocale]}</option>
@@ -190,7 +191,8 @@ class FormTranslationsContainer extends Component {
             <option key={code} value={code}>{nativeName}</option>
           )
         }
-      </select>);
+      </select>
+            </div>);
   }
 
   render() {
