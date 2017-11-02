@@ -40,8 +40,13 @@ class FormTranslationsContainer extends Component {
 
   componentDidMount() {
     const params = 'v=custom:(id,uuid,name,version)';
-    this._getAllowedLocales().then((locales) => {
-      this.setState({ allowedLocales: map(split(locales, ','), trim) });
+    this._getAllowedLocales().then((localeInfo) => {
+      const { locales } = localeInfo;
+      const allowedLocales = {};
+      forEach(locales, (locale) => {
+        allowedLocales[locale.code] = locale.nativeName;
+      });
+      this.setState({ allowedLocales });
       httpInterceptor
           .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
           .then((data) => {
@@ -64,27 +69,40 @@ class FormTranslationsContainer extends Component {
       .get(new UrlHelper().bahmniFormTranslateUrl(name, version, locale))
       .then((translations) => {
         this._createInitialValue(translations, locale);
-        const { translationData } = this.state;
-        const data = this._getTranslationsInfo(locale, translations, translationData);
+        const { allowedLocales } = this.state;
+        const data = this._getTranslationsInfo(locale, translations, allowedLocales);
         this.setState({ translationData: data, loading: false });
       }).catch(() => {
         this.setState({ loading: false });
       });
   }
 
-  _getTranslationsInfo(locale, selectedTranslations) {
-    const headers = ['Translation Key', 'Default Locale'];
-    if (localStorage.getItem('openmrsDefaultLocale') !== locale) {
-      headers.push(locale);
-    }
+  _getTranslationsInfo(locale, selectedTranslations, allowedLocales) {
+    const defaultLocale = localStorage.getItem('openmrsDefaultLocale');
+    const headers = this._getHeaders(allowedLocales, locale, defaultLocale);
     const { translationData } = this.state;
-    let data = translationData.data;
-    if (data && data.length) {
-      data[1] = selectedTranslations;
-    } else {
-      data = [selectedTranslations];
-    }
+    const data = this._getTranslationsData(translationData.data,
+      locale, defaultLocale, selectedTranslations);
     return Object.assign({}, { headers, data });
+  }
+
+  _getTranslationsData(translationData, locale, defaultLocale, selectedTranslations) {
+    let defaultTranslation = translationData && translationData.length ?
+      translationData[0] : null;
+    defaultTranslation = (defaultTranslation && defaultLocale !== locale) ?
+      defaultTranslation : null;
+
+    return defaultTranslation ? [defaultTranslation, selectedTranslations] : [selectedTranslations];
+  }
+
+  _getHeaders(allowedLocales, locale, defaultLocale) {
+    const headers = ['Translation Key'];
+    headers.push(`Default Locale (${allowedLocales[defaultLocale]})`);
+
+    if (defaultLocale !== locale) {
+      headers.push(allowedLocales[locale]);
+    }
+    return headers;
   }
 
   _createInitialValue(translations, locale) {
@@ -102,7 +120,7 @@ class FormTranslationsContainer extends Component {
 
   _getAllowedLocales() {
     return httpInterceptor
-      .get(formBuilderConstants.allowedLocalesUrl, 'text');
+      .get(formBuilderConstants.allowedLocalesUrl);
   }
 
   _showSaveButton() {
@@ -147,8 +165,8 @@ class FormTranslationsContainer extends Component {
         onChange={this._generateTranslation}
       >
         {
-          map(allowedLocales, (locale, index) =>
-            <option key={index} value={locale}>{locale}</option>
+          map(allowedLocales, (nativeName, code) =>
+            <option key={code} value={code}>{nativeName}</option>
           )
         }
       </select>);
