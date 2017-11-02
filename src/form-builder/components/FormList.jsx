@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import map from 'lodash/map';
+import each from 'lodash/each';
+import find from 'lodash/find';
+import filter from 'lodash/filter';
 import { dateUtils } from 'common/utils/dateUtils';
 import { Link } from 'react-router';
 import { httpInterceptor } from '../../common/utils/httpInterceptor';
@@ -16,7 +19,8 @@ export default class FormList extends Component {
   }
 
   getRows() {
-    return map(this.props.data, (rowItem, index) => (
+    const data = this._getUpdatedFormList(this.props.data);
+    return map(data, (rowItem, index) => (
       <tr key={rowItem.id}>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
@@ -27,9 +31,9 @@ export default class FormList extends Component {
           <a hidden={!rowItem.published}
             onClick={() => this.downloadFile(index)}
           >
-            <i className="fa fa-download" />
+            <i className="fa fa-download" title="Export Form" />
           </a>
-          <b className="translate-icon" hidden={!rowItem.published}>
+          <b className="translate-icon" hidden={!rowItem.isLatestPublished}>
             {this._translateIcon(rowItem)}</b>
         </td>
       </tr>
@@ -75,23 +79,21 @@ export default class FormList extends Component {
     if (rowItem.published) {
       return (
         <Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>
-          <i className="fa fa-eye"></i>
+          <i className="fa fa-eye" title="View Form"></i>
         </Link>
       );
     }
     return (
       <Link to={{ pathname: `form-builder/${rowItem.uuid}` }}>
-        <i className="fa fa-pencil"></i>
+        <i className="fa fa-pencil" title="Edit Form"></i>
       </Link>
     );
   }
 
   _translateIcon(rowItem) {
     return (
-      <Link
-        to={{ pathname: `form-builder/${rowItem.uuid}/translate` }}
-      >
-        Translate
+      <Link to={{ pathname: `form-builder/${rowItem.uuid}/translate` }} >
+        <i className="fa fa-language" title="Translate Form" />
       </Link>
     );
   }
@@ -101,6 +103,28 @@ export default class FormList extends Component {
       return 'Published';
     }
     return 'Draft';
+  }
+
+  _getUpdatedFormList(data) {
+    const formsMap = {};
+    const publishedForms = filter(data, 'published');
+    each(publishedForms, (form) => {
+      if (formsMap[form.name]) {
+        if (form.version > formsMap[form.name].version) {
+          formsMap[form.name] = form;
+        }
+      } else {
+        formsMap[form.name] = form;
+      }
+    });
+
+    const latestPublishedForms = Object.keys(formsMap).map((key) => formsMap[key]);
+    return map(data, (form) => {
+      const latestForm = form;
+      const k = find(latestPublishedForms, (lp) => lp.uuid === latestForm.uuid);
+      latestForm.isLatestPublished = (k !== undefined);
+      return latestForm;
+    });
   }
 
   render() {
