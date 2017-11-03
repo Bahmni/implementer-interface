@@ -58,22 +58,21 @@ class FormTranslationsContainer extends Component {
           const locale = localStorage.getItem('openmrsDefaultLocale');
           this._getTranslations(name, version, locale);
         }).catch(() => {
-          this.setErrorMessage('Failed to fetch form information');
-          this.setState({ loading: false });
+          this.setMessage('Failed to fetch form information', commonConstants.responseType.error);
         });
     }).catch(() => {
-      this.setErrorMessage('Failed to fetch locales information');
-      this.setState({ loading: false });
+      this.setMessage('Failed to fetch locales information', commonConstants.responseType.error);
     });
   }
 
-  setErrorMessage(message) {
-    const errorNotification = { message, type: commonConstants.responseType.error };
-    this.setState({ notification: errorNotification });
+  setMessage(message, type) {
+    const errorNotification = { message, type };
+    this.setState({ notification: errorNotification, loading: false });
     setTimeout(() => {
       this.setState({ notification: {} });
     }, commonConstants.toastTimeout);
   }
+
 
   _getTranslations(name, version, locale) {
     this.setState({ loading: true });
@@ -86,9 +85,8 @@ class FormTranslationsContainer extends Component {
         this.setState({ translationData: data, loading: false });
       }).catch(() => {
         const { allowedLocales } = this.state;
-        this.setErrorMessage('Failed to fetch translation for [' +
-        `${allowedLocales[locale] || locale}] locale`);
-        this.setState({ loading: false });
+        this.setMessage('Failed to fetch translation for [' +
+        `${allowedLocales[locale] || locale}] locale`, commonConstants.responseType.error);
       });
   }
 
@@ -143,7 +141,8 @@ class FormTranslationsContainer extends Component {
   _showSaveButton() {
     return (
       <button
-        className="fr save-button btn--highlight" onClick={this._saveTranslations}
+        className="fr save-button btn--highlight" id="save-translations-button"
+        onClick={this._saveTranslations}
       >Save</button>
     );
   }
@@ -154,6 +153,8 @@ class FormTranslationsContainer extends Component {
 
     httpInterceptor.post(formBuilderConstants.saveTranslationsUrl,
       this._createTranslationReqObject(translations)).then(() => {
+        const message = 'Form translations saved successfully';
+        this.setMessage(message, commonConstants.responseType.success);
         this.setState({ loading: false });
       }).catch(() => {
         this.setErrorMessage('Failed to save translations');
@@ -180,19 +181,19 @@ class FormTranslationsContainer extends Component {
     const defaultLocale = localStorage.getItem('openmrsDefaultLocale');
     const locales = omit(allowedLocales, defaultLocale);
     return (
-        <div className="locale-selector">
-      <label>Locales</label>
-      <select
-        onChange={this._generateTranslation}
-      >
-        <option key={defaultLocale} value={defaultLocale}>{allowedLocales[defaultLocale]}</option>
-        {
-          map(locales, (nativeName, code) =>
-            <option key={code} value={code}>{nativeName}</option>
-          )
-        }
-      </select>
-            </div>);
+      <div className="locale-selector">
+        <label>Locale</label>
+        <select
+          onChange={this._generateTranslation}
+        >
+          <option key={defaultLocale} value={defaultLocale}>{allowedLocales[defaultLocale]}</option>
+          {
+            map(locales, (nativeName, code) =>
+              <option key={code} value={code}>{nativeName}</option>
+            )
+          }
+        </select>
+      </div>);
   }
 
   render() {

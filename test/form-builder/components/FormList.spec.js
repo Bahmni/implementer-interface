@@ -147,5 +147,26 @@ describe('FormList', () => {
       done();
     }, 500);
   });
+
+  it('should show translate button only for latest Published forms', () => {
+    const form = {
+      id: 4,
+      name: 'Pulse',
+      version: 1.2,
+      auditInfo: {
+        dateCreated: '2017-08-10T15:21:17.000+0530',
+      },
+      published: true,
+      uuid: 'someUuid-4',
+    };
+    const forms = data.concat([form]);
+
+    wrapper = shallow(<FormList data={forms} />);
+
+    expect(getItem(0, 4).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(1, 4).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(2, 4).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(3, 4).find('.translate-icon').prop('hidden')).to.eql(false);
+  });
 });
 

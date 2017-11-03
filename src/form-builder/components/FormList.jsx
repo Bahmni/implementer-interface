@@ -121,8 +121,8 @@ export default class FormList extends Component {
     const latestPublishedForms = Object.keys(formsMap).map((key) => formsMap[key]);
     return map(data, (form) => {
       const latestForm = form;
-      const k = find(latestPublishedForms, (lp) => lp.uuid === latestForm.uuid);
-      latestForm.isLatestPublished = (k !== undefined);
+      const recentForm = find(latestPublishedForms, (lp) => lp.uuid === latestForm.uuid);
+      latestForm.isLatestPublished = (recentForm !== undefined);
       return latestForm;
     });
   }
