@@ -4,6 +4,9 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { getStore } from 'test/utils/storeHelper';
 import { Provider } from 'react-redux';
+import { updateTranslations } from 'form-builder/actions/control';
+import sinon from 'sinon';
+
 
 import FormTranslationsGrid from 'form-builder/components/FormTranslationsGrid.jsx';
 
@@ -89,6 +92,26 @@ describe('FormTranslationsGrid', () => {
     expect(getData(2, 0)).to.have.string('SECTION_12');
     expect(getData(2, 1)).to.have.string('SECTION es');
     expect(getData(2, 2)).to.have.string('SECTION_12');
+  });
+
+  it('should update store on value change', () => {
+    const store = getStore();
+    wrapper = mount(
+      <Provider store={store}>
+        <FormTranslationsGrid translationData={data} />
+      </Provider>);
+
+    const freeTextAutocomplete = wrapper.find('table').find('tbody').find('tr')
+      .at(0).find('td').at(1).find('FreeTextAutoComplete');
+    const onChange = freeTextAutocomplete.props().onChange;
+    expect(onChange).to.be.instanceOf(Function);
+    onChange({ value: 'something' }, 'concepts', 'SEVERE_UNDERNUTRITION_13', 'en');
+    sinon.assert.calledOnce(store.dispatch.withArgs(updateTranslations(
+      {
+        value: 'something', type: 'concepts',
+        translationKey: 'SEVERE_UNDERNUTRITION_13', locale: 'en',
+      }
+    )));
   });
 });
 
