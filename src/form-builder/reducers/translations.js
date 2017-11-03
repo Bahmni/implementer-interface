@@ -1,4 +1,5 @@
 import each from 'lodash/each';
+import omit from 'lodash/omit';
 
 const getLabelTranslations = (labelTranslations, data) => {
   const labels = labelTranslations || {};
@@ -27,6 +28,17 @@ const getBooleanValueTranslations = (labelTranslations, data) => {
   return labels;
 };
 
+const createLocaleTranslations = (action, store) => {
+  const { type, translationKey, value, locale } = action.control;
+  const localeTranslations = store[locale] || {};
+  const selectedTranslations = localeTranslations[type] || {};
+
+  selectedTranslations[translationKey] = value;
+  localeTranslations[type] = selectedTranslations;
+
+  return localeTranslations;
+};
+
 const translations = (store = {}, action) => {
   switch (action.type) {
     case 'GENERATE_TRANSLATIONS': {
@@ -40,6 +52,16 @@ const translations = (store = {}, action) => {
           concepts: getConceptTranslations(store.concepts, action.control),
           labels: getBooleanValueTranslations(store.labels, action.control),
         });
+    }
+
+    case 'UPDATE_TRANSLATIONS': {
+      const localeTranslations = createLocaleTranslations(action, store);
+      const { locale } = action.control;
+      return Object.assign({}, store, { [locale]: localeTranslations });
+    }
+
+    case 'REMOVE_LOCALE_TRANSLATIONS': {
+      return omit(store, action.locale);
     }
 
     case 'CLEAR_TRANSLATIONS': {

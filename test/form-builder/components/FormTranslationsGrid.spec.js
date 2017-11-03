@@ -1,0 +1,94 @@
+import React from 'react';
+import { mount } from 'enzyme';
+import chaiEnzyme from 'chai-enzyme';
+import chai, { expect } from 'chai';
+import { getStore } from 'test/utils/storeHelper';
+import { Provider } from 'react-redux';
+
+import FormTranslationsGrid from 'form-builder/components/FormTranslationsGrid.jsx';
+
+chai.use(chaiEnzyme());
+
+describe('FormTranslationsGrid', () => {
+  let wrapper;
+  const data = {
+    headers: [
+      'Translation Key',
+      'Default Locale (Español)',
+      'Français',
+    ],
+    data: [
+      {
+        concepts: {
+          SEVERE_UNDERNUTRITION_13: [
+            'Undernutrition es',
+            'Undernutrition s',
+          ],
+          SUPINE_10: [
+            'SUPINE_10',
+          ],
+        },
+        labels: {
+          SECTION_12: [
+            'SECTION es',
+          ],
+
+        },
+        locale: 'es',
+      },
+      {
+        concepts: {
+          SEVERE_UNDERNUTRITION_13: [
+            'Undernutrition',
+          ],
+          SUPINE_10: [
+            'SUPINE_10',
+          ],
+        },
+        labels: {
+          SECTION_12: [
+            'SECTION_12',
+          ],
+        },
+        locale: 'fr',
+      },
+    ],
+  };
+
+  function getTableBody() {
+    return wrapper.find('table').find('tbody');
+  }
+
+  function getItem(row, column) {
+    return getTableBody().find('tr').at(row).find('td').at(column);
+  }
+
+  function getData(row, column) {
+    return getItem(row, column).text();
+  }
+
+  it('should render locale translations in table', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormTranslationsGrid translationData={data} />
+      </Provider>);
+
+    expect(getTableBody()).to.have.exactly(3).descendants('tr');
+    expect(wrapper.find('table').find('thead')).to.have.exactly(1).descendants('tr');
+    expect(wrapper.find('table').find('thead')).to.have.exactly(3).descendants('th');
+
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+      expect(getItem(rowIndex, 0)).not.to.have.descendants('FreeTextAutoComplete');
+      expect(getItem(rowIndex, 2)).to.have.exactly(1).descendants('FreeTextAutoComplete');
+      expect(getItem(rowIndex, 1)).to.have.exactly(1).descendants('FreeTextAutoComplete');
+    }
+
+    expect(getData(0, 0)).to.have.string('SEVERE_UNDERNUTRITION_13');
+    expect(getData(0, 1)).to.have.string('Undernutrition es');
+    expect(getData(0, 2)).to.have.string('Undernutrition');
+    expect(getData(2, 0)).to.have.string('SECTION_12');
+    expect(getData(2, 1)).to.have.string('SECTION es');
+    expect(getData(2, 2)).to.have.string('SECTION_12');
+  });
+});
+

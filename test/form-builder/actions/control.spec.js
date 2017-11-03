@@ -115,4 +115,28 @@ describe('control', () => {
       expect(action.locale).to.eql(defaultLocale);
     });
   });
+
+  describe('updateTranslations', () => {
+    it('should update translations', () => {
+      const data = {
+        value: 'Test Value',
+        type: 'Labels',
+        TranslationsKey: 'TEST',
+      };
+      const action = control.updateTranslations(data);
+
+      expect(action.type).to.eql('UPDATE_TRANSLATIONS');
+      expect(action.control).to.eql(data);
+    });
+  });
+
+  describe('removeLocaleTranslation', () => {
+    it('should remove translations for given locale', () => {
+      const locale = 'es';
+      const action = control.removeLocaleTranslation(locale);
+
+      expect(action.type).to.eql('REMOVE_LOCALE_TRANSLATIONS');
+      expect(action.locale).to.eql(locale);
+    });
+  });
 });
