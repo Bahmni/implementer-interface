@@ -85,6 +85,7 @@ export class FormDetailContainer extends Component {
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                 this.state.formData.resources[0].uuid : '';
+      formJson.translationsUrl = formBuilderConstants.translationsUrl;
       const formResource = {
         form: {
           name: formName,
