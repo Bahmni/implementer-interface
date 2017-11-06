@@ -217,6 +217,14 @@ class FormTranslationsContainer extends Component {
         </div>
       </div>
       <div className="container-content-wrap">
+        <div className="info-view-mode-wrap">
+          <div className="info-view-mode">
+            <i className="fa fa-info-circle fl"></i>
+            <span className="info-message">
+             Please save the changes before selecting a locale.
+            </span>
+          </div>
+        </div>
         <FormTranslationsGrid translationData={translationData} />
       </div>
     </div>);
