@@ -31,6 +31,9 @@
 }
 
 .translations-table {
+  td {
+    width: 450px;
+  }
   th, td {
     font-size: 14px;
     padding: 8px;
