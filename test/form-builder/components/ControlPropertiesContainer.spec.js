@@ -52,6 +52,12 @@ describe('ControlPropertiesContainer', () => {
         .optionsUrl.includes(constants.supportedObsGroupDataTypes)).to.eql(false);
     });
 
+    it('should display control ID when obs control is selected', () => {
+      const state = { controlDetails: { selectedControl: controlMetadata } };
+      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      expect(wrapper.find('.control-id')).text().to.eql('123');
+    });
+
     it('should display autocomplete component when obsGroup control is selected', () => {
       controlMetadata.type = 'obsGroupControl';
       const state = { controlDetails: { selectedControl: controlMetadata } };
