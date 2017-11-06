@@ -78,6 +78,7 @@ class ControlPropertiesContainer extends Component {
       return (
         <div className="obs-control-wrap">
           {this.displayAutoComplete()}
+          <div>Control ID<span className="control-id">{selectedControl.id}</span></div>
           {this.displayPropertyEditor()}
         </div>
       );
