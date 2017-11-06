@@ -115,8 +115,7 @@ describe('FormTranslationContainer', () => {
           locale: 'en',
         })));
 
-      expect(formTranslationContainer.find('.info-message').html()).to
-        .have.string('Please save the changes before selecting a locale.');
+
       expect(formTranslationContainer.find('FormTranslationsGrid')
         .props().translationData).to.eql(expectedTranslationData);
       const table = formTranslationContainer.find('table');
