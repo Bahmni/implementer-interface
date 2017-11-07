@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist/*",
-    "upgrade-form-control": "yarn upgrade bahmni-form-controls",
+    "upgrade-form-control": "yarn upgrade bahmni-form-controls@0.90",
     "copy": "copyfiles -f ./index.html ./dist",
     "build": "yarn run copy && webpack",
     "build-dev": "yarn run copy && webpack --config webpack.dev.config.js",
