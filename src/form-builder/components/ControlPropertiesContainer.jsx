@@ -7,11 +7,13 @@ import { PropertyEditor } from 'form-builder/components/PropertyEditor.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { commonConstants } from 'common/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
+import filter from 'lodash/filter';
 
 class ControlPropertiesContainer extends Component {
   constructor() {
     super();
     this.onSelect = this.onSelect.bind(this);
+    this.filterOptions = this.filterOptions.bind(this);
   }
 
   onSelect(concept) {
@@ -38,6 +40,13 @@ class ControlPropertiesContainer extends Component {
     }, commonConstants.toastTimeout);
   }
 
+  filterOptions(options) {
+    return filter(options, (option) => {
+      const datatype = option.datatype && option.datatype.name;
+      return !(datatype === 'N/A' && !option.set);
+    });
+  }
+
   displayAutoComplete() {
     const { selectedControl, conceptToControlMap } = this.props;
     const value = (conceptToControlMap && conceptToControlMap[selectedControl.id]);
@@ -52,6 +61,7 @@ class ControlPropertiesContainer extends Component {
       <AutoComplete
         autofocus
         enabled={!disableAutoComplete}
+        filterOptions={this.filterOptions}
         onValueChange={this.onSelect}
         optionsUrl={optionsUrl}
         value={value}

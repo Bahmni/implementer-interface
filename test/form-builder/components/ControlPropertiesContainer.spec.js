@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
@@ -118,6 +118,26 @@ describe('ControlPropertiesContainer', () => {
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().enabled).to.eql(false);
+    });
+
+    it('should filter concepts with datatype N/A and is set', () => {
+      const concepts = [
+        {
+          id: 'someId-1',
+          datatype: { name: 'N/A' },
+          name: { name: 'someName-1' },
+          set: false,
+        },
+        {
+          id: 'someId-2',
+          datatype: { name: 'N/A' },
+          name: { name: 'someName-2' },
+          set: true,
+        },
+      ];
+      const wrapper = shallow(<ControlPropertiesContainer store={getStore()} />).shallow();
+      const instance = wrapper.instance();
+      expect(instance.filterOptions(concepts)).to.deep.eql([concepts[1]]);
     });
   });
 
