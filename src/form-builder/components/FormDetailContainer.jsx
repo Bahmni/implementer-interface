@@ -16,6 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import { clearTranslations, eventsChanged } from '../actions/control';
 
 
@@ -61,15 +62,17 @@ export class FormDetailContainer extends Component {
     this.getFormList();
   }
 
-  componentWillUpdate() {
-    this.props.dispatch(deselectControl());
-    this.props.dispatch(blurControl());
-    this.props.dispatch(removeControlProperties());
+  componentWillUpdate(nextProps, nextState) {
+    if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
+      this.props.dispatch(deselectControl());
+      this.props.dispatch(blurControl());
+      this.props.dispatch(removeControlProperties());
 
-    const updatedFormEvents = this.getFormEvents();
-    if (updatedFormEvents && this.formEvents !== updatedFormEvents) {
-      this.props.dispatch(eventsChanged(updatedFormEvents));
-      this.formEvents = updatedFormEvents;
+      const updatedFormEvents = this.getFormEvents();
+      if (updatedFormEvents && this.formEvents !== updatedFormEvents) {
+        this.props.dispatch(eventsChanged(updatedFormEvents));
+        this.formEvents = updatedFormEvents;
+      }
     }
   }
 
