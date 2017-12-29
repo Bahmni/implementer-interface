@@ -279,7 +279,8 @@ describe('Import form', () => {
       .callsFake(() => Promise.resolve({ results: [] }));
     sinon.stub(jsonpath, 'query')
       .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
-      .onSecondCall().returns([]);
+      .onSecondCall().returns([])
+      .onThirdCall().returns([]);
     const newInstance = wrapper.instance();
     newInstance.fixuuid('formName').catch(() => {
       expect(newInstance.validationErrors[0]).to.eql('Concept name not found Pulse');
@@ -292,16 +293,19 @@ describe('Import form', () => {
       name: { name: 'Pulse' },
       uuid: 'someUuid',
       setMembers: [{ name: { name: 'Abnormal' }, uuid: 'randomUuid' }],
+      answers: [{ name: { name: 'Answer-1' }, uuid: 'randomUuid1' }],
     }];
     sinon.stub(httpInterceptor, 'get')
       .onFirstCall().returns(Promise.resolve({ results: concept }))
-      .onSecondCall().returns(Promise.resolve({ results: concept[0].setMembers }));
+      .onSecondCall().returns(Promise.resolve({ results: concept[0].setMembers }))
+      .onThirdCall().returns(Promise.resolve({ results: concept[0].answers }));
     sinon.stub(jsonpath, 'query')
       .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
-      .onSecondCall().returns([[{ name: 'Abnormal', uuid: 'randomUuid' }]]);
+      .onSecondCall().returns([[{ name: 'Abnormal', uuid: 'randomUuid' }]])
+      .onThirdCall().returns([[{ name: 'Answer-1', uuid: 'randomUuid1' }]]);
     const newInstance = wrapper.instance();
     newInstance.fixuuid('formName').then((validated) => {
-      expect(validated).to.eql([true, true]);
+      expect(validated).to.eql([true, true, true]);
       done();
     });
   });
