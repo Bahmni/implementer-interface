@@ -45,11 +45,12 @@ export default class FormBuilder extends Component {
   }
 
   getConceptNameWithoutUnit(concept) {
-    if (concept.units !== null) {
-      return concept.name.replace(`(${concept.units})`, '');
+    const conceptName = concept.name.name || concept.name;
+    if (concept.units) {
+      return conceptName.replace(`(${concept.units})`, '');
     }
 
-    return concept.name;
+    return conceptName;
   }
 
   openFormModal() {
@@ -165,6 +166,7 @@ export default class FormBuilder extends Component {
     this.validationErrors = [];
     const concepts = jsonpath.query(value, '$..concept');
     const setMembers = jsonpath.query(value, '$..setMembers');
+    const conceptAnswers = jsonpath.query(value, '$..answers');
 
     concepts.forEach((concept) => {
       this.validateConcept(concept, checkPromises);
@@ -173,6 +175,12 @@ export default class FormBuilder extends Component {
     setMembers.forEach((setMember) => {
       setMember.forEach((member) => {
         this.validateConcept(member, checkPromises);
+      });
+    });
+
+    conceptAnswers.forEach((answers) => {
+      answers.forEach((answer) => {
+        this.validateConcept(answer, checkPromises);
       });
     });
 
