@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import FormList from 'form-builder/components/FormList.jsx';
 import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
