@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { DescriptorParser as Descriptor } from 'form-builder/helpers/descriptorParser';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
