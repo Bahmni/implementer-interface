@@ -131,6 +131,31 @@ describe('ControlWrapper', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata)));
   });
 
+  it('should update properties when changed for a section', () => {
+    ComponentStore.registerDesignerComponent('section', { control: testControl });
+    const store = getStore();
+    const sectionMetadata = {
+      id: '1',
+      type: 'section',
+    };
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ sectionMetadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => sectionMetadata };
+    const controlProperty = { id: '1', property: { addMore: true } };
+    controlWrapper.setProps({ controlProperty });
+
+    const expectedMetadata = Object.assign({}, sectionMetadata, { properties: { addMore: true } });
+    const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
+    expect(actualMetadata).to.deep.eql(expectedMetadata);
+    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata)));
+    ComponentStore.deRegisterDesignerComponent('section');
+  });
+
   it('should not update properties when metadata id is different', () => {
     const store = getStore();
     const controlWrapper = shallow(

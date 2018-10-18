@@ -65,9 +65,6 @@ export class PropertyEditor extends Component {
 
 PropertyEditor.propTypes = {
   metadata: PropTypes.shape({
-    concept: PropTypes.shape({
-      datatype: PropTypes.string.isRequired,
-    }).isRequired,
     id: PropTypes.number.isReqyuired,
     properties: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,

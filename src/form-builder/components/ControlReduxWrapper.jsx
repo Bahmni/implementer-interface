@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { focusControl, selectControl, removeControlProperties } from 'form-builder/actions/control';
+import { focusControl, selectControl } from 'form-builder/actions/control';
 import { blurControl, deselectControl, eventsChanged } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -36,7 +36,6 @@ class ControlWrapper extends Draggable {
   }
 
   onSelected(event, metadata) {
-    this.props.dispatch(removeControlProperties())
     this.props.dispatch(selectControl(metadata));
     event.stopPropagation();
   }
@@ -67,8 +66,9 @@ class ControlWrapper extends Draggable {
 
   updateProperties(newProps) {
     const controlProperty = newProps.controlProperty;
-    if (controlProperty && this.metadata.id === controlProperty.id && this.state.active) {
-      const childMetadata = this.childControl.getJsonDefinition();
+    if (controlProperty && this.metadata.id === controlProperty.id) {
+      const childMetadata = (this.metadata.type === 'section') ?
+        this.metadata : this.childControl.getJsonDefinition();
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
       if (!isEqual(this.metadata.properties, updatedProperties)) {
