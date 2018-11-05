@@ -43,7 +43,7 @@ const translations = (store = {}, action) => {
   switch (action.type) {
     case 'GENERATE_TRANSLATIONS': {
       const { type, label } = action.control;
-      if (type === 'label' || type === 'section') {
+      if (type === 'label' || type === 'section' || type === 'table') {
         return Object.assign({}, store,
           { labels: getLabelTranslations(store.labels, (label || action.control)) });
       }

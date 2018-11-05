@@ -41,6 +41,7 @@ describe('Property Editor', () => {
       concept: {
         datatype: 'text',
       },
+      unsupportedProperties: [],
     };
 
     attributes = [
@@ -158,5 +159,15 @@ describe('Property Editor', () => {
     expect(wrapper.find('Property').at(0).props().name).to.eql('controlEvent');
     expect(wrapper.find('Property').at(0).props().elementType).to.eql('button');
     expect(wrapper.find('Property').at(0).props().elementName).to.eql('Editor');
+  });
+
+  it('should filter out unsupported properties from attributes', () => {
+    metadata.unsupportedProperties = ['allowDecimal'];
+    ComponentStore.registerDesignerComponent('obsControl', controlDescriptor(attributes));
+    wrapper = shallow(<PropertyEditor metadata={metadata} onPropertyUpdate={() => {}} />);
+
+    attributes = wrapper.instance().getProperties(attributes);
+    expect(attributes.length).to.eql(1);
+    expect(attributes[0].props.name).to.eql('mandatory');
   });
 });
