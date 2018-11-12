@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { AutoComplete } from 'bahmni-form-controls';
 import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';

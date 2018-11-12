@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
@@ -153,7 +154,7 @@ export class FormBuilderContainer extends Component {
 }
 
 FormBuilderContainer.contextTypes = {
-  router: React.PropTypes.object.isRequired,
+  router: PropTypes.object.isRequired,
 };
 
 FormBuilderContainer.propTypes = {
