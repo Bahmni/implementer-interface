@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import NotificationContainer from 'common/Notification';

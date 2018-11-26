@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Property } from 'form-builder/components/Property.jsx';
 import get from 'lodash/get';
 import uniqBy from 'lodash/uniqBy';
