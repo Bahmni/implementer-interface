@@ -52,10 +52,24 @@ describe('ControlPropertiesContainer', () => {
         .optionsUrl.includes(constants.supportedObsGroupDataTypes)).to.eql(false);
     });
 
+    it('should not display autocomplete component when section control is selected', () => {
+      controlMetadata = { id: '123', type: 'section', properties: {} };
+      const state = { controlDetails: { selectedControl: controlMetadata } };
+      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      expect(wrapper).to.not.have.descendants('AutoComplete');
+    });
+
     it('should display control ID when obs control is selected', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper.find('.control-id')).text().to.eql('123');
+    });
+
+    it('should display control ID when selected control is section', () => {
+      controlMetadata = { id: '143', type: 'section', properties: {} };
+      const state = { controlDetails: { selectedControl: controlMetadata } };
+      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      expect(wrapper.find('.control-id')).text().to.eql('143');
     });
 
     it('should display autocomplete component when obsGroup control is selected', () => {
@@ -156,13 +170,26 @@ describe('ControlPropertiesContainer', () => {
       expect(wrapper).to.not.have.descendants('PropertyEditor');
     });
 
-    it('should display property editor component when control is selected', () => {
+    it('should display property editor component when control is selected and it has concept',
+      () => {
+        const state = { controlDetails: { selectedControl: controlMetadata } };
+        const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+        expect(wrapper).to.have.descendants('PropertyEditor');
+      });
+
+    it('should display property editor component when selected control type is section', () => {
+      controlMetadata = {
+        id: '123',
+        type: 'section',
+        properties: {},
+      };
       const state = { controlDetails: { selectedControl: controlMetadata } };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
       expect(wrapper).to.have.descendants('PropertyEditor');
     });
 
-    it('should not display property editor when selected control does not have concept', () => {
+    it('should not display property editor when selected control does not have concept and' +
+      ' seletedControl is not a section', () => {
       controlMetadata = { id: '123', type: 'obsControl', properties: {} };
       const state = { controlDetails: { selectedControl: controlMetadata } };
       const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);

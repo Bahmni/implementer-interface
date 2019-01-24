@@ -67,7 +67,8 @@ class ControlWrapper extends Draggable {
   updateProperties(newProps) {
     const controlProperty = newProps.controlProperty;
     if (controlProperty && this.metadata.id === controlProperty.id) {
-      const childMetadata = this.childControl.getJsonDefinition();
+      const childMetadata = (this.metadata.type === 'section') ?
+        this.metadata : this.childControl.getJsonDefinition();
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
       if (!isEqual(this.metadata.properties, updatedProperties)) {

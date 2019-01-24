@@ -72,7 +72,7 @@ class ControlPropertiesContainer extends Component {
 
   displayPropertyEditor() {
     const { selectedControl, selectedControl: { id, concept } } = this.props;
-    if (concept) {
+    if (concept || selectedControl.type === 'section') {
       return (
         <PropertyEditor
           metadata={selectedControl}
@@ -88,13 +88,18 @@ class ControlPropertiesContainer extends Component {
     if (selectedControl) {
       return (
         <div className="obs-control-wrap">
-          {this.displayAutoComplete()}
+          {this.isObsOrObsGroupControl(selectedControl) && this.displayAutoComplete()}
           <div>Control ID<span className="control-id">{selectedControl.id}</span></div>
           {this.displayPropertyEditor()}
         </div>
       );
     }
     return null;
+  }
+
+  isObsOrObsGroupControl(selectedControl) {
+    return selectedControl && (selectedControl.type === 'obsControl' ||
+      selectedControl.type === 'obsGroupControl');
   }
 
   render() {

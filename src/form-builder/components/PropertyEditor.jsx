@@ -22,7 +22,7 @@ export class PropertyEditor extends Component {
           name={name}
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
           value={value}
-          { ...attribute }
+          {...attribute}
         />
       );
     });
@@ -36,18 +36,24 @@ export class PropertyEditor extends Component {
 
   getAllPropertyDescriptors() {
     const { metadata: { type, concept } } = this.props;
-    let { metadata: { concept: { datatype } } } = this.props;
-    const { conceptHandler } = concept;
-    datatype = concept.set ? 'obsGroupControl' : datatype;
-    const descriptorsByType = this.getPropertyDescriptor(type);
-    const descriptorsByConceptType = this.getPropertyDescriptor(datatype);
-    const descriptorsByHandler = conceptHandler ? this.getPropertyDescriptor(conceptHandler) : [];
-    const allPropertyDescriptors =
-      descriptorsByType.concat(descriptorsByConceptType).concat(descriptorsByHandler);
+    let allPropertyDescriptors;
+    if (concept) {
+      let { metadata: { concept: { datatype } } } = this.props;
+      const { conceptHandler } = concept;
+      datatype = concept.set ? 'obsGroupControl' : datatype;
+      const descriptorsByType = this.getPropertyDescriptor(type);
+      const descriptorsByConceptType = this.getPropertyDescriptor(datatype);
+      const descriptorsByHandler = conceptHandler ?
+        this.getPropertyDescriptor(conceptHandler) : [];
+      allPropertyDescriptors =
+        descriptorsByType.concat(descriptorsByConceptType).concat(descriptorsByHandler);
+    } else {
+      allPropertyDescriptors = this.getPropertyDescriptor(type);
+    }
     const disabledDescriptors = allPropertyDescriptors.filter((d) => d.disabled);
     remove(allPropertyDescriptors, (propertyDescriptor) =>
       find(disabledDescriptors, (disabledDescriptor) =>
-      disabledDescriptor.name === propertyDescriptor.name));
+        disabledDescriptor.name === propertyDescriptor.name));
     return uniqBy(allPropertyDescriptors, 'name');
   }
 
@@ -59,9 +65,6 @@ export class PropertyEditor extends Component {
 
 PropertyEditor.propTypes = {
   metadata: PropTypes.shape({
-    concept: PropTypes.shape({
-      datatype: PropTypes.string.isRequired,
-    }).isRequired,
     id: PropTypes.number.isReqyuired,
     properties: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
