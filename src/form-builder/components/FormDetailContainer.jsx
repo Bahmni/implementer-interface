@@ -19,6 +19,7 @@ import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations, eventsChanged } from '../actions/control';
+import { Exception } from 'form-builder/helpers/Exception';
 
 
 export class FormDetailContainer extends Component {
@@ -84,6 +85,10 @@ export class FormDetailContainer extends Component {
   onSave() {
     try {
       const formJson = this.getFormJson();
+      if (this.hasEmptyBlocks(formJson)) {
+        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+        throw new Exception(emptySectionOrTable);
+      }
       formJson.events = this.state.formEvents;
       const formName = this.state.formData ? this.state.formData.name : 'FormName';
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
@@ -150,6 +155,20 @@ export class FormDetailContainer extends Component {
               this.setState({ formList: response.results });
             })
             .catch((error) => this.showErrors(error));
+  }
+
+  hasEmptyBlocks(formJson) {
+    const controls = formJson.controls;
+    return controls.some((control) => {
+      if (control.type === 'section' && control.controls.length === 0) {
+        return true;
+      } else if (control.type === 'table' && control.controls.length <= 2) {
+        return true;
+      } else if (control.controls && control.controls.length > 0) {
+        return this.hasEmptyBlocks(control);
+      }
+      return false;
+    });
   }
 
   _createTranslationReqObject(container, locale) {

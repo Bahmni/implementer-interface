@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { FormDetailContainer } from 'form-builder/components/FormDetailContainer.jsx';
@@ -28,7 +28,7 @@ describe('FormDetailContainer', () => {
 
   const publishedFormData = Object.assign({}, formData, { published: true });
 
-  const formJson = { uuid: 'FID' };
+  const formJson = { uuid: 'FID', controls: [] };
 
   const params =
     'v=custom:(id,uuid,name,version,published,auditInfo,' +
@@ -168,6 +168,144 @@ describe('FormDetailContainer', () => {
     const saveButton = wrapper.find('.save-button');
     saveButton.simulate('click');
     sinon.assert.calledOnce(spy);
+  });
+
+  it('should throw exception given form with empty blocks', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, {
+              context: {
+                router: {
+                  push() {
+                  },
+                },
+              },
+            }
+        );
+    wrapper.setState({ formData, httpReceived: true });
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [{
+        type: 'section',
+        controls: [],
+      }],
+    };
+    sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+    wrapper.instance().onSave();
+
+    const notificationContainer = wrapper.find('NotificationContainer');
+    expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
+  });
+
+  it('should return true when formJson have section with no inner controls', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [{
+        type: 'section',
+        controls: [],
+      },
+      {
+        type: 'table',
+        controls: [{ name: 'one' }, { name: 'two' }, { name: 'three' }],
+      }],
+    };
+    const instance = wrapper.instance();
+
+    expect(instance.hasEmptyBlocks(formJsonData)).to.equal(true);
+  });
+
+  it('should return true when formJson have tables with no inner controls', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [{
+        type: 'section',
+        controls: [{ name: 'obsControl' }],
+      },
+      {
+        type: 'table',
+        controls: [],
+      }],
+    };
+    const instance = wrapper.instance();
+
+    expect(instance.hasEmptyBlocks(formJsonData)).to.equal(true);
+  });
+
+  it('should return false when formJson has no empty section or table', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [
+        {
+          type: 'section',
+          controls: [{
+            name: 'label1',
+          }],
+        },
+        {
+          type: 'table',
+          controls: [{ name: 'first' }, { name: 'second' }, { name: 'third' }],
+        },
+      ],
+    };
+
+    expect(wrapper.instance().hasEmptyBlocks(formJsonData)).to.equal(false);
+  });
+
+  it('should return true when formJson have table and section with no inner controls', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [{
+        type: 'section',
+        controls: [],
+      },
+      {
+        type: 'table',
+        controls: [],
+      }],
+    };
+    const instance = wrapper.instance();
+
+    expect(instance.hasEmptyBlocks(formJsonData)).to.equal(true);
+  });
+
+  it('should return true when formJson have nested empty sections', () => {
+    const wrapper = shallow(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+    const formJsonData = {
+      name: 'SectionForm',
+      controls: [{
+        type: 'section',
+        controls: [{ type: 'section', controls: [{ type: 'section', controls: [] }] }],
+      }],
+    };
+    const instance = wrapper.instance();
+
+    expect(instance.hasEmptyBlocks(formJsonData)).to.equal(true);
   });
 
   it('should return newName when given new formName', () => {
