@@ -111,6 +111,11 @@ export class FormDetailContainer extends Component {
 
   onPublish() {
     try {
+      const formJson = this.getFormJson();
+      if (this.hasEmptyBlocks(formJson)) {
+        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+        throw new Exception(emptySectionOrTable);
+      }
       const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
       const { translations } = this.props;
       const defaultLocale = this.props.defaultLocale ||

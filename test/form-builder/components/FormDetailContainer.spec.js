@@ -736,5 +736,34 @@ describe('FormDetailContainer', () => {
         done();
       }, 500);
     });
+
+    it('should throw exception given form with empty blocks', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, {
+          context: {
+            router: {
+              push() {
+              },
+            },
+          },
+        }
+      );
+      wrapper.setState({ formData, httpReceived: true });
+      const formJsonData = {
+        name: 'SectionForm',
+        controls: [{
+          type: 'section',
+          controls: [],
+        }],
+      };
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+      wrapper.instance().onPublish();
+
+      const notificationContainer = wrapper.find('NotificationContainer');
+      expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
+    });
   });
 });
