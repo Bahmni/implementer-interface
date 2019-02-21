@@ -165,9 +165,8 @@ export class FormDetailContainer extends Component {
   hasEmptyBlocks(formJson) {
     const controls = formJson.controls;
     return controls.some((control) => {
-      if (control.type === 'section' && control.controls.length === 0) {
-        return true;
-      } else if (control.type === 'table' && control.controls.length <= 2) {
+      if ((control.type === 'section' || control.type === 'table')
+          && control.controls.length === 0) {
         return true;
       } else if (control.controls && control.controls.length > 0) {
         return this.hasEmptyBlocks(control);
