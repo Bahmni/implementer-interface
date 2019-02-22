@@ -119,6 +119,39 @@ describe('translations', () => {
     expect(state).to.be.eql(expectedStoreState);
   });
 
+  it('should store table translations', () => {
+    const control = {
+      type: 'table',
+      label: {
+        translationKey: 'TABLE_1',
+        type: 'label',
+        value: 'Vitals Table',
+        id: '2',
+      },
+      columnHeaders: [
+        {
+          translationKey: 'COLUMN_1',
+          type: 'label',
+          value: 'Column 1',
+          id: '2',
+        },
+        {
+          translationKey: 'COLUMN_2',
+          type: 'label',
+          value: 'Column 2',
+          id: '2',
+        },
+      ],
+      id: '2',
+    };
+    const action = { control, type: 'GENERATE_TRANSLATIONS' };
+    const expectedStoreState = { labels: { TABLE_1: 'Vitals Table',
+      COLUMN_1: 'Column 1', COLUMN_2: 'Column 2' } };
+
+    const state = translations({}, action);
+    expect(state).to.be.eql(expectedStoreState);
+  });
+
   describe('Update Translations', () => {
     it('should update the translations', () => {
       const action = {

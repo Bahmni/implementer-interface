@@ -43,9 +43,15 @@ const translations = (store = {}, action) => {
   switch (action.type) {
     case 'GENERATE_TRANSLATIONS': {
       const { type, label } = action.control;
-      if (type === 'label' || type === 'section' || type === 'table') {
+      if (type === 'label' || type === 'section') {
         return Object.assign({}, store,
           { labels: getLabelTranslations(store.labels, (label || action.control)) });
+      } else if (type === 'table') {
+        let newLables = getLabelTranslations(store.labels, label);
+        action.control.columnHeaders.forEach(columnHeader => {
+          newLables = getLabelTranslations(newLables, columnHeader);
+        });
+        return Object.assign({}, store, { labels: newLables });
       }
       return Object.assign({}, store,
         {
