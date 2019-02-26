@@ -139,6 +139,7 @@ class ControlWrapper extends Draggable {
       return (
         <DeleteControlModal
           closeModal={() => this.closeDeleteModal()}
+          controlId={this.props.metadata.id}
           controlName={this.props.metadata.name}
           deleteControl={this.props.deleteControl}
         />
