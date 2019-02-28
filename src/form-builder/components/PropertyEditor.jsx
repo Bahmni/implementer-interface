@@ -9,8 +9,12 @@ import find from 'lodash/find';
 import { ComponentStore } from 'bahmni-form-controls';
 
 export class PropertyEditor extends Component {
+  /* eslint-disable no-param-reassign */
   getProperties(attributes) {
-    const { metadata: { id, properties } } = this.props;
+    const { metadata: { id, properties, unsupportedProperties } } = this.props;
+    if (unsupportedProperties) {
+      attributes = attributes.filter(attribute => !unsupportedProperties.includes(attribute.name));
+    }
     const sortedAttributes = sortBy(attributes, (a) => a.elementName !== undefined);
     return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;

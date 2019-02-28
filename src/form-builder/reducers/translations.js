@@ -46,6 +46,12 @@ const translations = (store = {}, action) => {
       if (type === 'label' || type === 'section') {
         return Object.assign({}, store,
           { labels: getLabelTranslations(store.labels, (label || action.control)) });
+      } else if (type === 'table') {
+        let newLables = getLabelTranslations(store.labels, label);
+        action.control.columnHeaders.forEach(columnHeader => {
+          newLables = getLabelTranslations(newLables, columnHeader);
+        });
+        return Object.assign({}, store, { labels: newLables });
       }
       return Object.assign({}, store,
         {

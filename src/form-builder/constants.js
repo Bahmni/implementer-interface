@@ -7,6 +7,7 @@ export const formBuilderConstants = {
   'answers,hiNormal,lowNormal,hiAbsolute,lowAbsolute,units))',
   exceptionMessages: {
     conceptMissing: 'Please associate Concept to Obs',
+    emptySectionOrTable: 'Section/Table is empty',
   },
   // eslint-disable-next-line
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
