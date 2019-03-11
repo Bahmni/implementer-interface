@@ -112,9 +112,11 @@ describe('FormDetailContainer', () => {
         {...defaultProps}
       />, { context }
     );
-    const formDetail = wrapper.find('FormDetail');
+
     setTimeout(() => {
-      expect(formDetail.prop('formData')).to.eql(formData);
+      wrapper.update();
+
+      expect(wrapper.find('FormDetail').prop('formData')).to.eql(formData);
       httpInterceptor.get.restore();
       done();
     }, 500);
@@ -614,10 +616,10 @@ describe('FormDetailContainer', () => {
         />, { context }
       );
       wrapper.setState({ httpReceived: true });
-      const editButton = wrapper.find('.edit-button');
-
       setTimeout(() => {
-        expect(editButton.nodes.length).to.equal(0);
+        wrapper.update();
+
+        expect(wrapper.find('.edit-button').getElements().length).to.equal(0);
         done();
       }, 500);
     });
@@ -711,10 +713,9 @@ describe('FormDetailContainer', () => {
         />, { context }
       );
       wrapper.setState({ formData: publishedFormData });
-      const publishButton = wrapper.find('.publish-button');
-
       setTimeout(() => {
-        expect(publishButton.nodes.length).to.equal(0);
+        wrapper.update();
+        expect(wrapper.find('.publish-button').getElements().length).to.equal(0);
         done();
       }, 500);
     });

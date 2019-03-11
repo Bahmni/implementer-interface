@@ -96,6 +96,7 @@ describe('FormTranslationContainer', () => {
       </Provider>
     );
     setTimeout(() => {
+      wrapper.update();
       const localeOptions = wrapper.find('.breadcrumb-inner').find('#locale-options');
       expect(expectedLocaleOptions, localeOptions.find('select').html());
 
@@ -166,6 +167,8 @@ describe('FormTranslationContainer', () => {
 
     setTimeout(() => {
       setTimeout(() => {
+        wrapper.update();
+
         const formTranslationContainer = wrapper.find('FormTranslationsContainer');
         expect(formTranslationContainer.find('FormTranslationsGrid')
           .props().translationData).to.eql(expectedTranslationData);
@@ -187,6 +190,9 @@ describe('FormTranslationContainer', () => {
         sinon.assert.calledOnce(store.dispatch.withArgs(removeLocaleTranslation()));
         done();
       }, 50);
+
+      wrapper.update();
+
       wrapper.find('#locale-options').find('select')
         .simulate('change', { target: { value: 'es' } });
     }, 50);
@@ -232,6 +238,8 @@ describe('FormTranslationContainer', () => {
     setTimeout(() => {
       setTimeout(() => {
         setTimeout(() => {
+          wrapper.update();
+
           const formTranslationContainer = wrapper.find('FormTranslationsContainer');
           expect(formTranslationContainer.find('FormTranslationsGrid')
             .props().translationData).to.eql(expectedTranslationData);
@@ -256,9 +264,15 @@ describe('FormTranslationContainer', () => {
           sinon.assert.calledOnce(store.dispatch.withArgs(removeLocaleTranslation()));
           done();
         }, 50);
+
+        wrapper.update();
+
         wrapper.find('#locale-options').find('select')
           .simulate('change', { target: { value: 'fr' } });
       }, 50);
+
+      wrapper.update();
+
       wrapper.find('#locale-options').find('select')
         .simulate('change', { target: { value: 'es' } });
     }, 50);
@@ -286,16 +300,22 @@ describe('FormTranslationContainer', () => {
     );
     setTimeout(() => {
       setTimeout(() => {
+        wrapper.update();
+
         wrapper.find('#save-translations-button').simulate('click');
         sinon.assert.calledOnce(mockHttp.post.withArgs(
           '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation', sinon.match.any));
 
         setTimeout(() => {
+          wrapper.update();
+
           expect(wrapper.find('NotificationContainer').props().notification)
           .to.eql({ message: 'Form translations saved successfully', type: 'success' });
           done();
         }, 50);
       }, 50);
+      wrapper.update();
+
       wrapper.find('#locale-options').find('select')
         .simulate('change', { target: { value: 'es' } });
     }, 50);
@@ -313,6 +333,8 @@ describe('FormTranslationContainer', () => {
       </Provider>
     );
     setTimeout(() => {
+      wrapper.update();
+
       sinon.assert.calledOnce(
         mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json')
       );
@@ -337,6 +359,8 @@ describe('FormTranslationContainer', () => {
       </Provider>
     );
     setTimeout(() => {
+      wrapper.update();
+
       sinon.assert.callOrder(
         mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:(id,uuid,name,version)')
@@ -366,6 +390,8 @@ describe('FormTranslationContainer', () => {
       </Provider>
     );
     setTimeout(() => {
+      wrapper.update();
+
       sinon.assert.callOrder(
         mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:(id,uuid,name,version)'),
