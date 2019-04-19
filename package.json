@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist/*",
-    "upgrade-form-control": "yarn upgrade bahmni-form-controls@0.91",
+    "upgrade-form-control": "yarn upgrade bahmni-form-controls@0.91.11",
     "copy": "copyfiles -f ./index.html ./dist",
     "build": "yarn run copy && webpack",
     "build-dev": "yarn run copy && webpack --config webpack.dev.config.js",
@@ -76,7 +76,7 @@
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.1",
-    "bahmni-form-controls": "^0.91.x",
+    "bahmni-form-controls": "0.91.11",
     "classnames": "^2.2.5",
     "core-js": "^2.4.1",
     "history": "^2.1.2",
