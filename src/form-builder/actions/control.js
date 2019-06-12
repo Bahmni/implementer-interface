@@ -13,6 +13,8 @@ export const setChangedProperty = (property, id) =>
 
 export const sourceChangedProperty = (source) => ({ type: 'SOURCE_CHANGED', source });
 
+export const dragSourceUpdate = (cell) => ({ type: 'DRAG_SOURCE_CHANGED', cell });
+
 export const eventsChanged = (events) => ({ type: 'EVENT_CHANGED', events });
 
 export const removeControlProperties = () => ({ type: 'REMOVE_CONTROL_PROPERTIES' });

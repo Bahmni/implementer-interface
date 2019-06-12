@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { focusControl, selectControl } from 'form-builder/actions/control';
+import { focusControl, selectControl, dragSourceUpdate } from 'form-builder/actions/control';
 import { blurControl, deselectControl, eventsChanged } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -15,6 +15,7 @@ import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 import ScriptEditorModal from './ScriptEditorModal';
+import DragDropHelper from '../helpers/dragDropHelper.js';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -24,7 +25,8 @@ class ControlWrapper extends Draggable {
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
-    this.state = { active: false, showDeleteModal: false };
+    const isBeingDragged = props.parentRef ? props.parentRef.props.isBeingDragged : false;
+    this.state = { active: false, showDeleteModal: false, isBeingDragged };
     this.storeChildRef = this.storeChildRef.bind(this);
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
@@ -33,6 +35,8 @@ class ControlWrapper extends Draggable {
     this.clearControlProperties = this.clearControlProperties.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
     this.closeDeleteModal = this.closeDeleteModal.bind(this);
+    this.handleDragStart = this.handleDragStart.bind(this);
+    this.handleControlDrop = this.handleControlDrop.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -48,6 +52,9 @@ class ControlWrapper extends Draggable {
 
   componentWillReceiveProps(nextProps) {
     const activeControl = (this.metadata.id === nextProps.focusedControl);
+    if (!activeControl && nextProps.parentRef) {
+      this.setState({ isBeingDragged: nextProps.parentRef.props.isBeingDragged });
+    }
     this.setState({ active: activeControl });
   }
 
@@ -85,12 +92,13 @@ class ControlWrapper extends Draggable {
   }
 
   componentWillUpdate(newProps) {
-    this.conditionallyAddConcept(newProps);
-    this.updateProperties(newProps);
-    if (this.metadata.id !== newProps.metadata.id) {
-      this.metadata = Object.assign({}, this.metadata, newProps.metadata);
+    if (this.metadata.id !== newProps.metadata.id
+      || this.metadata.controls !== newProps.metadata.controls) {
+      this.metadata = Object.assign({}, this.metadata, { controls: newProps.metadata.controls });
       this.control = ComponentStore.getDesignerComponent(this.metadata.type).control;
     }
+    this.conditionallyAddConcept(newProps);
+    this.updateProperties(newProps);
   }
 
   getJsonDefinition(isBeingMoved) {
@@ -191,16 +199,29 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
+  handleDragStart(e, onDragStart) {
+    this.setState({ isBeingDragged: true });
+    this.props.dispatch(dragSourceUpdate(this.props.parentRef));
+    onDragStart(e);
+  }
+
+  handleControlDrop({ metadata, successCallback, dropCell }) {
+    DragDropHelper.processControlDrop({ dragSourceCell: this.props.dragSourceCell,
+      successfulDropCallback: successCallback, dropCell, metadata });
+    this.props.dispatch(dragSourceUpdate(undefined));
+  }
+
   render() {
-    const onDragEndFunc = this.onDragEnd(this.metadata);
+    const onDragStart = this.onDragStart(this.metadata);
+    const draggable = this.props.dragAllowed !== undefined ?
+      this.props.dragAllowed.toString() : true;
     return (
       <div
         className={
           classNames('control-wrapper', { 'control-selected': this.state.active }, 'clearfix')
         }
-        draggable="true"
-        onDragEnd={ (e) => onDragEndFunc(e) }
-        onDragStart={ this.onDragStart(this.metadata) }
+        draggable={draggable}
+        onDragStart={ (e) => this.handleDragStart(e, onDragStart)}
         onFocus={(e) => this.onFocus(e)}
         tabIndex="1"
       >
@@ -208,13 +229,17 @@ class ControlWrapper extends Draggable {
           clearSelectedControl={ this.clearSelectedControl}
           deleteControl={ this.confirmDelete }
           dispatch={this.clearControlProperties}
+          dragSourceCell= {this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator}
+          isBeingDragged= {this.state.isBeingDragged}
           metadata={ this.metadata }
+          onControlDrop={this.handleControlDrop}
           onSelect={ this.onSelected }
           ref={ this.storeChildRef }
           setError={this.props.setError}
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
+
         />
         { this.showDeleteControlModal() }
         { this.showScriptEditorDialog() }
@@ -229,6 +254,7 @@ ControlWrapper.propTypes = {
     property: PropTypes.object,
   }),
   deleteControl: PropTypes.func,
+  dragSourceCell: PropTypes.object,
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
@@ -245,6 +271,7 @@ function mapStateToProps(state) {
     formDetails: state.formDetails,
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
+    dragSourceCell: state.controlDetails.dragSourceCell,
   };
 }
 

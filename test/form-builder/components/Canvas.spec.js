@@ -5,10 +5,10 @@ import chai, { expect } from 'chai';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import { blurControl, deselectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl, dragSourceUpdate } from 'form-builder/actions/control';
 import { IDGenerator } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
-
+import DragDropHelper from 'form-builder/helpers/dragDropHelper';
 chai.use(chaiEnzyme());
 
 describe('Canvas', () => {
@@ -143,5 +143,38 @@ describe('Canvas', () => {
     const instance = canvas.instance();
     expect(instance.state.descriptors.length).to.eql(1);
     expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
+  });
+
+
+  it('should reset the drag source to undefined after the drop is done', () => {
+    const idGenerator = new IDGenerator();
+    const store = getStore();
+
+    const formResourceJSON = [
+      {
+        id: '1',
+        type: 'obsControl',
+      },
+      {
+        id: '2',
+        type: 'random',
+      },
+    ];
+    const canvasWrapper = shallow(
+      <Canvas
+        formId={1}
+        formName="formName"
+        formResourceControls={formResourceJSON}
+        formUuid="someFormUuid"
+        formVersion="1"
+        idGenerator={idGenerator}
+        store={store}
+      />).shallow();
+
+    const instance = canvasWrapper.instance();
+    const dragDrophelperStub = sinon.stub(DragDropHelper, 'processControlDrop');
+    instance.handleControlDrop({ metadata: {} });
+    sinon.assert.calledOnce(store.dispatch.withArgs(dragSourceUpdate(undefined)));
+    dragDrophelperStub.restore();
   });
 });
