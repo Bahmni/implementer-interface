@@ -52,7 +52,7 @@ export class FormDetailContainer extends Component {
             .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
             .then((data) => {
               this.setState({ formData: data, httpReceived: true,
-                loading: false, originalFormName: data.name });
+                loading: false, originalFormName: data.name, referenceVersion: data.version });
               this.getFormJson();
             })
             .catch((error) => {
@@ -177,7 +177,9 @@ export class FormDetailContainer extends Component {
 
   _createTranslationReqObject(container, locale) {
     const { version, name } = this.state.formData;
-    const translations = Object.assign({}, container, { version, locale }, { formName: name });
+    const referenceVersion = this.state.referenceVersion;
+    const translations = Object.assign({}, container, { version, locale, referenceVersion },
+        { formName: name });
     return [translations];
   }
 
