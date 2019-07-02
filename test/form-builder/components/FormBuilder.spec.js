@@ -310,3 +310,47 @@ describe('Import form', () => {
     });
   });
 });
+
+describe('Export Forms', () => {
+  let wrapper;
+  const saveFormSpy = sinon.spy();
+  beforeEach(() => {
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
+  });
+
+  it('should call exportForms method in click of export button', () => {
+    const spy = sinon.spy(wrapper.instance(), 'exportForms');
+    wrapper.find('.exportBtn').simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should return true when no form uuids are passed', () => {
+    expect(wrapper.instance().validateExport([])).to.eql(true);
+  });
+
+  it('should return true when form uuids are passed are more than limit', () => {
+    const spy = sinon.spy(wrapper.instance(), 'setMessage');
+    expect(wrapper.instance().validateExport(['1', '2', '3', '1', '2', '3', '1', '2', '3',
+      '1', '2', '3', '1', '2', '3', '1', '2', '3', '1', '2', '3', '1', '2',
+      '3', '1', '2', '3']))
+        .to.eql(true);
+    sinon.assert.calledOnce(spy);
+    expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('error');
+  });
+
+  it('should return false when form uuids are more than 0 and less than 20', () => {
+    expect(wrapper.instance().validateExport(['1', '2', '3'])).to.eql(false);
+  });
+
+  it('should return false when form uuids are more than 0 and less than 20', () => {
+    const spy = sinon.spy(wrapper.instance(), 'validateExport');
+    wrapper.instance().exportForms();
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should call validate export when exportForms is called', () => {
+    const spy = sinon.spy(wrapper.instance(), 'validateExport');
+    wrapper.instance().exportForms();
+    sinon.assert.calledOnce(spy);
+  });
+});
