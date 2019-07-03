@@ -13,6 +13,7 @@ import { commonConstants } from '../../common/constants';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import NotificationContainer from 'common/Notification';
+import { remove } from 'lodash';
 
 
 export default class FormBuilder extends Component {
@@ -22,6 +23,7 @@ export default class FormBuilder extends Component {
     this.state = { showModal: false, selectedForms: [], notification: {} };
     this.setState = this.setState.bind(this);
     this.validationErrors = [];
+    this.handleSelectedForm = this.handleSelectedForm.bind(this);
   }
 
   getFormVersion(formName) {
@@ -212,6 +214,12 @@ export default class FormBuilder extends Component {
     return false;
   }
 
+  handleSelectedForm(form) {
+    if (!this.state.selectedForms.includes(form.uuid)) {
+      this.state.selectedForms.push(form.uuid);
+    } else remove(this.state.selectedForms, (item) => item === form.uuid);
+  }
+
   exportForms() {
     if (this.validateExport(this.state.selectedForms)) {
       return;
@@ -221,8 +229,8 @@ export default class FormBuilder extends Component {
     httpInterceptor.get(`${formBuilderConstants.exportUrl}?uuids=${this.state.selectedForms}`)
           .then((exportResponse) => {
             if (exportResponse.errorFormList.length > 0) {
-              this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()}${+
-                  '\nPlease verify logs for details'}`, commonConstants.responseType.error);
+              this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()} . 
+                Please verify logs for details`, commonConstants.responseType.error);
             }
             const formData = exportResponse.bahmniFormDataList;
             formData.forEach(form => {
@@ -278,7 +286,7 @@ export default class FormBuilder extends Component {
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data} />
+              <FormList data={this.props.data} handleSelectedForm={this.handleSelectedForm} />
             </div>
           </div>
         </div>

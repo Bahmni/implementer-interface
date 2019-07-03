@@ -23,6 +23,11 @@ export default class FormList extends Component {
     const data = this._getUpdatedFormList(this.props.data);
     return map(data, (rowItem, index) => (
       <tr key={rowItem.id}>
+        <td className="form-select">
+          { rowItem.published ? <input className="form-list-row"
+            onChange={() => this.props.handleSelectedForm(rowItem)} type="checkbox"
+          /> : <br /> }
+        </td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>
         <td>{dateUtils.getDateWithoutTime(rowItem.auditInfo.dateCreated)}</td>
@@ -135,6 +140,7 @@ export default class FormList extends Component {
           <table>
             <thead>
             <tr>
+              <th />
               <th>Name</th>
               <th>Version</th>
               <th>Created On</th>
@@ -151,4 +157,5 @@ export default class FormList extends Component {
 
 FormList.propTypes = {
   data: PropTypes.array.isRequired,
+  handleSelectedForm: PropTypes.func.isRequired,
 };

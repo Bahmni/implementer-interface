@@ -314,9 +314,22 @@ describe('Import form', () => {
 describe('Export Forms', () => {
   let wrapper;
   const saveFormSpy = sinon.spy();
+  let exportResponse;
+  let mockHttp;
   beforeEach(() => {
     wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
+    mockHttp = sinon.stub(httpInterceptor);
   });
+
+  afterEach(() => {
+    if (mockHttp.get.restore !== undefined) {
+      mockHttp.get.restore();
+    }
+    if (mockHttp.post.restore !== undefined) {
+      mockHttp.post.restore();
+    }
+  });
+
 
   it('should call exportForms method in click of export button', () => {
     const spy = sinon.spy(wrapper.instance(), 'exportForms');
@@ -352,5 +365,20 @@ describe('Export Forms', () => {
     const spy = sinon.spy(wrapper.instance(), 'validateExport');
     wrapper.instance().exportForms();
     sinon.assert.calledOnce(spy);
+  });
+
+  it('should have notification container with error type, ' +
+      'when response have error forms list', (done) => {
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    exportResponse = {
+      errorFormList: ['Form1_1'],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuids=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('error');
+      done();
+    }, 50);
   });
 });
