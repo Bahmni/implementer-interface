@@ -381,4 +381,20 @@ describe('Export Forms', () => {
       done();
     }, 50);
   });
+
+  it('should have notification container with success type, ' +
+      'when response have no error forms list', (done) => {
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    exportResponse = {
+      bahmniFormDataList: [],
+      errorFormList: [],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuids=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('success');
+      done();
+    }, 50);
+  });
 });

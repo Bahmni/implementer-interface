@@ -242,6 +242,10 @@ export default class FormBuilder extends Component {
                 saveAs(content, commonConstants.exportFileName);
               });
             }
+            if (exportResponse.errorFormList.length === 0) {
+              this.setMessage(commonConstants.exportFormsSuccessMessage,
+                commonConstants.responseType.success);
+            }
           })
     .catch(() => {
       this.setMessage('Export failed', commonConstants.responseType.error);

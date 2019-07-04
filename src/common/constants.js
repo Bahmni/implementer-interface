@@ -11,4 +11,5 @@ export const commonConstants = {
   exportNoOfFormsLimit: noOfFormsExportLimit,
   exportFormsLimit: `User is not allowed to select more than '${noOfFormsExportLimit}' forms`,
   exportFileName: 'Export.zip',
+  exportFormsSuccessMessage: 'All forms Exported Successfully',
 };
