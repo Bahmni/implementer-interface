@@ -206,9 +206,8 @@ export default class FormBuilder extends Component {
     if (formUuids.length === 0) {
       return true;
     }
-    if (formUuids.length > 20) {
-      this.setMessage(formBuilderConstants.exceptionMessages.exportFormsLimit,
-          commonConstants.responseType.error);
+    if (formUuids.length > commonConstants.exportNoOfFormsLimit) {
+      this.setMessage(commonConstants.exportFormsLimit, commonConstants.responseType.error);
       return true;
     }
     return false;
@@ -230,16 +229,17 @@ export default class FormBuilder extends Component {
           .then((exportResponse) => {
             if (exportResponse.errorFormList.length > 0) {
               this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()} . 
-                Please verify logs for details`, commonConstants.responseType.error);
+                Please verify ${commonConstants.logPath} for details`,
+                  commonConstants.responseType.error);
             }
             const formData = exportResponse.bahmniFormDataList;
             formData.forEach(form => {
-              fileName = `${form.bahmniForm.name}_${form.bahmniForm.version}`;
+              fileName = `${form.formJson.name}_${form.formJson.version}`;
               zip.file(`${fileName}.json`, JSON.stringify(form));
             });
             if (formData.length > 0) {
               zip.generateAsync({ type: 'blob' }).then((content) => {
-                saveAs(content, 'Export.zip');
+                saveAs(content, commonConstants.exportFileName);
               });
             }
           })

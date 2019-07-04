@@ -8,7 +8,6 @@ export const formBuilderConstants = {
   exceptionMessages: {
     conceptMissing: 'Please associate Concept to Obs',
     emptySectionOrTable: 'Section/Table is empty',
-    exportFormsLimit: 'User is not allowed to select more than \'20\' forms',
   },
   // eslint-disable-next-line
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
