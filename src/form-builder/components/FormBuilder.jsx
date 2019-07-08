@@ -225,7 +225,12 @@ export default class FormBuilder extends Component {
     }
     const zip = new JSZip();
     let fileName;
-    httpInterceptor.get(`${formBuilderConstants.exportUrl}?uuids=${this.state.selectedForms}`)
+    let params = '';
+    const uuids = this.state.selectedForms;
+    uuids.forEach((uuid, index) => {
+      params = index !== 0 ? `${params}&uuid=${uuid}` : `uuid=${uuid}`;
+    });
+    httpInterceptor.get(`${formBuilderConstants.exportUrl}?${params}`)
           .then((exportResponse) => {
             if (exportResponse.errorFormList.length > 0) {
               this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()} . 
@@ -241,10 +246,10 @@ export default class FormBuilder extends Component {
               zip.generateAsync({ type: 'blob' }).then((content) => {
                 saveAs(content, commonConstants.exportFileName);
               });
-            }
-            if (exportResponse.errorFormList.length === 0) {
-              this.setMessage(commonConstants.exportFormsSuccessMessage,
-                commonConstants.responseType.success);
+              if (exportResponse.errorFormList.length === 0) {
+                this.setMessage(commonConstants.exportFormsSuccessMessage,
+                  commonConstants.responseType.success);
+              }
             }
           })
     .catch(() => {

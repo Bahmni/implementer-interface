@@ -5,6 +5,7 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
+import JSZip from 'jszip';
 import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
 import jsonpath from 'jsonpath/jsonpath';
 
@@ -373,7 +374,7 @@ describe('Export Forms', () => {
     exportResponse = {
       errorFormList: ['Form1_1'],
     };
-    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuids=uuid1')
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
         .returns(Promise.resolve(exportResponse));
     wrapper.instance().exportForms();
     setTimeout(() => {
@@ -384,15 +385,18 @@ describe('Export Forms', () => {
 
   it('should have notification container with success type, ' +
       'when response have no error forms list', (done) => {
+    const spyZipFile = sinon.spy(JSZip.prototype, 'file');
     wrapper.instance().state.selectedForms = ['uuid1'];
     exportResponse = {
-      bahmniFormDataList: [],
+      bahmniFormDataList: [{ formJson: { name: 'Form', version: '1' } },
+          { formJson: { name: 'Form2', version: '1' } }],
       errorFormList: [],
     };
-    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuids=uuid1')
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
         .returns(Promise.resolve(exportResponse));
     wrapper.instance().exportForms();
     setTimeout(() => {
+      sinon.assert.calledTwice(spyZipFile);
       expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('success');
       done();
     }, 50);
