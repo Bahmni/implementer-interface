@@ -74,55 +74,16 @@ export default class FormBuilder extends Component {
     }, commonConstants.toastTimeout);
   }
 
-  openFormModal() {
-    this.setState({ showModal: true });
-  }
-
-  closeFormModal() {
-    this.setState({ showModal: false });
-  }
-
-  createForm(formName) {
-    const form = {
-      name: formName,
-      version: '1',
-      published: false,
-    };
-    this.props.saveForm(form);
-  }
-
-  showLoader() {
-    this.setState({ loading: true });
-  }
-
-  hideLoader() {
-    this.setState({ loading: false });
-  }
-
-  resetValues() {
-    this.importErrors = [];
-    this.formJSONs = [];
-    this.formConceptValidationResults = {};
-  }
-
-  updateImportErrors(fileName, errorMessage) {
-    this.importErrors.push({
-      name: fileName,
-      error: errorMessage,
+  getValidJsonFileNames(fileNames) {
+    const validJsonFiles = [];
+    fileNames.forEach(fileName => {
+      if (fileName.endsWith('.json')) {
+        validJsonFiles.push(fileName);
+      } else {
+        this.updateImportErrors(fileName, 'Invalid file format');
+      }
     });
-  }
-
-  importForm(file) {
-    this.resetValues();
-    this.showLoader();
-    if (file[0].type === 'application/json') {
-      this.importJsonFile(file);
-    } else if (file[0].type === 'application/zip') {
-      this.importJsonZip(file[0]);
-    } else {
-      this.props.onValidationError('Error Importing.. Please import a valid file format');
-      this.hideLoader();
-    }
+    return validJsonFiles;
   }
 
   importJsonZip(jsonZip) {
@@ -139,16 +100,55 @@ export default class FormBuilder extends Component {
     }
   }
 
-  getValidJsonFileNames(fileNames) {
-    const validJsonFiles = [];
-    fileNames.forEach(fileName => {
-      if (fileName.endsWith('.json')) {
-        validJsonFiles.push(fileName);
-      } else {
-        this.updateImportErrors(fileName, 'Invalid file format');
-      }
+  importForm(file) {
+    this.resetValues();
+    this.showLoader();
+    if (file[0].type === 'application/json') {
+      this.importJsonFile(file);
+    } else if (file[0].type === 'application/zip') {
+      this.importJsonZip(file[0]);
+    } else {
+      this.props.onValidationError('Error Importing.. Please import a valid file format');
+      this.hideLoader();
+    }
+  }
+
+  updateImportErrors(fileName, errorMessage) {
+    this.importErrors.push({
+      name: fileName,
+      error: errorMessage,
     });
-    return validJsonFiles;
+  }
+
+  resetValues() {
+    this.importErrors = [];
+    this.formJSONs = [];
+    this.formConceptValidationResults = {};
+  }
+
+  hideLoader() {
+    this.setState({ loading: false });
+  }
+
+  showLoader() {
+    this.setState({ loading: true });
+  }
+
+  openFormModal() {
+    this.setState({ showModal: true });
+  }
+
+  closeFormModal() {
+    this.setState({ showModal: false });
+  }
+
+  createForm(formName) {
+    const form = {
+      name: formName,
+      version: '1',
+      published: false,
+    };
+    this.props.saveForm(form);
   }
 
   validateExtractedZip(jsonZip) {
