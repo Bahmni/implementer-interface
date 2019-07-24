@@ -7,6 +7,7 @@ import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
 import JSZip from 'jszip';
 import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
+import { saveAs } from 'file-saver';
 import jsonpath from 'jsonpath/jsonpath';
 
 chai.use(chaiEnzyme());
@@ -245,7 +246,7 @@ describe('Import form', () => {
   });
 
   it('should call validate file when click import button', () => {
-    const spy = sinon.spy(wrapper.instance(), 'validateFile');
+    const spy = sinon.spy(wrapper.instance(), 'importForm');
     wrapper.find('.importBtn').find('input').simulate('change', { target: { files: file } });
 
     sinon.assert.calledOnce(spy);
@@ -283,8 +284,12 @@ describe('Import form', () => {
       .onSecondCall().returns([])
       .onThirdCall().returns([]);
     const newInstance = wrapper.instance();
-    newInstance.fixuuid('formName').catch(() => {
-      expect(newInstance.validationErrors[0]).to.eql('Concept name not found Pulse');
+    const fileName = 'fileName.json';
+    const validationPromise = newInstance.fixuuid('formName', fileName);
+
+    validationPromise.then(() => {
+      expect(newInstance.formConceptValidationResults[fileName])
+        .to.eql(['Concept name not found Pulse']);
       done();
     });
   });
@@ -400,5 +405,360 @@ describe('Export Forms', () => {
       expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('success');
       done();
     }, 50);
+  });
+});
+
+describe('Import Multiple Forms', () => {
+  let wrapper;
+  const saveFormSpy = sinon.spy();
+  let onValidationErrorSpy = sinon.spy();
+  let newInstance;
+
+  beforeEach(() => {
+    onValidationErrorSpy = sinon.spy();
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} onValidationError={onValidationErrorSpy}
+      saveForm={saveFormSpy}
+    />);
+    newInstance = wrapper.instance();
+    newInstance.resetValues();
+  });
+
+  afterEach(() => {
+    if (JSZip.prototype.loadAsync.restore !== undefined) {
+      JSZip.prototype.loadAsync.restore();
+    }
+
+    if (JSZip.prototype.file.restore !== undefined) {
+      JSZip.prototype.file.restore();
+    }
+
+    if (httpInterceptor.get.restore !== undefined) {
+      httpInterceptor.get.restore();
+    }
+
+    if (jsonpath.query.restore !== undefined) {
+      jsonpath.query.restore();
+    }
+  });
+
+  it('set loading to true when show loader is called', () => {
+    newInstance.showLoader();
+
+    expect(newInstance.state.loading).to.eql(true);
+  });
+
+  it('set loading to false when hide loader is called', () => {
+    newInstance.hideLoader();
+
+    expect(newInstance.state.loading).to.eql(false);
+  });
+
+  it('should add error messages to importErrors when updateImportErrors is called', () => {
+    newInstance.updateImportErrors('file1', 'file1 error');
+    newInstance.updateImportErrors('file2', 'file2 error');
+
+    expect(newInstance.importErrors.length).to.eql(2);
+  });
+
+  it('should throw error when type of file is not json or zip', () => {
+    const file = [];
+    file.push({ type: 'application/text' });
+    newInstance.importForm(file);
+
+    sinon.assert.calledOnce(onValidationErrorSpy);
+  });
+
+  it('should call importJsonFile when type of file is json', () => {
+    newInstance.importJsonFile = sinon.spy();
+    const file = [];
+    file.push({ type: 'application/json' });
+    newInstance.importForm(file);
+
+    sinon.assert.calledOnce(newInstance.importJsonFile);
+  });
+
+  it('should call importJsonZip when type of file is zip', () => {
+    newInstance.importJsonZip = sinon.spy();
+    const file = [];
+    file.push({ type: 'application/zip' });
+    newInstance.importForm(file);
+
+    sinon.assert.calledOnce(newInstance.importJsonZip);
+  });
+
+
+  it('should throw error when zip size is more than 500KB', () => {
+    const jsonZip = {};
+    jsonZip.size = 500 * 1024 + 500;
+    newInstance.importJsonZip(jsonZip);
+
+    sinon.assert.calledOnce(onValidationErrorSpy);
+  });
+
+  it('should call loadAsync and validateExtractedZip when zip is valid', (done) => {
+    newInstance.validateExtractedZip = sinon.spy();
+    sinon.stub(JSZip.prototype, 'loadAsync').callsFake(() => Promise.resolve({ test: 'value' }));
+    const jsonZip = {};
+    jsonZip.size = 2 * 1024;
+    jsonZip.type = 'application/zip';
+    jsonZip.name = 'test.zip';
+    newInstance.importJsonZip(jsonZip);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.validateExtractedZip);
+      done();
+    }, 50);
+  });
+
+  it('should return valid json files', () => {
+    const fileNames = ['sample.json', 'sample1.txt', 'sample2.pdf', 'sample3.json'];
+    const validJsonFileNames = newInstance.getValidJsonFileNames(fileNames);
+    expect(validJsonFileNames).to.eql(['sample.json', 'sample3.json']);
+    expect(newInstance.importErrors.length).to.eql(2);
+  });
+
+  it('should call updateImportErrors for invalid json content', (done) => {
+    const fileNames = ['sample.json', 'sample3.json'];
+    const jsonZip = {
+      files: [{}],
+      file() {
+        return this;
+      },
+      async() {
+        return Promise.resolve('text goes here');
+      },
+    };
+    sinon.stub(JSZip.prototype, 'file').returns({
+      async: sinon.stub().callsFake(() => Promise.resolve('text goes here')),
+    });
+    sinon.stub(newInstance, 'getValidJsonFileNames').onFirstCall().returns(fileNames);
+    newInstance.validateExtractedZip(jsonZip);
+
+    setTimeout(() => {
+      expect(newInstance.importErrors.length).to.eql(2);
+      done();
+    });
+  });
+
+  it('should call processForms for valid json content', (done) => {
+    const fileNames = ['sample.json', 'sample3.json'];
+    const jsonZip = {
+      files: [{}],
+      file() {
+        return this;
+      },
+      async() {
+        return Promise.resolve({});
+      },
+    };
+    sinon.stub(JSZip.prototype, 'file').returns({
+      async: sinon.stub().callsFake(() => Promise.resolve({})),
+    });
+    newInstance.processForms = sinon.stub();
+    sinon.stub(newInstance, 'getValidJsonFileNames').onFirstCall().returns(fileNames);
+    newInstance.validateExtractedZip(jsonZip);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.processForms);
+      done();
+    });
+  });
+
+  it('should update errors for invalid json', () => {
+    const formJsons = [{}, {}];
+    newInstance.processForms(formJsons);
+
+    expect(newInstance.importErrors.length).to.eql(2);
+  });
+
+  it('should update errors for invalid json', (done) => {
+    const formJsons = [{}, {}];
+    newInstance.downloadErrorsFile = sinon.spy();
+    newInstance.processForms(formJsons);
+
+    expect(newInstance.importErrors.length).to.eql(2);
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.downloadErrorsFile);
+      done();
+    });
+  });
+
+  it('should insert valid form json into formsValidationPromises', (done) => {
+    const formJsons = [{}, {}];
+    sinon.stub(newInstance, 'validateFormJson')
+      .onFirstCall().returns(Promise.resolve('data'))
+      .onSecondCall().returns(Promise.resolve('data2'));
+    newInstance.downloadErrorsFile = sinon.spy();
+    newInstance.importForms = sinon.spy();
+    const importSpy = sinon.spy(newInstance, 'import');
+    newInstance.processForms(formJsons);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.import);
+      expect(importSpy.getCalls()[0].args[0].length).to.eql(2);
+      done();
+    });
+  });
+
+  it('should insert form json into formsValidationPromises when importJsonFile ' +
+    'called with valid form', (done) => {
+    const file = [{ name: 'sample.json' }];
+    const blob = new Blob([JSON.stringify(file)], { type: 'application/json' });
+    sinon.stub(newInstance, 'validateFormJson')
+      .onFirstCall().returns(Promise.resolve('data'));
+    newInstance.downloadErrorsFile = sinon.spy();
+    newInstance.importForms = sinon.spy();
+    const importSpy = sinon.spy(newInstance, 'import');
+    newInstance.importJsonFile([blob]);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.import);
+      expect(importSpy.getCalls()[0].args[0].length).to.eql(1);
+      done();
+    });
+  });
+
+  it('should call only downloadErrorFile when there are errors and no valid formJsons', (done) => {
+    const formValidationPromises = [Promise.resolve(), Promise.resolve()];
+    newInstance.importErrors = [{}];
+    newInstance.formJSONs = [];
+    newInstance.downloadErrorsFile = sinon.spy();
+    newInstance.importForms = sinon.spy();
+    newInstance.import(formValidationPromises);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.downloadErrorsFile);
+      sinon.assert.notCalled(newInstance.importForms);
+      done();
+    });
+  });
+
+  it('should call importForms when there are errors', (done) => {
+    const formValidationPromises = [Promise.resolve(), Promise.resolve()];
+    newInstance.formJSONs = [{}];
+    newInstance.importErrors = [];
+    newInstance.downloadErrorsFile = sinon.spy();
+    newInstance.importForms = sinon.spy();
+    newInstance.import(formValidationPromises);
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.importForms);
+      sinon.assert.notCalled(newInstance.downloadErrorsFile);
+      done();
+    });
+  });
+
+  it('should call saveAs and hideLoader method', () => {
+    sinon.stub(saveAs, 'saveAs').callsFake(() => {});
+    newInstance.hideLoader = sinon.spy();
+    newInstance.downloadErrorsFile([]);
+
+    sinon.assert.calledOnce(saveAs);
+    sinon.assert.calledOnce(newInstance.hideLoader);
+  });
+
+  it('should call importFormJson for given formJsons', (done) => {
+    const formJsons = [{}, {}];
+    newInstance.importFormJson = sinon.spy();
+    newInstance.hideLoader = sinon.spy();
+    newInstance.importForms(formJsons);
+
+    sinon.assert.calledTwice(newInstance.importFormJson);
+    setTimeout(() => {
+      sinon.assert.calledOnce(newInstance.hideLoader);
+      done();
+    });
+  });
+
+  it('should add form validation results to existing file results', (done) => {
+    const value = {};
+    const fileName = 'sampleFile.json';
+    newInstance.formConceptValidationResults[fileName] = ['Error in concept'];
+    sinon.stub(httpInterceptor, 'get')
+      .callsFake(() => Promise.resolve({ results: [] }));
+    sinon.stub(jsonpath, 'query')
+      .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
+      .onSecondCall().returns([])
+      .onThirdCall().returns([]);
+    const validationPromise = newInstance.fixuuid(value, fileName);
+
+    setTimeout(() => {
+      validationPromise.then(() => {
+        expect(newInstance.formConceptValidationResults[fileName].length).to.eql(2);
+      });
+      done();
+    });
+  });
+
+  it('should add to importErrors when formName is invalid', () => {
+    const formName = 'sample-form-1';
+    const fileName = 'fileName';
+    const formData = {
+      formJson: {
+        name: formName,
+        resources: [
+          { value: '{"a":2}' },
+        ],
+      },
+    };
+    newInstance.validateFormJson(fileName, formData);
+
+    expect(newInstance.importErrors.length).to.eql(1);
+  });
+
+  it('should update import errors', (done) => {
+    const formName = 'sampleForm';
+    const fileName = 'fileName.json';
+    const formData = {
+      formJson: {
+        name: formName,
+        resources: [
+          { value: '{"a":2}' },
+        ],
+      },
+    };
+    sinon.stub(newInstance, 'fixuuid').onFirstCall().returns(Promise.resolve(''));
+    newInstance.formConceptValidationResults[fileName] = ['ERR1', 'ERR2'];
+    newInstance.validateFormJson(fileName, formData);
+
+    setTimeout(() => {
+      expect(newInstance.importErrors.length).to.eql(1);
+      expect(newInstance.importErrors[0].error).to.eql('Concept validation error: \nERR1\nERR2\n');
+      expect(newInstance.importErrors[0].name).to.eql(fileName);
+      done();
+    });
+  });
+
+  it('should insert to formJson for a valid form', (done) => {
+    const formName = 'sampleForm';
+    const fileName = 'fileName.json';
+    const formData = {
+      formJson: {
+        name: formName,
+        resources: [
+          { value: '{"a":2}' },
+        ],
+      },
+      translations: [],
+    };
+    sinon.stub(newInstance, 'fixuuid').onFirstCall().returns(Promise.resolve(''));
+    newInstance.validateFormJson(fileName, formData);
+
+    setTimeout(() => {
+      expect(newInstance.formJSONs.length).to.eql(1);
+      expect(newInstance.formJSONs[0].formName).to.eql(formName);
+      expect(newInstance.formJSONs[0].translations).to.eql([]);
+      done();
+    });
+  });
+
+  it('should show empty file error and hide loader', () => {
+    const jsonZip = {
+      files: [],
+    };
+    newInstance.validateExtractedZip(jsonZip);
+
+    expect(onValidationErrorSpy.getCalls()[0].args[0])
+      .to.eql('Error Importing.. No files found in ZIP');
   });
 });
