@@ -86,7 +86,7 @@ export default class FormBuilder extends Component {
     return validJsonFiles;
   }
 
-  importJsonZip(jsonZip) {
+  validateAndLoadZipFile(jsonZip) {
     const self = this;
     const maxAllowedSize = 500 * 1024;
     if (jsonZip.size > maxAllowedSize) {
@@ -95,18 +95,18 @@ export default class FormBuilder extends Component {
     } else {
       const jsZip = new JSZip();
       jsZip.loadAsync(jsonZip).then((zip) => {
-        self.validateExtractedZip(zip);
+        self.validateFilesInZip(zip);
       });
     }
   }
 
-  importForm(file) {
+  import(file) {
     this.resetValues();
     this.showLoader();
     if (file[0].type === 'application/json') {
       this.importJsonFile(file);
     } else if (file[0].type === 'application/zip') {
-      this.importJsonZip(file[0]);
+      this.validateAndLoadZipFile(file[0]);
     } else {
       this.props.onValidationError('Error Importing.. Please import a valid file format');
       this.hideLoader();
@@ -151,7 +151,7 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  validateExtractedZip(jsonZip) {
+  validateFilesInZip(jsonZip) {
     const self = this;
     const files = jsonZip.files;
     const fileNames = (files || files.length < 1) && Object.keys(files);
@@ -180,7 +180,7 @@ export default class FormBuilder extends Component {
     const self = this;
     formJsons.forEach(form => {
       try {
-        const validateFormJson = self.validateFormJson(form.fileName, form.formData);
+        const validateFormJson = self.validateFormJsonAndConcepts(form.fileName, form.formData);
         if (validateFormJson !== null) {
           formsValidationPromises.push(validateFormJson);
         }
@@ -189,7 +189,7 @@ export default class FormBuilder extends Component {
           'Parse Error While Importing.. Please import a valid form');
       }
     });
-    self.import(formsValidationPromises);
+    self.processFormValidationPromises(formsValidationPromises);
   }
 
   importJsonFile(file) {
@@ -201,11 +201,11 @@ export default class FormBuilder extends Component {
       try {
         const formData = JSON.parse(reader.result);
         const formsValidationPromises = [];
-        const validateFormJsonPromise = self.validateFormJson(fileName, formData);
+        const validateFormJsonPromise = self.validateFormJsonAndConcepts(fileName, formData);
         if (validateFormJsonPromise !== null) {
           formsValidationPromises.push(validateFormJsonPromise);
         }
-        self.import(formsValidationPromises);
+        self.processFormValidationPromises(formsValidationPromises);
       } catch (error) {
         self.updateImportErrors(fileName, self.parseErrorMessage);
         self.downloadErrorsFile(self.importErrors);
@@ -214,7 +214,7 @@ export default class FormBuilder extends Component {
     reader.readAsText(file[0]);
   }
 
-  validateFormJson(fileName, formData) {
+  validateFormJsonAndConcepts(fileName, formData) {
     const self = this;
     const { formJson, translations } = formData;
     const formName = formJson.name;
@@ -244,14 +244,14 @@ export default class FormBuilder extends Component {
     return null;
   }
 
-  import(formsValidationPromises) {
+  processFormValidationPromises(formsValidationPromises) {
     const self = this;
     Promise.all(formsValidationPromises).then(() => {
       if (self.importErrors.length !== 0) {
         self.downloadErrorsFile(self.importErrors);
       }
       if (self.formJSONs.length !== 0) {
-        self.importForms(self.formJSONs);
+        self.importValidForms(self.formJSONs);
       }
     });
   }
@@ -265,17 +265,17 @@ export default class FormBuilder extends Component {
     this.hideLoader();
   }
 
-  importForms(formJsons) {
+  importValidForms(formJsons) {
     const self = this;
     const importFormJsonPromises = [];
     formJsons.forEach(formJson => {
       const { form, value, formName, translations } = formJson;
-      importFormJsonPromises.push(self.importFormJson(form, value, formName, translations));
+      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations));
     });
     Promise.all(importFormJsonPromises).finally(() => self.hideLoader());
   }
 
-  importFormJson(form, value, formName, translations) {
+  saveFormJson(form, value, formName, translations) {
     const self = this;
     const val = value;
     return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
@@ -440,7 +440,7 @@ export default class FormBuilder extends Component {
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
                 <input accept="application/zip, application/json" id="formImportBtn"
-                  onChange={(e) => this.importForm(e.target.files)}
+                  onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
                          // eslint-disable-next-line
                          e.target.value = null;
