@@ -480,7 +480,7 @@ describe('Import Multiple Forms', () => {
   it('should call validateAndLoadZipFile when type of file is zip', () => {
     newInstance.validateAndLoadZipFile = sinon.spy();
     const file = [];
-    file.push({ type: 'application/zip' });
+    file.push({ type: 'application/x-zip-compressed' });
     newInstance.import(file);
 
     sinon.assert.calledOnce(newInstance.validateAndLoadZipFile);

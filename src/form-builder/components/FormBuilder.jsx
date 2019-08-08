@@ -23,8 +23,10 @@ export default class FormBuilder extends Component {
     super();
     this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
-    this.validationErrors = [];
 
+    this.jsonFormat = 'application/json';
+    this.zipFormats = 'application/zip,application/octet-stream,' +
+      'application/x-zip,application/x-zip-compressed';
     this.importErrors = [];
     this.formJSONs = [];
     this.formConceptValidationResults = {};
@@ -103,9 +105,9 @@ export default class FormBuilder extends Component {
   import(file) {
     this.resetValues();
     this.showLoader();
-    if (file[0].type === 'application/json') {
+    if (file[0].type === this.jsonFormat) {
       this.importJsonFile(file);
-    } else if (file[0].type === 'application/zip') {
+    } else if (this.zipFormats.indexOf(file[0].type) !== -1) {
       this.validateAndLoadZipFile(file[0]);
     } else {
       this.props.onValidationError('Error Importing.. Please import a valid file format');
@@ -333,7 +335,6 @@ export default class FormBuilder extends Component {
 
   fixuuid(value, fileName) {
     const checkPromises = [];
-    this.validationErrors = [];
     const concepts = jsonpath.query(value, '$..concept');
     const setMembers = jsonpath.query(value, '$..setMembers');
     const conceptAnswers = jsonpath.query(value, '$..answers');
@@ -440,11 +441,7 @@ export default class FormBuilder extends Component {
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
                 <input
-                  accept="application/json,
-                  application/zip,
-                  application/octet-stream,
-                  application/x-zip,
-                  application/x-zip-compressed"
+                  accept={this.jsonFormat + this.zipFormats}
                   id="formImportBtn"
                   onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
