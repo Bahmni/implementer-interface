@@ -439,7 +439,13 @@ export default class FormBuilder extends Component {
             </button>
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
-                <input accept="application/zip, application/json" id="formImportBtn"
+                <input
+                  accept="application/json,
+                  application/zip,
+                  application/octet-stream,
+                  application/x-zip,
+                  application/x-zip-compressed"
+                  id="formImportBtn"
                   onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
                          // eslint-disable-next-line
