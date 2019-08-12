@@ -5,7 +5,7 @@ export default class DeleteControlModal extends Component {
 
   deleteControl(e) {
     e.preventDefault();
-    this.props.deleteControl();
+    this.props.deleteControl(this.props.controlId);
     this.props.closeModal();
   }
 
@@ -42,6 +42,7 @@ export default class DeleteControlModal extends Component {
 
 DeleteControlModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
+  controlId: PropTypes.string,
   controlName: PropTypes.string,
   deleteControl: PropTypes.func.isRequired,
 };

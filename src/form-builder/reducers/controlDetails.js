@@ -13,6 +13,9 @@ const controlDetails = (store = {}, action) => {
       // eslint-disable-next-line
       store.selectedControl.events = { onValueChange: action.source };
       return cloneDeep(store);
+    case 'DRAG_SOURCE_CHANGED':
+      return Object.assign({}, store, { dragSourceCell: action.cell });
+
     default:
       return store;
   }

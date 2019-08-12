@@ -13,6 +13,7 @@ describe('DeleteControlModal', () => {
   let closeModalSpy;
   let deleteControlSpy;
   let controlName;
+  let controlId;
 
   beforeEach(() => {
     closeModalSpy = sinon.spy();
@@ -20,6 +21,7 @@ describe('DeleteControlModal', () => {
     wrapper = shallow(
       <DeleteControlModal
         closeModal={closeModalSpy}
+        controlId={controlId}
         controlName={controlName}
         deleteControl={deleteControlSpy}
       />
@@ -56,7 +58,7 @@ describe('DeleteControlModal', () => {
       preventDefault: () => {},
     });
 
-    sinon.assert.calledOnce(deleteControlSpy);
+    sinon.assert.calledWith(deleteControlSpy, controlId);
     sinon.assert.calledOnce(closeModalSpy);
   });
 });

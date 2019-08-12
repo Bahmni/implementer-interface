@@ -9,7 +9,12 @@ import { focusControl, selectControl } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
 import { Exception } from 'form-builder/helpers/Exception';
 import { ComponentStore } from 'bahmni-form-controls';
-import { eventsChanged, sourceChangedProperty } from '../../../src/form-builder/actions/control';
+import {
+  eventsChanged,
+  sourceChangedProperty,
+  dragSourceUpdate,
+} from 'form-builder/actions/control';
+import DragDropHelper from 'form-builder/helpers/dragDropHelper';
 
 chai.use(chaiEnzyme());
 
@@ -60,7 +65,6 @@ describe('ControlWrapper', () => {
       />);
 
     expect(controlWrapper.find('.control-wrapper')).to.have.prop('onDragStart');
-    expect(controlWrapper.find('.control-wrapper')).to.have.prop('onDragEnd');
     expect(controlWrapper.find('.control-wrapper').children()).to.have.prop('onSelect');
   });
 
@@ -394,5 +398,21 @@ describe('ControlWrapper', () => {
     const expectedException = new Exception(conceptMissingMessage);
 
     expect(instance.getJsonDefinition.bind(instance)).to.throw(expectedException);
+  });
+
+  it('should reset the drag source to undefined after the drop is done', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+        store={ store }
+      />).shallow();
+
+    const instance = controlWrapper.instance();
+    const dragDrophelperStub = sinon.stub(DragDropHelper, 'processControlDrop');
+    instance.handleControlDrop({ metadata });
+    sinon.assert.calledOnce(store.dispatch.withArgs(dragSourceUpdate(undefined)));
+    dragDrophelperStub.restore();
   });
 });

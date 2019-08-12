@@ -7,6 +7,8 @@ import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import TitleDetail from './TitleDetail';
+import DragDropHelper from '../helpers/dragDropHelper.js';
+import { dragSourceUpdate } from '../actions/control';
 
 class Canvas extends Component {
   constructor(props) {
@@ -14,9 +16,10 @@ class Canvas extends Component {
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
     this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls),
-      formName: props.formName };
+      formName: props.formName, isBeingDragged: false };
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
+    this.handleControlDrop = this.handleControlDrop.bind(this);
   }
 
   getComponentDescriptors(formResourceControls) {
@@ -61,6 +64,16 @@ class Canvas extends Component {
     }
   }
 
+  handleControlDrop({ metadata, successCallback, dropCell }) {
+    DragDropHelper.processControlDrop({ dragSourceCell: this.props.dragSourceCell,
+      successfulDropCallback: successCallback, dropCell, metadata });
+    this.props.dispatch(dragSourceUpdate(undefined));
+  }
+
+  dragAndDropLocationIsSame(dragCell, dropCell) {
+    return dragCell === dropCell;
+  }
+
   render() {
     const { formResourceControls } = this.props;
     return (
@@ -79,7 +92,10 @@ class Canvas extends Component {
         <Grid
           className="bahmni-grid"
           controls={ formResourceControls || [] }
+          dragSourceCell={this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator }
+          isBeingDragged= {this.state.isBeingDragged}
+          onControlDrop={this.handleControlDrop}
           ref={ this.gridReference }
           setError={this.props.setError}
           showDeleteButton
@@ -93,6 +109,7 @@ class Canvas extends Component {
 Canvas.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
+  dragSourceCell: PropTypes.object,
   formId: PropTypes.number,
   formName: PropTypes.string.isRequired,
   formResourceControls: PropTypes.array.isRequired,
@@ -102,5 +119,9 @@ Canvas.propTypes = {
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
 };
-
-export default connect(null, null, null, { withRef: true })(Canvas);
+function mapStateToProps(state) {
+  return {
+    dragSourceCell: state.controlDetails.dragSourceCell,
+  };
+}
+export default connect(mapStateToProps, null, null, { withRef: true })(Canvas);
