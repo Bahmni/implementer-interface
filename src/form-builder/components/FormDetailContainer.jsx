@@ -29,7 +29,7 @@ export class FormDetailContainer extends Component {
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
       httpReceived: false, loading: true, formList: [],
-      originalFormName: undefined, formEvents: {} };
+      originalFormName: undefined, formEvents: {}, referenceVersion: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
