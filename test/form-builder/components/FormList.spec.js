@@ -56,31 +56,31 @@ describe('FormList', () => {
   }
 
   it('should render form list in table', () => {
-    wrapper = mount(<FormList data={data} />);
+    wrapper = mount(<FormList data={data} handleSelectedForm={undefined} />);
 
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
-    expect(getData(0, 0)).to.have.string('Vitals');
-    expect(getData(0, 1)).to.eql('1.1');
-    expect(getData(0, 2)).to.eql('10 Oct 10');
-    expect(getData(0, 3)).to.eql('Draft');
+    expect(getData(0, 1)).to.have.string('Vitals');
+    expect(getData(0, 2)).to.eql('1.1');
+    expect(getData(0, 3)).to.eql('10 Oct 10');
+    expect(getData(0, 4)).to.eql('Draft');
 
-    expect(getData(1, 0)).to.eql('BP');
-    expect(getData(1, 1)).to.eql('1.2');
-    expect(getData(1, 2)).to.eql('09 Aug 10');
-    expect(getData(1, 3)).to.eql('Published');
+    expect(getData(1, 1)).to.eql('BP');
+    expect(getData(1, 2)).to.eql('1.2');
+    expect(getData(1, 3)).to.eql('09 Aug 10');
+    expect(getData(1, 4)).to.eql('Published');
 
-    expect(getData(2, 0)).to.eql('Pulse');
-    expect(getData(2, 1)).to.eql('1.1');
-    expect(getData(2, 2)).to.eql('09 Aug 10');
-    expect(getData(2, 3)).to.eql('Published');
+    expect(getData(2, 1)).to.eql('Pulse');
+    expect(getData(2, 2)).to.eql('1.1');
+    expect(getData(2, 3)).to.eql('09 Aug 10');
+    expect(getData(2, 4)).to.eql('Published');
 
     expect(wrapper.find('table').find('.fa-pencil')).to.have.exactly(1).descendants('i');
     expect(wrapper.find('table').find('.fa-file-text-o')).to.have.exactly(3).descendants('i');
 
-    expect(getItem(0, 4).find('.translate-icon').prop('hidden')).to.eql(true);
-    expect(getItem(1, 4).find('.translate-icon').prop('hidden')).to.eql(false);
-    expect(getItem(2, 4).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(0, 5).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(1, 5).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(2, 5).find('.translate-icon').prop('hidden')).to.eql(false);
     expect(getLinkAt(0).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1' });
     expect(getLinkAt(1).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-1/translate' });
     expect(getLinkAt(2).props().to).to.deep.eql({ pathname: 'form-builder/someUuid-2' });
@@ -90,18 +90,18 @@ describe('FormList', () => {
   });
 
   it('should not display table if there is no data', () => {
-    wrapper = shallow(<FormList data={[]} />);
+    wrapper = shallow(<FormList data={[]} handleSelectedForm={undefined} />);
 
     expect(wrapper.find('p').text()).to.eql('No Forms to Display');
     expect(wrapper).to.not.have.descendants('table');
   });
 
   it('should render Export when form published', () => {
-    wrapper = shallow(<FormList data={data} />);
+    wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
 
-    expect(getItem(0, 4).find('a').prop('hidden')).to.eql(true);
-    expect(getItem(1, 4).find('a').prop('hidden')).to.eql(false);
-    expect(getItem(1, 4).find('a').find('i').prop('className')).to.eql('fa fa-download');
+    expect(getItem(0, 5).find('a').prop('hidden')).to.eql(true);
+    expect(getItem(1, 5).find('a').prop('hidden')).to.eql(false);
+    expect(getItem(1, 5).find('a').find('i').prop('className')).to.eql('fa fa-download');
   });
 
   it('should call downloadFile when export be clicked', (done) => {
@@ -110,7 +110,7 @@ describe('FormList', () => {
       .onSecondCall(1).returns(Promise.resolve([]));
 
     wrapper = shallow(<FormList data={data} />);
-    const exportElement = getItem(0, 4).find('a');
+    const exportElement = getItem(0, 5).find('a');
     exportElement.simulate('click');
     const params =
       'v=custom:(id,uuid,name,version,published,auditInfo,' +
@@ -130,16 +130,16 @@ describe('FormList', () => {
   });
 
   it('should render notification container', () => {
-    wrapper = shallow(<FormList data={data} />);
+    wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
 
     expect(wrapper.find('NotificationContainer')).to.have.length(1);
   });
 
   it('should call setMessage when download done', (done) => {
-    wrapper = shallow(<FormList data={data} />);
+    wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
     const spy = sinon.spy(wrapper.instance(), 'setMessage');
 
-    const exportElement = getItem(1, 4).find('a');
+    const exportElement = getItem(1, 5).find('a');
     exportElement.simulate('click');
 
     setTimeout(() => {
@@ -161,12 +161,20 @@ describe('FormList', () => {
     };
     const forms = data.concat([form]);
 
-    wrapper = shallow(<FormList data={forms} />);
+    wrapper = shallow(<FormList data={forms} handleSelectedForm={undefined} />);
 
-    expect(getItem(0, 4).find('.translate-icon').prop('hidden')).to.eql(true);
-    expect(getItem(1, 4).find('.translate-icon').prop('hidden')).to.eql(false);
-    expect(getItem(2, 4).find('.translate-icon').prop('hidden')).to.eql(true);
-    expect(getItem(3, 4).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(0, 5).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(1, 5).find('.translate-icon').prop('hidden')).to.eql(false);
+    expect(getItem(2, 5).find('.translate-icon').prop('hidden')).to.eql(true);
+    expect(getItem(3, 5).find('.translate-icon').prop('hidden')).to.eql(false);
+  });
+
+  it('should display check boxes in table', () => {
+    wrapper = mount(<FormList data={data} handleSelectedForm={undefined} />);
+    expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
+    expect(getItem(0, 0).find('br').not.null);
+    expect(getItem(1, 0).find('input').prop('type')).to.eql('checkbox');
+    expect(getItem(2, 0).find('input').prop('type')).to.eql('checkbox');
   });
 });
 

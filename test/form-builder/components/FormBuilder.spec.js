@@ -5,6 +5,7 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import FormBuilder from 'form-builder/components/FormBuilder.jsx';
 import sinon from 'sinon';
+import JSZip from 'jszip';
 import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
 import jsonpath from 'jsonpath/jsonpath';
 
@@ -308,5 +309,96 @@ describe('Import form', () => {
       expect(validated).to.eql([true, true, true]);
       done();
     });
+  });
+});
+
+describe('Export Forms', () => {
+  let wrapper;
+  const saveFormSpy = sinon.spy();
+  let exportResponse;
+  let mockHttp;
+  beforeEach(() => {
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
+    mockHttp = sinon.stub(httpInterceptor);
+  });
+
+  afterEach(() => {
+    if (mockHttp.get.restore !== undefined) {
+      mockHttp.get.restore();
+    }
+    if (mockHttp.post.restore !== undefined) {
+      mockHttp.post.restore();
+    }
+  });
+
+
+  it('should call exportForms method in click of export button', () => {
+    const spy = sinon.spy(wrapper.instance(), 'exportForms');
+    wrapper.find('.exportBtn').simulate('click');
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should return true when no form uuids are passed', () => {
+    expect(wrapper.instance().validateExport([])).to.eql(true);
+  });
+
+  it('should return true when form uuids are passed are more than limit', () => {
+    const spy = sinon.spy(wrapper.instance(), 'setMessage');
+    expect(wrapper.instance().validateExport(['1', '2', '3', '1', '2', '3', '1', '2', '3',
+      '1', '2', '3', '1', '2', '3', '1', '2', '3', '1', '2', '3', '1', '2',
+      '3', '1', '2', '3']))
+        .to.eql(true);
+    sinon.assert.calledOnce(spy);
+    expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('error');
+  });
+
+  it('should return false when form uuids are more than 0 and less than 20', () => {
+    expect(wrapper.instance().validateExport(['1', '2', '3'])).to.eql(false);
+  });
+
+  it('should return false when form uuids are more than 0 and less than 20', () => {
+    const spy = sinon.spy(wrapper.instance(), 'validateExport');
+    wrapper.instance().exportForms();
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should call validate export when exportForms is called', () => {
+    const spy = sinon.spy(wrapper.instance(), 'validateExport');
+    wrapper.instance().exportForms();
+    sinon.assert.calledOnce(spy);
+  });
+
+  it('should have notification container with error type, ' +
+      'when response have error forms list', (done) => {
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    exportResponse = {
+      errorFormList: ['Form1_1'],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('error');
+      done();
+    }, 50);
+  });
+
+  it('should have notification container with success type, ' +
+      'when response have no error forms list', (done) => {
+    const spyZipFile = sinon.spy(JSZip.prototype, 'file');
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    exportResponse = {
+      bahmniFormDataList: [{ formJson: { name: 'Form', version: '1' } },
+          { formJson: { name: 'Form2', version: '1' } }],
+      errorFormList: [],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      sinon.assert.calledTwice(spyZipFile);
+      expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('success');
+      done();
+    }, 50);
   });
 });

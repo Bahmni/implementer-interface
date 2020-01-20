@@ -91,3 +91,14 @@
     color: $gray600;
   }
 }
+.exportBtn {
+  float: right;
+  margin: 0 4px 0 4px;
+  width: 100px;
+
+  &:hover {
+    color: $gray800;
+    background: $gray200;
+    border-color: $gray400;
+  }
+}

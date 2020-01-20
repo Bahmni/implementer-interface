@@ -20,4 +20,5 @@ export const formBuilderConstants = {
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
   allowedLocalesUrl: '/bahmni_config/openmrs/apps/home/locale_languages.json',
   translationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/translations',
+  exportUrl: '/openmrs/ws/rest/v1/bahmniie/form/export',
 };
