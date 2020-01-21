@@ -487,9 +487,9 @@ describe('Import Multiple Forms', () => {
   });
 
 
-  it('should throw error when zip size is more than 500KB', () => {
+  it('should throw error when zip size is more than 5MB', () => {
     const jsonZip = {};
-    jsonZip.size = 500 * 1024 + 500;
+    jsonZip.size = 500 * 1024 * 1024 + 500;
     newInstance.validateAndLoadZipFile(jsonZip);
 
     sinon.assert.calledOnce(onValidationErrorSpy);

@@ -90,10 +90,10 @@ export default class FormBuilder extends Component {
 
   validateAndLoadZipFile(jsonZip) {
     const self = this;
-    const maxAllowedSize = 500 * 1024;
+    const maxAllowedSize = 5 * 1024 * 1024;
     if (jsonZip.size > maxAllowedSize) {
       self.hideLoader();
-      self.props.onValidationError('Error Importing.. Exceeded max file size 500KB');
+      self.props.onValidationError('Error Importing.. Exceeded max file size 5MB');
     } else {
       const jsZip = new JSZip();
       jsZip.loadAsync(jsonZip).then((zip) => {
