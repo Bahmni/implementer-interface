@@ -24,7 +24,8 @@ export default class FormList extends Component {
     return map(data, (rowItem, index) => (
       <tr key={rowItem.id}>
         <td className="form-list-check-box">
-            {rowItem.published && <input onChange={() => this.props.handleSelectedForm(rowItem)} type="checkbox"/>}
+          {rowItem.published &&
+          <input onChange={() => this.props.handleSelectedForm(rowItem)} type="checkbox" />}
         </td>
         <td><i className=" fa fa-file-text-o" />{rowItem.name}</td>
         <td>{rowItem.version}</td>

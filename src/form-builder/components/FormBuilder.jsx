@@ -14,16 +14,24 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import NotificationContainer from 'common/Notification';
 import { remove } from 'lodash';
+import Spinner from 'common/Spinner';
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false, selectedForms: [], notification: {} };
+    this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
-    this.validationErrors = [];
+
+    this.jsonFormat = 'application/json';
+    this.zipFormats = 'application/zip,application/octet-stream,' +
+      'application/x-zip,application/x-zip-compressed';
+    this.importErrors = [];
+    this.formJSONs = [];
+    this.formConceptValidationResults = {};
     this.handleSelectedForm = this.handleSelectedForm.bind(this);
+    this.parseErrorMessage = 'Parse Error While Importing.. Please import a valid form';
   }
 
   getFormVersion(formName) {
@@ -68,6 +76,66 @@ export default class FormBuilder extends Component {
     }, commonConstants.toastTimeout);
   }
 
+  getValidJsonFileNames(fileNames) {
+    const validJsonFiles = [];
+    fileNames.forEach(fileName => {
+      if (fileName.endsWith('.json')) {
+        validJsonFiles.push(fileName);
+      } else {
+        this.updateImportErrors(fileName, 'Invalid file format');
+      }
+    });
+    return validJsonFiles;
+  }
+
+  validateAndLoadZipFile(jsonZip) {
+    const self = this;
+    const maxAllowedSize = 5 * 1024 * 1024;
+    if (jsonZip.size > maxAllowedSize) {
+      self.hideLoader();
+      self.props.onValidationError('Error Importing.. Exceeded max file size 5MB');
+    } else {
+      const jsZip = new JSZip();
+      jsZip.loadAsync(jsonZip).then((zip) => {
+        self.validateFilesInZip(zip);
+      });
+    }
+  }
+
+  import(file) {
+    this.resetValues();
+    this.showLoader();
+    if (file[0].type === this.jsonFormat) {
+      this.importJsonFile(file);
+    } else if (this.zipFormats.indexOf(file[0].type) !== -1) {
+      this.validateAndLoadZipFile(file[0]);
+    } else {
+      this.props.onValidationError('Error Importing.. Please import a valid file format');
+      this.hideLoader();
+    }
+  }
+
+  updateImportErrors(fileName, errorMessage) {
+    this.importErrors.push({
+      name: fileName,
+      error: errorMessage,
+    });
+  }
+
+  resetValues() {
+    this.importErrors = [];
+    this.formJSONs = [];
+    this.formConceptValidationResults = {};
+  }
+
+  hideLoader() {
+    this.setState({ loading: false });
+  }
+
+  showLoader() {
+    this.setState({ loading: true });
+  }
+
   openFormModal() {
     this.setState({ showModal: true });
   }
@@ -85,73 +153,165 @@ export default class FormBuilder extends Component {
     this.props.saveForm(form);
   }
 
-  validateFile(file) {
+  validateFilesInZip(jsonZip) {
+    const self = this;
+    const files = jsonZip.files;
+    const fileNames = (files || files.length < 1) && Object.keys(files);
+    if (fileNames.length < 1) {
+      self.props.onValidationError('Error Importing.. No files found in ZIP');
+      self.hideLoader();
+      return;
+    }
+    const validJsonFileNames = self.getValidJsonFileNames(fileNames);
+    const fileParsePromises = [];
+    const formJsons = [];
+    validJsonFileNames.forEach(fileName => {
+      fileParsePromises.push(jsonZip.file(fileName).async('text').then(data => {
+        try {
+          formJsons.push({ fileName, formData: JSON.parse(data) });
+        } catch (error) {
+          self.updateImportErrors(fileName, self.parseErrorMessage);
+        }
+      }));
+    });
+    Promise.all(fileParsePromises).then(() => self.processForms(formJsons));
+  }
+
+  processForms(formJsons) {
+    const formsValidationPromises = [];
+    const self = this;
+    formJsons.forEach(form => {
+      try {
+        const validateFormJson = self.validateFormJsonAndConcepts(form.fileName, form.formData);
+        if (validateFormJson !== null) {
+          formsValidationPromises.push(validateFormJson);
+        }
+      } catch (e) {
+        this.updateImportErrors(form.fileName,
+          'Parse Error While Importing.. Please import a valid form');
+      }
+    });
+    self.processFormValidationPromises(formsValidationPromises);
+  }
+
+  importJsonFile(file) {
     const self = this;
     const reader = new FileReader();
-    let formData = null;
-
+    const fileName = file[0].name;
     // eslint-disable-next-line
     reader.onload = function () {
       try {
-        formData = JSON.parse(reader.result);
-        const { formJson, translations } = formData;
-        const formName = formJson.name;
-        const value = JSON.parse(formJson.resources[0].value);
-        const form = {
-          name: formName,
-          version: '1',
-          published: false,
-        };
-
-        if (formHelper.validateFormName(formName)) {
-          self.fixuuid(value).catch(() => {
-            const message = `Concept validation error: \n${self.validationErrors.join('\n')}`;
-            self.props.onValidationError(message);
-            return false;
-          }).then((validationPassed) => {
-            if (!validationPassed) return;
-
-            httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
-              value.uuid = response.uuid;
-              const formResource = {
-                form: {
-                  name: formName,
-                  uuid: response.uuid,
-                },
-                value: JSON.stringify(value),
-                uuid: '',
-              };
-              self.props.saveFormResource(formResource, translations);
-            })
-              .catch(() => {
-                const formUuid = self.getFormUuid(formName);
-                value.uuid = formUuid;
-                const params =
-                  'v=custom:(id,uuid,name,version,published,auditInfo,' +
-                  'resources:(value,dataType,uuid))';
-                httpInterceptor
-                  .get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
-                  .then((data) => {
-                    const formResource = {
-                      form: {
-                        name: formName,
-                        uuid: formUuid,
-                      },
-                      value: JSON.stringify(value),
-                      uuid: data.resources[0].uuid,
-                    };
-
-                    self.props.saveFormResource(formResource, translations);
-                  });
-              });
-          });
+        const formData = JSON.parse(reader.result);
+        const formsValidationPromises = [];
+        const validateFormJsonPromise = self.validateFormJsonAndConcepts(fileName, formData);
+        if (validateFormJsonPromise !== null) {
+          formsValidationPromises.push(validateFormJsonPromise);
         }
+        self.processFormValidationPromises(formsValidationPromises);
       } catch (error) {
-        self.props.onValidationError('Error Importing.. Please import a valid form');
+        self.updateImportErrors(fileName, self.parseErrorMessage);
+        self.downloadErrorsFile(self.importErrors);
       }
     };
-
     reader.readAsText(file[0]);
+  }
+
+  validateFormJsonAndConcepts(fileName, formData) {
+    const self = this;
+    const { formJson, translations } = formData;
+    const formName = formJson.name;
+    const value = JSON.parse(formJson.resources[0].value);
+    const form = {
+      name: formName,
+      version: '1',
+      published: false,
+    };
+    if (!formHelper.validateFormName(formName)) {
+      self.updateImportErrors(fileName, 'Invalid File Name');
+    } else {
+      const conceptValidationPromise = self.fixuuid(value, fileName);
+      return conceptValidationPromise.then(() => {
+        if (self.formConceptValidationResults[fileName]) {
+          const validationResults = self.formConceptValidationResults[fileName];
+          let message = 'Concept validation error: \n';
+          validationResults.forEach(v => {
+            message = message.concat(`${v}\n`);
+          });
+          self.updateImportErrors(fileName, message);
+        } else {
+          self.formJSONs.push({ form, value, formName, translations });
+        }
+      });
+    }
+    return null;
+  }
+
+  processFormValidationPromises(formsValidationPromises) {
+    const self = this;
+    Promise.all(formsValidationPromises).then(() => {
+      if (self.importErrors.length !== 0) {
+        self.downloadErrorsFile(self.importErrors);
+      }
+      if (self.formJSONs.length !== 0) {
+        self.importValidForms(self.formJSONs);
+      }
+    });
+  }
+
+  downloadErrorsFile(errors) {
+    const filename = 'importErrors.txt';
+    const blob = new Blob([JSON.stringify(errors)], {
+      type: 'text/plain',
+    });
+    saveAs(blob, filename);
+    this.hideLoader();
+  }
+
+  importValidForms(formJsons) {
+    const self = this;
+    const importFormJsonPromises = [];
+    formJsons.forEach(formJson => {
+      const { form, value, formName, translations } = formJson;
+      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations));
+    });
+    Promise.all(importFormJsonPromises)
+      .then(() => self.hideLoader())
+      .catch(() => self.hideLoader());
+  }
+
+  saveFormJson(form, value, formName, translations) {
+    const self = this;
+    const val = value;
+    return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
+      val.uuid = response.uuid;
+      const formResource = {
+        form: {
+          name: formName,
+          uuid: response.uuid,
+        },
+        value: JSON.stringify(value),
+        uuid: '',
+      };
+      self.props.saveFormResource(formResource, translations);
+    }).catch(() => {
+      const formUuid = self.getFormUuid(formName);
+      val.uuid = formUuid;
+      const params =
+        'v=custom:(id,uuid,name,version,published,auditInfo,' +
+        'resources:(value,dataType,uuid))';
+      httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+        .then((data) => {
+          const formResource = {
+            form: {
+              name: formName,
+              uuid: formUuid,
+            },
+            value: JSON.stringify(value),
+            uuid: data.resources[0].uuid,
+          };
+          self.props.saveFormResource(formResource, translations);
+        });
+    });
   }
 
   validateConcept(concept, checkPromises) {
@@ -168,7 +328,6 @@ export default class FormBuilder extends Component {
           return true;
         }
         const msg = `Concept name not found ${name}`;
-        this.validationErrors.push(msg);
         throw new Error(msg);
       }
       );
@@ -176,9 +335,8 @@ export default class FormBuilder extends Component {
     checkPromises.push(conceptCheckPromise);
   }
 
-  fixuuid(value) {
+  fixuuid(value, fileName) {
     const checkPromises = [];
-    this.validationErrors = [];
     const concepts = jsonpath.query(value, '$..concept');
     const setMembers = jsonpath.query(value, '$..setMembers');
     const conceptAnswers = jsonpath.query(value, '$..answers');
@@ -199,7 +357,16 @@ export default class FormBuilder extends Component {
       });
     });
 
-    return Promise.all(checkPromises);
+    const self = this;
+    return Promise.all(checkPromises.map(promise => promise
+      .catch(e => {
+        if (self.formConceptValidationResults[fileName] !== undefined) {
+          self.formConceptValidationResults[fileName].push(e.message);
+        } else {
+          self.formConceptValidationResults[fileName] = [e.message];
+        }
+      })
+    ));
   }
 
   validateExport(formUuids) {
@@ -243,7 +410,7 @@ export default class FormBuilder extends Component {
               zip.file(`${fileName}.json`, JSON.stringify(form));
             });
             if (formData.length > 0) {
-              zip.generateAsync({ type: 'blob' }).then((content) => {
+              zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
                 saveAs(content, commonConstants.exportFileName);
               });
               if (exportResponse.errorFormList.length === 0) {
@@ -260,6 +427,7 @@ export default class FormBuilder extends Component {
   render() {
     return (
       <div>
+        <Spinner show={this.state.loading} />
         <FormBuilderHeader />
         <NotificationContainer notification={this.state.notification} />
         <div className="breadcrumb-wrap">
@@ -273,14 +441,16 @@ export default class FormBuilder extends Component {
             >Create a Form
             </button>
             <button className="importBtn">
-              <label htmlFor="formImportBtn" >Import
-              <input accept=".json" id="formImportBtn"
-                onChange={(e) => this.validateFile(e.target.files)}
-                onClick={(e) => {
-                       // eslint-disable-next-line
-                       e.target.value = null;
-                }} type="file"
-              /></label></button>
+              <label htmlFor="formImportBtn">Import
+                <input
+                  accept={this.jsonFormat + this.zipFormats}
+                  id="formImportBtn"
+                  onChange={(e) => this.import(e.target.files)}
+                  onClick={(e) => {
+                         // eslint-disable-next-line
+                         e.target.value = null;
+                  }} type="file"
+                /></label></button>
             <button className="exportBtn" onClick={() => this.exportForms()}>
               Export
             </button>
