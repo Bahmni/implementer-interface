@@ -274,7 +274,9 @@ export default class FormBuilder extends Component {
       const { form, value, formName, translations } = formJson;
       importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations));
     });
-    Promise.all(importFormJsonPromises).finally(() => self.hideLoader());
+    Promise.all(importFormJsonPromises)
+      .then(() => self.hideLoader())
+      .catch(() => self.hideLoader());
   }
 
   saveFormJson(form, value, formName, translations) {
@@ -408,7 +410,7 @@ export default class FormBuilder extends Component {
               zip.file(`${fileName}.json`, JSON.stringify(form));
             });
             if (formData.length > 0) {
-              zip.generateAsync({ type: 'blob' }).then((content) => {
+              zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
                 saveAs(content, commonConstants.exportFileName);
               });
               if (exportResponse.errorFormList.length === 0) {
