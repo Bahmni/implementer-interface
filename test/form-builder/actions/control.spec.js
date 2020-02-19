@@ -96,12 +96,22 @@ describe('control', () => {
     });
   });
 
-  describe('eventsChanged', () => {
+  describe('formEventUpdate', () => {
     it('should return the action and changed events', () => {
       const events = 'any thing';
-      const action = control.eventsChanged(events);
+      const action = control.formEventUpdate(events);
 
-      expect(action.type).to.eql('EVENT_CHANGED');
+      expect(action.type).to.eql('FORM_EVENT_CHANGED');
+      expect(action.events).to.eql(events);
+    });
+  });
+
+  describe('saveEventUpdate', () => {
+    it('should return the action and changed events', () => {
+      const events = 'any thing';
+      const action = control.saveEventUpdate(events);
+
+      expect(action.type).to.eql('SAVE_EVENT_CHANGED');
       expect(action.events).to.eql(events);
     });
   });

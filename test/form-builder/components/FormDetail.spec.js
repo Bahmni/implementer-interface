@@ -88,6 +88,29 @@ describe('FormDetails', () => {
     expect(wrapper).to.be.blank();
   });
 
+  it('should render Form Event and Save Event with props', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          formData={formData}
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>
+    );
+    const formEvents = wrapper.find('FormEventContainer');
+    const formEventProps = formEvents.first().props();
+    expect(formEventProps).to.have.property('label');
+    expect(formEventProps.label).to.be.equal('Form Event');
+    expect(formEventProps.eventProperty).to.be.equal('formInitEvent');
+    const saveEventProps = formEvents.at(1).props();
+    expect(saveEventProps).to.have.property('label');
+    expect(saveEventProps.label).to.be.equal('Save Event');
+    expect(saveEventProps.eventProperty).to.be.equal('formSaveEvent');
+    expect(formEvents.length).to.be.equal(2);
+  });
+
   it('should create the idGenerator and pass it as props to required children', () => {
     wrapper = mount(
       <Provider store={getStore()}>

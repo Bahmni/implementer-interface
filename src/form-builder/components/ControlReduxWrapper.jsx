@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { focusControl, selectControl, dragSourceUpdate } from 'form-builder/actions/control';
-import { blurControl, deselectControl, eventsChanged } from 'form-builder/actions/control';
+import { blurControl, deselectControl, formEventUpdate, saveEventUpdate }
+  from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
@@ -156,43 +157,51 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
-  updateScript(script, id) {
-    if (id) {
+  updateScript(script, properties) {
+    if (properties.id) {
       this.props.dispatch(selectControl(this.metadata));
       this.props.dispatch(sourceChangedProperty(script));
     } else {
-      this.props.dispatch(eventsChanged(script));
+      const isSaveEvent = properties.property.formSaveEvent;
+      if (isSaveEvent) {
+        this.props.dispatch(saveEventUpdate(script));
+      } else {
+        this.props.dispatch(formEventUpdate(script));
+      }
     }
-    this.closeScriptEditorDialog(id);
+    this.closeScriptEditorDialog(properties.id);
   }
 
   closeScriptEditorDialog(id) {
     if (id) {
       this.props.dispatch(setChangedProperty({ controlEvent: false }, id));
     } else {
-      this.props.dispatch(setChangedProperty({ formEvent: false }));
+      this.props.dispatch(setChangedProperty({ formInitEvent: false }));
+      this.props.dispatch(setChangedProperty({ formSaveEvent: false }));
     }
   }
 
-  getScript(id) {
+  getScript(properties) {
     const selectedControl = this.props.selectedControl;
-    if (id && selectedControl) {
+    if (properties.id && selectedControl) {
       return selectedControl.events && selectedControl.events.onValueChange;
     }
     const formDetails = this.props.formDetails;
-    return formDetails.events && formDetails.events.onFormInit;
+    const isSaveEvent = properties.property.formSaveEvent;
+    return formDetails.events
+      && (isSaveEvent ? formDetails.events.onFormSave : formDetails.events.onFormInit);
   }
 
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
     if (properties && properties.property &&
       (properties.id === this.metadata.id && properties.property.controlEvent ||
-      !properties.id && properties.property.formEvent)) {
+      !properties.id && (properties.property.formInitEvent || properties.property.formSaveEvent))) {
       return (
         <ScriptEditorModal
           close={() => this.closeScriptEditorDialog(properties.id)}
-          script={this.getScript(properties.id)}
-          updateScript={(script) => this.updateScript(script, properties.id)}
+          script={this.getScript(properties)}
+          updateScript={(script) => this.updateScript(script, properties)}
         />
       );
     }

@@ -15,7 +15,9 @@ export const sourceChangedProperty = (source) => ({ type: 'SOURCE_CHANGED', sour
 
 export const dragSourceUpdate = (cell) => ({ type: 'DRAG_SOURCE_CHANGED', cell });
 
-export const eventsChanged = (events) => ({ type: 'EVENT_CHANGED', events });
+export const formEventUpdate = (events) => ({ type: 'FORM_EVENT_CHANGED', events });
+
+export const saveEventUpdate = (events) => ({ type: 'SAVE_EVENT_CHANGED', events });
 
 export const removeControlProperties = () => ({ type: 'REMOVE_CONTROL_PROPERTIES' });
 

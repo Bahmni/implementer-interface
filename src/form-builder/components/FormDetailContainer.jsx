@@ -18,7 +18,7 @@ import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { clearTranslations, eventsChanged } from '../actions/control';
+import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
 
 
@@ -71,8 +71,14 @@ export class FormDetailContainer extends Component {
       this.props.dispatch(removeControlProperties());
 
       const updatedFormEvents = this.getFormEvents();
-      if (updatedFormEvents && this.formEvents !== updatedFormEvents) {
-        this.props.dispatch(eventsChanged(updatedFormEvents));
+      if (updatedFormEvents) {
+        this.formEvents = this.formEvents || {};
+        if (this.formEvents.onFormInit !== updatedFormEvents.onFormInit) {
+          this.props.dispatch(formEventUpdate(updatedFormEvents.onFormInit));
+        }
+        if (this.formEvents.onFormSave !== updatedFormEvents.onFormSave) {
+          this.props.dispatch(saveEventUpdate(updatedFormEvents.onFormSave));
+        }
         this.formEvents = updatedFormEvents;
       }
     }
@@ -139,7 +145,7 @@ export class FormDetailContainer extends Component {
       const resource = this.state.formData.resources[0];
       if (resource && resource.value) {
         const formDetail = JSON.parse(resource.value);
-        return formDetail && formDetail.events && formDetail.events.onFormInit;
+        return formDetail && formDetail.events && formDetail.events;
       }
     }
     return null;

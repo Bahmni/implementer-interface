@@ -73,6 +73,13 @@ export default class FormDetail extends Component {
                                 />
                                 <ControlPropertiesContainer />
                                 <FormEventContainer
+                                  eventProperty={'formInitEvent'}
+                                  label={'Form Event'}
+                                  updateFormEvents={this.props.updateFormEvents}
+                                />
+                                <FormEventContainer
+                                  eventProperty={'formSaveEvent'}
+                                  label={'Save Event'}
                                   updateFormEvents={this.props.updateFormEvents}
                                 />
                             </div>
