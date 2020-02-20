@@ -25,3 +25,6 @@ document.createRange = function createRange() {
 };
 
 runnable.forEach(testsContext);
+
+import './enzyme_setup';
+
