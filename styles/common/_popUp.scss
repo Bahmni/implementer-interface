@@ -25,7 +25,7 @@
   min-width:450px;
   font-family: $primaryFont, Arial, sans-serif;
   border-radius: 5px 5px 0 0;
-  z-index: 10000;
+  z-index: 1001;
   max-width: 100%;
   &--container{
     padding: 10px 20px;
@@ -74,4 +74,8 @@
 
 .script-editor-container{
   width: 450px;
+}
+
+.CodeMirror-lint-tooltip{
+  z-index: 1002 !important;
 }
