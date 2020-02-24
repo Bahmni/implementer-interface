@@ -70,6 +70,10 @@ module.exports = {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract('css!sass'),
       },
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader',
+      },
       // the url-loader uses DataUrls.
       // the file-loader emits files.
       {

@@ -5,6 +5,7 @@ import chai, { expect } from 'chai';
 import ScriptEditorModal from '../../../src/form-builder/components/ScriptEditorModal';
 import sinon from 'sinon';
 import { commonConstants } from 'common/constants';
+import CodeMirror from 'codemirror';
 
 chai.use(chaiEnzyme());
 
@@ -12,29 +13,35 @@ describe('ScriptEditorModal', () => {
   let wrapper;
   let updateScriptSpy;
   let closeSpy;
+  let codeMirrorStub;
 
   beforeEach(() => {
     updateScriptSpy = sinon.spy();
     closeSpy = sinon.spy();
+  });
+
+  afterEach(() => {
+    if (codeMirrorStub) {
+      codeMirrorStub.restore();
+    }
+  });
+
+  it('should render editor modal', () => {
     wrapper = mount(
       <ScriptEditorModal
         close={closeSpy}
         updateScript={updateScriptSpy}
       />);
-  });
-
-  it('should render editor modal', () => {
     expect(wrapper.find('.editor-wrapper')).to.have.length(1);
-    expect(wrapper.find('.button-wrapper')).to.have.length(1);
-  });
-
-  it('should update script', () => {
-    wrapper.find('.editor-wrapper').simulate('change', { target: { value: 'value change' } });
-
-    expect(wrapper.state().script).to.eql('value change');
+    expect(wrapper.find('.script-editor-button-wrapper')).to.have.length(1);
   });
 
   it('should call close once click cancel button', () => {
+    wrapper = mount(
+      <ScriptEditorModal
+        close={closeSpy}
+        updateScript={updateScriptSpy}
+      />);
     const cancelButton = wrapper.find('.btn');
     cancelButton.simulate('click');
 
@@ -44,7 +51,13 @@ describe('ScriptEditorModal', () => {
 
   it('should call update script once click save button', () => {
     const script = 'function(){var x = 10;}';
-    wrapper.find('.editor-wrapper').simulate('change', { target: { value: script } });
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+      .callsFake(() => ({ getValue() {return script;} }));
+    wrapper = mount(
+      <ScriptEditorModal
+        close={closeSpy}
+        updateScript={updateScriptSpy}
+      />);
 
     const saveButton = wrapper.find('.button');
     saveButton.simulate('click');
@@ -54,11 +67,18 @@ describe('ScriptEditorModal', () => {
   });
 
   it('should throw error and show notification for sometime if script is invalid', () => {
+    const script = 'random value';
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+      .callsFake(() => ({ getValue() {return script;} }));
+    wrapper = mount(
+      <ScriptEditorModal
+        close={closeSpy}
+        updateScript={updateScriptSpy}
+      />);
     const clock = sinon.useFakeTimers();
     const expectedErrorMessage = 'Please Enter valid javascript function';
     commonConstants.toastTimeout = 1000;
 
-    wrapper.find('.editor-wrapper').simulate('change', { target: { value: 'random value' } });
     const saveButton = wrapper.find('.button');
     saveButton.simulate('click');
     expect(wrapper.state().notification).to.eql({ type: 'error', message: expectedErrorMessage });
@@ -70,7 +90,14 @@ describe('ScriptEditorModal', () => {
 
 
   it('should trim extra spaces in the script and save', () => {
-    wrapper.find('.editor-wrapper').simulate('change', { target: { value: '     ' } });
+    const script = '        ';
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+      .callsFake(() => ({ getValue() {return script;} }));
+    wrapper = mount(
+      <ScriptEditorModal
+        close={closeSpy}
+        updateScript={updateScriptSpy}
+      />);
 
     const saveButton = wrapper.find('.button');
     saveButton.simulate('click');

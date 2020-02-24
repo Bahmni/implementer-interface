@@ -12,4 +12,16 @@ if (!runnable.length) {
   runnable = testsContext.keys();
 }
 
+// For CodeMirror Library
+// https://discuss.codemirror.net/t/working-in-jsdom-or-node-js-natively/138
+document.createRange = function createRange() {
+  return {
+    setEnd() {},
+    setStart() {},
+    getBoundingClientRect() {
+      return { right: 0 };
+    },
+  };
+};
+
 runnable.forEach(testsContext);
