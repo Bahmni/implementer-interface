@@ -42,7 +42,7 @@ describe('ScriptEditorModal', () => {
         close={closeSpy}
         updateScript={updateScriptSpy}
       />);
-    const cancelButton = wrapper.find('.btn');
+    const cancelButton = wrapper.find('.btn').at(1);
     cancelButton.simulate('click');
 
     expect(cancelButton.text()).to.eql('Cancel');
@@ -103,5 +103,17 @@ describe('ScriptEditorModal', () => {
     saveButton.simulate('click');
 
     sinon.assert.calledOnce(updateScriptSpy);
+  });
+
+  it('should call format on click of format', () => {
+    const formatStub = sinon.stub(ScriptEditorModal.prototype, 'format').callsFake(() => ({}));
+    wrapper = mount(
+      <ScriptEditorModal
+        close={closeSpy}
+        updateScript={updateScriptSpy}
+      />);
+    const formatButton = wrapper.find('.btn').at(0);
+    formatButton.simulate('click');
+    sinon.assert.calledOnce(formatStub);
   });
 });

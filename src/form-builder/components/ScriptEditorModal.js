@@ -11,6 +11,7 @@ import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/javascript-lint.js';
+import 'js-beautify/js/lib/beautify.js';
 
 window.JSHINT = JSHINT;
 
@@ -24,6 +25,7 @@ export default class ScriptEditorModal extends Component {
     this.setScriptEditorTextArea = element => {
       this.scriptEditorTextArea = element;
     };
+    this.format = this.format.bind(this);
   }
 
   componentDidMount() {
@@ -55,6 +57,12 @@ export default class ScriptEditorModal extends Component {
     }
   }
 
+  format() {
+    const beautify = require('js-beautify').js;
+    const beautifiedData = beautify(this.codeMirrorEditor.getValue(),
+       { indent_size: 2, space_in_empty_paren: true });
+    this.codeMirrorEditor.setValue(beautifiedData);
+  }
 
   render() {
     return (
@@ -70,6 +78,7 @@ export default class ScriptEditorModal extends Component {
           >
           </textarea>
           <div className="script-editor-button-wrapper">
+            <button className="btn" onClick={() => this.format()}>Format</button>
             <button className="button btn--highlight"
               onClick={() => this.validateScript(this.state.script)}
               type="submit"
