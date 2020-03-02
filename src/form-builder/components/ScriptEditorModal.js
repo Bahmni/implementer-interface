@@ -11,7 +11,7 @@ import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/javascript-lint.js';
-import 'js-beautify/js/lib/beautify.js';
+import * as jsBeautifier from 'js-beautify';
 
 window.JSHINT = JSHINT;
 
@@ -58,9 +58,8 @@ export default class ScriptEditorModal extends Component {
   }
 
   format() {
-    const beautify = require('js-beautify').js;
-    const beautifiedData = beautify(this.codeMirrorEditor.getValue(),
-       { indent_size: 2, space_in_empty_paren: true });
+    const beautifiedData = jsBeautifier.js_beautify(this.codeMirrorEditor.getValue(),
+      { indent_size: 2, space_in_empty_paren: true });
     this.codeMirrorEditor.setValue(beautifiedData);
   }
 
