@@ -12,6 +12,9 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/javascript-lint.js';
 import * as jsBeautifier from 'js-beautify';
+import 'codemirror/addon/hint/show-hint.js';
+import 'codemirror/addon/hint/javascript-hint.js';
+import 'codemirror/addon/edit/closebrackets.js';
 
 window.JSHINT = JSHINT;
 
@@ -35,11 +38,14 @@ export default class ScriptEditorModal extends Component {
       mode: { name: 'javascript', globalVars: true },
       gutters: ['CodeMirror-lint-markers'],
       lint: true,
+      extraKeys: { 'Ctrl-Space': 'autocomplete' },
+      autoCloseBrackets: true,
     });
   }
 
   validateScript() {
     try {
+      this.format();
       const script = this.codeMirrorEditor.getValue().trim();
       /* eslint-disable no-eval*/
       if (script.trim().length > 0) eval(`(${script})`);
