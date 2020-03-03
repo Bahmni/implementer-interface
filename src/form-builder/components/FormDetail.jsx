@@ -29,7 +29,7 @@ export default class FormDetail extends Component {
 
   getFormJson() {
     if (this.canvas) {
-      return this.canvas.getWrappedInstance().prepareJson();
+      return this.canvas.prepareJson();
     }
     return null;
   }

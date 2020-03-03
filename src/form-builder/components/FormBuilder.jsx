@@ -433,7 +433,7 @@ export default class FormBuilder extends Component {
         <div className="breadcrumb-wrap">
           <div className="breadcrumb-inner">
             <div className="fl">
-              <FormBuilderBreadcrumbs routes={this.props.routes} />
+              <FormBuilderBreadcrumbs match={this.props.match} routes={this.props.routes} />
             </div>
             <button
               accessKey="n" className="btn--highlight openFormModal fr"
@@ -476,8 +476,13 @@ export default class FormBuilder extends Component {
 
 FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isExact: PropTypes.bool.isRequired,
+    params: PropTypes.object,
+  }),
   onValidationError: PropTypes.func,
-  routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
   saveFormResource: PropTypes.func,
 };

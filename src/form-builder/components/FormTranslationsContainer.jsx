@@ -51,7 +51,7 @@ class FormTranslationsContainer extends Component {
       });
       this.setState({ allowedLocales });
       httpInterceptor
-        .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
+        .get(`${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`)
         .then((data) => {
           const { name, version } = data;
           this.name = name;
@@ -208,7 +208,7 @@ class FormTranslationsContainer extends Component {
       <div className="breadcrumb-wrap">
         <div className="breadcrumb-inner">
           <div className="fl">
-            <FormBuilderBreadcrumbs routes={this.props.routes} />
+            <FormBuilderBreadcrumbs match={this.props.match} routes={this.props.routes} />
           </div>
           <div className="fr">
             {this._showSaveButton()}
@@ -234,7 +234,12 @@ class FormTranslationsContainer extends Component {
 
 FormTranslationsContainer.propTypes = {
   dispatch: PropTypes.func,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isExact: PropTypes.bool.isRequired,
+    params: PropTypes.object,
+  }),
   routes: PropTypes.array,
   translations: PropTypes.object,
 };

@@ -124,4 +124,4 @@ function mapStateToProps(state) {
     dragSourceCell: state.controlDetails.dragSourceCell,
   };
 }
-export default connect(mapStateToProps, null, null, { withRef: true })(Canvas);
+export default connect(mapStateToProps, null, null, { forwardRef: true })(Canvas);

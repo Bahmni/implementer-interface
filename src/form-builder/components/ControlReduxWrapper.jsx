@@ -270,7 +270,7 @@ ControlWrapper.propTypes = {
   metadata: PropTypes.object,
   setError: PropTypes.func,
   showDeleteButton: PropTypes.bool,
-  wrapper: PropTypes.func,
+  wrapper: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -284,4 +284,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, null, null, { withRef: true })(ControlWrapper);
+export default connect(mapStateToProps, null, null, { forwardRef: true })(ControlWrapper);

@@ -93,7 +93,7 @@ export class FormBuilderContainer extends Component {
         .post(formBuilderConstants.formUrl, form)
         .then((response) => {
           const uuid = response.uuid;
-          this.context.router.push(`/form-builder/${uuid}`);
+          this.context.router.history.push(`/form-builder/${uuid}`);
         })
         .catch((error) => this.showErrors(error));
     } else {
@@ -142,8 +142,9 @@ export class FormBuilderContainer extends Component {
         />
         <FormBuilder
           data={this.state.data}
-          onValidationError={(messages) => this.onValidationError(messages)}
+          match={this.props.match}
           routes={this.props.routes}
+          onValidationError={(messages) => this.onValidationError(messages)}
           saveForm={(formName) => this.saveForm(formName)}
           saveFormResource={(formJson, translations) =>
             this.saveFormResource(formJson, translations)}
@@ -159,6 +160,12 @@ FormBuilderContainer.contextTypes = {
 
 FormBuilderContainer.propTypes = {
   dispatch: PropTypes.func,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isExact: PropTypes.bool.isRequired,
+    params: PropTypes.object,
+  }),
   routes: PropTypes.array,
 };
 
