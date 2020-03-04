@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
-export const FormBuilderBreadcrumbs = (props) => {
-  const {routes } = props;
+const FormBuilderBreadcrumbs = (props) => {
+  const { routes } = props;
   const indexOfCurrentRoute = routes.findIndex(route => route.path === props.match.path);
   const breadcrumbItems = routes.slice(0, indexOfCurrentRoute)
     .filter(route => route.siblingPath !== props.match.path);
@@ -15,6 +15,8 @@ export const FormBuilderBreadcrumbs = (props) => {
     <span>{routes[indexOfCurrentRoute].title}</span>
   </div>);
 };
+
+export default FormBuilderBreadcrumbs;
 
 
 FormBuilderBreadcrumbs.propTypes = {

@@ -18,7 +18,7 @@ import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 import ScriptEditorModal from './ScriptEditorModal';
 import DragDropHelper from '../helpers/dragDropHelper.js';
 
-class ControlWrapper extends Draggable {
+export class ControlWrapper extends Draggable {
   constructor(props) {
     super(props);
     this.control = ComponentStore.getDesignerComponent(props.metadata.type).control;

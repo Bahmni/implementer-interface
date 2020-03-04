@@ -5,7 +5,7 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';
 import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
 import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
     from 'form-builder/actions/control';

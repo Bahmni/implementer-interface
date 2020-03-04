@@ -10,7 +10,7 @@ import { commonConstants } from 'common/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import filter from 'lodash/filter';
 
-class ControlPropertiesContainer extends Component {
+export class ControlPropertiesContainer extends Component {
   constructor() {
     super();
     this.onSelect = this.onSelect.bind(this);

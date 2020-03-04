@@ -10,7 +10,7 @@ import TitleDetail from './TitleDetail';
 import DragDropHelper from '../helpers/dragDropHelper.js';
 import { dragSourceUpdate } from '../actions/control';
 
-class Canvas extends Component {
+export class Canvas extends Component {
   constructor(props) {
     super(props);
     this.components = {};

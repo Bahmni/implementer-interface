@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import Canvas from 'form-builder/components/Canvas.jsx';
+import { Canvas } from 'form-builder/components/Canvas.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import { blurControl, deselectControl, dragSourceUpdate } from 'form-builder/actions/control';
@@ -81,13 +81,13 @@ describe('Canvas', () => {
     const store = getStore();
     const canvas = mount(
       <Canvas
+        dispatch={store.dispatch}
         formId={1}
         formName="formName"
         formResourceControls={[]}
         formUuid="someFormUuid"
         formVersion="1"
         idGenerator={idGenerator}
-        store={store}
       />);
     canvas.find('.form-builder-canvas').simulate('click');
     sinon.assert.calledOnce(store.dispatch.withArgs(deselectControl()));
@@ -108,11 +108,8 @@ describe('Canvas', () => {
         idGenerator={idGenerator}
         store={store}
         updateFormName={ (name) => name }
-      />).shallow();
-    const instance = canvas.instance();
-
-    instance.updateFormName('testName');
-
+      />);
+    canvas.find('TitleDetail').prop('updateValue')('testName');
     expect(canvas.state('formName')).to.eql('testName');
   });
 
@@ -132,14 +129,14 @@ describe('Canvas', () => {
     ];
     const canvas = shallow(
       <Canvas
+        dispatch={store.dispatch}
         formId={1}
         formName="formName"
         formResourceControls={formResourceJSON}
         formUuid="someFormUuid"
         formVersion="1"
         idGenerator={idGenerator}
-        store={store}
-      />).shallow();
+      />);
     const instance = canvas.instance();
     expect(instance.state.descriptors.length).to.eql(1);
     expect(instance.state.descriptors[0].metadata).to.deep.eql({ id: '1', type: 'obsControl' });
@@ -162,14 +159,14 @@ describe('Canvas', () => {
     ];
     const canvasWrapper = shallow(
       <Canvas
+        dispatch={store.dispatch}
         formId={1}
         formName="formName"
         formResourceControls={formResourceJSON}
         formUuid="someFormUuid"
         formVersion="1"
         idGenerator={idGenerator}
-        store={store}
-      />).shallow();
+      />);
 
     const instance = canvasWrapper.instance();
     const dragDrophelperStub = sinon.stub(DragDropHelper, 'processControlDrop');

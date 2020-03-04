@@ -5,3 +5,4 @@ import Adapter from 'enzyme-adapter-react-16';
 Enzyme.configure({ adapter: new Adapter(), disableLifecycleMethods: true });
 // Re-export all enzyme exports
 export * from 'enzyme';
+

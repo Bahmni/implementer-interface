@@ -143,8 +143,8 @@ export class FormBuilderContainer extends Component {
         <FormBuilder
           data={this.state.data}
           match={this.props.match}
-          routes={this.props.routes}
           onValidationError={(messages) => this.onValidationError(messages)}
+          routes={this.props.routes}
           saveForm={(formName) => this.saveForm(formName)}
           saveFormResource={(formJson, translations) =>
             this.saveFormResource(formJson, translations)}

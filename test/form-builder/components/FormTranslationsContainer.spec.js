@@ -9,7 +9,7 @@ import FormTranslationsContainer from 'form-builder/components/FormTranslationsC
 import { Provider } from 'react-redux';
 import { removeLocaleTranslation } from 'form-builder/actions/control';
 import { updateTranslations } from 'form-builder/actions/control';
-
+import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 
 chai.use(chaiEnzyme());
 
@@ -45,12 +45,13 @@ describe('FormTranslationContainer', () => {
 
 
   const defaultProps = {
-    params: { formUuid: 'form_uuid' },
+    match: { params: { formUuid: 'form_uuid' } },
     routes: [],
     defaultLocale: 'en',
   };
 
   let mockHttp;
+  let breadcrumbsStub;
   beforeEach(() => {
     window.localStorage = {
       getItem: sinon.stub(),
@@ -64,11 +65,14 @@ describe('FormTranslationContainer', () => {
       .returns(Promise.resolve(locales));
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
       'form_name&formVersion=2&locale=en').returns(Promise.resolve(translationData));
+
+    breadcrumbsStub = sinon.stub(FormBuilderBreadcrumbs, 'default').returns(<div>A stub</div>);
   });
 
   afterEach(() => {
     mockHttp.get.restore();
     mockHttp.post.restore();
+    breadcrumbsStub.restore();
   });
 
   it('should render form translations and locale options on page load', (done) => {
@@ -115,13 +119,12 @@ describe('FormTranslationContainer', () => {
           locale: 'en',
         })));
 
-      expect(formTranslationContainer.find('.info-message').html()).to
+      expect(formTranslationContainer.find('.info-message').text()).to
         .have.string('Please save the changes before selecting a locale.');
-      expect(formTranslationContainer.find('FormTranslationsGrid')
-        .props().translationData).to.eql(expectedTranslationData);
-      const table = formTranslationContainer.find('table');
-      expect(table.find('thead')).to.have.exactly(2).descendants('th');
-      expect(table.find('tbody')).to.have.exactly(4).descendants('tr');
+      formTranslationContainer.update();
+      formTranslationContainer.find('FormTranslationsGrid').update();
+      expect(formTranslationContainer.find('FormTranslationsGrid').instance().props
+        .translationData).to.eql(expectedTranslationData);
       sinon.assert.callOrder(
         mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:(id,uuid,name,version)'),
@@ -167,14 +170,9 @@ describe('FormTranslationContainer', () => {
     setTimeout(() => {
       setTimeout(() => {
         const formTranslationContainer = wrapper.find('FormTranslationsContainer');
-        expect(formTranslationContainer.find('FormTranslationsGrid')
-          .props().translationData).to.eql(expectedTranslationData);
-
-
-        const table = formTranslationContainer.find('table');
-        expect(table.find('thead')).to.have.exactly(3).descendants('th');
-        expect(table.find('tbody')).to.have.exactly(4).descendants('tr');
-
+        formTranslationContainer.update();
+        expect(formTranslationContainer.find('FormTranslationsGrid').instance().props
+          .translationData).to.eql(expectedTranslationData);
         sinon.assert.callOrder(
           mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
           mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:' +
@@ -233,13 +231,9 @@ describe('FormTranslationContainer', () => {
       setTimeout(() => {
         setTimeout(() => {
           const formTranslationContainer = wrapper.find('FormTranslationsContainer');
-          expect(formTranslationContainer.find('FormTranslationsGrid')
-            .props().translationData).to.eql(expectedTranslationData);
-
-
-          const table = formTranslationContainer.find('table');
-          expect(table.find('thead')).to.have.exactly(3).descendants('th');
-          expect(table.find('tbody')).to.have.exactly(4).descendants('tr');
+          formTranslationContainer.update();
+          expect(formTranslationContainer.find('FormTranslationsGrid').instance().props
+            .translationData).to.eql(expectedTranslationData);
 
           sinon.assert.callOrder(
             mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
@@ -291,6 +285,8 @@ describe('FormTranslationContainer', () => {
           '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation', sinon.match.any));
 
         setTimeout(() => {
+          const formTranslationContainer = wrapper.find('FormTranslationsContainer');
+          formTranslationContainer.update();
           expect(wrapper.find('NotificationContainer').props().notification)
           .to.eql({ message: 'Form translations saved successfully', type: 'success' });
           done();
@@ -319,6 +315,8 @@ describe('FormTranslationContainer', () => {
       sinon.assert.notCalled(
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:(id,uuid,name,version)')
       );
+      const formTranslationContainer = wrapper.find('FormTranslationsContainer');
+      formTranslationContainer.update();
       expect(wrapper.find('NotificationContainer').props().notification)
         .to.eql({ message: 'Failed to fetch locales information', type: 'error' });
       done();
@@ -346,7 +344,8 @@ describe('FormTranslationContainer', () => {
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
           'form_name&formVersion=2&locale=en')
       );
-
+      const formTranslationContainer = wrapper.find('FormTranslationsContainer');
+      formTranslationContainer.update();
       expect(wrapper.find('NotificationContainer').props().notification)
         .to.eql({ message: 'Failed to fetch form information', type: 'error' });
       done();
@@ -372,7 +371,8 @@ describe('FormTranslationContainer', () => {
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
           'form_name&formVersion=2&locale=en')
       );
-
+      const formTranslationContainer = wrapper.find('FormTranslationsContainer');
+      formTranslationContainer.update();
       expect(wrapper.find('NotificationContainer').props().notification)
         .to.eql({ message: 'Failed to fetch translation for [English] locale', type: 'error' });
       done();

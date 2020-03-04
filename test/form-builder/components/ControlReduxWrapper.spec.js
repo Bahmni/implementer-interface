@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
+import { ControlWrapper } from 'form-builder/components/ControlReduxWrapper.jsx';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import {
@@ -12,7 +12,6 @@ import {
   setChangedProperty,
 } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
-import { Exception } from 'form-builder/helpers/Exception';
 import { ComponentStore } from 'bahmni-form-controls';
 import {
   formEventUpdate,
@@ -77,10 +76,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
 
     const conceptToControlMap = {
       1: {
@@ -125,10 +124,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
     const controlProperty = { id: '1', property: { mandatory: true } };
@@ -149,10 +148,10 @@ describe('ControlWrapper', () => {
     };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ sectionMetadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => sectionMetadata };
     const controlProperty = { id: '1', property: { addMore: true } };
@@ -169,10 +168,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
     const controlProperty = { id: 'someOtherId', property: { mandatory: true } };
@@ -187,10 +186,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
 
     controlWrapper.instance().onSelected({ stopPropagation: () => {} }, '1');
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('1')));
@@ -200,9 +199,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = mount(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
       />);
 
     controlWrapper.find('.control-wrapper').simulate('focus');
@@ -213,10 +212,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapperShallow = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const controlWrapper = controlWrapperShallow.instance();
     sinon.stub(controlWrapper, 'getJsonDefinition');
 
@@ -228,9 +227,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapperShallow = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const controlWrapper = controlWrapperShallow.instance();
     sinon.stub(controlWrapper, 'getJsonDefinition').callsFake(() => undefined);
 
@@ -243,10 +242,10 @@ describe('ControlWrapper', () => {
     const controlWrapper = shallow(
       <ControlWrapper
         deleteControl={() => {}}
+        dispatch={ store.dispatch }
         metadata={ metadata }
         showDeleteButton
-        store={ store }
-      />).shallow();
+      />);
 
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('DeleteControlModal');
     controlWrapper.setState({ showDeleteModal: true });
@@ -259,9 +258,9 @@ describe('ControlWrapper', () => {
     const controlProperty = { id: '1', property: { controlEvent: true } };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
 
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
 
@@ -278,9 +277,9 @@ describe('ControlWrapper', () => {
     const controlProperty = { id: '2', property: { controlEvent: true } };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
 
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
 
@@ -297,9 +296,9 @@ describe('ControlWrapper', () => {
     const controlProperty = { property: { formInitEvent: true } };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
 
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
 
@@ -315,9 +314,9 @@ describe('ControlWrapper', () => {
     const controlProperty = { property: { formInitEvent: true } };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
 
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
@@ -336,9 +335,9 @@ describe('ControlWrapper', () => {
     const controlProperty = { property: { formSaveEvent: true } };
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
 
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
@@ -357,9 +356,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     const closeSpy = sinon.spy(instance, 'closeScriptEditorDialog');
 
@@ -372,9 +371,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
 
     instance.updateScript('', { id: '1' });
@@ -386,9 +385,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={store.dispatch}
         metadata={metadata}
-        store={store}
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
 
     instance.updateScript('', { property: {} });
@@ -404,9 +403,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
 
     instance.updateScript('', { property: {} });
@@ -418,9 +417,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
 
     instance.updateScript('', { property: { formSaveEvent: true } });
@@ -432,9 +431,9 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
 
     instance.updateScript('', { id: '1' });
@@ -446,10 +445,10 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => metadata };
 
@@ -460,27 +459,25 @@ describe('ControlWrapper', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
     const instance = controlWrapper.instance();
     instance.childControl = { getJsonDefinition: () => undefined };
 
     const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
-    const expectedException = new Exception(conceptMissingMessage);
-
-    expect(instance.getJsonDefinition.bind(instance)).to.throw(expectedException);
+    expect(instance.getJsonDefinition.bind(instance)).to.throw(conceptMissingMessage);
   });
 
   it('should reset the drag source to undefined after the drop is done', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
+        dispatch={ store.dispatch }
         metadata={ metadata }
         onUpdateMetadata={ () => {} }
-        store={ store }
-      />).shallow();
+      />);
 
     const instance = controlWrapper.instance();
     const dragDrophelperStub = sinon.stub(DragDropHelper, 'processControlDrop');

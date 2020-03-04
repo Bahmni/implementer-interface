@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setChangedProperty } from '../actions/control';
 
-class FormEventContainer extends Component {
+export class FormEventContainer extends Component {
 
   constructor(props) {
     super(props);

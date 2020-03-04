@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FormList from 'form-builder/components/FormList.jsx';
 import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
@@ -483,6 +483,7 @@ FormBuilder.propTypes = {
     params: PropTypes.object,
   }),
   onValidationError: PropTypes.func,
+  routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
   saveFormResource: PropTypes.func,
 };

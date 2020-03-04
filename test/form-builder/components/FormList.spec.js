@@ -6,6 +6,7 @@ import FormList from 'form-builder/components/FormList.jsx';
 import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from '../../../src/form-builder/constants';
+import { MemoryRouter } from 'react-router-dom';
 
 chai.use(chaiEnzyme());
 
@@ -56,7 +57,9 @@ describe('FormList', () => {
   }
 
   it('should render form list in table', () => {
-    wrapper = mount(<FormList data={data} handleSelectedForm={undefined} />);
+    wrapper = mount(<MemoryRouter><FormList data={data}
+      handleSelectedForm={undefined}
+    /></MemoryRouter>);
 
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
 
@@ -170,7 +173,9 @@ describe('FormList', () => {
   });
 
   it('should display check boxes in table', () => {
-    wrapper = mount(<FormList data={data} handleSelectedForm={undefined} />);
+    wrapper = mount(<MemoryRouter><FormList data={data}
+      handleSelectedForm={undefined}
+    /></MemoryRouter>);
     expect(wrapper.find('table').find('tbody')).to.have.exactly(3).descendants('tr');
     expect(getItem(0, 0).find('br').not.null);
     expect(getItem(1, 0).find('input').prop('type')).to.eql('checkbox');

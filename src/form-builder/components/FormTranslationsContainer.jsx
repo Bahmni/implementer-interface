@@ -5,7 +5,7 @@ import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { formBuilderConstants } from 'form-builder/constants';
 import FormTranslationsGrid from 'form-builder/components/FormTranslationsGrid.jsx';
 import { connect } from 'react-redux';

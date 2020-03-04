@@ -4,7 +4,7 @@ import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
-import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
+import { FormEventContainer } from 'form-builder/components/FormEventContainer.jsx';
 import { setChangedProperty } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
@@ -18,10 +18,9 @@ describe('FormEventContainer', () => {
 
     wrapper = shallow(
       <FormEventContainer
-        store={ getStore() }
+        dispatch={ getStore().dispatch }
         updateFormEvents={updateSpy}
-      />).shallow();
-
+      />);
     wrapper.setProps({ formDetails: { events: {} } });
   });
 
@@ -49,9 +48,9 @@ describe('FormEventContainer', () => {
     const store = getStore();
     wrapper = shallow(
       <FormEventContainer
+        dispatch={ store.dispatch }
         eventProperty={'prop_key'}
         label={'SAMPLE_NAME'}
-        store={ store }
         updateFormEvents={updateSpy}
       />).shallow();
     wrapper.find('.form-event-container').find('button').simulate('click');
