@@ -11,7 +11,7 @@ import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/javascript-lint.js';
-import * as jsBeautifier from 'js-beautify';
+import jsBeautifier from 'js-beautify';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';

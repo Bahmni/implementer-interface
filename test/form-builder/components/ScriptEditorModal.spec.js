@@ -6,6 +6,7 @@ import ScriptEditorModal from '../../../src/form-builder/components/ScriptEditor
 import sinon from 'sinon';
 import { commonConstants } from 'common/constants';
 import CodeMirror from 'codemirror';
+import jsBeautifier from 'js-beautify';
 
 chai.use(chaiEnzyme());
 
@@ -14,6 +15,8 @@ describe('ScriptEditorModal', () => {
   let updateScriptSpy;
   let closeSpy;
   let codeMirrorStub;
+  let beautifierStub;
+  let formatStub;
 
   beforeEach(() => {
     updateScriptSpy = sinon.spy();
@@ -23,6 +26,12 @@ describe('ScriptEditorModal', () => {
   afterEach(() => {
     if (codeMirrorStub) {
       codeMirrorStub.restore();
+    }
+    if (beautifierStub) {
+      beautifierStub.restore();
+    }
+    if (formatStub) {
+      formatStub.restore();
     }
   });
 
@@ -51,6 +60,7 @@ describe('ScriptEditorModal', () => {
 
   it('should call update script once click save button', () => {
     const script = 'function(){var x = 10;}';
+    formatStub = sinon.stub(ScriptEditorModal.prototype, 'format').callsFake(() => {});
     codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
       .callsFake(() => ({ getValue() {return script;} }));
     wrapper = mount(
@@ -88,9 +98,9 @@ describe('ScriptEditorModal', () => {
     expect(wrapper.state().notification).to.eql({});
   });
 
-
   it('should trim extra spaces in the script and save', () => {
     const script = '        ';
+    formatStub = sinon.stub(ScriptEditorModal.prototype, 'format').callsFake(() => {});
     codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
       .callsFake(() => ({ getValue() {return script;} }));
     wrapper = mount(
@@ -105,15 +115,18 @@ describe('ScriptEditorModal', () => {
     sinon.assert.calledOnce(updateScriptSpy);
   });
 
-  it('should call format on click of format', () => {
-    const formatStub = sinon.stub(ScriptEditorModal.prototype, 'format').callsFake(() => ({}));
+  it('should call js_beautify on click of format', () => {
+    const script = 'function(){var x = 10;}';
+    beautifierStub = sinon.stub(jsBeautifier, 'js_beautify').callsFake(() => '');
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+      .callsFake(() => ({ getValue() {return script;}, setValue() {} }));
     wrapper = mount(
       <ScriptEditorModal
         close={closeSpy}
         updateScript={updateScriptSpy}
       />);
-    const formatButton = wrapper.find('.btn').at(0);
-    formatButton.simulate('click');
-    sinon.assert.calledOnce(formatStub);
+    const saveButton = wrapper.find('.btn').at(0);
+    saveButton.simulate('click');
+    sinon.assert.calledOnce(beautifierStub);
   });
 });
