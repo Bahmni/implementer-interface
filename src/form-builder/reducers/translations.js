@@ -10,7 +10,9 @@ const getLabelTranslations = (labelTranslations, data) => {
 const getConceptTranslations = (conceptTranslations, data) => {
   const { label, concept } = data;
   const concepts = conceptTranslations || {};
-  concepts[label.translationKey] = label.value;
+  if (label) {
+    concepts[label.translationKey] = label.value;
+  }
   each(concept.answers, (answer) => {
     concepts[answer.translationKey] = answer.name.display;
   });

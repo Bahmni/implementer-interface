@@ -291,4 +291,34 @@ describe('translations', () => {
     const state = translations(store, action);
     expect(state).to.be.eql(expectedStoreState);
   });
+  it('should not break if the concept does not have a label and we try to get translations', () => {
+    const control = {
+      type: 'obsControl',
+      id: '1',
+      options: [
+        {
+          name: 'Yes',
+          value: true,
+          translationKey: 'BOOLEAN_YES',
+        },
+        {
+          name: 'No',
+          translationKey: 'BOOLEAN_NO',
+        },
+      ],
+      concept: {
+        name: 'Smoking History',
+        uuid: 'someUuid',
+      },
+    };
+
+    const action = { control, type: 'GENERATE_TRANSLATIONS' };
+    const expectedStoreState = {
+      concepts: {},
+      labels: { BOOLEAN_YES: 'Yes', BOOLEAN_NO: 'No' },
+    };
+
+    const state = translations({}, action);
+    expect(state).to.be.eql(expectedStoreState);
+  });
 });
