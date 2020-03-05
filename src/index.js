@@ -34,7 +34,7 @@ const routes = [
     component: FormTranslationsContainer,
     exact: true,
     path: '/form-builder/:formUuid/translate',
-    title: 'Form Translate',
+    title: 'Form Translation',
     siblingPath: '/form-builder/:formUuid',
   },
 ];
