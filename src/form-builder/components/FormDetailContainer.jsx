@@ -436,7 +436,6 @@ FormDetailContainer.propTypes = {
     isExact: PropTypes.bool.isRequired,
     params: PropTypes.object,
   }),
-  params: PropTypes.object.isRequired,
   routes: PropTypes.array,
   translations: PropTypes.object,
 };
