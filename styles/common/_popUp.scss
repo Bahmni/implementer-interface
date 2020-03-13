@@ -61,10 +61,9 @@
   .CodeMirror{
     height: 310px;
   }
-
   .CodeMirror-sizer{
-    width: 450px !important;
-    min-width: 0 !important;
+    width: 450px !important; /* stylelint-disable-line declaration-no-important */
+    min-width: 0 !important; /* stylelint-disable-line declaration-no-important */
   }
 
   .CodeMirror-scroll{
@@ -75,7 +74,6 @@
 .script-editor-container{
   width: 450px;
 }
-
 .CodeMirror-lint-tooltip{
-  z-index: 1002 !important;
+  z-index: 1002 !important; /* stylelint-disable-line declaration-no-important */
 }
