@@ -153,24 +153,29 @@ describe('FormDetailContainer', () => {
     httpInterceptor.get.restore();
   });
 
-  // it('should call the appropriate endpoint to fetch the formData', (done) => {
-  //   sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
-  //   const wrapper = mount(
-  //     <Provider store={getStore()}>
-  //     <FormDetailContainer
-  //       {...defaultProps}
-  //     /></Provider>, { context }
-  //   );
-  //   setTimeout(() => {
-  //     wrapper.find('FormDetailContainer').update();
-  //     const formDetail = wrapper.find('FormDetail');
-  //     expect(formDetail.prop('formData')).to.eql(formData);
-  //     httpInterceptor.get.restore();
-  //     done();
-  //   }, 500);
-  //
-  //   sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
-  // });
+
+  it('should call the appropriate endpoint to fetch the formData', (done) => {
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
+    const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
+    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
+    const wrapper = mount(
+      <Provider store={getStore()}>
+      <FormDetailContainer
+        {...defaultProps}
+      /></Provider>, { context }
+    );
+    setTimeout(() => {
+      wrapper.find('FormDetailContainer').update();
+      const formDetail = wrapper.find('FormDetail');
+      expect(formDetail.prop('formData')).to.eql(formData);
+      httpInterceptor.get.restore();
+      done();
+    }, 500);
+
+    sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
+  });
 
   it('should not show publish button & save button before get formData', () => {
     const wrapper = mount(
@@ -186,27 +191,26 @@ describe('FormDetailContainer', () => {
     expect(publishButton).to.have.length(0);
   });
 
-  // it('should call the appropriate endpoint to post formData', (done) => {
-  //   sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
-  //   const wrapper = shallow(
-  //     <Provider store={getStore()}>
-  //     <FormDetailContainer
-  //       {...defaultProps}
-  //     /></Provider>, { context }
-  //   );
-  //   wrapper.find('FormDetailContainer').setState({ formData });
-  //   setTimeout(() => {
-  //     wrapper.instance().cloneFormResource();
-  //     sinon.assert.calledWith(
-  //       httpInterceptor.post,
-  //       formBuilderConstants.formUrl,
-  //       sinon.match.any
-  //     );
-  //
-  //     httpInterceptor.post.restore();
-  //     done();
-  //   }, 500);
-  // });
+  it('should call the appropriate endpoint to post formData', (done) => {
+    sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+      />, { context }
+    );
+    wrapper.setState({ formData });
+    setTimeout(() => {
+      wrapper.instance().cloneFormResource();
+      sinon.assert.calledWith(
+        httpInterceptor.post,
+        formBuilderConstants.formUrl,
+        sinon.match.any
+      );
+
+      httpInterceptor.post.restore();
+      done();
+    }, 500);
+  });
 
   it('should call the cloneFormResource when name changed and click save button', () => {
     const wrapper = shallow(
