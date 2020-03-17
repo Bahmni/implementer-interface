@@ -17,6 +17,8 @@ import * as ControlPropertiesContainer from
     'form-builder/components/ControlPropertiesContainer.jsx';
 import * as FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 import * as Canvas from 'form-builder/components/Canvas.jsx';
+import * as FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
+
 const routes = [
   {
     exact: true,
@@ -55,6 +57,7 @@ describe('FormDetailContainer', () => {
   let controlPropertiesContainer;
   let formEventContainer;
   let canvas;
+  let formEventEditorStub;
   const formData = {
     id: 1,
     name: 'someFormName',
@@ -103,6 +106,7 @@ describe('FormDetailContainer', () => {
     getAllDesignerComponentsStub = sinon.stub(
       ComponentStore,
       'getAllDesignerComponents').callsFake(() => {});
+    formEventEditorStub = sinon.stub(FormEventEditor, 'default').returns(<div>A stub</div>);
   });
 
   after(() => {
@@ -112,6 +116,7 @@ describe('FormDetailContainer', () => {
     controlPropertiesContainer.restore();
     formEventContainer.restore();
     canvas.restore();
+    formEventEditorStub.restore();
   });
 
   afterEach(() => {

@@ -11,6 +11,7 @@
   animation:.5s;
 }
 
+
 .dialog{
   @include box-shadow-for-section;
   position: fixed;
@@ -38,13 +39,6 @@
     margin: 0 10px 0 0;
   }
 
-  .script-editor-button-wrapper{
-    background: #f7f7f7;
-    padding: 10px;
-    text-align: right;
-    border-top: 1px solid #dddddd;
-  }
-
   &--no-header{
     -webkit-animation:.5s;
     animation: .5s;
@@ -54,26 +48,40 @@
     padding: 1em;
     width: 450px;
   }
-  .editor-wrapper{
-    width: 100%;
-  }
-
-  .CodeMirror{
-    height: 310px;
-  }
-  .CodeMirror-sizer{
-    width: 450px !important; /* stylelint-disable-line declaration-no-important */
-    min-width: 0 !important; /* stylelint-disable-line declaration-no-important */
-  }
-
-  .CodeMirror-scroll{
-    margin-right: 0;
-  }
 }
 
 .script-editor-container{
-  width: 450px;
+  height: 55em;
+  border-radius: 5px 5px 0 0;
+  font-size: 13px;
+
+  .CodeMirror{
+    height: 90%;
+  }
+
+  .button-wrapper{
+    padding: 10px 0;
+    margin: 0 10px 0 0;
+  }
+
+  .script-editor-button-wrapper{
+    background: #f7f7f7;
+    padding: 10px;
+    text-align: right;
+    border-top: 1px solid #dddddd;
+  }
 }
+
+.form-event-popup{
+  &-content {
+    width: 90% !important; /* stylelint-disable-line declaration-no-important */
+    padding: 0 !important; /* stylelint-disable-line declaration-no-important */
+    border-radius: 5px 5px 0;
+    border: 1px solid #666 !important; /* stylelint-disable-line declaration-no-important */
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .CodeMirror-lint-tooltip{
   z-index: 1002 !important; /* stylelint-disable-line declaration-no-important */
 }

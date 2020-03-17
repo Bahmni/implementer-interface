@@ -7,6 +7,9 @@ import ControlPropertiesContainer from 'form-builder/components/ControlPropertie
 import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
 import FormHelper from 'form-builder/helpers/formHelper';
+import FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
+import ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
+import Popup from 'reactjs-popup';
 
 export default class FormDetail extends Component {
   constructor() {
@@ -57,8 +60,33 @@ export default class FormDetail extends Component {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
       const idGenerator = this.getIdGenerator(formResourceControls);
+      const getScript = (property, formDetails) => {
+        const isSaveEvent = property.formSaveEvent;
+        return formDetails.events && (isSaveEvent ? formDetails.events.onFormSave
+          : formDetails.events.onFormInit);
+      };
+      const FormEventEditorContent = (props) => {
+        const script = props.property ? getScript(props.property, props.formDetails) : '';
+        const showEditor = props.property && (props.property.formInitEvent
+          || props.property.formSaveEvent);
+        return (<div>
+          {showEditor &&
+          <Popup className="form-event-popup" closeOnDocumentClick={false}
+            open={showEditor} position="top center"
+          >
+          <ScriptEditorModal close={props.closeEventEditor} script={script}
+            updateScript={(scriptToUpdate) => {
+              props.updateScript(scriptToUpdate);
+              props.closeEventEditor();
+            }}
+          />
+            </Popup>
+          }
+       </div>);
+      };
       return (
                 <div>
+                    <FormEventEditor children={<FormEventEditorContent />} />
                     <div className="button-wrapper">
                     </div>
                     <div className={ classNames('container-main',

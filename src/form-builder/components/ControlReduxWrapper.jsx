@@ -17,6 +17,7 @@ import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 import ScriptEditorModal from './ScriptEditorModal';
 import DragDropHelper from '../helpers/dragDropHelper.js';
+import Popup from 'reactjs-popup';
 
 export class ControlWrapper extends Draggable {
   constructor(props) {
@@ -195,14 +196,18 @@ export class ControlWrapper extends Draggable {
   showScriptEditorDialog() {
     const properties = this.props.controlProperty;
     if (properties && properties.property &&
-      (properties.id === this.metadata.id && properties.property.controlEvent ||
-      !properties.id && (properties.property.formInitEvent || properties.property.formSaveEvent))) {
+      (properties.id === this.metadata.id && properties.property.controlEvent)) {
       return (
+        <Popup className="form-event-popup"
+          open={properties.id === this.metadata.id && properties.property.controlEvent}
+          position="top center"
+        >
         <ScriptEditorModal
           close={() => this.closeScriptEditorDialog(properties.id)}
           script={this.getScript(properties)}
           updateScript={(script) => this.updateScript(script, properties)}
         />
+        </Popup>
       );
     }
     return null;

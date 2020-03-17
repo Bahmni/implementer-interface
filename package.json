@@ -95,6 +95,7 @@
     "redux": "^4.0.5",
     "whatwg-fetch": "^1.0.0",
     "js-beautify" : "^1.10.3",
-    "enzyme-adapter-react-16": "^1.15.2"
+    "enzyme-adapter-react-16": "^1.15.2",
+    "reactjs-popup" : "^1.5.0"
   }
 }

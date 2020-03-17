@@ -291,24 +291,6 @@ describe('ControlWrapper', () => {
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
   });
 
-  it('should show script editor if the property formInitEvent equal true', () => {
-    const store = getStore();
-    const controlProperty = { property: { formInitEvent: true } };
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-
-    expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
-
-    const instance = controlWrapper.instance();
-    instance.childControl = { getJsonDefinition: () => metadata };
-    controlWrapper.setProps({ controlProperty, formDetails: { events: { onFormInit: '' } } });
-
-    expect(controlWrapper.find('.control-wrapper')).to.have.descendants('ScriptEditorModal');
-  });
-
   it('should show form init script if the form event equal true', () => {
     const store = getStore();
     const controlProperty = { property: { formInitEvent: true } };

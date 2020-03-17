@@ -73,13 +73,11 @@ export default class ScriptEditorModal extends Component {
 
   render() {
     return (
-      <div>
+      <div className="script-editor-container">
         <NotificationContainer
           notification={this.state.notification}
         />
-        <div className="dialog-wrapper"></div>
-        <div className="dialog area-height--dialog script-editor-container">
-          <h2 className="header-title">Editor</h2>
+         <h2 className="header-title">Editor</h2>
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.state.script} ref={this.setScriptEditorTextArea}
           >
@@ -99,7 +97,6 @@ export default class ScriptEditorModal extends Component {
               Cancel
             </button>
           </div>
-        </div>
       </div>
     );
   }
