@@ -51,7 +51,7 @@
 }
 
 .script-editor-container{
-  height: 55em;
+  height: 80vh;
   border-radius: 5px 5px 0 0;
   font-size: 13px;
 
@@ -74,7 +74,7 @@
 
 .form-event-popup{
   &-content {
-    width: 90% !important; /* stylelint-disable-line declaration-no-important */
+    width: 90vw !important; /* stylelint-disable-line declaration-no-important */
     padding: 0 !important; /* stylelint-disable-line declaration-no-important */
     border-radius: 5px 5px 0;
     border: 1px solid #666 !important; /* stylelint-disable-line declaration-no-important */
