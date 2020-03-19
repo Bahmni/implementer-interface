@@ -199,6 +199,7 @@ export class ControlWrapper extends Draggable {
       (properties.id === this.metadata.id && properties.property.controlEvent)) {
       return (
         <Popup className="form-event-popup" closeOnDocumentClick={false}
+          closeOnEscape={false}
           open={properties.id === this.metadata.id && properties.property.controlEvent}
           position="top center"
         >

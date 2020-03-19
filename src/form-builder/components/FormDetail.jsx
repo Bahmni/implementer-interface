@@ -72,6 +72,7 @@ export default class FormDetail extends Component {
         return (<div>
           {showEditor &&
           <Popup className="form-event-popup" closeOnDocumentClick={false}
+            closeOnEscape={false}
             open={showEditor} position="top center"
           >
           <ScriptEditorModal close={props.closeEventEditor} script={script}
