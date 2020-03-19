@@ -16,6 +16,8 @@ import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
 
+// Required for CodeMirror
+// https://stackoverflow.com/questions/44778262/cannot-get-codemirror-linting-and-jshint-to-work-in-angular-2-application
 window.JSHINT = JSHINT;
 
 export default class ScriptEditorModal extends Component {
