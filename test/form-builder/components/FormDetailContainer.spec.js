@@ -182,6 +182,18 @@ describe('FormDetailContainer', () => {
     expect(publishButton).to.have.length(0);
   });
 
+  it('should show preview button before get formData', () => {
+    const wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetailContainer
+          {...defaultProps}
+        /></Provider>, { context }
+    );
+    wrapper.find('FormDetailContainer').setState({ httpReceived: false });
+    const previewButton = wrapper.find('.preview-button');
+    expect(previewButton).to.have.length(1);
+  });
+
   it('should call the appropriate endpoint to post formData', (done) => {
     sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
     const wrapper = shallow(
@@ -763,6 +775,20 @@ describe('FormDetailContainer', () => {
       sinon.assert.calledTwice(dispatch.withArgs(clearTranslations()));
     });
 
+    it('should set showPreview equal true when click preview button', () => {
+      const dispatch = sinon.spy();
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+          dispatch={dispatch}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+      wrapper.find('.preview-button').simulate('click');
+
+      expect(wrapper.state().showPreview).to.equal(true);
+    });
+
     it('should show edit modal', (done) => {
       const wrapper = shallow(
         <FormDetailContainer
@@ -775,6 +801,22 @@ describe('FormDetailContainer', () => {
 
       setTimeout(() => {
         expect(editModal.prop('showModal')).to.equal(false);
+        done();
+      }, 1000);
+    });
+
+    it('should show preview modal', (done) => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+
+      const popup = wrapper.find('Popup');
+
+      setTimeout(() => {
+        expect(popup.prop('open')).to.equal(false);
         done();
       }, 1000);
     });

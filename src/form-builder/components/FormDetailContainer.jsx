@@ -20,6 +20,8 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
+import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
+import Popup from 'reactjs-popup';
 
 
 export class FormDetailContainer extends Component {
@@ -27,7 +29,7 @@ export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
-    this.state = { formData: undefined, showModal: false, notification: {},
+    this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined };
     this.setState = this.setState.bind(this);
@@ -37,6 +39,7 @@ export class FormDetailContainer extends Component {
     this.closeFormModal = this.closeFormModal.bind(this);
     this.onPublish = this.onPublish.bind(this);
     this.cloneFormResource = this.cloneFormResource.bind(this);
+    this.onPreview = this.onPreview.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -133,6 +136,10 @@ export class FormDetailContainer extends Component {
     }
   }
 
+  onPreview() {
+    this.setState({ showPreview: true });
+  }
+
   getFormJson() {
     if (this.formDetail) {
       return this.formDetail.getFormJson();
@@ -193,6 +200,10 @@ export class FormDetailContainer extends Component {
     this.setState({ showModal: false });
   }
 
+  closePreview() {
+    this.setState({ showPreview: false });
+  }
+
   openFormModal() {
     this.setState({ showModal: true });
   }
@@ -211,6 +222,15 @@ export class FormDetailContainer extends Component {
       );
     }
     return null;
+  }
+
+  showPreviewButton() {
+    return (
+      <button
+        className="preview-button"
+        onClick={ this.onPreview }
+      >Preview</button>
+    );
   }
 
   showSaveButton() {
@@ -263,6 +283,19 @@ export class FormDetailContainer extends Component {
         );
     this.props.dispatch(clearTranslations());
     this.setState({ formData: editableFormData });
+  }
+
+  showPreviewModal() {
+    return (<Popup className="form-preview-popup"
+      closeOnDocumentClick={false}
+      onClose={() => this.closePreview()}
+      open={this.state.showPreview}
+      position="top center"
+    >
+      <FormPreviewModal close={() => this.closePreview()}
+        formData={this.state.formData}
+      />
+    </Popup>);
   }
 
   _saveFormResource(formJson) {
@@ -405,12 +438,14 @@ export class FormDetailContainer extends Component {
                   <div className="fr">
                       {this.showSaveButton()}
                       {this.showPublishButton()}
+                      {this.showPreviewButton()}
                   </div>
                 </div>
               </div>
               <div className="container-content-wrap">
                 <div className="container-content">
                     {this.showEditButton()}
+                    {this.showPreviewModal()}
                   <FormDetail
                     defaultLocale={defaultLocale}
                     formData={this.state.formData}
