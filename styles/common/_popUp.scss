@@ -25,7 +25,7 @@
   min-width:450px;
   font-family: $primaryFont, Arial, sans-serif;
   border-radius: 5px 5px 0 0;
-  z-index: 10000;
+  z-index: 1001;
   max-width: 100%;
   &--container{
     padding: 10px 20px;
@@ -37,6 +37,14 @@
     padding: 10px 0;
     margin: 0 10px 0 0;
   }
+
+  .script-editor-button-wrapper{
+    background: #f7f7f7;
+    padding: 10px;
+    text-align: right;
+    border-top: 1px solid #dddddd;
+  }
+
   &--no-header{
     -webkit-animation:.5s;
     animation: .5s;
@@ -49,4 +57,23 @@
   .editor-wrapper{
     width: 100%;
   }
+
+  .CodeMirror{
+    height: 310px;
+  }
+  .CodeMirror-sizer{
+    width: 450px !important; /* stylelint-disable-line declaration-no-important */
+    min-width: 0 !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  .CodeMirror-scroll{
+    margin-right: 0;
+  }
+}
+
+.script-editor-container{
+  width: 450px;
+}
+.CodeMirror-lint-tooltip{
+  z-index: 1002 !important; /* stylelint-disable-line declaration-no-important */
 }

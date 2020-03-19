@@ -2,18 +2,53 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import NotificationContainer from 'common/Notification';
 import { commonConstants } from 'common/constants';
+import CodeMirror from 'codemirror';
+import { JSHINT } from 'jshint';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/lib/codemirror.js';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/addon/lint/lint.js';
+import 'codemirror/addon/lint/lint.css';
+import 'codemirror/addon/lint/javascript-lint.js';
+import jsBeautifier from 'js-beautify';
+import 'codemirror/addon/hint/show-hint.js';
+import 'codemirror/addon/hint/javascript-hint.js';
+import 'codemirror/addon/edit/closebrackets.js';
 
+// Required for CodeMirror
+// https://stackoverflow.com/questions/44778262/cannot-get-codemirror-linting-and-jshint-to-work-in-angular-2-application
+window.JSHINT = JSHINT;
 
 export default class ScriptEditorModal extends Component {
   constructor(props) {
     super(props);
     this.validateScript = this.validateScript.bind(this);
-    this.state = { script: this.props.script, notification: {} };
+    this.state = { script: this.props.script, notification: {}, codeMirrorEditor: {} };
+    this.codeMirrorEditor = null;
+    this.scriptEditorTextArea = null;
+    this.setScriptEditorTextArea = element => {
+      this.scriptEditorTextArea = element;
+    };
+    this.format = this.format.bind(this);
+  }
+
+  componentDidMount() {
+    const scriptEditorTextArea = this.scriptEditorTextArea;
+    this.codeMirrorEditor = CodeMirror.fromTextArea(scriptEditorTextArea, {
+      lineNumbers: true,
+      mode: { name: 'javascript', globalVars: true },
+      gutters: ['CodeMirror-lint-markers'],
+      lint: true,
+      extraKeys: { 'Ctrl-Space': 'autocomplete' },
+      autoCloseBrackets: true,
+    });
   }
 
   validateScript() {
     try {
-      const script = this.state.script.trim();
+      this.format();
+      const script = this.codeMirrorEditor.getValue().trim();
       /* eslint-disable no-eval*/
       if (script.trim().length > 0) eval(`(${script})`);
       this.props.updateScript(script);
@@ -30,6 +65,11 @@ export default class ScriptEditorModal extends Component {
     }
   }
 
+  format() {
+    const beautifiedData = jsBeautifier.js_beautify(this.codeMirrorEditor.getValue(),
+      { indent_size: 2, space_in_empty_paren: true });
+    this.codeMirrorEditor.setValue(beautifiedData);
+  }
 
   render() {
     return (
@@ -38,14 +78,14 @@ export default class ScriptEditorModal extends Component {
           notification={this.state.notification}
         />
         <div className="dialog-wrapper"></div>
-        <div className="dialog area-height--dialog">
+        <div className="dialog area-height--dialog script-editor-container">
           <h2 className="header-title">Editor</h2>
           <textarea autoFocus className="editor-wrapper area-height--textarea"
-            defaultValue={this.state.script}
-            onChange={(e) => {this.setState({ script: e.target.value });}}
+            defaultValue={this.state.script} ref={this.setScriptEditorTextArea}
           >
           </textarea>
-          <div className="button-wrapper fr">
+          <div className="script-editor-button-wrapper">
+            <button className="btn" onClick={() => this.format()}>Format</button>
             <button className="button btn--highlight"
               onClick={() => this.validateScript(this.state.script)}
               type="submit"
