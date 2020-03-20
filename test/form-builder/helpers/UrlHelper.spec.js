@@ -18,9 +18,10 @@ describe('UrlHelper', () => {
   });
 
   it('should return full form translate url', () => {
-    const conceptRepresentation = urlHelper.bahmniFormTranslateUrl('name', 'version', 'locale');
+    const conceptRepresentation = urlHelper.bahmniFormTranslateUrl('name',
+      'version', 'locale', 'formUuid');
     const expectedUrl = '/openmrs/ws/rest/v1/bahmniie/form/translate?' +
-        'formName=name&formVersion=version&locale=locale';
+        'formName=name&formVersion=version&locale=locale&formUuid=formUuid';
     expect(conceptRepresentation).to.eql(expectedUrl);
   });
 });

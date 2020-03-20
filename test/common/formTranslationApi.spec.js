@@ -45,13 +45,14 @@ describe('formTranslationApi', () => {
       const formName = 'formName';
       const formVersion = 'version';
       const locale = 'locale';
-      const translatePromise = translationsFor(formName, formVersion, locale);
+      const formUuid = 'formUuid';
+      const translatePromise = translationsFor(formName, formVersion, locale, formUuid);
 
       expect(translatePromise).not.to.eq(null);
       translatePromise.then(() => {
         sinon.assert.calledWith(
           httpInterceptor.get,
-          new UrlHelper().bahmniFormTranslateUrl(formName, formVersion, locale)
+          new UrlHelper().bahmniFormTranslateUrl(formName, formVersion, locale, formUuid)
         );
       });
     });

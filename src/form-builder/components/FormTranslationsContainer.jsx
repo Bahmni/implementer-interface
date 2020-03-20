@@ -57,7 +57,7 @@ class FormTranslationsContainer extends Component {
           this.name = name;
           this.version = version;
           const locale = localStorage.getItem('openmrsDefaultLocale');
-          this._getTranslations(name, version, locale);
+          this._getTranslations(name, version, locale, this.props.match.params.formUuid);
         }).catch(() => {
           this.setMessage('Failed to fetch form information', commonConstants.responseType.error);
         });
@@ -75,9 +75,9 @@ class FormTranslationsContainer extends Component {
   }
 
 
-  _getTranslations(name, version, locale) {
+  _getTranslations(name, version, locale, uuid) {
     this.setState({ loading: true });
-    translationsFor(name, version, locale)
+    translationsFor(name, version, locale, uuid)
       .then((translations) => {
         this._createInitialValue(translations, locale);
         const { allowedLocales } = this.state;
@@ -166,6 +166,7 @@ class FormTranslationsContainer extends Component {
     return map(translations, (localeTranslation, locale) =>
       Object.assign(localeTranslation, {
         formName: name,
+        formUuid: this.props.match.params.formUuid,
         version, locale,
       }));
   }
@@ -173,7 +174,8 @@ class FormTranslationsContainer extends Component {
   _generateTranslation(element) {
     this.props.dispatch(removeLocaleTranslation(this.selectedLocale));
     this.selectedLocale = element.target.value;
-    this._getTranslations(this.name, this.version, this.selectedLocale);
+    this._getTranslations(this.name, this.version, this.selectedLocale,
+      this.props.match.params.formUuid);
   }
 
   _createLocaleOptions(allowedLocales) {
