@@ -192,10 +192,10 @@ export class FormDetailContainer extends Component {
   }
 
   _createTranslationReqObject(container, locale) {
-    const { version, name } = this.state.formData;
+    const { version, name, uuid } = this.state.formData;
     const referenceVersion = this.state.referenceVersion;
-    const translations = Object.assign({}, container, { version, locale, referenceVersion },
-        { formName: name });
+    const translations = Object.assign({}, container, { formUuid: uuid,
+      formName: name, version, locale, referenceVersion });
     return [translations];
   }
 

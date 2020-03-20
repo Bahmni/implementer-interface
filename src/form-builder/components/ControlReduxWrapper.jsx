@@ -105,13 +105,13 @@ export class ControlWrapper extends Draggable {
 
   getJsonDefinition(isBeingMoved) {
     if (this.childControl) {
-      const jsonDefinition = this.childControl.getJsonDefinition();
-      if (jsonDefinition === undefined && !isBeingMoved) {
+      const controlJsonDefinition = this.childControl.getJsonDefinition();
+      if (controlJsonDefinition === undefined && !isBeingMoved) {
         const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
         throw new Exception(conceptMissingMessage);
       }
-      this.props.dispatch(generateTranslations(jsonDefinition));
-      return jsonDefinition;
+      this.props.dispatch(generateTranslations(controlJsonDefinition));
+      return controlJsonDefinition;
     }
     return undefined;
   }

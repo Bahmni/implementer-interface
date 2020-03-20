@@ -643,7 +643,8 @@ describe('FormDetailContainer', () => {
         sinon.assert.calledTwice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
-            [{ formName: 'someFormName', locale: 'en', version: '1', referenceVersion: '1' }]),
+            [{ formName: 'someFormName', locale: 'en', version: '1', referenceVersion: '1',
+              formUuid: 'someUuid' }]),
           postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
         postStub.restore();
@@ -685,7 +686,8 @@ describe('FormDetailContainer', () => {
         sinon.assert.calledTwice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
-            [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1' }]),
+            [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1',
+              formUuid: 'someUuid' }]),
           postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
         postStub.restore();
