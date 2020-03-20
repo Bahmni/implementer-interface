@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
@@ -17,7 +16,7 @@ import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import { commonConstants } from 'common/constants';
-import { saveTranslations } from 'common/apis/formTranslationApi';
+import { saveTranslations, translationsFor } from 'common/apis/formTranslationApi';
 
 
 class FormTranslationsContainer extends Component {
@@ -78,8 +77,7 @@ class FormTranslationsContainer extends Component {
 
   _getTranslations(name, version, locale) {
     this.setState({ loading: true });
-    httpInterceptor
-      .get(new UrlHelper().bahmniFormTranslateUrl(name, version, locale))
+    translationsFor(name, version, locale)
       .then((translations) => {
         this._createInitialValue(translations, locale);
         const { allowedLocales } = this.state;

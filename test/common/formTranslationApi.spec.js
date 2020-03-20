@@ -3,7 +3,8 @@ import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
-import { saveTranslations } from 'common/apis/formTranslationApi';
+import { saveTranslations, translationsFor } from 'common/apis/formTranslationApi';
+import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 
 chai.use(chaiEnzyme());
 
@@ -30,4 +31,30 @@ describe('formTranslationApi', () => {
       });
     });
   });
+  describe('fetch translation', () => {
+    const translations = [{ formName: 'formName', formUuid: 'formUuid', version: '2',
+      locale: 'en',
+      concepts: { HEIGHT_2: 'HEIGHT_NEW_UUID' }, labels: {} }];
+    beforeEach(() => {
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(translations));
+    });
+    afterEach(() => {
+      httpInterceptor.get.restore();
+    });
+    it('should call translate endpoint and return a translations', () => {
+      const formName = 'formName';
+      const formVersion = 'version';
+      const locale = 'locale';
+      const translatePromise = translationsFor(formName, formVersion, locale);
+
+      expect(translatePromise).not.to.eq(null);
+      translatePromise.then(() => {
+        sinon.assert.calledWith(
+          httpInterceptor.get,
+          new UrlHelper().bahmniFormTranslateUrl(formName, formVersion, locale)
+        );
+      });
+    });
+  });
 });
+
