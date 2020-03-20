@@ -225,9 +225,11 @@ export class FormDetailContainer extends Component {
   }
 
   showPreviewButton() {
+    const resourceData = FormHelper.getFormResourceControls(this.state.formData);
     return (
       <button
         className="preview-button"
+        disabled={isEmpty(resourceData)}
         onClick={ this.onPreview }
       >Preview</button>
     );

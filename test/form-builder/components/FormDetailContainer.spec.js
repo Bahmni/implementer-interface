@@ -194,6 +194,22 @@ describe('FormDetailContainer', () => {
     expect(previewButton).to.have.length(1);
   });
 
+
+  it('preview button should be in disabled state when formData have no resources', () => {
+    const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+    );
+    wrapper.setState({ httpReceived: false });
+    wrapper.setState({ formData: {} });
+
+    const previewButton = wrapper.find('.preview-button');
+    expect(previewButton).to.have.length(1);
+    expect(wrapper.state().showPreview).to.equal(false);
+    expect(previewButton.props().disabled).to.equal(true);
+  });
+
   it('should call the appropriate endpoint to post formData', (done) => {
     sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
     const wrapper = shallow(
