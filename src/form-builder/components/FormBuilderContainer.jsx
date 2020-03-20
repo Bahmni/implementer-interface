@@ -12,6 +12,7 @@ import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
 import { connect } from 'react-redux';
 import { setDefaultLocale } from '../actions/control';
+import { saveTranslations } from 'common/apis/formTranslationApi';
 
 
 export class FormBuilderContainer extends Component {
@@ -105,7 +106,7 @@ export class FormBuilderContainer extends Component {
   saveTranslations(translations) {
     const self = this;
     self.setMessage('Importing Translations...', commonConstants.responseType.success);
-    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations || [])
+    saveTranslations(translations || [])
       .then(() => {
         self.getFormData();
         self.setMessage('Imported Successfully',

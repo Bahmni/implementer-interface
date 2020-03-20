@@ -17,6 +17,7 @@ import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import { commonConstants } from 'common/constants';
+import { saveTranslations } from 'common/apis/formTranslationApi';
 
 
 class FormTranslationsContainer extends Component {
@@ -152,15 +153,14 @@ class FormTranslationsContainer extends Component {
     this.setState({ loading: true });
     const { translations } = this.props;
 
-    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl,
-      this._createTranslationReqObject(translations)).then(() => {
-        const message = 'Form translations saved successfully';
-        this.setMessage(message, commonConstants.responseType.success);
-        this.setState({ loading: false });
-      }).catch(() => {
-        this.setErrorMessage('Failed to save translations');
-        this.setState({ loading: false });
-      });
+    saveTranslations(this._createTranslationReqObject(translations)).then(() => {
+      const message = 'Form translations saved successfully';
+      this.setMessage(message, commonConstants.responseType.success);
+      this.setState({ loading: false });
+    }).catch(() => {
+      this.setErrorMessage('Failed to save translations');
+      this.setState({ loading: false });
+    });
   }
 
   _createTranslationReqObject(translations) {
