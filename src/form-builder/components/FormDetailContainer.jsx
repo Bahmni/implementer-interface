@@ -31,7 +31,8 @@ export class FormDetailContainer extends Component {
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [],
-      originalFormName: undefined, formEvents: {}, referenceVersion: undefined };
+      originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
+      formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -40,6 +41,7 @@ export class FormDetailContainer extends Component {
     this.onPublish = this.onPublish.bind(this);
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
+    this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -137,7 +139,7 @@ export class FormDetailContainer extends Component {
   }
 
   onPreview() {
-    this.setState({ showPreview: true });
+    this.generateFormPreviewJson();
   }
 
   getFormJson() {
@@ -287,6 +289,20 @@ export class FormDetailContainer extends Component {
     this.setState({ formData: editableFormData });
   }
 
+  generateFormPreviewJson() {
+    try {
+      const formJson = this.getFormJson();
+      if (formJson) {
+        formJson.version = this.state.formData.version;
+        formJson.events = this.state.formEvents;
+        this.setState({ formPreviewJson: formJson });
+        this.setState({ showPreview: true });
+      }
+    } catch (e) {
+      this.setErrorMessage(e.getException());
+    }
+  }
+
   showPreviewModal() {
     return (<Popup className="form-preview-popup"
       closeOnDocumentClick={false}
@@ -295,7 +311,7 @@ export class FormDetailContainer extends Component {
       position="top center"
     >
       <FormPreviewModal close={() => this.closePreview()}
-        formData={this.state.formData}
+        formJson={this.state.formPreviewJson}
       />
     </Popup>);
   }

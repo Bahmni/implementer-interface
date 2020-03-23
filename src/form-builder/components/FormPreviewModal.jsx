@@ -31,13 +31,12 @@ export default class FormPreviewModal extends React.Component {
   }
 
   render() {
-    if (this.props.formData) {
-      const metadata = JSON.parse(this.props.formData.resources[0].value);
-      metadata.version = this.props.formData.version;
+    if (this.props.formJson) {
+      const metadata = this.props.formJson;
       return (
                 <div className="preview-container">
                     <div className="preview-header">
-                        <div>{this.props.formData.name}</div>
+                        <div>Preview</div>
                         <i className="fa fa-times" onClick={this.props.close}></i>
                     </div>
                     <div className="preview-body">
@@ -59,5 +58,5 @@ export default class FormPreviewModal extends React.Component {
 
 FormPreviewModal.propTypes = {
   close: PropTypes.func.isRequired,
-  formData: PropTypes.object,
+  formJson: PropTypes.object,
 };

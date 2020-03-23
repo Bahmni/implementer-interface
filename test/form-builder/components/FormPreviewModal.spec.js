@@ -8,31 +8,48 @@ import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 
 chai.use(chaiEnzyme());
 
-describe('EditModal', () => {
+describe('FormPreviewModal', () => {
   let wrapper;
   let closeSpy;
 
-  const formData = { name: 'TestPreview', uuid: 'b313c324-7efc-4c46-abb5-89f405e436c6',
-    version: '1', published: false, id: null, resources: [{ name: 'TestPreview',
-      dataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
-      value: '{"name":"TestPreview","id":56,"uuid":"b313c324-7efc-4c46-abb5-89f405e436c6",' +
-              '"defaultLocale":"en","controls":[{"type":"obsControl",' +
-              '"label":{"translationKey":"ANA,_SYSTOLIC_BLOOD_PRESSURE_1","id":"1",' +
-          '"units":"(mmHg)","type":"label","value":"ANA, Systolic blood pressure"},' +
-          '"properties":{"mandatory":false,"notes":false,"addMore":false,"hideLabel":false,' +
-          '"controlEvent":false,"location":{"column":0,"row":0},"abnormal":false},"id":"1",' +
-          '"concept":{"name":"ANA, Systolic blood pressure","uuid":"uuid","datatype":"Numeric",' +
-              '"conceptClass":"Misc","conceptHandler":null,"answers":[],' +
-          '"properties":{"allowDecimal":true}},' +
-              '"units":"mmHg","hiNormal":null,"lowNormal":null,"hiAbsolute":null,' +
-              '"lowAbsolute":null}],"events":{},"translationsUrl":"url"}',
-      uuid: '7c87487b-e0e8-493a-a55f-b54e5184fded' }] };
+  const formJson = {
+    name: 'Groovy',
+    id: 62,
+    uuid: 'a70e3e5c-70cf-49a7-b73b-4dc6d70643a7',
+    controls: [
+      {
+        type: 'obsControl',
+        label: {
+          translationKey: 'ANA,_HEIGHT_1',
+          value: 'ANA, Height',
+        },
+        properties: {
+          mandatory: false,
+        },
+        id: '1',
+        concept: {
+          name: 'ANA, Height',
+          uuid: 'f17466a5-5d1a-11ea-9bb4-080027405b36',
+          datatype: 'Numeric',
+          properties: {
+            allowDecimal: true,
+          },
+        },
+        events: {
+          onValueChange: 'function(form, interceptor) {\n  var x = form.get("ANA, Height")' +
+              '.getValue();\n  var y = form.get("SA, Penicillin");\n  if (parseInt(x) > 5) {\n' +
+              '    y.setHidden(true);\n  } else\n    y.setHidden(false);\n}',
+        },
+      },
+    ],
+    version: '43',
+  };
   beforeEach(() => {
     closeSpy = sinon.spy();
     wrapper = mount(
       <FormPreviewModal
         close={closeSpy}
-        formData={formData}
+        formJson={formJson}
       />
     );
   });
@@ -47,7 +64,7 @@ describe('EditModal', () => {
     wrapper = mount(
         <FormPreviewModal
           close={closeSpy}
-          formData={undefined}
+          formJson={undefined}
         />
     );
     const modal = wrapper.find('.preview-container');
