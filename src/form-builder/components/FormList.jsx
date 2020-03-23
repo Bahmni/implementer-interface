@@ -64,7 +64,8 @@ export default class FormList extends Component {
     httpInterceptor
       .get(`${formBuilderConstants.formUrl}/${form.uuid}?${params}`)
       .then((formJson) => {
-        const translationParams = `formName=${form.name}&formVersion=${form.version}`;
+        const translationParams =
+          `formName=${form.name}&formVersion=${form.version}&formUuid=${form.uuid}`;
         httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`)
           .then((translations) => {
             const formData = { formJson, translations };

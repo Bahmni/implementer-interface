@@ -119,7 +119,7 @@ describe('FormList', () => {
       'v=custom:(id,uuid,name,version,published,auditInfo,' +
       'resources:(value,dataType,uuid))';
     const formUrl = `${formBuilderConstants.formUrl}/someUuid-1?${params}`;
-    const translationParams = 'formName=Vitals&formVersion=1.1';
+    const translationParams = 'formName=Vitals&formVersion=1.1&formUuid=someUuid-1';
     const translationUrl = `${formBuilderConstants.translationsUrl}?${translationParams}`;
     setTimeout(() => {
       sinon.assert.calledTwice(httpInterceptor.get);

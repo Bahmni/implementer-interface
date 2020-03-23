@@ -298,14 +298,17 @@ export default class FormBuilder extends Component {
         value: JSON.stringify(value),
         uuid: '',
       };
-      self.props.saveFormResource(formResource, translations);
-    }).catch(() => {
-      const formUuid = self.getFormUuid(formName);
-      val.uuid = formUuid;
-      const params =
+      const translationsWithFormUuid = translations.map((eachTranslation) => Object.assign({},
+        eachTranslation, { formUuid: response.uuid }));
+      self.props.saveFormResource(formResource, translationsWithFormUuid);
+    })
+      .catch(() => {
+        const formUuid = self.getFormUuid(formName);
+        val.uuid = formUuid;
+        const params =
         'v=custom:(id,uuid,name,version,published,auditInfo,' +
         'resources:(value,dataType,uuid))';
-      httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+        httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
         .then((data) => {
           const formResource = {
             form: {
@@ -317,7 +320,7 @@ export default class FormBuilder extends Component {
           };
           self.props.saveFormResource(formResource, translations);
         });
-    });
+      });
   }
 
   validateConcept(concept, checkPromises) {
