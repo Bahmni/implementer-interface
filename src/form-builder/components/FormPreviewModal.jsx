@@ -43,6 +43,9 @@ export default class FormPreviewModal extends React.Component {
                         {this.getContainer(metadata)}
                     </div>
                     <div className="preview-footer">
+                        <button className="button btn--highlight" type="submit">
+                          Save
+                        </button>
                         <button className="btn preview-close-btn"
                           onClick={this.props.close}
                           type="reset"

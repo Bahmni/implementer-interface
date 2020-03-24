@@ -89,4 +89,9 @@ describe('FormPreviewModal', () => {
     const container = wrapper.find('Container');
     expect(container).to.have.length(1);
   });
+
+  it('should render save button in footer', () => {
+    const saveButton = wrapper.find('.btn--highlight');
+    expect(saveButton).to.have.length(1);
+  });
 });
