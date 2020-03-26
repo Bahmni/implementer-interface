@@ -637,14 +637,14 @@ describe('FormDetailContainer', () => {
         () => {
           publishButton = wrapper.find('.publish-button');
         });
-      wrapper.setState({ referenceVersion: '1' });
+      wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
         sinon.assert.calledTwice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'en', version: '1', referenceVersion: '1',
-              formUuid: 'someUuid' }]),
+              referenceFormUuid: 'ref-uuid', formUuid: 'someUuid' }]),
           postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
         postStub.restore();
@@ -680,14 +680,14 @@ describe('FormDetailContainer', () => {
         () => {
           publishButton = wrapper.find('.publish-button');
         });
-      wrapper.setState({ referenceVersion: '1' });
+      wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
         sinon.assert.calledTwice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1',
-              formUuid: 'someUuid' }]),
+              referenceFormUuid: 'ref-uuid', formUuid: 'someUuid' }]),
           postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
         postStub.restore();
@@ -932,6 +932,41 @@ describe('FormDetailContainer', () => {
       wrapper.find('FormDetailContainer').setState({ httpReceived: false });
       const previewButton = wrapper.find('.preview-button');
       expect(previewButton).to.have.length(1);
+    });
+
+    it('should copy the translation to new version after editing', (done) => {
+      const wrapper = mount(
+        <Provider store={getStore()}>
+          <FormDetailContainer
+            {...defaultProps}
+          /></Provider>, { context }
+      );
+      wrapper.find('FormDetailContainer').setState({ formData: publishedFormData,
+        httpReceived: true, originalFormName: publishedFormData.name });
+      wrapper.update();
+      const editButton = wrapper.find('.edit-button');
+      editButton.simulate('click');
+      wrapper.find('EditModal').find('.btn--highlight').simulate('click');
+      expect(wrapper.find('FormDetailContainer').state().referenceVersion)
+        .to.eq(publishedFormData.version);
+      expect(wrapper.find('FormDetailContainer').state().referenceFormUuid)
+        .to.eq(publishedFormData.uuid);
+      sinon.stub(wrapper.find('FormDetailContainer').instance(), 'getFormJson').returns({});
+      sinon.stub(wrapper.find('FormDetailContainer').instance(), 'hasEmptyBlocks').returns(false);
+      const postStub = sinon.stub(httpInterceptor, 'post');
+      postStub.callsFake(() => Promise.resolve(Object.assign({},
+        formData, { version: '2', uuid: 'next-uuid' })));
+      const saveButton = wrapper.find('.save-button');
+      saveButton.simulate('click');
+      setTimeout(() => {
+        expect(postStub.getCall(0).args[0]).to.eq(formBuilderConstants.bahmniFormResourceUrl);
+        expect(JSON.parse(postStub.getCall(0).args[1].value).referenceVersion)
+          .to.eq(publishedFormData.version);
+        expect(JSON.parse(postStub.getCall(0).args[1].value).referenceFormUuid)
+          .to.eq(publishedFormData.uuid);
+        done();
+      }, 500);
+      httpInterceptor.post.restore();
     });
   });
 });
