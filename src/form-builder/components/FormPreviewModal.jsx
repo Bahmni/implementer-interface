@@ -12,6 +12,7 @@ export default class FormPreviewModal extends React.Component {
       container: {},
       defaultLocale: localStorage.getItem('openmrsDefaultLocale'),
     };
+    this.onSave = this.onSave.bind(this);
     this.setContainer = this.setContainer.bind(this);
   }
 
@@ -19,10 +20,19 @@ export default class FormPreviewModal extends React.Component {
     this.setContainer([]);
   }
 
+  onSave() {
+    const formJson = this.props.formJson;
+    if (this.state.container.state && formJson.events.onFormSave) {
+      /* eslint-disable no-undef */
+      const records = runEventScript(this.state.container.state.data, formJson.events.onFormSave);
+      unMountForm(document.getElementById('form-container'));
+      this.setContainer(getObservations(records));
+    }
+  }
+
   setContainer(observations) {
     const metadata = this.props.formJson;
     if (metadata) {
-      /* eslint-disable no-undef */
       const container = renderWithControls(metadata, observations, 'form-container', false, null,
         false, this.state.defaultLocale, '');
       this.setState({ container });
@@ -41,7 +51,9 @@ export default class FormPreviewModal extends React.Component {
                       <div id="form-container"> </div>
                     </div>
                     <div className="preview-footer">
-                        <button className="button btn--highlight" type="submit">
+                        <button className="button btn--highlight" onClick={this.onSave}
+                          type="submit"
+                        >
                           Save
                         </button>
                         <button className="btn preview-close-btn"

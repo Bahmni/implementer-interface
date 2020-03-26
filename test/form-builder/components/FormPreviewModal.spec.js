@@ -11,7 +11,7 @@ chai.use(chaiEnzyme());
 describe('FormPreviewModal', () => {
   let wrapper;
   let closeSpy;
-  let renderWithControlsSpy;
+  let renderWithControlsCounter = 0;
 
   const formJson = {
     name: 'Groovy',
@@ -44,11 +44,17 @@ describe('FormPreviewModal', () => {
       },
     ],
     version: '43',
+    events: {
+      onFormSave: 'function(form){}',
+    },
   };
   beforeEach(() => {
     closeSpy = sinon.spy();
-    renderWithControlsSpy = sinon.spy();
-    window.renderWithControls = renderWithControlsSpy;
+    renderWithControlsCounter = 0;
+    window.renderWithControls = function renderWithControls() {
+      renderWithControlsCounter++;
+      return 'container';
+    };
   });
 
   function mountComponent(formJsonMetadata) {
@@ -65,7 +71,7 @@ describe('FormPreviewModal', () => {
     const container = wrapper.find('.preview-container');
     expect(container).to.have.length(1);
     expect(container.children().length).to.be.equal(3);
-    sinon.assert.calledOnce(renderWithControlsSpy);
+    expect(renderWithControlsCounter).to.be.equal(1);
   });
 
   it('should not render create form modal when form data doesnot exist', () => {
@@ -74,7 +80,7 @@ describe('FormPreviewModal', () => {
     const container = wrapper.find('Container');
     expect(container).to.be.length(0);
     expect(modal).to.be.length(0);
-    sinon.assert.callCount(renderWithControlsSpy, 0);
+    expect(renderWithControlsCounter).to.be.equal(0);
   });
 
   it('should call close modal function when close button is clicked', () => {
@@ -96,4 +102,35 @@ describe('FormPreviewModal', () => {
     const saveButton = wrapper.find('.btn--highlight');
     expect(saveButton).to.have.length(1);
   });
+
+  it('should call 3 window methods and set container to state on click of save button', () => {
+    mountComponent(formJson);
+    const button = wrapper.find('.btn--highlight');
+    wrapper.setState({ container: { state: { data: {} } } });
+    let runEventScriptCounter = 0;
+    let unMountFormCounter = 0;
+    let getObservationsCounter = 0;
+    window.runEventScript = function runEventScript() {
+      runEventScriptCounter++;
+    };
+    window.unMountForm = function unMountForm() {
+      unMountFormCounter++;
+    };
+    window.getObservations = function getObservations() {
+      getObservationsCounter++;
+    };
+
+    button.simulate('click');
+
+    expect(runEventScriptCounter).to.equal(1);
+    expect(unMountFormCounter).to.equal(1);
+    expect(getObservationsCounter).to.equal(1);
+  });
+
+  it('should set renderWithControls return value to state variable container on componentDidMount',
+    () => {
+      mountComponent(formJson);
+      expect(renderWithControlsCounter).to.be.equal(1);
+      expect(wrapper.state().container).to.equal('container');
+    });
 });
