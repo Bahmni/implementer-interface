@@ -11,6 +11,7 @@ chai.use(chaiEnzyme());
 describe('FormPreviewModal', () => {
   let wrapper;
   let closeSpy;
+  let renderWithControlsSpy;
 
   const formJson = {
     name: 'Groovy',
@@ -46,51 +47,52 @@ describe('FormPreviewModal', () => {
   };
   beforeEach(() => {
     closeSpy = sinon.spy();
+    renderWithControlsSpy = sinon.spy();
+    window.renderWithControls = renderWithControlsSpy;
+  });
+
+  function mountComponent(formJsonMetadata) {
     wrapper = mount(
       <FormPreviewModal
         close={closeSpy}
-        formJson={formJson}
+        formJson={formJsonMetadata}
       />
     );
-  });
+  }
 
   it('should render create form preview modal when form data exists', () => {
+    mountComponent(formJson);
     const container = wrapper.find('.preview-container');
     expect(container).to.have.length(1);
     expect(container.children().length).to.be.equal(3);
+    sinon.assert.calledOnce(renderWithControlsSpy);
   });
 
   it('should not render create form modal when form data doesnot exist', () => {
-    wrapper = mount(
-        <FormPreviewModal
-          close={closeSpy}
-          formJson={undefined}
-        />
-    );
+    mountComponent(undefined);
     const modal = wrapper.find('.preview-container');
     const container = wrapper.find('Container');
     expect(container).to.be.length(0);
     expect(modal).to.be.length(0);
+    sinon.assert.callCount(renderWithControlsSpy, 0);
   });
 
   it('should call close modal function when close button is clicked', () => {
+    mountComponent(formJson);
     const button = wrapper.find('.preview-close-btn');
     button.simulate('click');
     sinon.assert.calledOnce(closeSpy);
   });
 
   it('should call close modal function when close icon is clicked', () => {
+    mountComponent(formJson);
     const button = wrapper.find('.fa-times');
     button.simulate('click');
     sinon.assert.calledOnce(closeSpy);
   });
 
-  it('should render container if metadata is present', () => {
-    const container = wrapper.find('Container');
-    expect(container).to.have.length(1);
-  });
-
   it('should render save button in footer', () => {
+    mountComponent(formJson);
     const saveButton = wrapper.find('.btn--highlight');
     expect(saveButton).to.have.length(1);
   });

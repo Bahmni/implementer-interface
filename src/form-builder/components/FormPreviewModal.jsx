@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container as Container } from 'bahmni-form-controls';
 import 'bahmni-form-controls/dist/helpers.js';
 
 
@@ -10,29 +9,28 @@ export default class FormPreviewModal extends React.Component {
     super(props);
     this.state = {
       formData: {},
-      observations: [],
+      container: {},
+      defaultLocale: localStorage.getItem('openmrsDefaultLocale'),
     };
-    this.getContainer = this.getContainer.bind(this);
+    this.setContainer = this.setContainer.bind(this);
   }
 
-  getContainer(metadata) {
+  componentDidMount() {
+    this.setContainer([]);
+  }
+
+  setContainer(observations) {
+    const metadata = this.props.formJson;
     if (metadata) {
-      return (<Container
-        collapse={false}
-        metadata={metadata}
-        observations={this.state.observations}
-        patient={{}}
-        translations={{ labels: {}, concepts: {} }}
-        validate={false}
-        validateForm={false}
-      />);
+      /* eslint-disable no-undef */
+      const container = renderWithControls(metadata, observations, 'form-container', false, null,
+        false, this.state.defaultLocale, '');
+      this.setState({ container });
     }
-    return null;
   }
 
   render() {
     if (this.props.formJson) {
-      const metadata = this.props.formJson;
       return (
                 <div className="preview-container">
                     <div className="preview-header">
@@ -40,7 +38,7 @@ export default class FormPreviewModal extends React.Component {
                         <i className="fa fa-times" onClick={this.props.close}></i>
                     </div>
                     <div className="preview-body">
-                        {this.getContainer(metadata)}
+                      <div id="form-container"> </div>
                     </div>
                     <div className="preview-footer">
                         <button className="button btn--highlight" type="submit">
