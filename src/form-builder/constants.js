@@ -20,5 +20,6 @@ export const formBuilderConstants = {
   translationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/translations',
   formTranslationUrl: '/openmrs/ws/rest/v1/bahmniie/form/translate',
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
+  saveNameTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation',
   exportUrl: '/openmrs/ws/rest/v1/bahmniie/form/export',
 };

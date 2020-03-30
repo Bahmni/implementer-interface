@@ -12,4 +12,9 @@ export class UrlHelper {
     return '/openmrs/ws/rest/v1/bahmniie/form/translate?' +
       `formName=${formName}&formVersion=${formVersion}&locale=${locale}&formUuid=${formUuid}`;
   }
+
+  bahmniFormNameTranslateUrl(formName, formUuid) {
+    return '/openmrs/ws/rest/v1/bahmniie/form/name/translate?' +
+      `formName=${formName}&formUuid=${formUuid}`;
+  }
 }

@@ -35,7 +35,9 @@ describe('FormTranslationsGrid', () => {
           SECTION_12: [
             'SECTION es',
           ],
-
+        },
+        formNames: {
+          sampleName: ['Sample Name ESPANOL'],
         },
         locale: 'es',
       },
@@ -52,6 +54,9 @@ describe('FormTranslationsGrid', () => {
           SECTION_12: [
             'SECTION_12',
           ],
+        },
+        formNames: {
+          sampleName: ['Sample Name FRENCH'],
         },
         locale: 'fr',
       },
@@ -76,7 +81,7 @@ describe('FormTranslationsGrid', () => {
         <FormTranslationsGrid translationData={data} />
       </Provider>);
 
-    expect(getTableBody()).to.have.exactly(3).descendants('tr');
+    expect(getTableBody()).to.have.exactly(4).descendants('tr');
     expect(wrapper.find('table').find('thead')).to.have.exactly(1).descendants('tr');
     expect(wrapper.find('table').find('thead')).to.have.exactly(3).descendants('th');
 
@@ -86,12 +91,15 @@ describe('FormTranslationsGrid', () => {
       expect(getItem(rowIndex, 1)).to.have.exactly(1).descendants('FreeTextAutoComplete');
     }
 
-    expect(getData(0, 0)).to.have.string('SEVERE_UNDERNUTRITION_13');
-    expect(getData(0, 1)).to.have.string('Undernutrition es');
-    expect(getData(0, 2)).to.have.string('Undernutrition');
-    expect(getData(2, 0)).to.have.string('SECTION_12');
-    expect(getData(2, 1)).to.have.string('SECTION es');
-    expect(getData(2, 2)).to.have.string('SECTION_12');
+    expect(getData(0, 0)).to.have.string('sampleName');
+    expect(getData(0, 1)).to.have.string('Sample Name ESPANOL');
+    expect(getData(0, 2)).to.have.string('Sample Name FRENCH');
+    expect(getData(1, 0)).to.have.string('SEVERE_UNDERNUTRITION_13');
+    expect(getData(1, 1)).to.have.string('Undernutrition es');
+    expect(getData(1, 2)).to.have.string('Undernutrition');
+    expect(getData(3, 0)).to.have.string('SECTION_12');
+    expect(getData(3, 1)).to.have.string('SECTION es');
+    expect(getData(3, 2)).to.have.string('SECTION_12');
   });
 
   it('should update store on value change', () => {
@@ -106,10 +114,17 @@ describe('FormTranslationsGrid', () => {
     const onChange = freeTextAutocomplete.props().onChange;
     expect(onChange).to.be.instanceOf(Function);
     onChange({ value: 'something' }, 'concepts', 'SEVERE_UNDERNUTRITION_13', 'en');
+    onChange({ value: 'NEW NAME TRANSLATION' }, 'formNames', 'sampleName', 'en');
     sinon.assert.calledOnce(store.dispatch.withArgs(updateTranslations(
       {
         value: 'something', type: 'concepts',
         translationKey: 'SEVERE_UNDERNUTRITION_13', locale: 'en',
+      }
+    )));
+    sinon.assert.calledOnce(store.dispatch.withArgs(updateTranslations(
+      {
+        value: 'NEW NAME TRANSLATION', type: 'formNames',
+        translationKey: 'sampleName', locale: 'en',
       }
     )));
   });

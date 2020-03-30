@@ -16,7 +16,13 @@ import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import { commonConstants } from 'common/constants';
-import { saveTranslations, translationsFor } from 'common/apis/formTranslationApi';
+import {
+  getFormNameTranslations,
+  saveFormNameTranslations,
+  saveTranslations,
+  translationsFor,
+} from 'common/apis/formTranslationApi';
+import { each } from 'lodash';
 
 
 class FormTranslationsContainer extends Component {
@@ -33,9 +39,13 @@ class FormTranslationsContainer extends Component {
     this.name = undefined;
     this.version = undefined;
     this.selectedLocale = undefined;
+    this.formNameTranslations = undefined;
     this._updateStore = this._updateStore.bind(this);
     this._saveTranslations = this._saveTranslations.bind(this);
     this._createTranslationReqObject = this._createTranslationReqObject.bind(this);
+    this._createNameTranslationReqObject = this._createNameTranslationReqObject.bind(this);
+    this._getFormNameTranslationsPromise = this._getFormNameTranslationsPromise.bind(this);
+    this._generateFormNameTranslationPayload = this._generateFormNameTranslationPayload.bind(this);
     this._getTranslations = this._getTranslations.bind(this);
     this._generateTranslation = this._generateTranslation.bind(this);
     props.dispatch(clearTranslations());
@@ -77,17 +87,39 @@ class FormTranslationsContainer extends Component {
 
   _getTranslations(name, version, locale, uuid) {
     this.setState({ loading: true });
-    translationsFor(name, version, locale, uuid)
-      .then((translations) => {
-        this._createInitialValue(translations, locale);
+    const getFormNameTranslationsPromise = this._getFormNameTranslationsPromise(name, uuid);
+    const getFormTranslationsPromise = translationsFor(name, version, locale, uuid);
+
+    Promise.all([getFormTranslationsPromise, getFormNameTranslationsPromise])
+      .then(translationsResponse => {
+        const formNameTranslationResponse = translationsResponse[1];
+        const formTranslationResponse = translationsResponse[0];
+        if (formNameTranslationResponse) {
+          this.formNameTranslations = formNameTranslationResponse;
+          const nameTranslationJSON = JSON.parse(formNameTranslationResponse.toString());
+          const nameTranslation = nameTranslationJSON.find(nameTranslationObj =>
+            locale === nameTranslationObj.locale);
+          formTranslationResponse.formNames = {
+            [name]: [nameTranslation && nameTranslation.display || name],
+          };
+        } else {
+          formTranslationResponse.formNames = { [name]: [name] };
+        }
+        this._createInitialValue(formTranslationResponse, locale);
         const { allowedLocales } = this.state;
-        const data = this._getTranslationsInfo(locale, translations, allowedLocales);
+        const data = this._getTranslationsInfo(locale, formTranslationResponse, allowedLocales);
         this.setState({ translationData: data, loading: false });
       }).catch(() => {
         const { allowedLocales } = this.state;
         this.setMessage('Failed to fetch translation for [' +
         `${allowedLocales[locale] || locale}] locale`, commonConstants.responseType.error);
       });
+  }
+
+  _getFormNameTranslationsPromise(name, uuid) {
+    return this.formNameTranslations
+      ? Promise.resolve(this.formNameTranslations)
+      : getFormNameTranslations(name, uuid);
   }
 
   _getTranslationsInfo(locale, selectedTranslations, allowedLocales) {
@@ -121,6 +153,7 @@ class FormTranslationsContainer extends Component {
   _createInitialValue(translations, locale) {
     this._updateStore(translations, 'concepts', locale);
     this._updateStore(translations, 'labels', locale);
+    this._updateStore(translations, 'formNames', locale);
   }
 
 
@@ -150,6 +183,17 @@ class FormTranslationsContainer extends Component {
   _saveTranslations() {
     this.setState({ loading: true });
     const { translations } = this.props;
+    saveFormNameTranslations(this._createNameTranslationReqObject(translations)).then(() => {
+      this.formNameTranslations = undefined;
+      this.setState({ loading: true });
+      this._getFormNameTranslationsPromise(this.name, this.props.match.params.formUuid)
+        .then(resp => {
+          this.formNameTranslations = resp;
+        }).catch(() => {
+        }).finally(() => {
+          this.setState({ loading: false });
+        });
+    });
 
     saveTranslations(this._createTranslationReqObject(translations)).then(() => {
       const message = 'Form translations saved successfully';
@@ -161,14 +205,48 @@ class FormTranslationsContainer extends Component {
     });
   }
 
+  _createNameTranslationReqObject(translations) {
+    const formNameTranslations = this._generateFormNameTranslationPayload(translations);
+    return {
+      form: { name: this.name, uuid: this.props.match.params.formUuid },
+      value: JSON.stringify(formNameTranslations),
+    };
+  }
+
+  _generateFormNameTranslationPayload(translations) {
+    const formNameTranslationsObj = {};
+    each(translations, (localeTranslation, locale) => {
+      formNameTranslationsObj[locale] = localeTranslation.formNames[this.name];
+    });
+    if (this.formNameTranslations) {
+      const existingTranslations = JSON.parse(this.formNameTranslations);
+      each(existingTranslations, translation => {
+        if (!formNameTranslationsObj[translation.locale]) {
+          formNameTranslationsObj[translation.locale] = translation.display;
+        }
+      });
+    }
+
+    const formNameTranslationsList = [];
+    each(formNameTranslationsObj, (display, locale) => {
+      formNameTranslationsList.push({ display, locale });
+    });
+    return formNameTranslationsList;
+  }
+
   _createTranslationReqObject(translations) {
     const { name, version } = this;
-    return map(translations, (localeTranslation, locale) =>
-      Object.assign(localeTranslation, {
+    const translationObj = [];
+    each(translations, (localeTranslation, locale) => {
+      const localeTranslationCopy = Object.assign(Object.assign({}, localeTranslation), {
         formName: name,
         formUuid: this.props.match.params.formUuid,
         version, locale,
-      }));
+      });
+      delete localeTranslationCopy.formNames;
+      translationObj.push(localeTranslationCopy);
+    });
+    return translationObj;
   }
 
   _generateTranslation(element) {

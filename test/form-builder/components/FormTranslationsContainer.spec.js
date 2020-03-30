@@ -41,11 +41,14 @@ describe('FormTranslationContainer', () => {
       ],
     },
     locale: 'en',
+    formNames: { form_name: ['default_form_name_display_en'] },
   };
 
+  const nameTranslations = '[{"display": "form_name_display_es", "locale": "es"},' +
+    ' {"display": "default_form_name_display_en", "locale": "en"}]';
 
   const defaultProps = {
-    match: { params: { formUuid: 'form_uuid' } },
+    match: { params: { formUuid: 'form_uuid' }, path: '' },
     routes: [],
     defaultLocale: 'en',
   };
@@ -66,6 +69,8 @@ describe('FormTranslationContainer', () => {
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
       'form_name&formVersion=2&locale=en&formUuid=form_uuid')
       .returns(Promise.resolve(translationData));
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/translate?formName=' +
+      'form_name&formUuid=form_uuid').returns(Promise.resolve(nameTranslations));
 
     breadcrumbsStub = sinon.stub(FormBuilderBreadcrumbs, 'default').returns(<div>A stub</div>);
   });
@@ -105,8 +110,8 @@ describe('FormTranslationContainer', () => {
       expect(expectedLocaleOptions, localeOptions.find('select').html());
 
       const formTranslationContainer = wrapper.find('FormTranslationsContainer');
-
-      sinon.assert.callOrder(store.dispatch.withArgs(
+      sinon.assert.callOrder(
+        store.dispatch.withArgs(
         updateTranslations({
           value: 'desc Examination Notes',
           type: 'concepts',
@@ -119,7 +124,6 @@ describe('FormTranslationContainer', () => {
           translationKey: 'SEVERE_UNDERNUTRITION_13',
           locale: 'en',
         })));
-
       expect(formTranslationContainer.find('.info-message').text()).to
         .have.string('Please save the changes before selecting a locale.');
       formTranslationContainer.update();
@@ -129,6 +133,8 @@ describe('FormTranslationContainer', () => {
       sinon.assert.callOrder(
         mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:(id,uuid,name,version)'),
+        mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/translate?formName=' +
+          'form_name&formUuid=form_uuid'),
         mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
           'form_name&formVersion=2&locale=en&formUuid=form_uuid')
       );
@@ -144,7 +150,6 @@ describe('FormTranslationContainer', () => {
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
       'form_name&formVersion=2&locale=es&formUuid=form_uuid')
       .returns(Promise.resolve(localeTranslations));
-
 
     const expectedTranslationData = {
       headers: [
@@ -179,6 +184,8 @@ describe('FormTranslationContainer', () => {
           mockHttp.get.withArgs('/bahmni_config/openmrs/apps/home/locale_languages.json'),
           mockHttp.get.withArgs('/openmrs/ws/rest/v1/form/form_uuid?v=custom:' +
             '(id,uuid,name,version)'),
+          mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/translate?formName=' +
+            'form_name&formUuid=form_uuid'),
           mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
             'form_name&formVersion=2&locale=en&formUuid=form_uuid'),
           mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
@@ -264,18 +271,25 @@ describe('FormTranslationContainer', () => {
 
   it('should save generated translations', (done) => {
     const localeTranslations = Object.assign({}, translationData);
-
     mockHttp.post.withArgs('/openmrs/ws/rest/v1/bahmniie/form/saveTranslation')
+      .returns(Promise.resolve({}));
+    mockHttp.post.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation')
       .returns(Promise.resolve({}));
     localeTranslations.locale = 'es';
     localeTranslations.concepts.SEVERE_UNDERNUTRITION_13 = ['Severe Undernutrition es'];
+    localeTranslations.formNames.form_name = ['default_form_name_display_es'];
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/translate?formName=' +
       'form_name&formVersion=2&locale=es&formUuid=form_uuid')
       .returns(Promise.resolve(localeTranslations));
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/translate?formName=' +
+      'form_name&formUuid=form_uuid')
+      .returns(Promise.resolve(nameTranslations));
 
     localeTranslations.formName = 'form_name';
     localeTranslations.formUuid = 'form_uuid';
     localeTranslations.version = '2';
+
+    delete localeTranslations.formNames;
     const wrapper = mount(
       <Provider store={getStore({ translations: { es: localeTranslations } })}>
 
@@ -288,10 +302,24 @@ describe('FormTranslationContainer', () => {
     setTimeout(() => {
       setTimeout(() => {
         wrapper.find('#save-translations-button').simulate('click');
+        const nameTranslation = {
+          form: { name: 'form_name', uuid: 'form_uuid' },
+          value: '[{"display":["form_name_display_es"],"locale":"es"},' +
+            '{"display":"default_form_name_display_en","locale":"en"}]',
+        };
+        sinon.assert.calledOnce(
+          mockHttp.post.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation',
+            nameTranslation)
+        );
+        delete localeTranslations.formNames;
         sinon.assert.calledOnce(mockHttp.post.withArgs(
           '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation', [localeTranslations]));
 
         setTimeout(() => {
+          sinon.assert.called(
+            mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/name/translate?formName=' +
+              'form_name&formUuid=form_uuid')
+          );
           const formTranslationContainer = wrapper.find('FormTranslationsContainer');
           formTranslationContainer.update();
           expect(wrapper.find('NotificationContainer').props().notification)
