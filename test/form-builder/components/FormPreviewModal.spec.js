@@ -11,6 +11,7 @@ chai.use(chaiEnzyme());
 describe('FormPreviewModal', () => {
   let wrapper;
   let closeSpy;
+  let setErrorMessageSpy;
   let renderWithControlsCounter = 0;
 
   const formJson = {
@@ -50,6 +51,7 @@ describe('FormPreviewModal', () => {
   };
   beforeEach(() => {
     closeSpy = sinon.spy();
+    setErrorMessageSpy = sinon.spy();
     renderWithControlsCounter = 0;
     window.renderWithControls = function renderWithControls() {
       renderWithControlsCounter++;
@@ -62,6 +64,7 @@ describe('FormPreviewModal', () => {
       <FormPreviewModal
         close={closeSpy}
         formJson={formJsonMetadata}
+        setErrorMessage={setErrorMessageSpy}
       />
     );
   }
@@ -133,4 +136,44 @@ describe('FormPreviewModal', () => {
       expect(renderWithControlsCounter).to.be.equal(1);
       expect(wrapper.state().container).to.equal('container');
     });
+
+  it('should return error message for single error object', () => {
+    const errorMessage = FormPreviewModal.formatErrors({ message: 'It is an error' });
+
+    expect(errorMessage).to.equal('It is an error');
+  });
+
+  it('should return pipe separated error messages for array of errors', () => {
+    const errorMessage = FormPreviewModal.formatErrors([{ message: 'It is an error1' },
+      { message: 'It is an error2' }]);
+
+    expect(errorMessage).to.equal('It is an error1 | It is an error2');
+  });
+
+  it('should return [ERROR] when message key is not present in error object(s)', () => {
+    const errorMessageObject = FormPreviewModal.formatErrors({ mesage: 'It is an error' });
+    const errorMessagesArray = FormPreviewModal.formatErrors([{ message: 'It is an error1' },
+      { mesage: 'It is an error2' }]);
+
+    expect(errorMessageObject).to.equal('[ERROR]');
+    expect(errorMessagesArray).to.equal('It is an error1 | [ERROR]');
+  });
+
+  it('should call setErrorMessage when runEventScript throws exception', () => {
+    mountComponent(formJson);
+    const button = wrapper.find('.btn--highlight');
+    wrapper.setState({ container: { state: { data: {} } } });
+    window.runEventScript = function runEventScript() {
+      throw Object.assign(new Error('Error'));
+    };
+    window.unMountForm = function unMountForm() {
+    };
+    window.getObservations = function getObservations() {
+    };
+
+    button.simulate('click');
+
+    sinon.assert.calledOnce(setErrorMessageSpy);
+    sinon.assert.calledWith(setErrorMessageSpy, { type: 'Exception', message: 'Error' });
+  });
 });

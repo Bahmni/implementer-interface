@@ -1,9 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import 'bahmni-form-controls/dist/helpers.js';
+import { Exception } from 'form-builder/helpers/Exception';
 
 
 export default class FormPreviewModal extends React.Component {
+
+  static formatErrors(error) {
+    if (Array.isArray(error)) {
+      return error.map(e => e.message || '[ERROR]').join(' | ');
+    }
+    return error.message || '[ERROR]';
+  }
 
   constructor(props) {
     super(props);
@@ -24,9 +32,13 @@ export default class FormPreviewModal extends React.Component {
     const formJson = this.props.formJson;
     if (this.state.container.state && formJson.events.onFormSave) {
       /* eslint-disable no-undef */
-      const records = runEventScript(this.state.container.state.data, formJson.events.onFormSave);
-      unMountForm(document.getElementById('form-container'));
-      this.setContainer(getObservations(records));
+      try {
+        const records = runEventScript(this.state.container.state.data, formJson.events.onFormSave);
+        unMountForm(document.getElementById('form-container'));
+        this.setContainer(getObservations(records));
+      } catch (e) {
+        this.props.setErrorMessage(new Exception(FormPreviewModal.formatErrors(e)).getException());
+      }
     }
   }
 
@@ -72,4 +84,5 @@ export default class FormPreviewModal extends React.Component {
 FormPreviewModal.propTypes = {
   close: PropTypes.func.isRequired,
   formJson: PropTypes.object,
+  setErrorMessage: PropTypes.func.isRequired,
 };
