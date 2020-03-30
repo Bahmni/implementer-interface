@@ -5,6 +5,7 @@ import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
+import { setChangedProperty } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
 
@@ -42,5 +43,20 @@ describe('FormEventContainer', () => {
     wrapper.setProps({ formDetails: { events } });
 
     sinon.assert.calledWith(updateSpy, events);
+  });
+
+  it('should render FormEventContainer with given label in props', () => {
+    const store = getStore();
+    wrapper = shallow(
+      <FormEventContainer
+        eventProperty={'prop_key'}
+        label={'SAMPLE_NAME'}
+        store={ store }
+        updateFormEvents={updateSpy}
+      />).shallow();
+    wrapper.find('.form-event-container').find('button').simulate('click');
+
+    expect(wrapper.find('label').text()).to.be.equal('SAMPLE_NAME');
+    sinon.assert.calledWith(store.dispatch, setChangedProperty({ prop_key: true }));
   });
 });
