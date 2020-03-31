@@ -25,7 +25,11 @@ export default class FormPreviewModal extends React.Component {
   }
 
   componentDidMount() {
-    this.setContainer([]);
+    try {
+      this.setContainer([]);
+    } catch (e) {
+      this.props.setErrorMessage(new Exception(FormPreviewModal.formatErrors(e)).getException());
+    }
   }
 
   onSave() {

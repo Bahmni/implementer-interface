@@ -176,4 +176,14 @@ describe('FormPreviewModal', () => {
     sinon.assert.calledOnce(setErrorMessageSpy);
     sinon.assert.calledWith(setErrorMessageSpy, { type: 'Exception', message: 'Error' });
   });
+
+  it('should call setErrorMessage when renderWithControls throws exception', () => {
+    window.renderWithControls = function renderWithControls() {
+      throw Object.assign(new Error('Error'));
+    };
+    mountComponent(formJson);
+
+    sinon.assert.calledOnce(setErrorMessageSpy);
+    sinon.assert.calledWith(setErrorMessageSpy, { type: 'Exception', message: 'Error' });
+  });
 });
