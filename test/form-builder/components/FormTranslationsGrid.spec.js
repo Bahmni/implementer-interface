@@ -37,7 +37,7 @@ describe('FormTranslationsGrid', () => {
           ],
         },
         formNames: {
-          sampleName: ['Sample Name ESPANOL'],
+          FORM_NAME: ['Sample Name ESPANOL'],
         },
         locale: 'es',
       },
@@ -56,7 +56,7 @@ describe('FormTranslationsGrid', () => {
           ],
         },
         formNames: {
-          sampleName: ['Sample Name FRENCH'],
+          FORM_NAME: ['Sample Name FRENCH'],
         },
         locale: 'fr',
       },
@@ -91,7 +91,7 @@ describe('FormTranslationsGrid', () => {
       expect(getItem(rowIndex, 1)).to.have.exactly(1).descendants('FreeTextAutoComplete');
     }
 
-    expect(getData(0, 0)).to.have.string('sampleName');
+    expect(getData(0, 0)).to.have.string('FORM_NAME');
     expect(getData(0, 1)).to.have.string('Sample Name ESPANOL');
     expect(getData(0, 2)).to.have.string('Sample Name FRENCH');
     expect(getData(1, 0)).to.have.string('SEVERE_UNDERNUTRITION_13');
@@ -114,7 +114,7 @@ describe('FormTranslationsGrid', () => {
     const onChange = freeTextAutocomplete.props().onChange;
     expect(onChange).to.be.instanceOf(Function);
     onChange({ value: 'something' }, 'concepts', 'SEVERE_UNDERNUTRITION_13', 'en');
-    onChange({ value: 'NEW NAME TRANSLATION' }, 'formNames', 'sampleName', 'en');
+    onChange({ value: 'NEW NAME TRANSLATION' }, 'formNames', 'FORM_NAME', 'en');
     sinon.assert.calledOnce(store.dispatch.withArgs(updateTranslations(
       {
         value: 'something', type: 'concepts',
@@ -124,7 +124,7 @@ describe('FormTranslationsGrid', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(updateTranslations(
       {
         value: 'NEW NAME TRANSLATION', type: 'formNames',
-        translationKey: 'sampleName', locale: 'en',
+        translationKey: 'FORM_NAME', locale: 'en',
       }
     )));
   });

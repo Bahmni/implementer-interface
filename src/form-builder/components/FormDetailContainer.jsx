@@ -356,10 +356,12 @@ export class FormDetailContainer extends Component {
         uuid: this.props.match.params.formUuid,
       }, value: '',
     };
-    const saveNameTranslationsPromise = saveFormNameTranslations(formNameTranslations,
-      this.state.referenceFormUuid);
-    const saveTranslationsPromise = saveTranslations(translations);
-    Promise.all([saveTranslationsPromise, saveNameTranslationsPromise]).then(() => {
+    const translationsPromises = [saveTranslations(translations)];
+    if (this.state.referenceFormUuid && this.state.formData.version !== '1') {
+      translationsPromises.push(saveFormNameTranslations(formNameTranslations,
+        this.state.referenceFormUuid));
+    }
+    Promise.all(translationsPromises).then(() => {
       httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
         .then((response) => {
           const successNotification = {

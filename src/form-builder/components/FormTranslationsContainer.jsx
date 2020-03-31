@@ -100,10 +100,10 @@ class FormTranslationsContainer extends Component {
           const nameTranslation = nameTranslationJSON.find(nameTranslationObj =>
             locale === nameTranslationObj.locale);
           formTranslationResponse.formNames = {
-            [name]: [nameTranslation && nameTranslation.display || name],
+            FORM_NAME: [nameTranslation && nameTranslation.display || name],
           };
         } else {
-          formTranslationResponse.formNames = { [name]: [name] };
+          formTranslationResponse.formNames = { FORM_NAME: [name] };
         }
         this._createInitialValue(formTranslationResponse, locale);
         const { allowedLocales } = this.state;
@@ -216,7 +216,7 @@ class FormTranslationsContainer extends Component {
   _generateFormNameTranslationPayload(translations) {
     const formNameTranslationsObj = {};
     each(translations, (localeTranslation, locale) => {
-      formNameTranslationsObj[locale] = localeTranslation.formNames[this.name];
+      formNameTranslationsObj[locale] = localeTranslation.formNames.FORM_NAME;
     });
     if (this.formNameTranslations) {
       const existingTranslations = JSON.parse(this.formNameTranslations);

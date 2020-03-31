@@ -635,6 +635,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       let publishButton = undefined;
+      updatedForm.version = '2';
       wrapper.setState({ formData: updatedForm },
         () => {
           publishButton = wrapper.find('.publish-button');
@@ -652,10 +653,50 @@ describe('FormDetailContainer', () => {
         sinon.assert.calledOnce(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
-            [{ formName: 'someFormName', locale: 'en', version: '1', referenceVersion: '1',
+            [{ formName: 'someFormName', locale: 'en', version: '2', referenceVersion: '1',
               referenceFormUuid: 'ref-uuid', formUuid: 'someUuid' }]),
           postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
         );
+        postStub.restore();
+        done();
+      }, 500);
+    });
+
+    it('should not call save form name translation endpoint if the form is of 1st version' +
+      ' and publish form when the publish button is clicked', (done) => {
+      const resources = [{
+        dataType: formBuilderConstants.formResourceDataType,
+        value: '{"controls": [{}]}',
+      }];
+      const updatedForm = Object.assign({}, formData, { resources });
+      const postStub = sinon.stub(httpInterceptor, 'post');
+      postStub.onFirstCall().returns(Promise
+        .resolve('[{"display" :"some name to display", "locale": "en"}]'))
+        .onSecondCall().returns(Promise.resolve({}))
+        .onThirdCall(1).returns(Promise.resolve(updatedForm));
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      wrapper.setState({ httpReceived: true });
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
+      let publishButton = undefined;
+      wrapper.setState({ formData: updatedForm },
+        () => {
+          publishButton = wrapper.find('.publish-button');
+        });
+      wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
+      publishButton.simulate('click');
+      setTimeout(() => {
+        sinon.assert.calledTwice(httpInterceptor.post);
+        const formNameTranslations = {
+          form: { name: wrapper.state().originalFormName, uuid: 'FID' },
+          value: '',
+        };
+        const formNameTranslateSaveUrl = new UrlHelper()
+          .bahmniSaveFormNameTranslateUrl('ref-uuid');
+        sinon.assert.notCalled(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
         postStub.restore();
         done();
       }, 500);
@@ -692,7 +733,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledThrice(httpInterceptor.post);
+        sinon.assert.calledTwice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1',
