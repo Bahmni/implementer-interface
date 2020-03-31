@@ -623,8 +623,10 @@ describe('FormDetailContainer', () => {
       }];
       const updatedForm = Object.assign({}, formData, { resources });
       const postStub = sinon.stub(httpInterceptor, 'post');
-      postStub.onFirstCall().returns(Promise.resolve({}))
-        .onSecondCall(1).returns(Promise.resolve(updatedForm));
+      postStub.onFirstCall().returns(Promise
+        .resolve('[{"display" :"some name to display", "locale": "en"}]'))
+        .onSecondCall().returns(Promise.resolve({}))
+        .onThirdCall(1).returns(Promise.resolve(updatedForm));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
@@ -640,7 +642,14 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.calledThrice(httpInterceptor.post);
+        const formNameTranslations = {
+          form: { name: wrapper.state().originalFormName, uuid: 'FID' },
+          value: '',
+        };
+        const formNameTranslateSaveUrl = new UrlHelper()
+          .bahmniSaveFormNameTranslateUrl('ref-uuid');
+        sinon.assert.calledOnce(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'en', version: '1', referenceVersion: '1',
@@ -683,7 +692,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.calledThrice(httpInterceptor.post);
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1',

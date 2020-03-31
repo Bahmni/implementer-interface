@@ -31,4 +31,17 @@ describe('UrlHelper', () => {
       'formName=name&formUuid=formUuid';
     expect(conceptRepresentation).to.eql(expectedUrl);
   });
+
+  it('should return save form name translate url without query parameters', () => {
+    const conceptRepresentation = urlHelper.bahmniSaveFormNameTranslateUrl(null);
+    const expectedUrl = '/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation';
+    expect(conceptRepresentation).to.eql(expectedUrl);
+  });
+
+  it('should return save form name translate url with query parameters', () => {
+    const conceptRepresentation = urlHelper.bahmniSaveFormNameTranslateUrl('ref-uuid');
+    const expectedUrl = '/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation?' +
+      'referenceFormUuid=ref-uuid';
+    expect(conceptRepresentation).to.eql(expectedUrl);
+  });
 });

@@ -69,6 +69,7 @@ describe('formTranslationApi', () => {
     afterEach(() => {
       httpInterceptor.post.restore();
     });
+
     it('should call save form name translations endpoint and return a promise', () => {
       const translations = { form: { name: 'formName', uuid: 'formUuid' }, value: '' };
       const saveTranslationPromise = saveFormNameTranslations(translations);
@@ -77,6 +78,19 @@ describe('formTranslationApi', () => {
         sinon.assert.calledWith(
           httpInterceptor.post,
           formBuilderConstants.saveNameTranslationsUrl,
+          translations
+        );
+      });
+    });
+
+    it('should call save form name translations endpoint with reference form uuid ', () => {
+      const translations = { form: { name: 'formName', uuid: 'formUuid' }, value: '' };
+      const saveTranslationPromise = saveFormNameTranslations(translations, 'ref-uuid');
+      expect(saveTranslationPromise).not.to.eq(null);
+      saveTranslationPromise.then(() => {
+        sinon.assert.calledWith(
+          httpInterceptor.post,
+          `${formBuilderConstants.saveNameTranslationsUrl}?referenceFormUuid=ref-uuid`,
           translations
         );
       });

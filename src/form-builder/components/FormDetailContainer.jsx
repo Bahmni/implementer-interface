@@ -20,7 +20,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
-import { saveTranslations } from 'common/apis/formTranslationApi';
+import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
 
@@ -350,7 +350,16 @@ export class FormDetailContainer extends Component {
 
   _saveTranslationsAndPublishForm(formUuid, translations) {
     this.setState({ loading: true });
-    saveTranslations(translations).then(() => {
+    const formNameTranslations = {
+      form: {
+        name: this.state.originalFormName,
+        uuid: this.props.match.params.formUuid,
+      }, value: '',
+    };
+    const saveNameTranslationsPromise = saveFormNameTranslations(formNameTranslations,
+      this.state.referenceFormUuid);
+    const saveTranslationsPromise = saveTranslations(translations);
+    Promise.all([saveTranslationsPromise, saveNameTranslationsPromise]).then(() => {
       httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
         .then((response) => {
           const successNotification = {

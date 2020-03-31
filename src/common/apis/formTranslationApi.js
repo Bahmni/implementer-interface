@@ -12,8 +12,9 @@ export function saveTranslations(translations) {
   return httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations);
 }
 
-export function saveFormNameTranslations(nameTranslations) {
-  return httpInterceptor.post(formBuilderConstants.saveNameTranslationsUrl, nameTranslations);
+export function saveFormNameTranslations(nameTranslations, referenceUuid) {
+  return httpInterceptor.post(new UrlHelper()
+    .bahmniSaveFormNameTranslateUrl(referenceUuid), nameTranslations);
 }
 
 
