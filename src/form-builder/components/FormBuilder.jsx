@@ -15,12 +15,12 @@ import { saveAs } from 'file-saver';
 import NotificationContainer from 'common/Notification';
 import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
-
+import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 
 export default class FormBuilder extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
 
@@ -32,6 +32,7 @@ export default class FormBuilder extends Component {
     this.formConceptValidationResults = {};
     this.handleSelectedForm = this.handleSelectedForm.bind(this);
     this.parseErrorMessage = 'Parse Error While Importing.. Please import a valid form';
+    this.clearEventEditors();
   }
 
   getFormVersion(formName) {
@@ -86,6 +87,11 @@ export default class FormBuilder extends Component {
       }
     });
     return validJsonFiles;
+  }
+
+  clearEventEditors() {
+    this.props.dispatch(saveEventUpdate(''));
+    this.props.dispatch(formEventUpdate(''));
   }
 
   validateAndLoadZipFile(jsonZip) {
@@ -476,6 +482,7 @@ export default class FormBuilder extends Component {
 
 FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
   match: PropTypes.shape({
     path: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,

@@ -11,15 +11,21 @@ import { saveAs } from 'file-saver';
 import jsonpath from 'jsonpath/jsonpath';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { MemoryRouter } from 'react-router-dom';
+import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
+
 
 chai.use(chaiEnzyme());
 
 describe('FormBuilder', () => {
   let wrapper;
   const saveFormSpy = sinon.spy();
+  let dispatchSpy;
 
   beforeEach(() => {
-    wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
+    dispatchSpy = sinon.spy();
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} dispatch={dispatchSpy}
+      saveForm={saveFormSpy}
+    />);
   });
 
   it('should render FormList', () => {
@@ -28,6 +34,13 @@ describe('FormBuilder', () => {
 
   it('should render create form modal', () => {
     expect(wrapper).to.have.exactly(1).descendants('CreateFormModal');
+  });
+
+  it('should clear clear FormEvent and Save Event', () => {
+    sinon.assert.calledTwice(dispatchSpy);
+    sinon.assert.callOrder(dispatchSpy.withArgs(saveEventUpdate('')),
+      dispatchSpy.withArgs(formEventUpdate(''))
+    );
   });
 
   it('should set state of showModal as true when create a form option is clicked', () => {
@@ -81,6 +94,7 @@ describe('Import form', () => {
   let breadcrumbsStub;
   const saveFormSpy = sinon.spy();
   const saveFormResourceSpy = sinon.spy();
+  const dispatchSpy = sinon.spy();
   const file = [
     {
       lastModified: 1492756593000,
@@ -230,8 +244,8 @@ describe('Import form', () => {
 
   beforeEach(() => {
     breadcrumbsStub = sinon.stub(FormBuilderBreadcrumbs, 'default').returns(<div>A stub</div>);
-    wrapper = mount(<MemoryRouter><FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
-      saveFormResource={saveFormResourceSpy}
+    wrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}
+      routes={routes} saveForm={saveFormSpy} saveFormResource={saveFormResourceSpy}
     /></MemoryRouter>);
   });
 
@@ -327,8 +341,12 @@ describe('Export Forms', () => {
   const saveFormSpy = sinon.spy();
   let exportResponse;
   let mockHttp;
+  const dispatchSpy = sinon.spy();
+
   beforeEach(() => {
-    wrapper = shallow(<FormBuilder data={[1, 2, 3]} saveForm={saveFormSpy} />);
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} dispatch={dispatchSpy}
+      saveForm={saveFormSpy}
+    />);
     mockHttp = sinon.stub(httpInterceptor);
   });
 
@@ -418,11 +436,12 @@ describe('Import Multiple Forms', () => {
   const saveFormSpy = sinon.spy();
   let onValidationErrorSpy = sinon.spy();
   let newInstance;
+  const dispatchSpy = sinon.spy();
 
   beforeEach(() => {
     onValidationErrorSpy = sinon.spy();
-    wrapper = shallow(<FormBuilder data={[1, 2, 3]} onValidationError={onValidationErrorSpy}
-      saveForm={saveFormSpy}
+    wrapper = shallow(<FormBuilder data={[1, 2, 3]} dispatch={dispatchSpy}
+      onValidationError={onValidationErrorSpy} saveForm={saveFormSpy}
     />);
     newInstance = wrapper.instance();
     newInstance.resetValues();

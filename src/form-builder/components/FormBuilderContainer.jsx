@@ -142,6 +142,7 @@ export class FormBuilderContainer extends Component {
         />
         <FormBuilder
           data={this.state.data}
+          dispatch={this.props.dispatch}
           match={this.props.match}
           onValidationError={(messages) => this.onValidationError(messages)}
           routes={this.props.routes}
