@@ -117,11 +117,25 @@ input[type="checkbox"] {
   width: 255px;
   float: left;
   margin-right: -100%;
-  &.scrolled {
-    position: fixed;
-    top: 112px;
+  height: 80%;
+  overflow: scroll;
+
+  &:not(.scrolled) {
+    @media screen and (max-height: 742px) {
+      max-height: 572px;
+    }
+    @media screen and (max-height: 642px) {
+      max-height: 472px;
+    }
+    @media screen and (max-height: 482px) {
+      max-height: 310px;
+    }
   }
 
+  &.scrolled {
+    position: fixed;
+    top: 96px;
+  }
 }
 
 .container-column-main {

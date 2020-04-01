@@ -17,15 +17,15 @@ export default class FormDetail extends Component {
     this.canvasRef = this.canvasRef.bind(this);
     this.canvas = undefined;
     window.onscroll = () => {
-      if (document.getElementsByClassName('column-side').length === 1) {
-        if (window.scrollY <= 62) {
-          const element = document.getElementsByClassName('column-side');
-          element[0].className = 'column-side';
-        }
-        if (window.scrollY >= 63 && window.scrollY <= 500) {
-          const element = document.getElementsByClassName('column-side');
-          element[0].className = 'column-side scrolled';
-        }
+      const getByClass = (elementClassName) => document.getElementsByClassName(elementClassName);
+      const isViewMode = getByClass('info-view-mode-wrap').length === 1;
+      const heightCheck = isViewMode ? 120 : 66;
+      const element = getByClass('column-side');
+      const isPresent = element.length === 1;
+      if (isPresent && window.scrollY > heightCheck) {
+        element[0].className = 'column-side scrolled';
+      } else {
+        element[0].className = 'column-side';
       }
     };
   }
