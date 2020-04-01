@@ -92,6 +92,7 @@ export default class ScriptEditorComponentModal extends Component {
           >
           </textarea>
         </div>
+        <br /><br />
       </div>
     );
   }

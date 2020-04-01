@@ -12,7 +12,8 @@ const controlDetails = (store = {}, action) => {
         storeClone.allControls = storeClone.allControls.filter(control =>
           control.id !== action.metadata.id);
         storeClone.allControls = storeClone.allControls.concat({ id: action.metadata.id,
-          name: action.metadata.concept.name, events: action.metadata.events });
+          name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
+          events: action.metadata.events });
       }
       return Object.assign({}, storeClone, { selectedControl: action.metadata });
     case 'DESELECT_CONTROL':
