@@ -10,6 +10,8 @@ import FormHelper from 'form-builder/helpers/formHelper';
 import FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
 import ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
 import Popup from 'reactjs-popup';
+import FormConditionsModal from 'form-builder/components/FormConditionsModal';
+
 
 export default class FormDetail extends Component {
   constructor() {
@@ -68,7 +70,32 @@ export default class FormDetail extends Component {
       const FormEventEditorContent = (props) => {
         const script = props.property ? getScript(props.property, props.formDetails) : '';
         const showEditor = props.property && (props.property.formInitEvent
-          || props.property.formSaveEvent);
+          || props.property.formSaveEvent || props.property.formConditionsEvent);
+        if (!showEditor) {
+          return (<div></div>);
+        }
+        if (props.property.formConditionsEvent) {
+          return (<div>
+            {showEditor &&
+            <Popup className="form-event-popup" closeOnDocumentClick={false}
+              closeOnEscape={false}
+              open={showEditor} position="top center"
+            >
+              <FormConditionsModal
+                close={props.closeEventEditor}
+                controlEvents={this.props.formControlEvents}
+                formDetails={this.props.formDetails}
+                formTitle={props.property.formTitle}
+                script={script}
+                updateScript={(scriptToUpdate) => {
+                  props.updateScript(scriptToUpdate);
+                  props.closeEventEditor();
+                }}
+              />
+            </Popup>
+            }
+          </div>);
+        }
         return (<div>
           {showEditor &&
           <Popup className="form-event-popup" closeOnDocumentClick={false}
@@ -111,6 +138,13 @@ export default class FormDetail extends Component {
                                   label={'Save Event'}
                                   updateFormEvents={this.props.updateFormEvents}
                                 />
+                                <FormEventContainer
+                                  eventProperty={'formConditionsEvent'}
+                                  formObsControls={this.props.formObsControls}
+                                  formTitle={this.props.formData.name}
+                                  label={'Form Conditions'}
+                                  updateFormEvents={this.props.updateFormEvents}
+                                />
                             </div>
                             <div className="container-column-main">
                                 <div className="column-main">
@@ -139,6 +173,7 @@ export default class FormDetail extends Component {
 
 FormDetail.propTypes = {
   defaultLocale: PropTypes.string,
+  formControlEvents: PropTypes.Array,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
@@ -148,6 +183,10 @@ FormDetail.propTypes = {
     version: PropTypes.string.isRequired,
     editable: PropTypes.bool,
   }),
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
+  formObsControls: PropTypes.array,
   setError: PropTypes.func.isRequired,
   updateFormEvents: PropTypes.func,
   updateFormName: PropTypes.func,

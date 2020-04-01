@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setChangedProperty } from '../actions/control';
 
-export class FormEventContainer extends Component {
+export class FormConditionsContainer extends Component {
 
   constructor(props) {
     super(props);
@@ -19,15 +19,14 @@ export class FormEventContainer extends Component {
   }
 
   updateProperty() {
-    const properties = { [this.props.eventProperty]: true, formTitle: this.props.formTitle  };
+    const properties = { [this.props.eventProperty]: true, formTitle: this.props.formTitle };
     this.props.dispatch(setChangedProperty(properties));
   }
 
   render() {
-    const name = this.props.label;
     return (
-      <div className="form-event-container">
-        <label>{name}</label>
+      <div className="form-controls-container">
+        <label>{this.props.label}</label>
         <button onClick={() => this.updateProperty()}>
           <i aria-hidden="true" className="fa fa-code" />
         </button>
@@ -36,11 +35,10 @@ export class FormEventContainer extends Component {
   }
 }
 
-FormEventContainer.propTypes = {
+FormConditionsContainer.propTypes = {
   dispatch: PropTypes.func,
   eventProperty: PropTypes.string,
   formDetails: PropTypes.object,
-  formObsControls: PropTypes.array,
   formTitle: PropTypes.string,
   label: PropTypes.string,
   updateFormEvents: PropTypes.func,
@@ -50,5 +48,4 @@ const mapStateToProps = (state) => ({
   formDetails: state.formDetails,
 });
 
-export default connect(mapStateToProps)(FormEventContainer);
-
+export default connect(mapStateToProps)(FormConditionsContainer);

@@ -7,7 +7,7 @@ import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
-import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
+import { blurControl, deselectControl, removeControlProperties, removeSourceMap, formLoad }
     from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
@@ -18,7 +18,8 @@ import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
+import { clearTranslations } from '../actions/control';
+import { formEventUpdate, saveEventUpdate, formConditionsEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
@@ -31,7 +32,7 @@ export class FormDetailContainer extends Component {
     super(props);
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
-      httpReceived: false, loading: true, formList: [],
+      httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
       referenceFormUuid: undefined, formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
@@ -63,7 +64,10 @@ export class FormDetailContainer extends Component {
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
-              this.getFormJson();
+              const formJson = this.getFormJson();
+              const formControlsArray = formJson ? formJson.controls : [];
+              this.setState({ formControls: formControlsArray });
+              this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
               this.setErrorMessage(error);
@@ -88,6 +92,9 @@ export class FormDetailContainer extends Component {
         }
         if (this.formEvents.onFormSave !== updatedFormEvents.onFormSave) {
           this.props.dispatch(saveEventUpdate(updatedFormEvents.onFormSave));
+        }
+        if (this.formEvents.onFormConditionsUpdate !== updatedFormEvents.onFormConditionsUpdate) {
+          this.props.dispatch(formConditionsEventUpdate(updatedFormEvents.onFormConditionsUpdate));
         }
         this.formEvents = updatedFormEvents;
       }
@@ -485,7 +492,10 @@ export class FormDetailContainer extends Component {
                     {this.showPreviewModal()}
                   <FormDetail
                     defaultLocale={defaultLocale}
+                    formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
+                    formDetails={this.props.formDetails}
+                    formObsControls = {this.state.formControls}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
                     updateFormEvents={(events) => this.updateFormEvents(events)}
@@ -502,6 +512,10 @@ export class FormDetailContainer extends Component {
 FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
+  formControlEvents: PropTypes.array,
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
   match: PropTypes.shape({
     path: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
@@ -520,6 +534,8 @@ function mapStateToProps(state) {
   return {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
     translations: state.translations,
+    formDetails: state.formDetails,
+    formControlEvents: state.controlDetails.allControls,
   };
 }
 
