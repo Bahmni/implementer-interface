@@ -19,7 +19,6 @@ export default class FormConditionsModal extends Component {
   constructor(props) {
     super(props);
     this.state = { selectedControlEventTitle: undefined, selectedControlScript: undefined };
-    this.setState = this.setState.bind(this);
     this.selectedControlOption = undefined;
     this.prevSelectedControlOption = undefined;
     this.selectedControlTitle = undefined;
