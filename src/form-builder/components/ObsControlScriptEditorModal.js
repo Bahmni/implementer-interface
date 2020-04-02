@@ -17,7 +17,7 @@ import 'codemirror/addon/edit/closebrackets.js';
 
 window.JSHINT = JSHINT;
 
-export default class ScriptEditorComponentModal extends Component {
+export default class ObsControlScriptEditorModal extends Component {
   constructor(props) {
     super(props);
     this.validateScript = this.validateScript.bind(this);
@@ -84,21 +84,22 @@ export default class ScriptEditorComponentModal extends Component {
     }
     // eslint-disable-next-line consistent-return
     return (
-      <div style={{ paddingLeft: '10px' }}>
-        <label style={{ fontWeight: 'bolder' }}>{this.props.title}</label><br /><br />
-        <div className="comp1" style={{ borderStyle: 'solid', borderWidth: 'thin' }}>
+      <div className="control-modal">
+        <label className="label-div" >{this.props.title}</label>
+        <span className="line-break-2"></span>
+        <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.setScriptEditorTextArea}
           >
           </textarea>
         </div>
-        <br /><br />
+        <span className="line-break-2"></span>
       </div>
     );
   }
 }
 
-ScriptEditorComponentModal.propTypes = {
+ObsControlScriptEditorModal.propTypes = {
   close: PropTypes.func.isRequired,
   script: PropTypes.string,
   title: PropTypes.string,

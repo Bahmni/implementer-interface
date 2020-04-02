@@ -11,7 +11,7 @@ import 'codemirror/addon/lint/javascript-lint.js';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
-import ScriptEditorComponentModal from 'form-builder/components/ScriptEditorComponentModal';
+import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScriptEditorModal';
 
 window.JSHINT = JSHINT;
 
@@ -25,10 +25,6 @@ export default class FormConditionsModal extends Component {
     this.selectedControlTitle = undefined;
     this.selectedControlScript = undefined;
     this.updateSelectedOption = this.updateSelectedOption.bind(this);
-  }
-
-  componentDidMount() {
-
   }
 
   updateSelectedOption(element) {
@@ -49,13 +45,12 @@ export default class FormConditionsModal extends Component {
     }
   }
 
-  showControlEventScript() {
-    if (this.state.selectedControlEventTitle !== undefined) {
-      return (<ScriptEditorComponentModal
+  showObsControlScriptEditorModal(controlScript, controlEventTitle) {
+    if (controlEventTitle !== undefined) {
+      return (<ObsControlScriptEditorModal
         close={this.props.close}
-        script={this.state.selectedControlScript}
-        selectedControlOption={this.selectedControlOption}
-        title={this.state.selectedControlEventTitle}
+        script={controlScript}
+        title={controlEventTitle}
         updateScript={this.props.updateScript}
       />
       );
@@ -69,53 +64,46 @@ export default class FormConditionsModal extends Component {
     return (
       <div>
         <div className="dialog-wrapper"></div>
-        <div className="dialog area-height--dialog script-conditions-editor-container">
-          <h2 className="header-title">Form Conditions Modal</h2>
-          <div style={{ width: '100%', height: '90%' }}>
-            <div className="form-conditions-left-panel" style={{ width: '50%', float: 'left' }}>
+        <div className="dialog area-height--dialog form-conditions-modal-container">
+          <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
+          <div className="body" >
+            <div className="left-panel" >
               <br />
-              <ScriptEditorComponentModal
-                close={this.props.close}
-                script={this.props.formDetails.events.onFormInit}
-                title={'Form Event'}
-                updateScript={this.props.updateScript}
-              />
+              { this.showObsControlScriptEditorModal(this.props.formDetails.events.onFormInit,
+                'Form Event')}
               <br />
-              <ScriptEditorComponentModal
-                close={this.props.close}
-                script={this.props.formDetails.events.onFormSave}
-                title={ 'Save Event' }
-                updateScript={this.props.updateScript}
-              />
+              { this.showObsControlScriptEditorModal(this.props.formDetails.events.onFormSave,
+                'Save Event')}
               <br />
             </div>
-            <div className="form-conditions-right-panel" style={{ marginLeft: '50%' }}>
+            <div className="right-panel" >
               <br />
               <div>
-                <label style={{ float: 'left', fontWeight: 'bolder' }}>Control Events:</label>
-                <select onChange={this.updateSelectedOption} style={{ float: 'right' }} >
+                <label className="label" >Control Events:</label>
+                <select className="obs-dropdown" onChange={this.updateSelectedOption}>
+                  <option key="0" value="0" >Select Option</option>)
                   {obsWithoutControlEvents.map((e) =>
                     <option key={e.id} value={e.id} >{e.name}</option>)}
                 </select>
-              </div><br /><br /><br /><br />
+              </div>
+              <span className="line-break-3"></span>
               <div>
                 {
                   ObsWithControlEvents.map((e) =>
-                    <ScriptEditorComponentModal
-                      close={this.props.close}
-                      script={e.events.onValueChange}
-                      title={`Control Id: ${e.id}    Control Name: ${e.name}`}
-                      updateScript={this.props.updateScript}
-                    />
+                    this.showObsControlScriptEditorModal(e.events.onValueChange,
+                      `Control Id: ${e.id}    Control Name: ${e.name}`)
                   )
                 }
               </div>
               {
-                <div> {this.showControlEventScript()}<br /><br /> </div>
+                <div> {this.showObsControlScriptEditorModal(this.state.selectedControlScript,
+                  this.state.selectedControlEventTitle)}
+                  <span className="line-break-2"></span>
+                </div>
               }
             </div>
           </div>
-          <div className="script-editor-button-wrapper" >
+          <div className="button-wrapper" >
             <button className="btn" onClick={() => this.props.close()} type="reset">
               Cancel
             </button>
@@ -133,6 +121,7 @@ FormConditionsModal.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
+  formTitle: PropTypes.string,
   script: PropTypes.string,
   selectedControlEventTitle: PropTypes.string,
   selectedControlScript: PropTypes.string,

@@ -85,7 +85,7 @@ export default class FormDetail extends Component {
                 close={props.closeEventEditor}
                 controlEvents={this.props.formControlEvents}
                 formDetails={this.props.formDetails}
-                formTitle={props.property.formTitle}
+                formTitle={this.formTitle(name, version, published, editable)}
                 script={script}
                 updateScript={(scriptToUpdate) => {
                   props.updateScript(scriptToUpdate);
