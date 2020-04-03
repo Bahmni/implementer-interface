@@ -414,7 +414,8 @@ describe('Import form', () => {
       expect(secondArgumentOfSaveFormResource[0].formUuid).to.eq('new_uuid');
       expect(thirdArgumentOfSaveFormResource.form.name).to.eq(data[0].name);
       expect(thirdArgumentOfSaveFormResource.form.uuid).to.eq('new_uuid');
-      expect(thirdArgumentOfSaveFormResource.value).to.eq('{"display":"1_EN_Name", "locale": "en"}');
+      expect(thirdArgumentOfSaveFormResource.value)
+        .to.eq('{"display":"1_EN_Name", "locale": "en"}');
       done();
     }, 500);
   });
@@ -844,7 +845,7 @@ describe('Import Multiple Forms', () => {
       formJson: {
         name: formName,
         resources: [
-          {value: '{"a":2}'}, {value: '{"display":"sampleForm_EN", "locale": "en"}'},
+          { value: '{"a":2}' }, { value: '{"display":"sampleForm_EN", "locale": "en"}' },
         ],
       },
       translations: [],
@@ -853,10 +854,11 @@ describe('Import Multiple Forms', () => {
     newInstance.validateFormJsonAndConcepts(fileName, formData);
 
     setTimeout(() => {
-      expect(newInstance.formJSONs.length).to.eql(2);
+      expect(newInstance.formJSONs.length).to.eql(1);
       expect(newInstance.formJSONs[0].formName).to.eql(formName);
       expect(newInstance.formJSONs[0].translations).to.eql([]);
-      expect(newInstance.formJSONs[0].nameTranslations).to.eql('{"display":"sampleForm_EN", "locale": "en"}');
+      expect(newInstance.formJSONs[0].nameTranslations)
+        .to.eql('{"display":"sampleForm_EN", "locale": "en"}');
       done();
     });
   });

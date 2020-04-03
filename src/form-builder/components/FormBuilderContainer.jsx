@@ -12,7 +12,7 @@ import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
 import { connect } from 'react-redux';
 import { setDefaultLocale } from '../actions/control';
-import {saveFormNameTranslations, saveTranslations} from 'common/apis/formTranslationApi';
+import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 
 
 export class FormBuilderContainer extends Component {
@@ -107,17 +107,16 @@ export class FormBuilderContainer extends Component {
     const self = this;
     self.setMessage('Importing Translations...', commonConstants.responseType.success);
     const translationsPromises = [saveTranslations(translations || [])];
-    if (formNameTranslations)
+    if (formNameTranslations) {
       translationsPromises.push(saveFormNameTranslations(formNameTranslations, null));
+    }
 
     Promise.all(translationsPromises).then(() => {
-        self.getFormData();
-        self.setMessage('Imported Successfully',
-          commonConstants.responseType.success);
-      })
-      .catch(() => {
-        this.setMessage('Error Importing Translations', commonConstants.responseType.error);
-      });
+      self.getFormData();
+      self.setMessage('Imported Successfully', commonConstants.responseType.success);
+    }).catch(() => {
+      this.setMessage('Error Importing Translations', commonConstants.responseType.error);
+    });
   }
 
   saveFormResource(formJson, formTranslations, formNameTranslationsResource) {

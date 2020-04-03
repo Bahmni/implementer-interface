@@ -279,7 +279,8 @@ export default class FormBuilder extends Component {
     const importFormJsonPromises = [];
     formJsons.forEach(formJson => {
       const { form, value, formName, translations, nameTranslations } = formJson;
-      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations, nameTranslations));
+      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations,
+        nameTranslations));
     });
     Promise.all(importFormJsonPromises)
       .then(() => self.hideLoader())
@@ -307,9 +308,10 @@ export default class FormBuilder extends Component {
         value: nameTranslations,
         uuid: '',
       };
-      const translationsWithFormUuid = translations.map((eachTranslation) => Object.assign({},
-        eachTranslation, { formUuid: response.uuid }));
-      self.props.saveFormResource(formResource, translationsWithFormUuid, formNameTranslationsResource);
+      const translationsWithFormUuid = translations.map((eachTranslation) =>
+        Object.assign({}, eachTranslation, { formUuid: response.uuid }));
+      self.props.saveFormResource(formResource, translationsWithFormUuid,
+        formNameTranslationsResource);
     })
       .catch(() => {
         const formUuid = self.getFormUuid(formName);
