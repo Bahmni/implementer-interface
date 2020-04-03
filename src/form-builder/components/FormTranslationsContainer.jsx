@@ -189,6 +189,25 @@ class FormTranslationsContainer extends Component {
       this._getFormNameTranslationsPromise(this.name, this.props.match.params.formUuid)
         .then(resp => {
           this.formNameTranslations = resp;
+          const nameTranslationJSON = JSON.parse(resp.toString());
+          if (nameTranslationJSON) {
+            const updatedTranslationsData = map(this.state.translationData.data, translationObj => {
+              const translation = Object.assign({}, translationObj);
+              const nameTranslation = nameTranslationJSON.find(nameTranslationObj =>
+                translation.locale === nameTranslationObj.locale
+              );
+              if (nameTranslation) {
+                translation.formNames.FORM_NAME[0] = nameTranslation.display;
+              }
+              return translation;
+            });
+            this.setState({
+              translationsData: {
+                headers: this.state.translationData.headers,
+                data: updatedTranslationsData,
+              },
+            });
+          }
         }).catch(() => {
         }).finally(() => {
           this.setState({ loading: false });
