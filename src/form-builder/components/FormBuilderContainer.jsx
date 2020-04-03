@@ -12,7 +12,7 @@ import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
 import { connect } from 'react-redux';
 import { setDefaultLocale } from '../actions/control';
-import { saveTranslations } from 'common/apis/formTranslationApi';
+import {saveFormNameTranslations, saveTranslations} from 'common/apis/formTranslationApi';
 
 
 export class FormBuilderContainer extends Component {
@@ -103,11 +103,14 @@ export class FormBuilderContainer extends Component {
     }
   }
 
-  saveTranslations(translations) {
+  saveTranslations(translations, formNameTranslations) {
     const self = this;
     self.setMessage('Importing Translations...', commonConstants.responseType.success);
-    saveTranslations(translations || [])
-      .then(() => {
+    const translationsPromises = [saveTranslations(translations || [])];
+    if (formNameTranslations)
+      translationsPromises.push(saveFormNameTranslations(formNameTranslations, null));
+
+    Promise.all(translationsPromises).then(() => {
         self.getFormData();
         self.setMessage('Imported Successfully',
           commonConstants.responseType.success);
@@ -117,7 +120,7 @@ export class FormBuilderContainer extends Component {
       });
   }
 
-  saveFormResource(formJson, formTranslations) {
+  saveFormResource(formJson, formTranslations, formNameTranslationsResource) {
     const self = this;
     self.setMessage('Importing Form...', commonConstants.responseType.success);
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
@@ -127,7 +130,7 @@ export class FormBuilderContainer extends Component {
           formTranslation.version = form.form.version || translation.version;
           return formTranslation;
         });
-        self.saveTranslations(updatedTranslations);
+        self.saveTranslations(updatedTranslations, formNameTranslationsResource);
       })
       .catch(() => {
         this.setMessage('Error Importing Form', commonConstants.responseType.error);
@@ -148,8 +151,8 @@ export class FormBuilderContainer extends Component {
           onValidationError={(messages) => this.onValidationError(messages)}
           routes={this.props.routes}
           saveForm={(formName) => this.saveForm(formName)}
-          saveFormResource={(formJson, translations) =>
-            this.saveFormResource(formJson, translations)}
+          saveFormResource={(formJson, translations, nameTranslations) =>
+            this.saveFormResource(formJson, translations, nameTranslations)}
         />
       </div>
     );

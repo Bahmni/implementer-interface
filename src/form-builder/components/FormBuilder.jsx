@@ -227,6 +227,7 @@ export default class FormBuilder extends Component {
     const { formJson, translations } = formData;
     const formName = formJson.name;
     const value = JSON.parse(formJson.resources[0].value);
+    const nameTranslations = formJson.resources[1] && formJson.resources[1].value;
     const form = {
       name: formName,
       version: '1',
@@ -245,7 +246,7 @@ export default class FormBuilder extends Component {
           });
           self.updateImportErrors(fileName, message);
         } else {
-          self.formJSONs.push({ form, value, formName, translations });
+          self.formJSONs.push({ form, value, formName, translations, nameTranslations });
         }
       });
     }
@@ -277,15 +278,15 @@ export default class FormBuilder extends Component {
     const self = this;
     const importFormJsonPromises = [];
     formJsons.forEach(formJson => {
-      const { form, value, formName, translations } = formJson;
-      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations));
+      const { form, value, formName, translations, nameTranslations } = formJson;
+      importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations, nameTranslations));
     });
     Promise.all(importFormJsonPromises)
       .then(() => self.hideLoader())
       .catch(() => self.hideLoader());
   }
 
-  saveFormJson(form, value, formName, translations) {
+  saveFormJson(form, value, formName, translations, nameTranslations) {
     const self = this;
     const val = value;
     return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
@@ -298,9 +299,17 @@ export default class FormBuilder extends Component {
         value: JSON.stringify(value),
         uuid: '',
       };
+      const formNameTranslationsResource = !!nameTranslations && {
+        form: {
+          name: formName,
+          uuid: response.uuid,
+        },
+        value: nameTranslations,
+        uuid: '',
+      };
       const translationsWithFormUuid = translations.map((eachTranslation) => Object.assign({},
         eachTranslation, { formUuid: response.uuid }));
-      self.props.saveFormResource(formResource, translationsWithFormUuid);
+      self.props.saveFormResource(formResource, translationsWithFormUuid, formNameTranslationsResource);
     })
       .catch(() => {
         const formUuid = self.getFormUuid(formName);
@@ -318,7 +327,15 @@ export default class FormBuilder extends Component {
             value: JSON.stringify(value),
             uuid: data.resources[0].uuid,
           };
-          self.props.saveFormResource(formResource, translations);
+          const formNameTranslationsResource = !!nameTranslations && {
+            form: {
+              name: formName,
+              uuid: formUuid,
+            },
+            value: nameTranslations,
+            uuid: '',
+          };
+          self.props.saveFormResource(formResource, translations, formNameTranslationsResource);
         });
       });
   }
