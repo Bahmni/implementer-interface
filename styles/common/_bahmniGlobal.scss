@@ -122,7 +122,7 @@ input[type="checkbox"] {
 
   &:not(.scrolled) {
     @media screen and (max-height: 742px) {
-      max-height: 572px;
+      max-height: 500px;
     }
     @media screen and (max-height: 642px) {
       max-height: 472px;
