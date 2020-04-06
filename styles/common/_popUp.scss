@@ -87,19 +87,26 @@
 }
 
 .form-conditions-modal-container{
-
+  height: 80vh;
   border-radius: 5px 5px 0 0;
   font-size: 13px;
 
   .left-panel{
     padding: 30px;
     border-right: 1px solid #dddddd;
-    width: 50%;
+    width: 40%;
     float: left;
+    height: 90%;
+    overflow-y: auto;
+  }
+  .left-panel .CodeMirror{
+    height: 230px;
   }
   .right-panel{
     padding: 30px;
-    margin-left: 50%;
+    margin-left: 40%;
+    height: 90%;
+    overflow-y: auto;
   }
   .right-panel .CodeMirror{
     height: 155px;
