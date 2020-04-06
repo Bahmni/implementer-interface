@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { commonConstants } from 'common/constants';
 import CodeMirror from 'codemirror';
 import { JSHINT } from 'jshint';
 import 'codemirror/mode/javascript/javascript';
@@ -10,7 +9,6 @@ import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/javascript-lint.js';
-import jsBeautifier from 'js-beautify';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
@@ -20,7 +18,6 @@ window.JSHINT = JSHINT;
 export default class ObsControlScriptEditorModal extends Component {
   constructor(props) {
     super(props);
-    this.validateScript = this.validateScript.bind(this);
     this.state = { notification: {}, codeMirrorEditor: {} };
     this.codeMirrorEditor = null;
     this.scriptEditorTextArea = null;
@@ -28,7 +25,6 @@ export default class ObsControlScriptEditorModal extends Component {
     this.setScriptEditorTextArea = element => {
       this.scriptEditorTextArea = element;
     };
-    this.format = this.format.bind(this);
   }
 
   componentDidMount() {
@@ -38,8 +34,9 @@ export default class ObsControlScriptEditorModal extends Component {
         mode: { name: 'javascript', globalVars: true },
         autoCloseBrackets: true,
         readOnly: true,
-        indentWithTabs: true,
-        tabSize: 2,
+        gutters: ['CodeMirror-lint-markers'],
+        lint: true,
+        extraKeys: { 'Ctrl-Space': 'autocomplete' },
       });
     }
   }
@@ -50,42 +47,28 @@ export default class ObsControlScriptEditorModal extends Component {
       this.prevScriptEditorTextArea = script;
     }
   }
-
-
-  validateScript() {
-    try {
-      this.format();
-      const script = this.codeMirrorEditor.getValue().trim();
-      /* eslint-disable no-eval*/
-      if (script.trim().length > 0) eval(`(${script})`);
-      this.props.updateScript(script);
-    } catch (ex) {
-      const errorNotification = {
-        message: 'Please Enter valid javascript function',
-        type: commonConstants.responseType.error,
-      };
-      this.setState({ notification: errorNotification });
-
-      setTimeout(() => {
-        this.setState({ notification: {} });
-      }, commonConstants.toastTimeout);
+  getLabel() {
+    if (this.props.titleId === null) {
+      return (<label className="label-key" >{this.props.titleName}</label>);
+      // eslint-disable-next-line no-else-return
+    } else {
+      return (<div>
+        <label className="label-key" >Control Id: </label>
+        <label className="label-value" >{this.props.titleId}</label>
+        <label className="label-key" >Name: </label>
+        <label className="label-value" >{this.props.titleName}</label>
+      </div>);
     }
   }
 
-  format() {
-    const beautifiedData = jsBeautifier.js_beautify(this.codeMirrorEditor.getValue(),
-      { indent_size: 2, space_in_empty_paren: true });
-    this.codeMirrorEditor.setValue(beautifiedData);
-  }
-
   render() {
-    if (this.props.title === undefined) {
+    if (this.props.titleId === undefined) {
       return null;
     }
     // eslint-disable-next-line consistent-return
     return (
       <div className="control-modal">
-        <label className="label-div" >{this.props.title}</label>
+        {this.getLabel()}
         <span className="line-break-2"></span>
         <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
@@ -102,6 +85,7 @@ export default class ObsControlScriptEditorModal extends Component {
 ObsControlScriptEditorModal.propTypes = {
   close: PropTypes.func.isRequired,
   script: PropTypes.string,
-  title: PropTypes.string,
+  titleId: PropTypes.string,
+  titleName: PropTypes.string,
   updateScript: PropTypes.func.isRequired,
 };

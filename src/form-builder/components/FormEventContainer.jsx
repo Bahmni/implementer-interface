@@ -19,7 +19,7 @@ export class FormEventContainer extends Component {
   }
 
   updateProperty() {
-    const properties = { [this.props.eventProperty]: true, formTitle: this.props.formTitle  };
+    const properties = { [this.props.eventProperty]: true };
     this.props.dispatch(setChangedProperty(properties));
   }
 
@@ -40,8 +40,6 @@ FormEventContainer.propTypes = {
   dispatch: PropTypes.func,
   eventProperty: PropTypes.string,
   formDetails: PropTypes.object,
-  formObsControls: PropTypes.array,
-  formTitle: PropTypes.string,
   label: PropTypes.string,
   updateFormEvents: PropTypes.func,
 };

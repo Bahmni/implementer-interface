@@ -83,10 +83,9 @@ export default class FormDetail extends Component {
             >
               <FormConditionsModal
                 close={props.closeEventEditor}
-                controlEvents={this.props.formControlEvents}
-                formDetails={this.props.formDetails}
+                controlEvents={props.formControlEvents}
+                formDetails={props.formDetails}
                 formTitle={this.formTitle(name, version, published, editable)}
-                script={script}
                 updateScript={(scriptToUpdate) => {
                   props.updateScript(scriptToUpdate);
                   props.closeEventEditor();
@@ -140,7 +139,6 @@ export default class FormDetail extends Component {
                                 />
                                 <FormEventContainer
                                   eventProperty={'formConditionsEvent'}
-                                  formObsControls={this.props.formObsControls}
                                   formTitle={this.props.formData.name}
                                   label={'Form Conditions'}
                                   updateFormEvents={this.props.updateFormEvents}
@@ -186,7 +184,6 @@ FormDetail.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
-  formObsControls: PropTypes.array,
   setError: PropTypes.func.isRequired,
   updateFormEvents: PropTypes.func,
   updateFormName: PropTypes.func,

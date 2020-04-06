@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 import { setChangedProperty, formConditionsEventUpdate } from 'form-builder/actions/control';
 export const FormEventEditor = (props) => {
-  const { property, formDetails, closeEventEditor } = props;
+  const { property, formDetails, closeEventEditor, formControlEvents } = props;
   const updateScript = (script) => {
     props.updateScript(script, property);
   };
@@ -12,7 +12,7 @@ export const FormEventEditor = (props) => {
   return (
     <div>
       {React.cloneElement(props.children, { property, formDetails, closeEventEditor,
-        updateScript })}
+        formControlEvents, updateScript })}
     </div>
   );
 };
@@ -20,6 +20,7 @@ export const FormEventEditor = (props) => {
 FormEventEditor.propTypes = {
   children: PropTypes.element.isRequired,
   closeEventEditor: PropTypes.func.isRequired,
+  formControlEvents: PropTypes.Array,
   formDetails: PropTypes.shape({
     events: PropTypes.shape({
       onFormInit: PropTypes.string,
@@ -38,7 +39,7 @@ FormEventEditor.propTypes = {
 
 const mapStateToProps = (state) => ({
   property: state.controlProperty ? state.controlProperty.property : undefined,
-  formDetails: state.formDetails,
+  formDetails: state.formDetails, formControlEvents: state.controlDetails.allControls,
 });
 
 const mapDispatchToProps = (dispatch) => ({

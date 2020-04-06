@@ -27,10 +27,10 @@ import Popup from 'reactjs-popup';
 
 
 export class FormDetailContainer extends Component {
-
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
+    this.formJson = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
@@ -44,6 +44,7 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
+
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -64,9 +65,10 @@ export class FormDetailContainer extends Component {
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
-              const formJson = this.getFormJson();
-              const formControlsArray = formJson ? formJson.controls : [];
-              this.setState({ formControls: formControlsArray });
+              this.formJson = this.getFormJson();
+
+              const formControlsArray = this.formJson && this.formJson !== undefined
+                ? this.formJson.controls : [];
               this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
@@ -495,7 +497,6 @@ export class FormDetailContainer extends Component {
                     formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
-                    formObsControls = {this.state.formControls}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
                     updateFormEvents={(events) => this.updateFormEvents(events)}

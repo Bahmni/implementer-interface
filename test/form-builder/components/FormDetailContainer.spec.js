@@ -9,7 +9,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
-import { clearTranslations } from 'form-builder/actions/control';
+import { clearTranslations, formLoad } from 'form-builder/actions/control';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';

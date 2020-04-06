@@ -89,10 +89,30 @@ describe('control', () => {
   describe('sourceChangedProperty', () => {
     it('should return the action and changed source', () => {
       const source = 'any thing';
-      const action = control.sourceChangedProperty(source);
-
+      const id = 1;
+      const action = control.sourceChangedProperty(source, id);
       expect(action.type).to.eql('SOURCE_CHANGED');
       expect(action.source).to.eql(source);
+      expect(action.id).to.eql(id);
+    });
+  });
+
+  describe('formConditionsEventUpdate', () => {
+    it('should return the events and changed source', () => {
+      const events = { onValueChange: "function(){console.log('test');}" };
+      const action = control.formConditionsEventUpdate(events);
+      expect(action.type).to.eql('FORM_CONDITIONS_CHANGED');
+      expect(action.events).to.eql(events);
+    });
+  });
+
+  describe('formLoad', () => {
+    it('should return the controls and changed source', () => {
+      const controls = { id: 1, name,
+        events: { onValueChange: "function(){console.log('test');}" } };
+      const action = control.formLoad(controls);
+      expect(action.type).to.eql('FORM_LOAD');
+      expect(action.controls).to.eql(controls);
     });
   });
 
