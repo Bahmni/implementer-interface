@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FormList from 'form-builder/components/FormList.jsx';
 import CreateFormModal from 'form-builder/components/CreateFormModal.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
@@ -433,7 +433,7 @@ export default class FormBuilder extends Component {
         <div className="breadcrumb-wrap">
           <div className="breadcrumb-inner">
             <div className="fl">
-              <FormBuilderBreadcrumbs routes={this.props.routes} />
+              <FormBuilderBreadcrumbs match={this.props.match} routes={this.props.routes} />
             </div>
             <button
               accessKey="n" className="btn--highlight openFormModal fr"
@@ -476,6 +476,12 @@ export default class FormBuilder extends Component {
 
 FormBuilder.propTypes = {
   data: PropTypes.array.isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isExact: PropTypes.bool.isRequired,
+    params: PropTypes.object,
+  }),
   onValidationError: PropTypes.func,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,

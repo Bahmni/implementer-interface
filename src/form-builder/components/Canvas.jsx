@@ -10,7 +10,7 @@ import TitleDetail from './TitleDetail';
 import DragDropHelper from '../helpers/dragDropHelper.js';
 import { dragSourceUpdate } from '../actions/control';
 
-class Canvas extends Component {
+export class Canvas extends Component {
   constructor(props) {
     super(props);
     this.components = {};
@@ -124,4 +124,4 @@ function mapStateToProps(state) {
     dragSourceCell: state.controlDetails.dragSourceCell,
   };
 }
-export default connect(mapStateToProps, null, null, { withRef: true })(Canvas);
+export default connect(mapStateToProps, null, null, { forwardRef: true })(Canvas);

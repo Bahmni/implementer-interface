@@ -18,7 +18,7 @@ import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 import ScriptEditorModal from './ScriptEditorModal';
 import DragDropHelper from '../helpers/dragDropHelper.js';
 
-class ControlWrapper extends Draggable {
+export class ControlWrapper extends Draggable {
   constructor(props) {
     super(props);
     this.control = ComponentStore.getDesignerComponent(props.metadata.type).control;
@@ -270,7 +270,7 @@ ControlWrapper.propTypes = {
   metadata: PropTypes.object,
   setError: PropTypes.func,
   showDeleteButton: PropTypes.bool,
-  wrapper: PropTypes.func,
+  wrapper: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -284,4 +284,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, null, null, { withRef: true })(ControlWrapper);
+export default connect(mapStateToProps, null, null, { forwardRef: true })(ControlWrapper);

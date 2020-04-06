@@ -9,6 +9,8 @@ import JSZip from 'jszip';
 import { httpInterceptor } from '../../../src/common/utils/httpInterceptor';
 import { saveAs } from 'file-saver';
 import jsonpath from 'jsonpath/jsonpath';
+import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import { MemoryRouter } from 'react-router-dom';
 
 chai.use(chaiEnzyme());
 
@@ -76,6 +78,7 @@ describe('FormBuilder', () => {
 
 describe('Import form', () => {
   let wrapper;
+  let breadcrumbsStub;
   const saveFormSpy = sinon.spy();
   const saveFormResourceSpy = sinon.spy();
   const file = [
@@ -226,9 +229,10 @@ describe('Import form', () => {
   ];
 
   beforeEach(() => {
-    wrapper = mount(<FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
+    breadcrumbsStub = sinon.stub(FormBuilderBreadcrumbs, 'default').returns(<div>A stub</div>);
+    wrapper = mount(<MemoryRouter><FormBuilder data={data} routes={routes} saveForm={saveFormSpy}
       saveFormResource={saveFormResourceSpy}
-    />);
+    /></MemoryRouter>);
   });
 
   afterEach(() => {
@@ -243,10 +247,11 @@ describe('Import form', () => {
     if (jsonpath.query.restore !== undefined) {
       jsonpath.query.restore();
     }
+    breadcrumbsStub.restore();
   });
 
   it('should call validate file when click import button', () => {
-    const spy = sinon.spy(wrapper.instance(), 'import');
+    const spy = sinon.spy(wrapper.find('FormBuilder').instance(), 'import');
     wrapper.find('.importBtn').find('input').simulate('change', { target: { files: file } });
 
     sinon.assert.calledOnce(spy);
@@ -264,14 +269,14 @@ describe('Import form', () => {
 
   it('should get max version when import same name form', () => {
     const sameName = '1';
-    const exitedMaxVersion = wrapper.instance().getFormVersion(sameName);
+    const exitedMaxVersion = wrapper.find('FormBuilder').instance().getFormVersion(sameName);
 
     expect(exitedMaxVersion).to.eql(2);
   });
 
   it('should get max version form uuid when import same name form', () => {
     const sameName = '1';
-    const uuid = wrapper.instance().getFormUuid(sameName);
+    const uuid = wrapper.find('FormBuilder').instance().getFormUuid(sameName);
 
     expect(uuid).to.eql(data[1].uuid);
   });
@@ -283,7 +288,7 @@ describe('Import form', () => {
       .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
       .onSecondCall().returns([])
       .onThirdCall().returns([]);
-    const newInstance = wrapper.instance();
+    const newInstance = wrapper.find('FormBuilder').instance();
     const fileName = 'fileName.json';
     const validationPromise = newInstance.fixuuid('formName', fileName);
 
@@ -309,7 +314,7 @@ describe('Import form', () => {
       .onFirstCall().returns([{ name: 'Pulse', uuid: 'someUuid' }])
       .onSecondCall().returns([[{ name: 'Abnormal', uuid: 'randomUuid' }]])
       .onThirdCall().returns([[{ name: 'Answer-1', uuid: 'randomUuid1' }]]);
-    const newInstance = wrapper.instance();
+    const newInstance = wrapper.find('FormBuilder').instance();
     newInstance.fixuuid('formName').then((validated) => {
       expect(validated).to.eql([true, true, true]);
       done();

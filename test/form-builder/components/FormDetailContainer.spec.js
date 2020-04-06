@@ -10,13 +10,51 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
 import { clearTranslations } from 'form-builder/actions/control';
+import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import * as ControlPropertiesContainer from
+    'form-builder/components/ControlPropertiesContainer.jsx';
+import * as FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
+import * as Canvas from 'form-builder/components/Canvas.jsx';
+const routes = [
+  {
+    exact: true,
+    path: '/',
+    title: 'Dashboard',
+  },
+  {
+    exact: true,
+    path: '/form-builder',
+    title: 'Form Builder',
+  },
+  {
+    exact: true,
+    path: '/form-builder/:formUuid',
+    title: 'Form Details',
+    siblingPath: '/form-builder/:formUuid/translate',
+  },
+  {
+    exact: true,
+    path: '/form-builder/:formUuid/translate',
+    title: 'Form Translate',
+    siblingPath: '/form-builder/:formUuid',
+  },
+];
 
+window.localStorage = {
+  getItem: sinon.stub(),
+};
 
 chai.use(chaiEnzyme());
 
 describe('FormDetailContainer', () => {
   let getDesignerComponentStub;
   let getAllDesignerComponentsStub;
+  let breadcrumbsStub;
+  let controlPropertiesContainer;
+  let formEventContainer;
+  let canvas;
   const formData = {
     id: 1,
     name: 'someFormName',
@@ -30,19 +68,20 @@ describe('FormDetailContainer', () => {
 
   const formJson = { uuid: 'FID', controls: [] };
 
-  const params =
-    'v=custom:(id,uuid,name,version,published,auditInfo,' +
-    'resources:(value,dataType,uuid))';
-  const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
-
   const defaultProps = {
     params: { formUuid: 'FID' },
-    routes: [],
+    routes,
     defaultLocale: 'en',
     dispatch: () => {},
     store: getStore(),
+    match: {
+      path: '/form-builder/:formUuid',
+      params: {
+        formUuid: 'FID',
+      },
+    },
   };
-  const context = { router: {} };
+  const context = { router: {}, store: getStore() };
 
   const control = () => (<div></div>);
 
@@ -54,6 +93,13 @@ describe('FormDetailContainer', () => {
       },
       control,
     });
+    breadcrumbsStub = sinon.stub(FormBuilderBreadcrumbs, 'default').returns(<div>A stub</div>);
+    controlPropertiesContainer = sinon.stub(ControlPropertiesContainer, 'default')
+      .returns(<div>A stub</div>);
+    formEventContainer = sinon.stub(FormEventContainer, 'default')
+      .returns(<div>A stub</div>);
+    canvas = sinon.stub(Canvas, 'default')
+      .returns(<div>A stub</div>);
     getAllDesignerComponentsStub = sinon.stub(
       ComponentStore,
       'getAllDesignerComponents').callsFake(() => {});
@@ -62,16 +108,20 @@ describe('FormDetailContainer', () => {
   after(() => {
     getDesignerComponentStub.restore();
     getAllDesignerComponentsStub.restore();
+    breadcrumbsStub.restore();
+    controlPropertiesContainer.restore();
+    formEventContainer.restore();
+    canvas.restore();
   });
 
   it('should render appropriate controls with appropriate props', () => {
     sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
-      <FormDetailContainer
-        {...defaultProps}
-      />, { context }
+      <Provider store={getStore()}>
+        <FormDetailContainer
+          {...defaultProps}
+        /></Provider>, { context }
     );
-
     const formDetail = wrapper.find('FormDetail');
     expect(formDetail.prop('formData')).to.equal(undefined);
     expect(formDetail).to.have.prop('setError');
@@ -79,22 +129,20 @@ describe('FormDetailContainer', () => {
     const notification = wrapper.find('NotificationContainer');
     expect(notification).to.have.prop('notification');
 
-    const formBuilderBreadcrumbs = wrapper.find('FormBuilderBreadcrumbs');
+    const formBuilderBreadcrumbs = wrapper.find('.breadcrumb-wrap').find('default');
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
     httpInterceptor.get.restore();
   });
 
   it('should get defaultLocale from local storage if its not present in props', () => {
-    window.localStorage = {
-      getItem: sinon.stub(),
-    };
     localStorage.getItem.returns('en');
     sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
+      <MemoryRouter>
       <FormDetailContainer
         {...defaultProps}
         defaultLocale={undefined}
-      />, { context }
+      /></MemoryRouter>, { context }
     );
 
     const formDetail = wrapper.find('FormDetail');
@@ -105,15 +153,22 @@ describe('FormDetailContainer', () => {
     httpInterceptor.get.restore();
   });
 
+
   it('should call the appropriate endpoint to fetch the formData', (done) => {
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
+    const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
     sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
+      <Provider store={getStore()}>
       <FormDetailContainer
         {...defaultProps}
-      />, { context }
+      /></Provider>, { context }
     );
-    const formDetail = wrapper.find('FormDetail');
     setTimeout(() => {
+      wrapper.find('FormDetailContainer').update();
+      const formDetail = wrapper.find('FormDetail');
       expect(formDetail.prop('formData')).to.eql(formData);
       httpInterceptor.get.restore();
       done();
@@ -124,11 +179,12 @@ describe('FormDetailContainer', () => {
 
   it('should not show publish button & save button before get formData', () => {
     const wrapper = mount(
+      <Provider store={getStore()}>
       <FormDetailContainer
         {...defaultProps}
-      />, { context }
+      /></Provider>, { context }
     );
-    wrapper.setState({ httpReceived: false });
+    wrapper.find('FormDetailContainer').setState({ httpReceived: false });
     const saveButton = wrapper.find('.save-button');
     const publishButton = wrapper.find('.publish-button');
     expect(saveButton).to.have.length(0);
@@ -431,11 +487,12 @@ describe('FormDetailContainer', () => {
 
     it('should show save button', () => {
       const wrapper = mount(
+        <Provider store={getStore()} >
         <FormDetailContainer
           {...defaultProps}
-        />, { context }
+        /></Provider>, { context }
       );
-      wrapper.setState({ httpReceived: true });
+      wrapper.find('FormDetailContainer').setState({ httpReceived: true });
 
       const saveButton = wrapper.find('.save-button');
       expect(saveButton.text()).to.equal('Save');
@@ -478,7 +535,7 @@ describe('FormDetailContainer', () => {
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
-        />, { context: { router: { push() {} } } }
+        />, { context: { router: { history: { push() {} } } } }
       );
       wrapper.setState({ formData, httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
@@ -521,11 +578,12 @@ describe('FormDetailContainer', () => {
 
     it('should show publish button', () => {
       const wrapper = mount(
+        <Provider store={getStore()}>
         <FormDetailContainer
           {...defaultProps}
-        />, { context }
+        /></Provider>, { context }
       );
-      wrapper.setState({ httpReceived: true });
+      wrapper.find('FormDetailContainer').setState({ httpReceived: true });
 
       const publishButton = wrapper.find('.publish-button');
       expect(publishButton.text()).to.equal('Publish');
@@ -611,15 +669,16 @@ describe('FormDetailContainer', () => {
 
     it('should NOT show edit button', (done) => {
       const wrapper = mount(
+        <Provider store={getStore()}>
         <FormDetailContainer
           {...defaultProps}
-        />, { context }
+        /></Provider>, { context }
       );
-      wrapper.setState({ httpReceived: true });
+      wrapper.find('FormDetailContainer').setState({ httpReceived: true });
       const editButton = wrapper.find('.edit-button');
 
       setTimeout(() => {
-        expect(editButton.nodes.length).to.equal(0);
+        expect(editButton.getElements().length).to.equal(0);
         done();
       }, 500);
     });
@@ -714,9 +773,8 @@ describe('FormDetailContainer', () => {
       );
       wrapper.setState({ formData: publishedFormData });
       const publishButton = wrapper.find('.publish-button');
-
       setTimeout(() => {
-        expect(publishButton.nodes.length).to.equal(0);
+        expect(publishButton.getElements().length).to.equal(0);
         done();
       }, 500);
     });

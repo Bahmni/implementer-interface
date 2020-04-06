@@ -5,7 +5,7 @@ import each from 'lodash/each';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
 import { dateUtils } from 'common/utils/dateUtils';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { httpInterceptor } from '../../common/utils/httpInterceptor';
 import { formBuilderConstants } from '../constants';
 import fileDownload from 'react-file-download';

@@ -72,10 +72,10 @@ describe('CreateFormModal', () => {
   });
 
   it('should show notification when form name more than 50 characters', () => {
-    const notificationContainer = wrapper.find('NotificationContainer');
     wrapper.find('.form-name').simulate('change', { target:
         { value: '12345678901234567890123456789012345678901234567890w' } });
-    expect(notificationContainer.prop('notification')).to.eql({
+    wrapper.update();
+    expect(wrapper.find('NotificationContainer').prop('notification')).to.eql({
       message: 'Form name shall not exceed 50 characters',
       type: 'error',
     });

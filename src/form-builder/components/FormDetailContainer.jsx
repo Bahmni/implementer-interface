@@ -5,7 +5,7 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { commonConstants } from 'common/constants';
 import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
-import { FormBuilderBreadcrumbs } from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
+import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
 import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
     from 'form-builder/actions/control';
@@ -49,7 +49,7 @@ export class FormDetailContainer extends Component {
             'v=custom:(id,uuid,name,version,published,auditInfo,' +
             'resources:(value,dataType,uuid))';
     httpInterceptor
-            .get(`${formBuilderConstants.formUrl}/${this.props.params.formUuid}?${params}`)
+            .get(`${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`)
             .then((data) => {
               this.setState({ formData: data, httpReceived: true,
                 loading: false, originalFormName: data.name, referenceVersion: data.version });
@@ -270,7 +270,7 @@ export class FormDetailContainer extends Component {
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
             .then((response) => {
               const updatedUuid = response.form.uuid;
-              this.context.router.push(`/form-builder/${updatedUuid}`);
+              this.context.router.history.push(`/form-builder/${updatedUuid}`);
               const successNotification = {
                 message: commonConstants.saveSuccessMessage,
                 type: commonConstants.responseType.success,
@@ -400,7 +400,7 @@ export class FormDetailContainer extends Component {
               <div className="breadcrumb-wrap">
                 <div className="breadcrumb-inner">
                   <div className="fl">
-                    <FormBuilderBreadcrumbs routes={this.props.routes} />
+                    <FormBuilderBreadcrumbs match={this.props.match} routes={this.props.routes} />
                   </div>
                   <div className="fr">
                       {this.showSaveButton()}
@@ -430,7 +430,12 @@ export class FormDetailContainer extends Component {
 FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.shape({
+    path: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isExact: PropTypes.bool.isRequired,
+    params: PropTypes.object,
+  }),
   routes: PropTypes.array,
   translations: PropTypes.object,
 };

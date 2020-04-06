@@ -2,7 +2,8 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
-import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
+import ControlPropertiesContainerWithRedux, { ControlPropertiesContainer } from
+    'form-builder/components/ControlPropertiesContainer.jsx';
 import { getStore } from 'test/utils/storeHelper';
 import { setChangedProperty } from 'form-builder/actions/control';
 import sinon from 'sinon';
@@ -14,7 +15,7 @@ chai.use(chaiEnzyme());
 describe('ControlPropertiesContainer', () => {
   let controlMetadata;
   let componentStoreStub;
-
+  const store = getStore();
   before(() => {
     const controlDescriptor = {
       metadata: { attributes: [{ name: 'properties', type: 'complex', attributes: [] }] },
@@ -38,13 +39,13 @@ describe('ControlPropertiesContainer', () => {
     });
 
     it('should not display autocomplete component when no control is selected', () => {
-      const wrapper = mount(<ControlPropertiesContainer store={getStore()} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore()} />);
       expect(wrapper).to.not.have.descendants('AutoComplete');
     });
 
     it('should display autocomplete component when obs control is selected', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find(('AutoComplete')).props()
         .optionsUrl.includes(constants.supportedObsDataTypes)).to.eql(true);
@@ -55,27 +56,27 @@ describe('ControlPropertiesContainer', () => {
     it('should not display autocomplete component when section control is selected', () => {
       controlMetadata = { id: '123', type: 'section', properties: {} };
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.not.have.descendants('AutoComplete');
     });
 
     it('should display control ID when obs control is selected', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper.find('.control-id')).text().to.eql('123');
     });
 
     it('should display control ID when selected control is section', () => {
       controlMetadata = { id: '143', type: 'section', properties: {} };
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper.find('.control-id')).text().to.eql('143');
     });
 
     it('should display autocomplete component when obsGroup control is selected', () => {
       controlMetadata.type = 'obsGroupControl';
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find(('AutoComplete')).props()
         .optionsUrl.includes(constants.supportedObsGroupDataTypes)).to.eql(true);
@@ -88,7 +89,7 @@ describe('ControlPropertiesContainer', () => {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: { 123: { name: 'someName' } },
       };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().value).to.eql({ name: 'someName' });
     });
@@ -98,7 +99,7 @@ describe('ControlPropertiesContainer', () => {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: undefined,
       };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().value).to.eql(undefined);
     });
@@ -109,7 +110,7 @@ describe('ControlPropertiesContainer', () => {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: { 1: { name: 'someOtherName' } },
       };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().value).to.eql(undefined);
     });
@@ -119,7 +120,7 @@ describe('ControlPropertiesContainer', () => {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: { 1: { name: 'someOtherName' } },
       };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().enabled).to.eql(true);
     });
@@ -129,7 +130,7 @@ describe('ControlPropertiesContainer', () => {
         controlDetails: { selectedControl: controlMetadata },
         conceptToControlMap: { 123: { name: 'someOtherName' } },
       };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('AutoComplete');
       expect(wrapper.find('AutoComplete').props().enabled).to.eql(false);
     });
@@ -149,7 +150,7 @@ describe('ControlPropertiesContainer', () => {
           set: true,
         },
       ];
-      const wrapper = shallow(<ControlPropertiesContainer store={getStore()} />).shallow();
+      const wrapper = shallow(<ControlPropertiesContainer dispatch={store.dispatch} />);
       const instance = wrapper.instance();
       expect(instance.filterOptions(concepts)).to.deep.eql([concepts[1]]);
     });
@@ -166,14 +167,14 @@ describe('ControlPropertiesContainer', () => {
     });
 
     it('should not display property editor component when no control is selected', () => {
-      const wrapper = mount(<ControlPropertiesContainer store={getStore()} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore()} />);
       expect(wrapper).to.not.have.descendants('PropertyEditor');
     });
 
     it('should display property editor component when control is selected and it has concept',
       () => {
         const state = { controlDetails: { selectedControl: controlMetadata } };
-        const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+        const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
         expect(wrapper).to.have.descendants('PropertyEditor');
       });
 
@@ -184,7 +185,7 @@ describe('ControlPropertiesContainer', () => {
         properties: {},
       };
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('PropertyEditor');
     });
 
@@ -192,13 +193,13 @@ describe('ControlPropertiesContainer', () => {
       ' seletedControl is not a section', () => {
       controlMetadata = { id: '123', type: 'obsControl', properties: {} };
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.not.have.descendants('PropertyEditor');
     });
 
     it('should pass appropriate props to property editor component', () => {
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const wrapper = mount(<ControlPropertiesContainer store={getStore(state)} />);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={getStore(state)} />);
       expect(wrapper).to.have.descendants('PropertyEditor');
       expect(wrapper.find('PropertyEditor').props().metadata).to.deep.eql(controlMetadata);
     });
@@ -206,12 +207,13 @@ describe('ControlPropertiesContainer', () => {
     it('should dispatch action on metadata update', () => {
       const updatedProperty = { mandatory: true };
       const state = { controlDetails: { selectedControl: controlMetadata } };
-      const store = getStore(state);
-      const wrapper = mount(<ControlPropertiesContainer store={store} />);
+      const localStore = getStore(state);
+      const wrapper = mount(<ControlPropertiesContainerWithRedux store={localStore} />);
       expect(wrapper).to.have.descendants('PropertyEditor');
 
       wrapper.find('PropertyEditor').props().onPropertyUpdate(updatedProperty);
-      sinon.assert.calledOnce(store.dispatch.withArgs(setChangedProperty(updatedProperty, '123')));
+      sinon.assert.calledOnce(localStore.dispatch
+        .withArgs(setChangedProperty(updatedProperty, '123')));
     });
   });
 });
