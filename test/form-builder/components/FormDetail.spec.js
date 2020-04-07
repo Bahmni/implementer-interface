@@ -256,9 +256,9 @@ describe('FormDetails', () => {
     const dummyScript = '';
     const property = { formConditionsEvent: true };
     const formDetails = { events: { onFormInit: dummyScript } };
-    const allControls = [{ id: '1', name: 'name', events: { onValueChange: '' } }];
+    const allObsControlEvents = [{ id: '1', name: 'name', events: { onValueChange: '' } }];
     const state = { controlProperty: { property },
-      formDetails, controlDetails: { allControls } };
+      formDetails, controlDetails: { allObsControlEvents } };
     const store = getStore(state);
     wrapper = mount(
       <Provider store={store}>
@@ -272,7 +272,7 @@ describe('FormDetails', () => {
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
       .prop('formDetails')).to.eq(formDetails);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
-      .prop('controlEvents')).to.eq(allControls);
+      .prop('controlEvents')).to.eq(allObsControlEvents);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
       .prop('script')).to.eq(undefined);
   });

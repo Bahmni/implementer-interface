@@ -4,16 +4,17 @@ const controlDetails = (store = {}, action) => {
     // eslint-disable-next-line no-case-declarations
     case 'SELECT_CONTROL':
       let storeClone;
-      if (store.allControls === undefined) {
-        storeClone = Object.assign({}, store, { allControls: [{ id: action.metadata.id,
+      if (store.allObsControlEvents === undefined) {
+        storeClone = Object.assign({}, store, { allObsControlEvents: [{ id: action.metadata.id,
           name: action.metadata.concept.name, events: action.metadata.events }] });
       } else {
         storeClone = store;
-        storeClone.allControls = storeClone.allControls.filter(control =>
+        storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
           control.id !== action.metadata.id);
-        storeClone.allControls = storeClone.allControls.concat({ id: action.metadata.id,
-          name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
-          events: action.metadata.events });
+        storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(
+          { id: action.metadata.id,
+            name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
+            events: action.metadata.events });
       }
       return Object.assign({}, storeClone, { selectedControl: action.metadata });
     case 'DESELECT_CONTROL':
@@ -26,16 +27,16 @@ const controlDetails = (store = {}, action) => {
       // eslint-disable-next-line no-param-reassign
       store.selectedControl.events = { onValueChange: action.source };
       // eslint-disable-next-line no-param-reassign
-      store.allControls = store.allControls.map(control =>
+      store.allObsControlEvents = store.allObsControlEvents.map(control =>
         (control.id === action.id ?
           Object.assign({}, control, { events: { onValueChange: action.source } })
           : control)
       );
       return cloneDeep(store);
     case 'FORM_LOAD':
-      return Object.assign({}, store, { allControls:
+      return Object.assign({}, store, { allObsControlEvents:
           action.controls.map(e => ({ id: e.id,
-            name: e.concept.name, events: e.events })) });
+            name: e.concept !== undefined ? e.concept.name : undefined, events: e.events })) });
     case 'DRAG_SOURCE_CHANGED':
       return Object.assign({}, store, { dragSourceCell: action.cell });
 

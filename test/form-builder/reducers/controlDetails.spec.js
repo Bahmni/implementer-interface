@@ -4,7 +4,7 @@ import controlDetails from 'form-builder/reducers/controlDetails';
 describe('controlDetails', () => {
   let action = {};
   let expectedStoreState;
-  let allControls;
+  let allObsControlEvents;
   describe('selectControl', () => {
     beforeEach(() => {
       const metadata = {
@@ -24,14 +24,14 @@ describe('controlDetails', () => {
         type: 'SELECT_CONTROL',
         metadata,
       };
-      allControls = [{ id: action.metadata.id,
+      allObsControlEvents = [{ id: action.metadata.id,
         name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
         events: action.metadata.events }];
-      expectedStoreState = { allControls, selectedControl: metadata };
+      expectedStoreState = { allObsControlEvents, selectedControl: metadata };
     });
 
     it('should add selected control id to store and add to all controls', () => {
-      const state = controlDetails({ allControls }, action);
+      const state = controlDetails({ allObsControlEvents }, action);
       expect(state).to.be.eql(expectedStoreState);
     });
 
@@ -98,12 +98,12 @@ describe('controlDetails', () => {
   describe('sourceChanged', () => {
     it('should change the source', () => {
       action = { type: 'SOURCE_CHANGED', source: 'test', id: 1 };
-      allControls = [{ id: 1, name: 'ob1', events: { onValueChange: '' } }];
+      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: '' } }];
 
-      const state = controlDetails({ allControls, selectedControl: {} }, action);
+      const state = controlDetails({ allObsControlEvents, selectedControl: {} }, action);
 
       expect(state.selectedControl.events).to.eql({ onValueChange: 'test' });
-      const updatedControl = state.allControls.filter(e => e.id === action.id);
+      const updatedControl = state.allObsControlEvents.filter(e => e.id === action.id);
       expect(updatedControl[0].events).to.eql({ onValueChange: 'test' });
     });
   });
@@ -128,12 +128,12 @@ describe('controlDetails', () => {
       };
       const state = controlDetails({}, action);
       // eslint-disable-next-line no-shadow
-      const allControls = [{
+      const allObsControlEvents = [{
         id: controls[0].id,
         name: controls[0].concept.name,
         events: controls[0].events,
       }];
-      expect(state).to.be.eql({ allControls });
+      expect(state).to.be.eql({ allObsControlEvents });
     });
   });
 });

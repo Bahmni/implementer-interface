@@ -536,7 +536,7 @@ function mapStateToProps(state) {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
     translations: state.translations,
     formDetails: state.formDetails,
-    formControlEvents: state.controlDetails.allControls,
+    formControlEvents: state.controlDetails.allObsControlEvents,
   };
 }
 

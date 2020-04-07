@@ -39,7 +39,7 @@ FormEventEditor.propTypes = {
 
 const mapStateToProps = (state) => ({
   property: state.controlProperty ? state.controlProperty.property : undefined,
-  formDetails: state.formDetails, formControlEvents: state.controlDetails.allControls,
+  formDetails: state.formDetails, formControlEvents: state.controlDetails.allObsControlEvents,
 });
 
 const mapDispatchToProps = (dispatch) => ({

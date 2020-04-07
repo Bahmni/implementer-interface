@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { JSHINT } from 'jshint';
 import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScriptEditorModal';
-
-window.JSHINT = JSHINT;
 
 export default class FormConditionsModal extends Component {
   constructor(props) {

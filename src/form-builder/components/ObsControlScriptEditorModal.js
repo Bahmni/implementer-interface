@@ -32,6 +32,7 @@ export default class ObsControlScriptEditorModal extends Component {
     if (scriptEditorTextArea !== null) {
       this.codeMirrorEditor = CodeMirror.fromTextArea(scriptEditorTextArea, {
         mode: { name: 'javascript', globalVars: true },
+        autofocus: false,
         autoCloseBrackets: true,
         readOnly: true,
         gutters: ['CodeMirror-lint-markers'],
