@@ -85,3 +85,49 @@
 .CodeMirror-lint-tooltip{
   z-index: 1002 !important; /* stylelint-disable-line declaration-no-important */
 }
+
+.disable-image-and-video-upload {
+    .image-upload {
+      cursor: not-allowed;
+      width: fit-content;
+      height: 100%;
+      &:hover:after {
+        content: "Preview of image upload is not supported";
+        display: inline-block;
+        font-size: 12px;
+        padding: 5px;
+        border-radius: 5px;
+        background: #000;
+        color: #FFF;
+        position: absolute;
+        top: 65%;
+        left: 30%;
+      }
+      .placeholder{
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    }
+
+  .video-upload {
+    cursor: not-allowed;
+    width: fit-content;
+    height: 100%;
+    &:hover:after {
+      content: "Preview of video upload is not supported";
+      display: inline-block;
+      font-size: 12px;
+      padding: 5px;
+      border-radius: 5px;
+      background: #000;
+      color: #FFF;
+      position: absolute;
+      top: 72%;
+      left: 28%;
+    }
+    .video-placeholder {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+}

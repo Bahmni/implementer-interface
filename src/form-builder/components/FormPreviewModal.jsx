@@ -60,7 +60,7 @@ export default class FormPreviewModal extends React.Component {
                         <i className="fa fa-times" onClick={this.props.close}></i>
                     </div>
                     <div className="preview-body">
-                      <div id="form-container"> </div>
+                        <div className="disable-image-and-video-upload" id="form-container"> </div>
                     </div>
                     <div className="preview-footer">
                         <button className="button btn--highlight" onClick={this.onSave}
