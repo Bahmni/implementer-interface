@@ -114,8 +114,6 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_false', () => {
     const script = 'abcd';
     wrapper.find('FormEventEditor').prop('updateScript')(script, property);
     sinon.assert.callCount(store.dispatch, 0);
-    // sinon.assert.calledOnce(store.dispatch
-    //  .withArgs(formEventUpdate(script)));
   });
 });
 
