@@ -71,7 +71,7 @@ export default class FormConditionsModal extends Component {
               <div>
                 <label className="label" >Control Events:</label>
                 <select className="obs-dropdown" onChange={this.updateSelectedOption}>
-                  <option key="0" value="0" >Select Option</option>)
+                  <option key="0" value="0" >Select Control</option>)
                   {obsWithoutControlEvents.map((e) =>
                     <option key={e.id} value={e.id} >{e.name}</option>)}
                 </select>
