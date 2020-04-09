@@ -121,7 +121,7 @@ describe('FormConditionsModal', () => {
     sinon.assert.calledOnce(closeSpy);
   });
 
-  it('should rerender ObsControlScriptEditorModal on change  of obs dropdown', () => {
+  it.skip('should rerender ObsControlScriptEditorModal on change  of obs dropdown', () => {
     closeSpy = sinon.spy();
     formControlEvents = [{ id: '1', name: 'obs1' }];
     wrapper = shallow(
