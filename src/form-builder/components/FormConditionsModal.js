@@ -5,32 +5,27 @@ import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScrip
 export default class FormConditionsModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { selectedControlEventTitleId: undefined,
-      selectedControlEventTitleName: undefined, selectedControlScript: undefined };
-    this.selectedControlOption = undefined;
-    this.prevSelectedControlOption = undefined;
-    this.selectedControlTitleId = undefined;
-    this.selectedControlTitleName = undefined;
-    this.selectedControlScript = undefined;
-    this.updateSelectedOption = this.updateSelectedOption.bind(this);
+    this.state = { selectedControl: {
+      id: undefined,
+      name: undefined,
+      controlEvent: undefined,
+    } };
+    this.prevSelectedControlId = undefined;
+    this.selectedControlId = undefined;
+    this.updateDropDownSelection = this.updateDropDownSelection.bind(this);
   }
 
-  updateSelectedOption(element) {
-    this.prevSelectedControlOption = this.selectedControlOption;
-    this.selectedControlOption = element.target.value;
-    const selectedControlEventObj = this.props.controlEvents.find(control =>
-      control.id === this.selectedControlOption);
-    const selectedControlScriptObj = selectedControlEventObj ?
-      selectedControlEventObj.events : undefined;
-    this.selectedControlTitleId = selectedControlEventObj ? selectedControlEventObj.id : undefined;
-    this.selectedControlTitleName = selectedControlEventObj ? selectedControlEventObj.name :
-      undefined;
-    this.selectedControlScript = selectedControlScriptObj ?
-      selectedControlScriptObj.onValueChange : undefined;
-    if (this.selectedControlOption !== this.prevSelectedControlOption) {
-      this.setState({ selectedControlEventTitleId: this.selectedControlTitleId });
-      this.setState({ selectedControlEventTitleName: this.selectedControlTitleName });
-      this.setState({ selectedControlScript: this.selectedControlScript });
+  updateDropDownSelection(element) {
+    this.prevSelectedControlId = this.selectedControlId;
+    this.selectedControlId = element.target.value;
+    const selectedControl = this.props.controlEvents
+        .find(control => control.id === this.selectedControlId);
+    if (selectedControl && selectedControl.events && selectedControl.events.onValueChange) {
+      selectedControl.controlEvent = selectedControl.events.onValueChange;
+      delete(selectedControl.events);
+    }
+    if (this.selectedControlId !== this.prevSelectedControlId) {
+      this.setState({ selectedControl });
     }
   }
 
@@ -48,15 +43,14 @@ export default class FormConditionsModal extends Component {
     return null;
   }
   render() {
-    const obs = this.props.controlEvents !== undefined ? this.props.controlEvents : [];
-    const ObsWithControlEvents = obs.filter(o => o.events !== undefined);
+    const obs = this.props.controlEvents ? this.props.controlEvents : [];
+    const obsWithControlEvents = obs.filter(o => o.events !== undefined);
     const obsWithoutControlEvents = obs.filter(o => o.events === undefined);
     const formDetailEvents = this.props.formDetails.events ? this.props.formDetails.events
       : { onFormInit: undefined, onFormSave: undefined };
     return (
         <div className="form-conditions-modal-container">
           <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
-
             <div className="left-panel" >
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormInit, null,
                 'Form Event')}
@@ -66,7 +60,7 @@ export default class FormConditionsModal extends Component {
             <div className="right-panel" >
               <div className="control-events-header">
                 <label className="label" >Control Events:</label>
-                <select className="obs-dropdown" onChange={this.updateSelectedOption}>
+                <select className="obs-dropdown" onChange={this.updateDropDownSelection}>
                   <option key="0" value="0" >Select Control</option>)
                   {obsWithoutControlEvents.map((e) =>
                     <option key={e.id} value={e.id} >{e.name}</option>)}
@@ -74,15 +68,14 @@ export default class FormConditionsModal extends Component {
               </div>
               <div>
                 {
-                  ObsWithControlEvents.map((e) =>
-                  this.showObsControlScriptEditorModal(e.events.onValueChange, e.id, e.name)
-                  )
+                  obsWithControlEvents.map((e) =>
+                  this.showObsControlScriptEditorModal(e.events.onValueChange, e.id, e.name))
                 }
               </div>
               {
-                <div> {this.showObsControlScriptEditorModal(this.state.selectedControlScript,
-                  this.state.selectedControlEventTitleId, this.state.selectedControlEventTitleName)}
-                  <span className="line-break-2"></span>
+                <div> {this.showObsControlScriptEditorModal(this.state.selectedControl.controlEvent,
+                  this.state.selectedControl.id, this.state.selectedControl.name)}
+                  <span className="line-break-2" />
                 </div>
               }
             </div>

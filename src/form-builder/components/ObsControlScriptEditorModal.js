@@ -63,7 +63,7 @@ export default class ObsControlScriptEditorModal extends Component {
           <label className="label-key">Name</label>
           <label className="label-value">{this.props.titleName}</label>
         </div>
-        <i className="fa fa-times"></i>
+        <i className="fa fa-times" />
       </div>);
   }
 
