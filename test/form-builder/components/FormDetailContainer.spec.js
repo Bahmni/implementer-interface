@@ -1018,5 +1018,63 @@ describe('FormDetailContainer', () => {
       }, 500);
       httpInterceptor.post.restore();
     });
+
+    it('should return Obs Control Events when formJsonData is passed', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, {
+          context: {
+            router: {
+              push() {
+              },
+            },
+          },
+        }
+      );
+      wrapper.setState({ formData, httpReceived: true });
+      const formJsonData = {
+        name: 'SectionForm',
+        id: 1,
+        type: 'section',
+        controls: [
+          {
+            type: 'section',
+            controls: [
+              {
+                type: 'obsControl',
+                id: 2,
+                concept: {
+                  name: 'obs1',
+                },
+              },
+            ],
+          },
+          {
+            type: 'obsControl',
+            id: 3,
+            concept: {
+              name: 'obs2',
+            },
+            events: { onValueChange: 'func(){}' },
+          },
+        ],
+      };
+      const estimatedObsControlEvents = [
+        { id: 2,
+          name: 'obs1',
+          events: undefined,
+        },
+        { id: 3,
+          name: 'obs2',
+          events: { onValueChange: 'func(){}' },
+        },
+      ];
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+      const obsControlEvents = wrapper.instance().getObsControlEvents(formJsonData);
+
+      expect(JSON.stringify(estimatedObsControlEvents)).to.equal(JSON.stringify(obsControlEvents));
+    });
   });
 });
