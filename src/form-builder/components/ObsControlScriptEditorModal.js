@@ -12,6 +12,7 @@ import 'codemirror/addon/lint/javascript-lint.js';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
+import _ from 'lodash';
 
 window.JSHINT = JSHINT;
 
@@ -20,22 +21,17 @@ export default class ObsControlScriptEditorModal extends Component {
     super(props);
     this.state = { notification: {}, codeMirrorEditor: {} };
     this.codeMirrorEditor = null;
-    this.scriptEditorTextArea = null;
     this.prevScriptEditorTextArea = null;
-    this.setScriptEditorTextArea = element => {
-      this.scriptEditorTextArea = element;
-    };
   }
 
   componentDidMount() {
-    const scriptEditorTextArea = this.scriptEditorTextArea;
-    if (scriptEditorTextArea !== null) {
+    const scriptEditorTextArea = this.props.textAreaRef && this.props.textAreaRef.current;
+    if (!_.isNil(scriptEditorTextArea)) {
       this.codeMirrorEditor = CodeMirror.fromTextArea(scriptEditorTextArea, {
         mode: { name: 'javascript', globalVars: true },
         lineNumbers: true,
         autofocus: false,
         autoCloseBrackets: true,
-        readOnly: true,
         gutters: ['CodeMirror-lint-markers'],
         lint: true,
         extraKeys: { 'Ctrl-Space': 'autocomplete' },
@@ -77,7 +73,7 @@ export default class ObsControlScriptEditorModal extends Component {
         {this.getLabel()}
         <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
-            defaultValue={this.props.script} ref={this.setScriptEditorTextArea}
+            defaultValue={this.props.script} ref={this.props.textAreaRef}
           >
           </textarea>
         </div>
@@ -90,6 +86,7 @@ export default class ObsControlScriptEditorModal extends Component {
 ObsControlScriptEditorModal.propTypes = {
   close: PropTypes.func.isRequired,
   script: PropTypes.string,
+  textAreaRef: PropTypes.object.isRequired,
   titleId: PropTypes.string,
   titleName: PropTypes.string,
   updateScript: PropTypes.func.isRequired,

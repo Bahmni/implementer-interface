@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScriptEditorModal';
+import _ from 'lodash';
 
 export default class FormConditionsModal extends Component {
   constructor(props) {
@@ -10,6 +11,9 @@ export default class FormConditionsModal extends Component {
       name: undefined,
       controlEvent: undefined,
     } };
+    props.controlEvents.forEach(control => {this[`${control.id}_ref`] = React.createRef();});
+    this.formEventRef = React.createRef();
+    this.saveEventRef = React.createRef();
     this.prevSelectedControlId = undefined;
     this.selectedControlId = undefined;
     this.updateDropDownSelection = this.updateDropDownSelection.bind(this);
@@ -29,11 +33,13 @@ export default class FormConditionsModal extends Component {
     }
   }
 
-  showObsControlScriptEditorModal(controlScript, controlEventTitleId, controlEventTitleName) {
+  showObsControlScriptEditorModal(controlScript, controlEventTitleId, controlEventTitleName,
+                                  editorRef) {
     if (controlEventTitleId !== undefined) {
       return (<ObsControlScriptEditorModal
         close={this.props.close}
         script={controlScript}
+        textAreaRef={editorRef}
         titleId={controlEventTitleId}
         titleName={controlEventTitleName}
         updateScript={this.props.updateScript}
@@ -53,9 +59,9 @@ export default class FormConditionsModal extends Component {
           <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
             <div className="left-panel" >
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormInit, null,
-                'Form Event')}
+                'Form Event', this.formEventRef)}
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormSave, null,
-                'Save Event')}
+                'Save Event', this.saveEventRef)}
             </div>
             <div className="right-panel" >
               <div className="control-events-header">
@@ -69,7 +75,8 @@ export default class FormConditionsModal extends Component {
               <div>
                 {
                   obsWithControlEvents.map((e) =>
-                  this.showObsControlScriptEditorModal(e.events.onValueChange, e.id, e.name))
+                  this.showObsControlScriptEditorModal(e.events.onValueChange, e.id, e.name,
+                    this[`${e.id}_ref`]))
                 }
               </div>
               {
