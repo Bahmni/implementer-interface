@@ -81,6 +81,9 @@ export default class FormConditionsModal extends Component {
             </div>
 
           <div className="button-wrapper" >
+            <button className="button btn--highlight" type="submit">
+              Save
+            </button>
             <button className="btn" onClick={() => this.props.close()} type="reset">
               Cancel
             </button>

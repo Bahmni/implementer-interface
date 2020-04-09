@@ -137,4 +137,18 @@ describe('FormConditionsModal', () => {
     expect(wrapper.state('selectedControlEventTitleId')).to.eq(formControlEvents[0].id);
     expect(wrapper.state('selectedControlEventTitleName')).to.eq(formControlEvents[0].name);
   });
+
+  it('should render save button', () => {
+    wrapper = shallow(
+      <FormConditionsModal
+        close={() => {}}
+        controlEvents={formControlEvents}
+        formDetails={formDetails}
+        formTitle={formTitle}
+        script={script}
+        updateScript={() => {}}
+      />);
+    expect(wrapper.find('.btn--highlight').length).to.eql(1);
+    expect(wrapper.find('.btn--highlight').text()).to.eql('Save');
+  });
 });
