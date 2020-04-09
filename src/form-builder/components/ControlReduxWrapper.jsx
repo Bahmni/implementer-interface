@@ -39,6 +39,7 @@ export class ControlWrapper extends Draggable {
     this.closeDeleteModal = this.closeDeleteModal.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleControlDrop = this.handleControlDrop.bind(this);
+    this.controlEventFor = this.controlEventFor.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -103,6 +104,11 @@ export class ControlWrapper extends Draggable {
     this.updateProperties(newProps);
   }
 
+  controlEventFor(controlId) {
+    const control = this.props.allObsControlEvents.find(obsControl => obsControl.id === controlId);
+    return control && control.events;
+  }
+
   getJsonDefinition(isBeingMoved) {
     if (this.childControl) {
       const controlJsonDefinition = this.childControl.getJsonDefinition();
@@ -111,6 +117,9 @@ export class ControlWrapper extends Draggable {
         throw new Exception(conceptMissingMessage);
       }
       this.props.dispatch(generateTranslations(controlJsonDefinition));
+      if (this.props.allObsControlEvents) {
+        controlJsonDefinition.events = this.controlEventFor(this.metadata.id);
+      }
       return controlJsonDefinition;
     }
     return undefined;
@@ -288,6 +297,7 @@ function mapStateToProps(state) {
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
     dragSourceCell: state.controlDetails.dragSourceCell,
+    allObsControlEvents: state.controlDetails.allObsControlEvents,
   };
 }
 

@@ -467,4 +467,42 @@ describe('ControlWrapper', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(dragSourceUpdate(undefined)));
     dragDrophelperStub.restore();
   });
+
+  it('should update events of control from redux store', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        allObsControlEvents={[{
+          id: '1',
+          events: 'Control Event',
+        }]}
+        dispatch={ store.dispatch }
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+      />);
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    const jsonDefinition = instance.getJsonDefinition();
+
+    expect(jsonDefinition.events).to.eql('Control Event');
+  });
+
+  it('should not update events of control from redux store when id is not present', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        allObsControlEvents={[{
+          id: '2',
+          events: 'Control Event',
+        }]}
+        dispatch={ store.dispatch }
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+      />);
+    const instance = controlWrapper.instance();
+    instance.childControl = { getJsonDefinition: () => metadata };
+    const jsonDefinition = instance.getJsonDefinition();
+
+    expect(jsonDefinition.events).to.eql(undefined);
+  });
 });
