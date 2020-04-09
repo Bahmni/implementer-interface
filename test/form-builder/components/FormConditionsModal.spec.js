@@ -44,11 +44,11 @@ describe('FormConditionsModal', () => {
     wrapperInstance.render();
     sinon.assert.calledThrice(wrapperInstance.showObsControlScriptEditorModal);
     sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Form Event');
+      undefined, null, 'Form Event');
     sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Save Event');
+      undefined, null, 'Save Event');
     sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, undefined);
+      undefined,undefined, undefined);
 
     expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(2);
   });
@@ -70,11 +70,11 @@ describe('FormConditionsModal', () => {
       wrapperInstance.render();
       sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 3);
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Form Event');
+      undefined, null, 'Form Event');
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Save Event');
+      undefined, null, 'Save Event');
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, undefined);
+      undefined, undefined, undefined);
       expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(2);
     });
 
@@ -95,13 +95,13 @@ describe('FormConditionsModal', () => {
       wrapperInstance.render();
       sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 4);
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Form Event');
+      undefined, null, 'Form Event');
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, 'Save Event');
+      undefined, null, 'Save Event');
+      // sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
+      //  formControlEvents[0].events, formControlEvents[0].id, formControlEvents[0].name);
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-        'func1(){}', 'Control Id: 1    Control Name: obs1');
-      sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, undefined);
+      undefined, undefined, undefined);
       expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(3);
     });
 
@@ -135,6 +135,6 @@ describe('FormConditionsModal', () => {
       />);
     wrapper.find('.obs-dropdown').simulate('change', { target: { value: '1' } });
     expect(wrapper.state('selectedControlEventTitleId')).to.eq(formControlEvents[0].id);
-    expect(wrapper.state('selectedControlEventTitleName')).to.eq(formControlEvents[0].Name);
+    expect(wrapper.state('selectedControlEventTitleName')).to.eq(formControlEvents[0].name);
   });
 });

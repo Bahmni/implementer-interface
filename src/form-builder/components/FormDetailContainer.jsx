@@ -66,9 +66,7 @@ export class FormDetailContainer extends Component {
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
               this.formJson = this.getFormJson();
-
-              const formControlsArray = this.formJson && this.formJson !== undefined
-                ? this.formJson.controls : [];
+              const formControlsArray = this.getObsControlEvents(this.formJson);
               this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
@@ -79,6 +77,7 @@ export class FormDetailContainer extends Component {
 
     this.getFormList();
   }
+
 
   componentWillUpdate(nextProps, nextState) {
     if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
@@ -156,6 +155,29 @@ export class FormDetailContainer extends Component {
 
   onPreview() {
     this.generateFormPreviewJson();
+  }
+
+
+  getObsControlEvents(control) {
+    let obsControlEvents = [];
+    if (control && control !== undefined && control.controls !== undefined) {
+      const childControls = control.controls;
+      const obsControls = childControls.filter(ctrl => ctrl.type === 'obsControl');
+      const nonObscontrols = childControls.filter(ctrl => ctrl.type !== 'obsControl');
+
+      nonObscontrols.forEach(ctrl => {
+        if (ctrl.controls !== undefined) {
+          const childObsControlEvents = this.getObsControlEvents(ctrl);
+          if (childObsControlEvents && childObsControlEvents !== undefined) {
+            obsControlEvents = obsControlEvents.concat(childObsControlEvents);
+          }
+        }
+      });
+      obsControlEvents = obsControlEvents.concat(obsControls.map(ctrl => {
+        return { id: ctrl.id, name: ctrl.concept.name, events: ctrl.events };
+      }));
+    }
+    return obsControlEvents;
   }
 
   getFormJson() {

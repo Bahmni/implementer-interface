@@ -152,6 +152,7 @@ export class ControlWrapper extends Draggable {
           controlId={this.props.metadata.id}
           controlName={this.props.metadata.name}
           deleteControl={this.props.deleteControl}
+          dispatch={this.props.dispatch}
         />
       );
     }

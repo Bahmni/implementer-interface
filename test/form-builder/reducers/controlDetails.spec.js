@@ -111,13 +111,8 @@ describe('controlDetails', () => {
   describe('formLoad', () => {
     it('should assign all controls on form load', () => {
       const controls = [{
-        type: 'obsControl',
-        concept: {
-          uuid: 'someUuid',
-          datatype: 'text',
-          name: 'controlName',
-        },
         id: 1,
+        name: 'controlName',
         events: {
           onValueChange: 'func(){}',
         },
@@ -127,13 +122,32 @@ describe('controlDetails', () => {
         controls,
       };
       const state = controlDetails({}, action);
-      // eslint-disable-next-line no-shadow
-      const allObsControlEvents = [{
-        id: controls[0].id,
-        name: controls[0].concept.name,
-        events: controls[0].events,
+      expect(state).to.be.eql({ allObsControlEvents: controls });
+    });
+  });
+
+  describe('deleteControl', () => {
+    beforeEach(() => {
+      const controls = [{
+        id: 1,
+        name: 'controlName',
+        events: {
+          onValueChange: 'func(){}',
+        },
       }];
-      expect(state).to.be.eql({ allObsControlEvents });
+      action = {
+        type: 'DELETE_CONTROL',
+        id: controls[0].id,
+      };
+      allObsControlEvents = [{ id: controls[0].id,
+        name: controls[0].name,
+        events: controls[0].events }];
+      expectedStoreState = { allObsControlEvents };
+    });
+
+    it('should delete selected control on delete control', () => {
+      const state = controlDetails({ allObsControlEvents }, action);
+      expect(state).to.be.eql({ allObsControlEvents: [] });
     });
   });
 });

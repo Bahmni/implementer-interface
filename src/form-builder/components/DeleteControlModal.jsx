@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { deleteControl } from 'form-builder/actions/control';
 
 export default class DeleteControlModal extends Component {
 
@@ -7,6 +8,7 @@ export default class DeleteControlModal extends Component {
     e.preventDefault();
     this.props.deleteControl(this.props.controlId);
     this.props.closeModal();
+    this.props.dispatch(deleteControl(this.props.controlId));
   }
 
   handleEsc(e) {
@@ -45,4 +47,5 @@ DeleteControlModal.propTypes = {
   controlId: PropTypes.string,
   controlName: PropTypes.string,
   deleteControl: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };

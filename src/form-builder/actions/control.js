@@ -39,3 +39,5 @@ export const clearTranslations = () => ({ type: 'CLEAR_TRANSLATIONS' });
 export const formConditionsEventUpdate = (events) => ({ type: 'FORM_CONDITIONS_CHANGED', events });
 
 export const formLoad = (controls) => ({ type: 'FORM_LOAD', controls });
+
+export const deleteControl = (id) => ({ type: 'DELETE_CONTROL', id });

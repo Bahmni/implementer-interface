@@ -108,11 +108,20 @@ describe('control', () => {
 
   describe('formLoad', () => {
     it('should return the controls and changed source', () => {
-      const controls = { id: 1, name,
-        events: { onValueChange: "function(){console.log('test');}" } };
+      const controls = [{ id: 1, name,
+        events: { onValueChange: "function(){console.log('test');}" } }];
       const action = control.formLoad(controls);
       expect(action.type).to.eql('FORM_LOAD');
       expect(action.controls).to.eql(controls);
+    });
+  });
+
+  describe('deleteControl', () => {
+    it('should return the control id and action', () => {
+      const ctrl = { id: 1, name, events: undefined };
+      const action = control.deleteControl(ctrl.id);
+      expect(action.type).to.eql('DELETE_CONTROL');
+      expect(action.id).to.eql(ctrl.id);
     });
   });
 

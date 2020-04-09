@@ -13,7 +13,7 @@ const controlDetails = (store = {}, action) => {
           control.id !== action.metadata.id);
         storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(
           { id: action.metadata.id,
-            name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
+            name: action.metadata.concept ? action.metadata.concept.name : undefined,
             events: action.metadata.events });
       }
       return Object.assign({}, storeClone, { selectedControl: action.metadata });
@@ -34,9 +34,14 @@ const controlDetails = (store = {}, action) => {
       );
       return cloneDeep(store);
     case 'FORM_LOAD':
-      return Object.assign({}, store, { allObsControlEvents:
-          action.controls.map(e => ({ id: e.id,
-            name: e.concept !== undefined ? e.concept.name : undefined, events: e.events })) });
+      return Object.assign({}, store, { allObsControlEvents: action.controls });
+
+    case 'DELETE_CONTROL':
+      storeClone = cloneDeep(store);
+      storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
+          control.id !== action.id);
+      return storeClone;
+
     case 'DRAG_SOURCE_CHANGED':
       return Object.assign({}, store, { dragSourceCell: action.cell });
 
