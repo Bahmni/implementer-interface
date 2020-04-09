@@ -178,6 +178,16 @@
   z-index: 1002 !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.line-break-2 {
+  display: block;
+  margin-bottom: 2em;
+}
+
+.line-break-3 {
+  display: block;
+  margin-bottom: 3em;
+}
+
 .disable-image-and-video-upload {
     .image-upload {
       cursor: not-allowed;
@@ -238,15 +248,4 @@
       }
     }
   }
-}
-
-
-.line-break-2 {
-  display: block;
-  margin-bottom: 2em;
-}
-
-.line-break-3 {
-  display: block;
-  margin-bottom: 3em;
 }
