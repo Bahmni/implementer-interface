@@ -32,6 +32,7 @@ export default class ObsControlScriptEditorModal extends Component {
     if (scriptEditorTextArea !== null) {
       this.codeMirrorEditor = CodeMirror.fromTextArea(scriptEditorTextArea, {
         mode: { name: 'javascript', globalVars: true },
+        lineNumbers: true,
         autofocus: false,
         autoCloseBrackets: true,
         readOnly: true,
@@ -48,18 +49,22 @@ export default class ObsControlScriptEditorModal extends Component {
       this.prevScriptEditorTextArea = script;
     }
   }
+
   getLabel() {
     if (this.props.titleId === null) {
-      return (<label className="label-key" >{this.props.titleName}</label>);
+      return (<label className="label-key">{this.props.titleName}</label>);
       // eslint-disable-next-line no-else-return
-    } else {
-      return (<div>
-        <label className="label-key" >Control Id: </label>
-        <label className="label-value" >{this.props.titleId}</label>
-        <label className="label-key" >Name: </label>
-        <label className="label-value" >{this.props.titleName}</label>
-      </div>);
     }
+    return (
+      <div className="control-event-label">
+        <div>
+          <label className="label-key">Control Id</label>
+          <label className="label-value">{this.props.titleId}</label>
+          <label className="label-key">Name</label>
+          <label className="label-value">{this.props.titleName}</label>
+        </div>
+        <i className="fa fa-times"></i>
+      </div>);
   }
 
   render() {
@@ -70,7 +75,6 @@ export default class ObsControlScriptEditorModal extends Component {
     return (
       <div className="control-modal">
         {this.getLabel()}
-        <span className="line-break-2"></span>
         <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.setScriptEditorTextArea}

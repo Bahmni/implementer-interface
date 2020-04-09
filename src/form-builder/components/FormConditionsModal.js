@@ -58,17 +58,13 @@ export default class FormConditionsModal extends Component {
           <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
 
             <div className="left-panel" >
-              <br />
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormInit, null,
                 'Form Event')}
-              <br />
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormSave, null,
                 'Save Event')}
-              <br />
             </div>
             <div className="right-panel" >
-              <br />
-              <div>
+              <div className="control-events-header">
                 <label className="label" >Control Events:</label>
                 <select className="obs-dropdown" onChange={this.updateSelectedOption}>
                   <option key="0" value="0" >Select Control</option>)
@@ -76,7 +72,6 @@ export default class FormConditionsModal extends Component {
                     <option key={e.id} value={e.id} >{e.name}</option>)}
                 </select>
               </div>
-              <span className="line-break-3"></span>
               <div>
                 {
                   ObsWithControlEvents.map((e) =>
