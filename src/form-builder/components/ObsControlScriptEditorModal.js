@@ -21,7 +21,6 @@ export default class ObsControlScriptEditorModal extends Component {
     super(props);
     this.state = { notification: {}, codeMirrorEditor: {} };
     this.codeMirrorEditor = null;
-    this.prevScriptEditorTextArea = null;
   }
 
   componentDidMount() {
@@ -39,14 +38,6 @@ export default class ObsControlScriptEditorModal extends Component {
       this.codeMirrorEditor.on('change', () => {
         this.codeMirrorEditor.save();
       });
-    }
-  }
-  componentDidUpdate() {
-    if (this.prevScriptEditorTextArea !== this.props.script) {
-      const script = this.props.script === undefined ? '' : this.props.script;
-      this.codeMirrorEditor.setValue(script);
-      this.props.textAreaRef.current.value = script;
-      this.prevScriptEditorTextArea = script;
     }
   }
 
