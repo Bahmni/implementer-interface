@@ -70,7 +70,7 @@ describe('FormDetails', () => {
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
-  it('should render with column side scroll when form data is present', () => {
+  it('should render form title when form data is present without version', () => {
     const formDataWithoutVersion = {
       id: 1,
       name: 'someFormName',
@@ -89,8 +89,6 @@ describe('FormDetails', () => {
       </Provider>
     );
     expect(wrapper.find('.header-title').at(0).text()).to.eql('someFormName  - Draft');
-    // canvas.find('.form-builder-canvas').simulate('click');
-    // const scrollInstance = wrapper.find('.column-side');
   });
   it('should render null when form data is not present', () => {
     wrapper = mount(

@@ -73,7 +73,7 @@ describe('controlDetails', () => {
     });
 
     it('should add selected control id to store and assign all controls ' +
-      'when allObsControlEvents are {}', () => {
+      'when allObsControlEvents are not empty', () => {
       const state = controlDetails({ allObsControlEvents }, action);
       expect(state).to.be.eql(expectedStoreState);
     });
