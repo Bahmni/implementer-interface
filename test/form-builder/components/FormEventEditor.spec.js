@@ -7,7 +7,12 @@ import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import { getStore } from 'test/utils/storeHelper';
 
-import { formEventUpdate, saveEventUpdate, setChangedProperty } from 'form-builder/actions/control';
+import {
+  formEventUpdate,
+  formLoad,
+  saveEventUpdate,
+  setChangedProperty,
+} from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
 
@@ -117,3 +122,44 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_false', () => {
   });
 });
 
+describe('Update All Scripts', () => {
+  let wrapper;
+  const DummyComponent = () => <div></div>;
+  let store;
+
+  beforeEach(() => {
+    store = getStore();
+    wrapper = shallow(
+      <FormEventEditorWithRedux
+        children={<DummyComponent />}
+        store = {store}
+      />);
+  });
+
+  it('should save all control scripts in redux', () => {
+    wrapper.find('FormEventEditor').prop('updateAllScripts')({ controlScripts: [] });
+    sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
+  });
+
+  it('should save form save event in redux', () => {
+    wrapper.find('FormEventEditor').prop('updateAllScripts')({ formSaveEventScript: 'Save Event' });
+    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
+  });
+
+  it('should save form init event in redux', () => {
+    wrapper.find('FormEventEditor').prop('updateAllScripts')({ formInitEventScript: 'Init Event' });
+    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
+  });
+
+  it('should save control events, form save event and form init event in redux', () => {
+    wrapper.find('FormEventEditor').prop('updateAllScripts')({
+      controlScripts: [],
+      formSaveEventScript: 'Save Event',
+      formInitEventScript: 'Init Event',
+    });
+    sinon.assert.callCount(store.dispatch, 3);
+    sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
+    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
+    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
+  });
+});
