@@ -19,7 +19,7 @@ import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations } from '../actions/control';
-import { formEventUpdate, saveEventUpdate, formConditionsEventUpdate } from '../actions/control';
+import { formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
@@ -93,9 +93,6 @@ export class FormDetailContainer extends Component {
         }
         if (this.formEvents.onFormSave !== updatedFormEvents.onFormSave) {
           this.props.dispatch(saveEventUpdate(updatedFormEvents.onFormSave));
-        }
-        if (this.formEvents.onFormConditionsUpdate !== updatedFormEvents.onFormConditionsUpdate) {
-          this.props.dispatch(formConditionsEventUpdate(updatedFormEvents.onFormConditionsUpdate));
         }
         this.formEvents = updatedFormEvents;
       }
@@ -173,9 +170,8 @@ export class FormDetailContainer extends Component {
           }
         }
       });
-      obsControlEvents = obsControlEvents.concat(obsControls.map(ctrl => {
-        return { id: ctrl.id, name: ctrl.concept.name, events: ctrl.events };
-      }));
+      obsControlEvents = obsControlEvents.concat(obsControls.map(ctrl =>
+        ({ id: ctrl.id, name: ctrl.concept.name, events: ctrl.events })));
     }
     return obsControlEvents;
   }

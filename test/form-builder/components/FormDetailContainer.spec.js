@@ -9,7 +9,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
-import { clearTranslations, formLoad } from 'form-builder/actions/control';
+import { clearTranslations } from 'form-builder/actions/control';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
@@ -1070,6 +1070,34 @@ describe('FormDetailContainer', () => {
           events: { onValueChange: 'func(){}' },
         },
       ];
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+      const obsControlEvents = wrapper.instance().getObsControlEvents(formJsonData);
+
+      expect(JSON.stringify(estimatedObsControlEvents)).to.equal(JSON.stringify(obsControlEvents));
+    });
+
+    it('should return empty Obs Control Events when formJsonData without ' +
+      'obsControl  is passed', () => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, {
+          context: {
+            router: {
+              push() {
+              },
+            },
+          },
+        }
+      );
+      wrapper.setState({ formData, httpReceived: true });
+      const formJsonData = {
+        name: 'SectionForm',
+        id: 1,
+        type: 'section',
+      };
+      const estimatedObsControlEvents = [];
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
 
       const obsControlEvents = wrapper.instance().getObsControlEvents(formJsonData);

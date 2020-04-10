@@ -46,6 +46,39 @@ describe('controlDetails', () => {
     });
   });
 
+  describe('selectControl_metada_without_concept', () => {
+    beforeEach(() => {
+      const metadata = {
+        type: 'obsControl',
+        id: 1,
+        events: {
+          onValueChange: 'func(){}',
+        },
+      };
+
+      action = {
+        type: 'SELECT_CONTROL',
+        metadata,
+      };
+      allObsControlEvents = [{ id: action.metadata.id,
+        name: undefined,
+        events: action.metadata.events }];
+      expectedStoreState = { allObsControlEvents, selectedControl: metadata };
+    });
+
+    it('should add selected control id to store and assign all controls ' +
+      'when allObsControlEvents are {}', () => {
+      const state = controlDetails({}, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+
+    it('should add selected control id to store and assign all controls ' +
+      'when allObsControlEvents are {}', () => {
+      const state = controlDetails({ allObsControlEvents }, action);
+      expect(state).to.be.eql(expectedStoreState);
+    });
+  });
+
   describe('deselectControl', () => {
     it('should deselect control', () => {
       action = { type: 'DESELECT_CONTROL' };
@@ -98,7 +131,8 @@ describe('controlDetails', () => {
   describe('sourceChanged', () => {
     it('should change the source', () => {
       action = { type: 'SOURCE_CHANGED', source: 'test', id: 1 };
-      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: '' } }];
+      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: '' } },
+        { id: 2, name: 'ob2', events: { onValueChange: '' } }];
 
       const state = controlDetails({ allObsControlEvents, selectedControl: {} }, action);
 

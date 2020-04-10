@@ -70,6 +70,43 @@ describe('FormDetails', () => {
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
+  it('should render with column side scroll when form data is present', () => {
+    const formDataWithoutVersion = {
+      id: 1,
+      name: 'someFormName',
+      uuid: 'someUuid',
+      resources: [],
+      published: false,
+    };
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          formData={formDataWithoutVersion}
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>
+    );
+    expect(wrapper.find('.header-title').at(0).text()).to.eql('someFormName  - Draft');
+    // canvas.find('.form-builder-canvas').simulate('click');
+    // const scrollInstance = wrapper.find('.column-side');
+  });
+  it('should render null when form data is not present', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>
+    );
+    expect(wrapper).to.have.exactly(0).descendants('ControlPool');
+    expect(wrapper).to.have.exactly(0).descendants('ControlPropertiesContainer');
+    expect(wrapper).to.have.exactly(0).descendants('Canvas');
+  });
+
   it('should pass the given defaultLocale to Canvas', () => {
     wrapper = mount(
       <Provider store={getStore()}>

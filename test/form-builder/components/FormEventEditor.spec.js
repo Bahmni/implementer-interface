@@ -7,6 +7,7 @@ import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import { getStore } from 'test/utils/storeHelper';
 
+<<<<<<< HEAD
 import {
   formEventUpdate,
   formLoad,
@@ -14,6 +15,10 @@ import {
   setChangedProperty,
 } from 'form-builder/actions/control';
 
+=======
+import { saveEventUpdate, formConditionsEventUpdate } from 'form-builder/actions/control';
+import { setChangedProperty } from 'form-builder/actions/control';
+>>>>>>> dec8b99... Yamuna | FBE-22 | Add tests for unit test coverage
 chai.use(chaiEnzyme());
 
 describe('FormEventEditor', () => {
@@ -122,6 +127,7 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_false', () => {
   });
 });
 
+<<<<<<< HEAD
 describe('Update All Scripts', () => {
   let wrapper;
   const DummyComponent = () => <div></div>;
@@ -129,12 +135,27 @@ describe('Update All Scripts', () => {
 
   beforeEach(() => {
     store = getStore();
+=======
+describe('FormEventEditorWithRedux_where_formConditionsEvent_is_true', () => {
+  let wrapper;
+  const DummyComponent = () => <div></div>;
+  const formDetails = {};
+  let property;
+  let state;
+  let store;
+
+  beforeEach(() => {
+    property = { formConditionsEvent: true };
+    state = { controlProperty: { property }, formDetails, controlDetails: {} };
+    store = getStore(state);
+>>>>>>> dec8b99... Yamuna | FBE-22 | Add tests for unit test coverage
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
         store = {store}
       />);
   });
+<<<<<<< HEAD
 
   it('should save all control scripts in redux', () => {
     wrapper.find('FormEventEditor').prop('updateAllScripts')({ controlScripts: [] });
@@ -163,3 +184,40 @@ describe('Update All Scripts', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
   });
 });
+=======
+  it('should update saveEventUpdate property when updateScript is called ' +
+    'and formSaveEvent is true', () => {
+    const script = 'abcd';
+    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+    sinon.assert.calledOnce(store.dispatch);
+    sinon.assert.calledOnce(store.dispatch
+      .withArgs(formConditionsEventUpdate(script)));
+  });
+});
+
+
+describe('FormEventEditorWithRedux_where_formConditionsEvent_is_false', () => {
+  let wrapper;
+  const DummyComponent = () => <div></div>;
+  const formDetails = {};
+  const property = { formConditionsEvent: false };
+  const state = { controlProperty: { property }, formDetails, controlDetails: {} };
+  const store = getStore(state);
+
+  beforeEach(() => {
+    wrapper = shallow(
+      <FormEventEditorWithRedux
+        children={<DummyComponent />}
+        store = {store}
+      />);
+  });
+
+  it('should update saveEventUpdate property when updateScript ' +
+    'is called and formSaveEvent is false', () => {
+    const script = 'abcd';
+    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+    sinon.assert.callCount(store.dispatch, 0);
+  });
+});
+
+>>>>>>> dec8b99... Yamuna | FBE-22 | Add tests for unit test coverage

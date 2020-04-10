@@ -6,7 +6,8 @@ const controlDetails = (store = {}, action) => {
       let storeClone;
       if (store.allObsControlEvents === undefined) {
         storeClone = Object.assign({}, store, { allObsControlEvents: [{ id: action.metadata.id,
-          name: action.metadata.concept.name, events: action.metadata.events }] });
+          name: action.metadata.concept ? action.metadata.concept.name : undefined,
+          events: action.metadata.events }] });
       } else {
         storeClone = store;
         storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>

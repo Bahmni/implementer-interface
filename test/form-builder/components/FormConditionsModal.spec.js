@@ -115,7 +115,20 @@ describe('FormConditionsModal', () => {
     sinon.assert.calledOnce(closeSpy);
   });
 
-  it.skip('should rerender ObsControlScriptEditorModal on change  of obs dropdown', () => {
+  it.skip('should obs dropdown not contain any option other than select option', () => {
+    closeSpy = sinon.spy();
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        formDetails={formDetails}
+        formTitle={formTitle}
+        script={script}
+        updateScript={() => {}}
+      />);
+    expect(wrapper.find('.obs-dropdown option').length).to.eq(1);
+  });
+
+  it('should rerender ObsControlScriptEditorModal on change  of obs dropdown', () => {
     closeSpy = sinon.spy();
     formControlEvents = [{ id: '1', name: 'obs1' }];
     wrapper = shallow(
@@ -128,8 +141,7 @@ describe('FormConditionsModal', () => {
         updateScript={() => {}}
       />);
     wrapper.find('.obs-dropdown').simulate('change', { target: { value: '1' } });
-    expect(wrapper.state('selectedControlEventTitleId')).to.eq(formControlEvents[0].id);
-    expect(wrapper.state('selectedControlEventTitleName')).to.eq(formControlEvents[0].name);
+    expect(wrapper.state('controlsWithoutEvents').size).to.eq(0);
   });
 
   it('should render save button', () => {
