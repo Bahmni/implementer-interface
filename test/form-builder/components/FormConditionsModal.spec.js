@@ -8,8 +8,6 @@ chai.use(chaiEnzyme());
 
 describe('FormConditionsModal', () => {
   let wrapper;
-  // eslint-disable-next-line no-unused-vars
-  let ObsControlScriptEditorModalStub;
   let closeSpy;
   let formControlEvents = [];
   const formDetails = {};
@@ -29,7 +27,7 @@ describe('FormConditionsModal', () => {
     expect(wrapper.find('.header-title').at(0).text()).to.eql(`${formTitle} - Form Conditions`);
   });
 
-  it('should call showObsControlScriptEditorModal thrice with no observations ', () => {
+  it('should call showObsControlScriptEditorModal twice with no observations ', () => {
     wrapper = shallow(
       <FormConditionsModal
         close={() => {}}
@@ -42,18 +40,16 @@ describe('FormConditionsModal', () => {
     const wrapperInstance = wrapper.instance();
     sinon.stub(wrapperInstance, 'showObsControlScriptEditorModal');
     wrapperInstance.render();
-    sinon.assert.calledThrice(wrapperInstance.showObsControlScriptEditorModal);
+    sinon.assert.calledTwice(wrapperInstance.showObsControlScriptEditorModal);
     sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
       undefined, null, 'Form Event');
     sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
       undefined, null, 'Save Event');
-    sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined,undefined, undefined);
 
     expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(2);
   });
 
-  it('should call showObsControlScriptEditorModal thrice with observations which has no events'
+  it('should call showObsControlScriptEditorModal twice with observations which has no events'
     , () => {
       formControlEvents = [{ id: '1', name: 'obs1' }];
       wrapper = shallow(
@@ -68,13 +64,11 @@ describe('FormConditionsModal', () => {
       const wrapperInstance = wrapper.instance();
       sinon.stub(wrapperInstance, 'showObsControlScriptEditorModal');
       wrapperInstance.render();
-      sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 3);
+      sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 2);
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
       undefined, null, 'Form Event');
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
       undefined, null, 'Save Event');
-      sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, undefined, undefined);
       expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(2);
     });
 
@@ -93,15 +87,15 @@ describe('FormConditionsModal', () => {
       const wrapperInstance = wrapper.instance();
       sinon.stub(wrapperInstance, 'showObsControlScriptEditorModal');
       wrapperInstance.render();
-      sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 4);
+      const dropDown = wrapper.find('.obs-dropdown');
+      expect(dropDown.length).to.eq(0);
+      sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 3);
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, null, 'Form Event');
+      undefined, null, 'Form Event', { current: null });
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, null, 'Save Event');
-      // sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      //  formControlEvents[0].events, formControlEvents[0].id, formControlEvents[0].name);
+      undefined, null, 'Save Event', { current: null });
       sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
-      undefined, undefined, undefined);
+          'func1(){}', formControlEvents[0].id, formControlEvents[0].name, { current: null });
       expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(3);
     });
 
@@ -150,5 +144,55 @@ describe('FormConditionsModal', () => {
       />);
     expect(wrapper.find('.btn--highlight').length).to.eql(1);
     expect(wrapper.find('.btn--highlight').text()).to.eql('Save');
+  });
+
+  it('should render dropdown and control event editors according to control events passed', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } },
+      { id: '2', name: 'obs2', events: undefined }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateScript={() => {}}
+        />);
+    const wrapperInstance = wrapper.instance();
+    sinon.stub(wrapperInstance, 'showObsControlScriptEditorModal');
+    wrapperInstance.render();
+    const dropDown = wrapper.find('.obs-dropdown option');
+    expect(dropDown).to.have.lengthOf(2);
+    sinon.assert.callCount(wrapperInstance.showObsControlScriptEditorModal, 3);
+    sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
+        undefined, null, 'Form Event', { current: null });
+    sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
+        undefined, null, 'Save Event', { current: null });
+    sinon.assert.calledWith(wrapperInstance.showObsControlScriptEditorModal,
+        'func1(){}', formControlEvents[0].id, formControlEvents[0].name, { current: null });
+    expect(wrapper.find('ObsControlScriptEditorModal').length).to.eq(3);
+  });
+
+  it('should update state variables on dropdown selection', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } },
+      { id: '2', name: 'obs2', events: undefined }];
+    const value = '2';
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateScript={() => {}}
+        />);
+    const wrapperInstance = wrapper.instance();
+    sinon.stub(wrapperInstance, 'updateDropDownSelection');
+    wrapperInstance.render();
+
+    const drop = wrapper.find('.obs-dropdown');
+    drop.simulate('change', { target: { value } });
+    expect(wrapper.state().controlsWithEvents).to.have.all.keys('1', '2');
+    expect(wrapper.state().controlsWithoutEvents).to.be.empty;
   });
 });
