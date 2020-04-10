@@ -115,17 +115,19 @@ describe('FormConditionsModal', () => {
     sinon.assert.calledOnce(closeSpy);
   });
 
-  it.skip('should obs dropdown not contain any option other than select option', () => {
+  it('should obs dropdown not contain any option when no obs controls without events', () => {
     closeSpy = sinon.spy();
+    formControlEvents = [];
     wrapper = shallow(
       <FormConditionsModal
         close={closeSpy}
+        controlEvents={formControlEvents}
         formDetails={formDetails}
         formTitle={formTitle}
         script={script}
         updateScript={() => {}}
       />);
-    expect(wrapper.find('.obs-dropdown option').length).to.eq(1);
+    expect(wrapper.find('.obs-dropdown option').length).to.eq(0);
   });
 
   it('should rerender ObsControlScriptEditorModal on change  of obs dropdown', () => {
