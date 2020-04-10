@@ -22,6 +22,17 @@ describe('ObsControlScriptEditorModal', () => {
     }
   });
 
+  it('should not render anything if no title id is given', () => {
+    wrapper = mount(
+        <ObsControlScriptEditorModal
+          script={controlScript}
+          titleId={undefined}
+          titleName={controlEventTitleName}
+        />);
+    // eslint-disable-next-line no-unused-expressions
+    expect(wrapper).to.be.empty;
+  });
+
   it('should render obs control script editor modal', () => {
     wrapper = mount(
       <ObsControlScriptEditorModal

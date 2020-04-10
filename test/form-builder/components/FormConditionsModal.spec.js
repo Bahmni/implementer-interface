@@ -198,7 +198,7 @@ describe('FormConditionsModal', () => {
           formDetails={formDetails}
           formTitle={formTitle}
           script={script}
-          updateScript={() => {}}
+          updateAllScripts={() => {}}
         />);
     const wrapperInstance = wrapper.instance();
     sinon.stub(wrapperInstance, 'updateDropDownSelection');
@@ -207,6 +207,101 @@ describe('FormConditionsModal', () => {
     const drop = wrapper.find('.obs-dropdown');
     drop.simulate('change', { target: { value } });
     expect(wrapper.state().controlsWithEvents).to.have.all.keys('1', '2');
+    // eslint-disable-next-line no-unused-expressions
     expect(wrapper.state().controlsWithoutEvents).to.be.empty;
+  });
+
+  it('should remove control from state variable', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateAllScripts={() => {}}
+        />);
+
+    const wrapperInstance = wrapper.instance();
+    // eslint-disable-next-line no-unused-expressions
+    expect(wrapper.state().controlsWithEvents.get('1')).not.be.undefined;
+    wrapperInstance.removeFromMap('controlsWithEvents',
+        { id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } });
+    // eslint-disable-next-line no-unused-expressions
+    expect(wrapper.state().controlsWithEvents.get('1')).be.undefined;
+  });
+
+  it('should initialise state variables based on control events', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } },
+      { id: '2', name: 'obs2', events: undefined }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateAllScripts={() => {}}
+        />);
+    expect(wrapper.state().controlsWithoutEvents.size).to.eq(1);
+    expect(wrapper.state().controlsWithEvents.size).to.eq(1);
+  });
+
+  it('should remove control event from the state variable and add to drop down', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } },
+      { id: '2', name: 'obs2', events: undefined }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateAllScripts={() => {}}
+        />);
+    wrapper.instance().removeControlEvent('1');
+    expect(wrapper.state().controlsWithoutEvents.size).to.eq(2);
+    expect(wrapper.state().controlsWithEvents.size).to.eq(0);
+  });
+
+  it('should add control to state variable', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateAllScripts={() => {}}
+        />);
+
+    const wrapperInstance = wrapper.instance();
+    // eslint-disable-next-line no-unused-expressions
+    expect(wrapper.state().controlsWithEvents.get('2')).be.undefined;
+    wrapperInstance.addToMap('controlsWithEvents', { id: '2', name: 'obs2', events: undefined });
+    // eslint-disable-next-line no-unused-expressions
+    expect(wrapper.state().controlsWithEvents.get('2')).not.be.undefined;
+  });
+
+  it('should add control event from the state variable and remove from drop down', () => {
+    formControlEvents = [{ id: '1', name: 'obs1', events: { onValueChange: 'func1(){}' } },
+      { id: '2', name: 'obs2', events: undefined }];
+    wrapper = shallow(
+        <FormConditionsModal
+          close={() => {}}
+          controlEvents={formControlEvents}
+          formDetails={formDetails}
+          formTitle={formTitle}
+          script={script}
+          updateAllScripts={() => {}}
+        />);
+    const element = { target: {
+      value: '2',
+    } };
+    wrapper.instance().updateDropDownSelection(element);
+    expect(wrapper.state().controlsWithoutEvents.size).to.eq(0);
+    expect(wrapper.state().controlsWithEvents.size).to.eq(2);
   });
 });
