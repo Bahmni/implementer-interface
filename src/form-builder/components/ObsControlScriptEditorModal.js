@@ -70,6 +70,7 @@ export default class ObsControlScriptEditorModal extends Component {
     return (
       <div className="control-modal">
         {this.getLabel()}
+        <span className="line-break-1"></span>
         <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.props.textAreaRef}
