@@ -95,9 +95,6 @@ export default class ObsControlScriptEditorModal extends Component {
   }
 
   render() {
-    if (this.props.titleId === undefined) {
-      return null;
-    }
     return (
       <div className="control-modal">
         {this.getLabel()}

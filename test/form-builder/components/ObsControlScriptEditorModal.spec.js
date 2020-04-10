@@ -46,6 +46,18 @@ describe('ObsControlScriptEditorModal', () => {
     expect(wrapper.find('.control-modal .editor-wrapper').text()).to.eq('');
   });
 
+  it('should not render obs control label when title id is null' +
+    'when controlEventTitleId is null', () => {
+    wrapper = mount(
+      <ObsControlScriptEditorModal
+        script={controlScript}
+        titleId={null}
+        titleName={controlEventTitleName}
+      />);
+    expect(wrapper.find('.control-modal')).to.have.length(1);
+    expect(wrapper.find('.control-modal .label-value')).to.have.length(0);
+  });
+
   it('should have delete icon and click on it should open confirmation popup', () => {
     wrapper = shallow(
         <ObsControlScriptEditorModal
