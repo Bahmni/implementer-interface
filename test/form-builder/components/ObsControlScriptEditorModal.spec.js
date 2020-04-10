@@ -5,6 +5,7 @@ import chai, { expect } from 'chai';
 import ObsControlScriptEditorModal from
     '../../../src/form-builder/components/ObsControlScriptEditorModal';
 import sinon from 'sinon';
+import CodeMirror from 'codemirror';
 
 chai.use(chaiEnzyme());
 
@@ -22,15 +23,21 @@ describe('ObsControlScriptEditorModal', () => {
     }
   });
 
-  it('should not render anything if no title id is given', () => {
+  it('should render codemirror editor if text area ref is not empty', () => {
+    // const mountSpy = sinon.spy(ObsControlScriptEditorModal.prototype, 'componentDidMount');
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+      .callsFake(() => ({ getValue() {return controlScript;}, setValue() {}, save() {},
+        on() {} }));
     wrapper = mount(
-        <ObsControlScriptEditorModal
-          script={controlScript}
-          titleId={undefined}
-          titleName={controlEventTitleName}
-        />);
-    // eslint-disable-next-line no-unused-expressions
-    expect(wrapper).to.be.empty;
+      <ObsControlScriptEditorModal
+        removeControlEvent={removeControlEventSpy}
+        script={controlScript}
+        textAreaRef={{ current: 'values' }}
+        titleId={controlEventTitleId}
+        titleName={controlEventTitleName}
+      />);
+    sinon.assert.calledOnce(codeMirrorStub);
+    // ObsControlScriptEditorModal.prototype.componentDidMount.restore();
   });
 
   it('should render obs control script editor modal', () => {
