@@ -12,6 +12,7 @@ export default class FormConditionsModal extends Component {
     this.initialiseMaps = this.initialiseMaps.bind(this);
     this.addToMap = this.addToMap.bind(this);
     this.removeFromMap = this.removeFromMap.bind(this);
+    this.removeControlEvent = this.removeControlEvent.bind(this);
     props.controlEvents.forEach(control => {
       this[`${control.id}_ref`] = React.createRef();
     });
@@ -57,11 +58,21 @@ export default class FormConditionsModal extends Component {
     this.setState({ [key]: newState });
   }
 
+  removeControlEvent(controlId) {
+    const control = this.state.controlsWithEvents.get(controlId);
+    if (control && control.events) {
+      control.events.onValueChange = undefined;
+    }
+    this.removeFromMap('controlsWithEvents', control);
+    this.addToMap('controlsWithoutEvents', control);
+  }
+
   showObsControlScriptEditorModal(controlScript, controlEventTitleId,
                                   controlEventTitleName, editorRef) {
     if (controlEventTitleId !== undefined) {
       return (<ObsControlScriptEditorModal
         close={this.props.close}
+        removeControlEvent={this.removeControlEvent}
         script={controlScript}
         textAreaRef={editorRef}
         titleId={controlEventTitleId}
@@ -117,7 +128,8 @@ export default class FormConditionsModal extends Component {
                 <select className="obs-dropdown" onChange={this.updateDropDownSelection}>
                   <option key="0" value="0">Select Control</option>
                   {[...this.state.controlsWithoutEvents.keys()].map(key =>
-                      <option key={key} value={key}>{this.state.controlsWithoutEvents.get(key).name}
+                      <option key={key} value={key}>
+                        {`${key} - ${this.state.controlsWithoutEvents.get(key).name}`}
                       </option>)
                   }
                 </select>}

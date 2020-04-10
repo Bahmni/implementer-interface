@@ -42,7 +42,7 @@ describe('RemoveControlEventConfirmation', () => {
     sinon.assert.calledOnce(closeSpy);
   });
 
-  it('should call update script once click save button', () => {
+  it('should call remove and close func on click of yes button', () => {
     wrapper = shallow(
         <RemoveControlEventConfirmation
           close={closeSpy}

@@ -8,7 +8,7 @@ const RemoveControlEventConfirmation = props => <div className="remove-control-e
       <span>Are you sure, you want to delete the control event?</span>
     </div>
     <div className="button-wrapper">
-      <button className="btn" onClick={() => props.removeAndClose()}
+      <button className="btn" onClick={props.removeAndClose}
         type="reset"
       >Yes</button>
       <button className="btn btn--highlight" onClick={props.close}>No</button>

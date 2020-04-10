@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Popup from 'reactjs-popup';
 import PropTypes from 'prop-types';
 import CodeMirror from 'codemirror';
 import { JSHINT } from 'jshint';
@@ -13,14 +14,19 @@ import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import _ from 'lodash';
+import RemoveControlEventConfirmation from
+      'form-builder/components/RemoveControlEventConfirmation.jsx';
 
 window.JSHINT = JSHINT;
 
 export default class ObsControlScriptEditorModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { notification: {}, codeMirrorEditor: {} };
+    this.state = { notification: {}, codeMirrorEditor: {}, displayConfirmationPopup: false };
     this.codeMirrorEditor = null;
+    this.closeEditor = this.closeEditor.bind(this);
+    this.showConfirmationPopup = this.showConfirmationPopup.bind(this);
+    this.closeConfirmationPopup = this.closeConfirmationPopup.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +48,7 @@ export default class ObsControlScriptEditorModal extends Component {
   }
 
   componentWillUnmount() {
+    // eslint-disable-next-line no-unused-expressions
     this.codeMirrorEditor && this.codeMirrorEditor.off('change');
   }
 
@@ -58,36 +65,58 @@ export default class ObsControlScriptEditorModal extends Component {
           <label className="label-key">Name</label>
           <label className="label-value">{this.props.titleName}</label>
         </div>
-        <i className="fa fa-times" />
+        <i className="fa fa-times" onClick={this.closeEditor} />
       </div>);
+  }
+
+  closeEditor() {
+    this.setState({ displayConfirmationPopup: true });
+  }
+
+  closeConfirmationPopup() {
+    this.setState({ displayConfirmationPopup: false });
+  }
+
+  showConfirmationPopup() {
+    return (<Popup className="remove-control-confirmation-popup"
+      closeOnDocumentClick={false}
+      onClose={() => this.closeConfirmationPopup()}
+      open={this.state.displayConfirmationPopup}
+      position="top center"
+    >
+      <RemoveControlEventConfirmation
+        close={this.closeConfirmationPopup}
+        removeAndClose={() => {
+          this.closeConfirmationPopup();
+          this.props.removeControlEvent(this.props.titleId);
+        }}
+      />
+    </Popup>);
   }
 
   render() {
     if (this.props.titleId === undefined) {
       return null;
     }
-    // eslint-disable-next-line consistent-return
     return (
       <div className="control-modal">
         {this.getLabel()}
-        <span className="line-break-1"></span>
         <div className="text-div" >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.props.textAreaRef}
-          >
-          </textarea>
+          />
         </div>
-        <span className="line-break-2"></span>
+        <span className="line-break-2" />
+        {this.showConfirmationPopup()}
       </div>
     );
   }
 }
 
 ObsControlScriptEditorModal.propTypes = {
-  close: PropTypes.func.isRequired,
+  removeControlEvent: PropTypes.func.isRequired,
   script: PropTypes.string,
   textAreaRef: PropTypes.object.isRequired,
   titleId: PropTypes.string,
   titleName: PropTypes.string,
 };
-
