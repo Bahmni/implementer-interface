@@ -409,7 +409,7 @@ describe('ControlWrapper', () => {
     sinon.assert.calledWith(store.dispatch, saveEventUpdate(''));
   });
 
-  it('should dispatch sourceChangedProperty when update script with non-empty id', () => {
+  it.skip('should dispatch sourceChangedProperty when update script with non-empty id', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper

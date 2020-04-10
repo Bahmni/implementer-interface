@@ -54,11 +54,22 @@ export class ControlWrapper extends Draggable {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.updateEvents(nextProps, this.props, this.metadata.id);
     const activeControl = (this.metadata.id === nextProps.focusedControl);
     if (!activeControl && nextProps.parentRef) {
       this.setState({ isBeingDragged: nextProps.parentRef.props.isBeingDragged });
     }
     this.setState({ active: activeControl });
+  }
+
+  updateEvents(nextProps, prevProps, metadataId) {
+    if (nextProps.allObsControlEvents && prevProps.allObsControlEvents) {
+      const newControl = nextProps.allObsControlEvents.find(control => control.id === metadataId);
+      const oldControl = prevProps.allObsControlEvents.find(control => control.id === metadataId);
+      if (newControl && newControl.events !== oldControl && oldControl.events) {
+        this.metadata.events = newControl && newControl.events;
+      }
+    }
   }
 
   conditionallyAddConcept(newProps) {
@@ -171,7 +182,7 @@ export class ControlWrapper extends Draggable {
   updateScript(script, properties) {
     if (properties.id) {
       this.props.dispatch(selectControl(this.metadata));
-      this.props.dispatch(sourceChangedProperty(script));
+      this.props.dispatch(sourceChangedProperty(script, properties.id));
     } else {
       const isSaveEvent = properties.property.formSaveEvent;
       if (isSaveEvent) {

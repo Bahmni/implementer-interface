@@ -21,6 +21,7 @@ export default class FormConditionsModal extends Component {
       controlsWithEvents: controls.controlsWithEvents,
       controlsWithoutEvents: controls.controlsWithoutEvents,
     };
+    this.formConditionsSave = this.formConditionsSave.bind(this);
   }
 
   initialiseMaps() {
@@ -65,11 +66,34 @@ export default class FormConditionsModal extends Component {
         textAreaRef={editorRef}
         titleId={controlEventTitleId}
         titleName={controlEventTitleName}
-        updateScript={this.props.updateScript}
       />
       );
     }
     return null;
+  }
+
+  formConditionsSave() {
+    const controlScripts = [];
+    this.props.controlEvents.forEach(control => {
+      const eventScript = this[`${control.id}_ref`].current
+        && this[`${control.id}_ref`].current.value;
+      if (eventScript) {
+        controlScripts.push({
+          id: control.id,
+          name: control.name,
+          events: { onValueChange: eventScript },
+        });
+      } else {
+        controlScripts.push({
+          id: control.id,
+          name: control.name,
+        });
+      }
+    });
+    const formSaveEventScript = this.saveEventRef.current.value;
+    const formInitEventScript = this.formEventRef.current.value;
+    this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
+    this.props.close();
   }
 
   render() {
@@ -110,7 +134,9 @@ export default class FormConditionsModal extends Component {
             </div>
 
           <div className="button-wrapper" >
-            <button className="button btn--highlight" type="submit">
+            <button className="button btn--highlight" onClick={this.formConditionsSave}
+              type="submit"
+            >
               Save
             </button>
             <button className="btn" onClick={() => this.props.close()} type="reset">
@@ -130,7 +156,7 @@ FormConditionsModal.propTypes = {
     events: PropTypes.object,
   }),
   formTitle: PropTypes.string,
-  updateScript: PropTypes.func.isRequired,
+  updateAllScripts: PropTypes.func.isRequired,
 };
 
 FormConditionsModal.defaultProps = {

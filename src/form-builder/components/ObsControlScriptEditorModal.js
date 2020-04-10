@@ -36,14 +36,22 @@ export default class ObsControlScriptEditorModal extends Component {
         lint: true,
         extraKeys: { 'Ctrl-Space': 'autocomplete' },
       });
+      this.codeMirrorEditor.on('change', () => {
+        this.codeMirrorEditor.save();
+      });
     }
   }
   componentDidUpdate() {
     if (this.prevScriptEditorTextArea !== this.props.script) {
       const script = this.props.script === undefined ? '' : this.props.script;
       this.codeMirrorEditor.setValue(script);
+      this.props.textAreaRef.current.value = script;
       this.prevScriptEditorTextArea = script;
     }
+  }
+
+  componentWillUnmount() {
+    this.codeMirrorEditor && this.codeMirrorEditor.off('change');
   }
 
   getLabel() {
@@ -89,6 +97,5 @@ ObsControlScriptEditorModal.propTypes = {
   textAreaRef: PropTypes.object.isRequired,
   titleId: PropTypes.string,
   titleName: PropTypes.string,
-  updateScript: PropTypes.func.isRequired,
 };
 

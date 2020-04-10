@@ -86,10 +86,7 @@ export default class FormDetail extends Component {
                 controlEvents={props.formControlEvents}
                 formDetails={props.formDetails}
                 formTitle={this.formTitle(name, version, published, editable)}
-                updateScript={(scriptToUpdate) => {
-                  props.updateScript(scriptToUpdate);
-                  props.closeEventEditor();
-                }}
+                updateAllScripts={props.updateAllScripts}
               />
             </Popup>
             }

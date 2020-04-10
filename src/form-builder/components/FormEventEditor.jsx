@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
+import { formEventUpdate, formLoad, saveEventUpdate } from 'form-builder/actions/control';
 import { setChangedProperty, formConditionsEventUpdate } from 'form-builder/actions/control';
 export const FormEventEditor = (props) => {
-  const { property, formDetails, closeEventEditor, formControlEvents } = props;
+  const { property, formDetails, closeEventEditor, formControlEvents, updateAllScripts } = props;
   const updateScript = (script) => {
     props.updateScript(script, property);
   };
@@ -12,7 +12,7 @@ export const FormEventEditor = (props) => {
   return (
     <div>
       {React.cloneElement(props.children, { property, formDetails, closeEventEditor,
-        formControlEvents, updateScript })}
+        formControlEvents, updateScript, updateAllScripts })}
     </div>
   );
 };
@@ -33,8 +33,8 @@ FormEventEditor.propTypes = {
     formSaveEvent: PropTypes.bool,
     formConditionsEvent: PropTypes.bool,
   }),
+  updateAllScripts: PropTypes.func.isRequired,
   updateScript: PropTypes.func.isRequired,
-
 };
 
 const mapStateToProps = (state) => ({
@@ -55,6 +55,17 @@ const mapDispatchToProps = (dispatch) => ({
       dispatch(formEventUpdate(script));
     } else if (property.formConditionsEvent) {
       dispatch(formConditionsEventUpdate(script));
+    }
+  },
+  updateAllScripts: ({ controlScripts, formSaveEventScript, formInitEventScript }) => {
+    if (formSaveEventScript) {
+      dispatch(saveEventUpdate(formSaveEventScript));
+    }
+    if (formInitEventScript) {
+      dispatch(formEventUpdate(formInitEventScript));
+    }
+    if (controlScripts) {
+      dispatch(formLoad(controlScripts));
     }
   },
 });
