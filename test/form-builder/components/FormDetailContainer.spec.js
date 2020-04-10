@@ -114,6 +114,15 @@ describe('FormDetailContainer', () => {
     canvas.restore();
   });
 
+  afterEach(() => {
+    if (httpInterceptor && httpInterceptor.get.restore) {
+      httpInterceptor.get.restore();
+    }
+    if (httpInterceptor && httpInterceptor.post.restore) {
+      httpInterceptor.post.restore();
+    }
+  });
+
   it('should render appropriate controls with appropriate props', () => {
     sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
     const wrapper = mount(
@@ -154,29 +163,6 @@ describe('FormDetailContainer', () => {
   });
 
 
-  it('should call the appropriate endpoint to fetch the formData', (done) => {
-    const params =
-      'v=custom:(id,uuid,name,version,published,auditInfo,' +
-      'resources:(value,dataType,uuid))';
-    const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
-    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
-    const wrapper = mount(
-      <Provider store={getStore()}>
-      <FormDetailContainer
-        {...defaultProps}
-      /></Provider>, { context }
-    );
-    setTimeout(() => {
-      wrapper.find('FormDetailContainer').update();
-      const formDetail = wrapper.find('FormDetail');
-      expect(formDetail.prop('formData')).to.eql(formData);
-      httpInterceptor.get.restore();
-      done();
-    }, 500);
-
-    sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
-  });
-
   it('should not show publish button & save button before get formData', () => {
     const wrapper = mount(
       <Provider store={getStore()}>
@@ -210,6 +196,29 @@ describe('FormDetailContainer', () => {
       httpInterceptor.post.restore();
       done();
     }, 500);
+  });
+
+  it('should call the appropriate endpoint to fetch the formData', (done) => {
+    const params =
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
+    const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
+    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
+    const wrapper = mount(
+      <Provider store={getStore()}>
+      <FormDetailContainer
+        {...defaultProps}
+      /></Provider>, { context }
+    );
+    setTimeout(() => {
+      wrapper.find('FormDetailContainer').update();
+      const formDetail = wrapper.find('FormDetail');
+      expect(formDetail.prop('formData')).to.eql(formData);
+      httpInterceptor.get.restore();
+      done();
+    }, 500);
+
+    sinon.assert.calledWith(httpInterceptor.get, formResourceURL);
   });
 
   it('should call the cloneFormResource when name changed and click save button', () => {
