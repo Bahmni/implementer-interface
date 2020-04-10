@@ -409,7 +409,7 @@ describe('ControlWrapper', () => {
     sinon.assert.calledWith(store.dispatch, saveEventUpdate(''));
   });
 
-  it.skip('should dispatch sourceChangedProperty when update script with non-empty id', () => {
+  it('should dispatch sourceChangedProperty when update script with non-empty id', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
@@ -420,7 +420,7 @@ describe('ControlWrapper', () => {
 
     instance.updateScript('', { id: '1' });
 
-    sinon.assert.calledWith(store.dispatch, sourceChangedProperty(''));
+    sinon.assert.calledWith(store.dispatch, sourceChangedProperty('', '1'));
   });
 
   it('getJsonDefinition should return json if present', () => {
