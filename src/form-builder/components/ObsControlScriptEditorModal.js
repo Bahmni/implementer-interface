@@ -16,6 +16,7 @@ import 'codemirror/addon/edit/closebrackets.js';
 import _ from 'lodash';
 import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
+import jsBeautifier from 'js-beautify';
 
 window.JSHINT = JSHINT;
 
@@ -32,6 +33,8 @@ export default class ObsControlScriptEditorModal extends Component {
   componentDidMount() {
     const scriptEditorTextArea = this.props.textAreaRef && this.props.textAreaRef.current;
     if (!_.isNil(scriptEditorTextArea)) {
+      scriptEditorTextArea.value = jsBeautifier.js_beautify(scriptEditorTextArea.value,
+          { indent_size: 2, space_in_empty_paren: true });
       this.codeMirrorEditor = CodeMirror.fromTextArea(scriptEditorTextArea, {
         mode: { name: 'javascript', globalVars: true },
         lineNumbers: true,

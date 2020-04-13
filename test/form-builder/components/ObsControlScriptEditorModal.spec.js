@@ -6,12 +6,14 @@ import ObsControlScriptEditorModal from
     '../../../src/form-builder/components/ObsControlScriptEditorModal';
 import sinon from 'sinon';
 import CodeMirror from 'codemirror';
+import jsBeautifier from 'js-beautify';
 
 chai.use(chaiEnzyme());
 
 describe('ObsControlScriptEditorModal', () => {
   let wrapper;
   let codeMirrorStub;
+  let beautifierStub;
   const controlScript = '';
   const controlEventTitleId = '1';
   const controlEventTitleName = 'title';
@@ -21,13 +23,16 @@ describe('ObsControlScriptEditorModal', () => {
     if (codeMirrorStub) {
       codeMirrorStub.restore();
     }
+    if (beautifierStub) {
+      beautifierStub.restore();
+    }
   });
 
-  it('should render codemirror editor if text area ref is not empty', () => {
-    // const mountSpy = sinon.spy(ObsControlScriptEditorModal.prototype, 'componentDidMount');
+  it('should render codemirror editor formatted data if text area ref is not empty', () => {
     codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
       .callsFake(() => ({ getValue() {return controlScript;}, setValue() {}, save() {},
         on() {} }));
+    beautifierStub = sinon.stub(jsBeautifier, 'js_beautify').callsFake(() => '');
     wrapper = mount(
       <ObsControlScriptEditorModal
         removeControlEvent={removeControlEventSpy}
@@ -37,13 +42,14 @@ describe('ObsControlScriptEditorModal', () => {
         titleName={controlEventTitleName}
       />);
     sinon.assert.calledOnce(codeMirrorStub);
-    // ObsControlScriptEditorModal.prototype.componentDidMount.restore();
+    sinon.assert.calledOnce(beautifierStub);
   });
 
   it('should render obs control script editor modal', () => {
     wrapper = mount(
       <ObsControlScriptEditorModal
         script={controlScript}
+        textAreaRef={undefined}
         titleId={controlEventTitleId}
         titleName={controlEventTitleName}
       />);
@@ -58,6 +64,7 @@ describe('ObsControlScriptEditorModal', () => {
     wrapper = mount(
       <ObsControlScriptEditorModal
         script={controlScript}
+        textAreaRef={undefined}
         titleId={null}
         titleName={controlEventTitleName}
       />);
