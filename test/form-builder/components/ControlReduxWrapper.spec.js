@@ -505,4 +505,21 @@ describe('ControlWrapper', () => {
 
     expect(jsonDefinition.events).to.eql(undefined);
   });
+
+  it('should update control event in metadata object from the redux state', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        allObsControlEvents={[{
+          id: '1',
+        }]}
+        dispatch={ store.dispatch }
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+      />);
+    const instance = controlWrapper.instance();
+    controlWrapper.setProps({ allObsControlEvents: [{ id: '1', events: 'Control Event' }] });
+
+    expect(instance.metadata.events).to.eq('Control Event');
+  });
 });

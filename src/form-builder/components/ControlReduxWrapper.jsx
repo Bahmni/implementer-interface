@@ -66,8 +66,10 @@ export class ControlWrapper extends Draggable {
     if (nextProps.allObsControlEvents && prevProps.allObsControlEvents) {
       const newControl = nextProps.allObsControlEvents.find(control => control.id === metadataId);
       const oldControl = prevProps.allObsControlEvents.find(control => control.id === metadataId);
-      if (newControl && newControl.events !== oldControl && oldControl.events) {
-        this.metadata.events = newControl && newControl.events;
+      if (newControl && oldControl) {
+        if (newControl.events !== oldControl.events) {
+          this.metadata.events = newControl && newControl.events;
+        }
       }
     }
   }
