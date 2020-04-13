@@ -98,8 +98,8 @@ export default class FormConditionsModal extends Component {
         });
       }
     });
-    const formSaveEventScript = this.saveEventRef.current.value;
-    const formInitEventScript = this.formEventRef.current.value;
+    const formSaveEventScript = this.saveEventRef.current && this.saveEventRef.current.value;
+    const formInitEventScript = this.saveEventRef.current && this.formEventRef.current.value;
     this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
     this.props.close();
   }

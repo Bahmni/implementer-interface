@@ -304,4 +304,66 @@ describe('FormConditionsModal', () => {
     expect(wrapper.state().controlsWithoutEvents.size).to.eq(0);
     expect(wrapper.state().controlsWithEvents.size).to.eq(2);
   });
+
+  it('should update all controls events, form event and save event and close the popup when save ' +
+    'is clicked', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    const controlEvents = [
+      {
+        id: 1,
+        name: 'Control 1',
+      },
+      {
+        id: 2,
+        name: 'Control 2',
+        events: { onValueChange: 'Control Event' },
+      },
+    ];
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={controlEvents}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    wrapper.instance().saveEventRef = { current: { value: 'form save event' } };
+    wrapper.instance().formEventRef = { current: { value: 'form init event' } };
+    wrapper.instance()['2_ref'] = { current: { value: 'Control Event' } };
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.calledOnce(updateAllScriptsSpy);
+    expect(JSON.stringify(updateAllScriptsSpy.getCall(0).args[0].controlScripts))
+      .to.deep.eql(JSON.stringify(controlEvents));
+    expect(updateAllScriptsSpy.getCall(0).args[0].formSaveEventScript).to.eq('form save event');
+    expect(updateAllScriptsSpy.getCall(0).args[0].formInitEventScript).to.eq('form init event');
+    sinon.assert.calledOnce(closeSpy);
+  });
+
+  it('should call updateAllScripts without events when there are no control events, form save ' +
+    'event and form init event', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    const controlEvents = [];
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={controlEvents}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.calledOnce(updateAllScriptsSpy);
+    expect([]).to.deep.eql(controlEvents);
+    expect(updateAllScriptsSpy.getCall(0).args[0].formSaveEventScript).to.eq(null);
+    expect(updateAllScriptsSpy.getCall(0).args[0].formInitEventScript).to.eq(null);
+    sinon.assert.calledOnce(closeSpy);
+  });
 });
