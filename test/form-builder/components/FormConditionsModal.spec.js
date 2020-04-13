@@ -415,13 +415,15 @@ describe('FormConditionsModal', () => {
         script={script}
         updateAllScripts={updateAllScriptsSpy}
       />);
-    wrapper.instance().saveEventRef = { current: { value: 'Form Save Event' } };
+    const instance = wrapper.instance();
+    instance.saveEventRef = { current: { value: 'Form Save Event' } };
     const saveButton = wrapper.find('.btn--highlight');
     saveButton.simulate('click');
 
     sinon.assert.notCalled(updateAllScriptsSpy);
     sinon.assert.notCalled(closeSpy);
     expect(wrapper.find(NotificationContainer).length).to.eq(1);
+    expect(instance.state.formEventsErrors.hasFormSaveError).to.eq(true);
   });
 
   it('should not update the form init event when there is error', () => {
@@ -436,12 +438,14 @@ describe('FormConditionsModal', () => {
         script={script}
         updateAllScripts={updateAllScriptsSpy}
       />);
-    wrapper.instance().formEventRef = { current: { value: 'Form Init Event' } };
+    const instance = wrapper.instance();
+    instance.formEventRef = { current: { value: 'Form Init Event' } };
     const saveButton = wrapper.find('.btn--highlight');
     saveButton.simulate('click');
 
     sinon.assert.notCalled(updateAllScriptsSpy);
     sinon.assert.notCalled(closeSpy);
     expect(wrapper.find(NotificationContainer).length).to.eq(1);
+    expect(instance.state.formEventsErrors.hasFormInitError).to.eq(true);
   });
 });

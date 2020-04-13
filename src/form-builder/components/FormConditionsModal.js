@@ -24,6 +24,7 @@ export default class FormConditionsModal extends Component {
       controlsWithEvents: controls.controlsWithEvents,
       controlsWithoutEvents: controls.controlsWithoutEvents,
       errorMessage: {},
+      formEventsErrors: { hasFormSaveError: false, hasFormInitError: false },
     };
     this.formConditionsSave = this.formConditionsSave.bind(this);
     this.updateErrorInMap = this.updateErrorInMap.bind(this);
@@ -132,9 +133,11 @@ export default class FormConditionsModal extends Component {
     });
     const formSaveEventScript = this.saveEventRef.current && this.saveEventRef.current.value;
     const formInitEventScript = this.formEventRef.current && this.formEventRef.current.value;
-    if (!this.isValid(formSaveEventScript) || !this.isValid(formInitEventScript)) {
-      hasErrors = true;
-    }
+    const formEventsErrors = { hasFormSaveError: false, hasFormInitError: false };
+    formEventsErrors.hasFormInitError = !this.isValid(formInitEventScript);
+    formEventsErrors.hasFormSaveError = !this.isValid(formSaveEventScript);
+    hasErrors = hasErrors || formEventsErrors.hasFormInitError || formEventsErrors.hasFormSaveError;
+    this.setState({ formEventsErrors });
     if (!hasErrors) {
       this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
       this.props.close();
@@ -162,9 +165,9 @@ export default class FormConditionsModal extends Component {
           <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
             <div className="left-panel" >
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormInit, null,
-                'Form Event', this.formEventRef)}
+                'Form Event', this.formEventRef, this.state.formEventsErrors.hasFormInitError)}
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormSave, null,
-                'Save Event', this.saveEventRef)}
+                'Save Event', this.saveEventRef, this.state.formEventsErrors.hasFormSaveError)}
             </div>
             <div className="right-panel" >
               <div className="control-events-header">
