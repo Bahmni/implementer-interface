@@ -90,4 +90,32 @@ describe('ObsControlScriptEditorModal', () => {
     expect(wrapper.find('Popup').dive().find('RemoveControlEventConfirmation').exists())
         .to.eq(true);
   });
+
+  it('should render error-editor when there is an error in script', () => {
+    wrapper = shallow(
+      <ObsControlScriptEditorModal
+        hasError
+        removeControlEvent = {removeControlEventSpy}
+        script={controlScript}
+        textAreaRef={undefined}
+        titleId={controlEventTitleId}
+        titleName={controlEventTitleName}
+      />);
+
+    expect(wrapper.find('.error-editor').length).to.eq(1);
+  });
+
+  it('should not render error-editor when there is no error in script', () => {
+    wrapper = shallow(
+      <ObsControlScriptEditorModal
+        hasError={false}
+        removeControlEvent = {removeControlEventSpy}
+        script={controlScript}
+        textAreaRef={undefined}
+        titleId={controlEventTitleId}
+        titleName={controlEventTitleName}
+      />);
+
+    expect(wrapper.find('.error-editor').length).to.eq(0);
+  });
 });

@@ -308,6 +308,7 @@ describe('FormConditionsModal', () => {
   it('should update all controls events, form event and save event and close the popup when save ' +
     'is clicked', () => {
     const updateAllScriptsSpy = sinon.spy();
+    const getScript = (eventType) => `function(){console.log("${eventType}");}`;
     closeSpy = sinon.spy();
     const controlEvents = [
       {
@@ -317,7 +318,7 @@ describe('FormConditionsModal', () => {
       {
         id: 2,
         name: 'Control 2',
-        events: { onValueChange: 'Control Event' },
+        events: { onValueChange: getScript('Control Event') },
       },
     ];
     wrapper = shallow(
@@ -329,17 +330,19 @@ describe('FormConditionsModal', () => {
         script={script}
         updateAllScripts={updateAllScriptsSpy}
       />);
-    wrapper.instance().saveEventRef = { current: { value: 'form save event' } };
-    wrapper.instance().formEventRef = { current: { value: 'form init event' } };
-    wrapper.instance()['2_ref'] = { current: { value: 'Control Event' } };
+    wrapper.instance().saveEventRef = { current: { value: getScript('FormSave Event') } };
+    wrapper.instance().formEventRef = { current: { value: getScript('FormInit Event') } };
+    wrapper.instance()['2_ref'] = { current: { value: getScript('Control Event') } };
     const saveButton = wrapper.find('.btn--highlight');
     saveButton.simulate('click');
 
     sinon.assert.calledOnce(updateAllScriptsSpy);
     expect(JSON.stringify(updateAllScriptsSpy.getCall(0).args[0].controlScripts))
       .to.deep.eql(JSON.stringify(controlEvents));
-    expect(updateAllScriptsSpy.getCall(0).args[0].formSaveEventScript).to.eq('form save event');
-    expect(updateAllScriptsSpy.getCall(0).args[0].formInitEventScript).to.eq('form init event');
+    expect(updateAllScriptsSpy.getCall(0).args[0].formSaveEventScript)
+      .to.eq(getScript('FormSave Event'));
+    expect(updateAllScriptsSpy.getCall(0).args[0].formInitEventScript)
+      .to.eq(getScript('FormInit Event'));
     sinon.assert.calledOnce(closeSpy);
   });
 
@@ -365,5 +368,76 @@ describe('FormConditionsModal', () => {
     expect(updateAllScriptsSpy.getCall(0).args[0].formSaveEventScript).to.eq(null);
     expect(updateAllScriptsSpy.getCall(0).args[0].formInitEventScript).to.eq(null);
     sinon.assert.calledOnce(closeSpy);
+  });
+
+  it('should not update the control scripts when there are errors', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    const controlEvents = [
+      {
+        id: 1,
+        name: 'Control 1',
+      },
+      {
+        id: 2,
+        name: 'Control 2',
+        events: { onValueChange: 'Control Event' },
+      },
+    ];
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={controlEvents}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    wrapper.instance()['2_ref'] = { current: { value: 'Control Event' } };
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.notCalled(updateAllScriptsSpy);
+    sinon.assert.notCalled(closeSpy);
+  });
+
+  it('should not update the form save event when there is error', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={[]}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    wrapper.instance().saveEventRef = { current: { value: 'Form Save Event' } };
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.notCalled(updateAllScriptsSpy);
+    sinon.assert.notCalled(closeSpy);
+  });
+
+  it('should not update the form init event when there is error', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={[]}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    wrapper.instance().formEventRef = { current: { value: 'Form Init Event' } };
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.notCalled(updateAllScriptsSpy);
+    sinon.assert.notCalled(closeSpy);
   });
 });

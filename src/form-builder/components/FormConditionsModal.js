@@ -23,6 +23,7 @@ export default class FormConditionsModal extends Component {
       controlsWithoutEvents: controls.controlsWithoutEvents,
     };
     this.formConditionsSave = this.formConditionsSave.bind(this);
+    this.updateErrorInMap = this.updateErrorInMap.bind(this);
   }
 
   initialiseMaps() {
@@ -31,8 +32,10 @@ export default class FormConditionsModal extends Component {
     const controlsWithoutEvents = new Map();
     _.each(controls, control => {
       const key = control.id.toString();
-      if (control.events) controlsWithEvents.set(key, control);
-      else controlsWithoutEvents.set(key, control);
+      if (control.events) {
+        const controlWithError = Object.assign({}, control, { hasError: false });
+        controlsWithEvents.set(key, controlWithError);
+      } else controlsWithoutEvents.set(key, control);
     });
     return { controlsWithEvents, controlsWithoutEvents };
   }
@@ -68,9 +71,10 @@ export default class FormConditionsModal extends Component {
   }
 
   showObsControlScriptEditorModal(controlScript, controlEventTitleId,
-                                  controlEventTitleName, editorRef) {
+                                  controlEventTitleName, editorRef, hasError) {
     return (<ObsControlScriptEditorModal
       close={this.props.close}
+      hasError={hasError}
       removeControlEvent={this.removeControlEvent}
       script={controlScript}
       textAreaRef={editorRef}
@@ -80,12 +84,25 @@ export default class FormConditionsModal extends Component {
     );
   }
 
+  updateErrorInMap(control, hasError) {
+    const newState = this.state.controlsWithEvents;
+    newState.set(control.id, Object.assign({}, control, { hasError }));
+    this.setState({ ['controlsWithEvents']: newState });
+  }
+
   formConditionsSave() {
     const controlScripts = [];
+    let hasErrors = false;
     this.props.controlEvents.forEach(control => {
       const eventScript = this[`${control.id}_ref`].current
         && this[`${control.id}_ref`].current.value;
       if (eventScript) {
+        if (!this.isValid(eventScript)) {
+          hasErrors = true;
+          this.updateErrorInMap(control, true);
+        } else {
+          this.updateErrorInMap(control, false);
+        }
         controlScripts.push({
           id: control.id,
           name: control.name,
@@ -99,9 +116,24 @@ export default class FormConditionsModal extends Component {
       }
     });
     const formSaveEventScript = this.saveEventRef.current && this.saveEventRef.current.value;
-    const formInitEventScript = this.saveEventRef.current && this.formEventRef.current.value;
-    this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
-    this.props.close();
+    const formInitEventScript = this.formEventRef.current && this.formEventRef.current.value;
+    if (!this.isValid(formSaveEventScript) || !this.isValid(formInitEventScript)) {
+      hasErrors = true;
+    }
+    if (!hasErrors) {
+      this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
+      this.props.close();
+    }
+  }
+
+  isValid(eventScript) {
+    try {
+      /* eslint-disable no-eval*/
+      eval(`(${eventScript})`);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   render() {
@@ -137,7 +169,7 @@ export default class FormConditionsModal extends Component {
                   const value = this.state.controlsWithEvents.get(key);
                   return this.showObsControlScriptEditorModal(
                       value.events ? value.events.onValueChange : undefined, key,
-                      value.name, this[`${key}_ref`]);
+                      value.name, this[`${key}_ref`], value.hasError);
                 })}
               </div>
             </div>

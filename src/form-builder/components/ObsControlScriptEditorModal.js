@@ -98,10 +98,11 @@ export default class ObsControlScriptEditorModal extends Component {
   }
 
   render() {
+    const editorClassNames = this.props.hasError ? 'text-div error-editor' : 'text-div';
     return (
       <div className="control-modal">
         {this.getLabel()}
-        <div className="text-div" >
+        <div className={editorClassNames} >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.props.textAreaRef}
           />
@@ -114,6 +115,7 @@ export default class ObsControlScriptEditorModal extends Component {
 }
 
 ObsControlScriptEditorModal.propTypes = {
+  hasError: PropTypes.bool,
   removeControlEvent: PropTypes.func.isRequired,
   script: PropTypes.string,
   textAreaRef: PropTypes.object.isRequired,
