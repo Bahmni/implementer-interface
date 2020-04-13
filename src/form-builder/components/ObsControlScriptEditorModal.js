@@ -28,6 +28,9 @@ export default class ObsControlScriptEditorModal extends Component {
     this.closeEditor = this.closeEditor.bind(this);
     this.showConfirmationPopup = this.showConfirmationPopup.bind(this);
     this.closeConfirmationPopup = this.closeConfirmationPopup.bind(this);
+    this.format = this.format.bind(this);
+    this.getLabelForControl = this.getLabelForControl.bind(this);
+    this.getLabel = this.getLabel.bind(this);
   }
 
   componentDidMount() {
@@ -56,20 +59,31 @@ export default class ObsControlScriptEditorModal extends Component {
   }
 
   getLabel() {
-    if (this.props.titleId === null) {
-      return (<label className="label-key">{this.props.titleName}</label>);
-      // eslint-disable-next-line no-else-return
-    }
-    return (
-      <div className="control-event-label">
-        <div>
-          <label className="label-key">Control Id</label>
-          <label className="label-value">{this.props.titleId}</label>
-          <label className="label-key">Name</label>
-          <label className="label-value">{this.props.titleName}</label>
-        </div>
+    return (<div className="control-event-label">
+      <label className="label-key">{this.props.titleName}</label>
+      <i className="fa fa-file-code-o" onClick={this.format} />
+    </div>);
+  }
+
+  getLabelForControl() {
+    return (<div className="control-event-label">
+      <div>
+        <label className="label-key">Control Id</label>
+        <label className="label-value">{this.props.titleId}</label>
+        <label className="label-key">Name</label>
+        <label className="label-value">{this.props.titleName}</label>
+      </div>
+      <div>
+        <i className="fa fa-file-code-o" onClick={this.format} />
         <i className="fa fa-times" onClick={this.closeEditor} />
-      </div>);
+      </div>
+    </div>);
+  }
+
+  format() {
+    const beautifiedData = jsBeautifier.js_beautify(this.codeMirrorEditor.getValue(),
+        { indent_size: 2, space_in_empty_paren: true });
+    this.codeMirrorEditor.setValue(beautifiedData);
   }
 
   closeEditor() {
@@ -101,7 +115,7 @@ export default class ObsControlScriptEditorModal extends Component {
     const editorClassNames = this.props.hasError ? 'text-div error-editor' : 'text-div';
     return (
       <div className="control-modal">
-        {this.getLabel()}
+        {this.props.titleId ? this.getLabelForControl() : this.getLabel()}
         <div className={editorClassNames} >
           <textarea autoFocus className="editor-wrapper area-height--textarea"
             defaultValue={this.props.script} ref={this.props.textAreaRef}

@@ -118,4 +118,23 @@ describe('ObsControlScriptEditorModal', () => {
 
     expect(wrapper.find('.error-editor').length).to.eq(0);
   });
+
+  it('should have format icon and click on it should open beautify the content', () => {
+    beautifierStub = sinon.stub(jsBeautifier, 'js_beautify').callsFake(() => '');
+    codeMirrorStub = sinon.stub(CodeMirror, 'fromTextArea')
+        .callsFake(() => ({ getValue() {return controlScript;}, setValue() {}, save() {},
+          on() {} }));
+    wrapper = mount(
+        <ObsControlScriptEditorModal
+          removeControlEvent = {removeControlEventSpy}
+          script={controlScript}
+          textAreaRef={{ current: 'values' }}
+          titleId={controlEventTitleId}
+          titleName={controlEventTitleName}
+        />);
+    const formatIcon = wrapper.find('.fa-file-code-o');
+    formatIcon.simulate('click');
+    sinon.assert.calledOnce(codeMirrorStub);
+    sinon.assert.calledTwice(beautifierStub);
+  });
 });

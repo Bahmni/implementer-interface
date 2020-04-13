@@ -138,6 +138,12 @@
 .control-modal {
   padding-left: 10px;
 
+  .fa-file-code-o {
+    color: #669999;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
   .label {
     font-weight: bolder;
   }
@@ -170,8 +176,13 @@
     justify-content: space-between;
     align-items: center;
 
-    > i {
+    .fa-times {
       color: #F00;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .fa-file-code-o{
+      color: #669999;
       cursor: pointer;
       margin-right: 10px;
     }
