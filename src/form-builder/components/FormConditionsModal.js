@@ -69,18 +69,15 @@ export default class FormConditionsModal extends Component {
 
   showObsControlScriptEditorModal(controlScript, controlEventTitleId,
                                   controlEventTitleName, editorRef) {
-    if (controlEventTitleId !== undefined) {
-      return (<ObsControlScriptEditorModal
-        close={this.props.close}
-        removeControlEvent={this.removeControlEvent}
-        script={controlScript}
-        textAreaRef={editorRef}
-        titleId={controlEventTitleId}
-        titleName={controlEventTitleName}
-      />
-      );
-    }
-    return null;
+    return (<ObsControlScriptEditorModal
+      close={this.props.close}
+      removeControlEvent={this.removeControlEvent}
+      script={controlScript}
+      textAreaRef={editorRef}
+      titleId={controlEventTitleId}
+      titleName={controlEventTitleName}
+    />
+    );
   }
 
   formConditionsSave() {
