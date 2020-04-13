@@ -61,7 +61,7 @@ export default class ObsControlScriptEditorModal extends Component {
   getLabel() {
     return (<div className="control-event-label">
       <label className="label-key">{this.props.titleName}</label>
-      <i className="fa fa-file-code-o" onClick={this.format} />
+      <i className="fa fa-file-code-o" onClick={this.format} title="format code" />
     </div>);
   }
 
@@ -74,7 +74,7 @@ export default class ObsControlScriptEditorModal extends Component {
         <label className="label-value">{this.props.titleName}</label>
       </div>
       <div>
-        <i className="fa fa-file-code-o" onClick={this.format} />
+        <i className="fa fa-file-code-o" onClick={this.format} title="format code" />
         <i className="fa fa-times" onClick={this.closeEditor} />
       </div>
     </div>);
