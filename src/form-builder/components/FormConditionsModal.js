@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScriptEditorModal';
 import _ from 'lodash';
+import NotificationContainer from 'common/Notification';
+import { commonConstants } from 'common/constants';
 
 export default class FormConditionsModal extends Component {
   constructor(props) {
@@ -21,9 +23,22 @@ export default class FormConditionsModal extends Component {
     this.state = {
       controlsWithEvents: controls.controlsWithEvents,
       controlsWithoutEvents: controls.controlsWithoutEvents,
+      errorMessage: {},
     };
     this.formConditionsSave = this.formConditionsSave.bind(this);
     this.updateErrorInMap = this.updateErrorInMap.bind(this);
+    this.setErrorMessage = this.setErrorMessage.bind(this);
+  }
+
+  setErrorMessage(errorMessage) {
+    const errorNotification = {
+      message: errorMessage,
+      type: commonConstants.responseType.error,
+    };
+    this.setState({ errorMessage: errorNotification });
+    setTimeout(() => {
+      this.setState({ errorMessage: {} });
+    }, commonConstants.toastTimeout);
   }
 
   initialiseMaps() {
@@ -123,6 +138,8 @@ export default class FormConditionsModal extends Component {
     if (!hasErrors) {
       this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
       this.props.close();
+    } else {
+      this.setErrorMessage('Please Enter valid javascript function(s)');
     }
   }
 
@@ -141,6 +158,7 @@ export default class FormConditionsModal extends Component {
       : { onFormInit: undefined, onFormSave: undefined };
     return (
         <div className="form-conditions-modal-container">
+          <NotificationContainer notification={this.state.errorMessage} />
           <h2 className="header-title">{this.props.formTitle} - Form Conditions</h2>
             <div className="left-panel" >
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormInit, null,

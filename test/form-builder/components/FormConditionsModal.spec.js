@@ -4,6 +4,7 @@ import chai, { expect } from 'chai';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import FormConditionsModal from 'form-builder/components/FormConditionsModal';
+import NotificationContainer from 'common/Notification';
 chai.use(chaiEnzyme());
 
 describe('FormConditionsModal', () => {
@@ -399,6 +400,7 @@ describe('FormConditionsModal', () => {
 
     sinon.assert.notCalled(updateAllScriptsSpy);
     sinon.assert.notCalled(closeSpy);
+    expect(wrapper.find(NotificationContainer).length).to.eq(1);
   });
 
   it('should not update the form save event when there is error', () => {
@@ -419,6 +421,7 @@ describe('FormConditionsModal', () => {
 
     sinon.assert.notCalled(updateAllScriptsSpy);
     sinon.assert.notCalled(closeSpy);
+    expect(wrapper.find(NotificationContainer).length).to.eq(1);
   });
 
   it('should not update the form init event when there is error', () => {
@@ -439,5 +442,6 @@ describe('FormConditionsModal', () => {
 
     sinon.assert.notCalled(updateAllScriptsSpy);
     sinon.assert.notCalled(closeSpy);
+    expect(wrapper.find(NotificationContainer).length).to.eq(1);
   });
 });
