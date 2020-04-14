@@ -222,4 +222,25 @@ describe('FormDetails', () => {
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
       .prop('script')).to.eq(dummyScript);
   });
+
+  it('should render form details when form data is present', () => {
+    const documentStub = sinon.stub(document, 'getElementsByClassName')
+        .callsFake(() => [{ className: 'column-side' }]);
+    window.scrollY = 100;
+
+    wrapper = mount(
+        <Provider store={getStore()}>
+          <FormDetail
+            formData={formData}
+            publishForm={() => {}}
+            saveFormResource={() => {}}
+            setError={() => {}}
+          />
+        </Provider>
+    );
+    window.onscroll();
+    expect(wrapper.find('.column-side').length).to.equal(1);
+    sinon.assert.calledTwice(documentStub);
+    documentStub.restore();
+  });
 });
