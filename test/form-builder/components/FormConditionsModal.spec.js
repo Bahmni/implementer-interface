@@ -448,4 +448,26 @@ describe('FormConditionsModal', () => {
     expect(wrapper.find(NotificationContainer).length).to.eq(1);
     expect(instance.state.formEventsErrors.hasFormInitError).to.eq(true);
   });
+
+  it('should update the form init event when it is empty', () => {
+    const updateAllScriptsSpy = sinon.spy();
+    closeSpy = sinon.spy();
+    wrapper = shallow(
+      <FormConditionsModal
+        close={closeSpy}
+        controlEvents={[]}
+        formDetails={[]}
+        formTitle={formTitle}
+        script={script}
+        updateAllScripts={updateAllScriptsSpy}
+      />);
+    const instance = wrapper.instance();
+    instance.formEventRef = { current: { value: '' } };
+    const saveButton = wrapper.find('.btn--highlight');
+    saveButton.simulate('click');
+
+    sinon.assert.calledOnce(updateAllScriptsSpy);
+    sinon.assert.calledOnce(closeSpy);
+    expect(instance.state.formEventsErrors.hasFormInitError).to.eq(false);
+  });
 });

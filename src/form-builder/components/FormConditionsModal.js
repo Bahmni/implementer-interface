@@ -66,20 +66,21 @@ export default class FormConditionsModal extends Component {
   }
 
   addToMap(key, control) {
-    const newState = Object.assign(this.state[key]);
+    const newState = new Map(this.state[key]);
     newState.set(control.id, control);
     this.setState({ [key]: newState });
   }
 
   removeFromMap(key, control) {
-    const newState = Object.assign(this.state[key]);
+    const newState = new Map(this.state[key]);
     newState.delete(control.id);
     this.setState({ [key]: newState });
   }
 
   removeControlEvent(controlId) {
-    const control = this.state.controlsWithEvents.get(controlId);
+    const control = _.cloneDeep(this.state.controlsWithEvents.get(controlId));
     if (control && control.events) {
+      this[`${controlId}_ref`].current = { value: undefined };
       control.events.onValueChange = undefined;
     }
     this.removeFromMap('controlsWithEvents', control);
@@ -91,6 +92,7 @@ export default class FormConditionsModal extends Component {
     return (<ObsControlScriptEditorModal
       close={this.props.close}
       hasError={hasError}
+      key={`${controlEventTitleName}_${controlEventTitleId}`}
       removeControlEvent={this.removeControlEvent}
       script={controlScript}
       textAreaRef={editorRef}
@@ -101,7 +103,7 @@ export default class FormConditionsModal extends Component {
   }
 
   updateErrorInMap(control, hasError) {
-    const newState = this.state.controlsWithEvents;
+    const newState = new Map(this.state.controlsWithEvents);
     newState.set(control.id, Object.assign({}, control, { hasError }));
     this.setState({ ['controlsWithEvents']: newState });
   }
@@ -149,7 +151,9 @@ export default class FormConditionsModal extends Component {
   isValid(eventScript) {
     try {
       /* eslint-disable no-eval*/
-      eval(`(${eventScript})`);
+      if (!_.isEmpty(eventScript)) {
+        eval(`(${eventScript})`);
+      }
       return true;
     } catch (e) {
       return false;
