@@ -100,8 +100,8 @@
         background: #000;
         color: #FFF;
         position: absolute;
-        top: 65%;
-        left: 30%;
+        top: 83%;
+        left: 33%;
       }
       .placeholder{
         pointer-events: none;
@@ -123,12 +123,26 @@
       background: #000;
       color: #FFF;
       position: absolute;
-      top: 72%;
-      left: 28%;
+      top: 9%;
+      left: 33%;
     }
     .video-placeholder {
       pointer-events: none;
       opacity: 0.5;
+    }
+  }
+  .table-controls {
+    .video-upload {
+      &:hover:after {
+        top: 9%;
+        left: 47%;
+      }
+    }
+    .image-upload {
+      &:hover:after {
+        top: 83%;
+        left: 47%;
+      }
     }
   }
 }
