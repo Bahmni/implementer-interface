@@ -83,7 +83,7 @@ export class ControlWrapper extends Draggable {
         this.props.idGenerator
       );
       this.metadata = newMetadata;
-      this.props.dispatch(selectControl(this.metadata));
+      this.props.dispatch(selectControl(this.metadata, true));
     }
   }
 

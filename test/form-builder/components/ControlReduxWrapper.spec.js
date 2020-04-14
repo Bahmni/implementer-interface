@@ -117,7 +117,7 @@ describe('ControlWrapper', () => {
     };
     const actualMetadata = controlWrapper.find('.control-wrapper').children().prop('metadata');
     expect(actualMetadata).to.deep.eql(expectedMetadata);
-    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata)));
+    sinon.assert.calledOnce(store.dispatch.withArgs(selectControl(expectedMetadata, true)));
   });
 
   it('should update properties when changed', () => {

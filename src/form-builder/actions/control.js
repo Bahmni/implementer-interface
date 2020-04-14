@@ -1,4 +1,4 @@
-export const selectControl = (metadata) => ({ type: 'SELECT_CONTROL', metadata });
+export const selectControl = (metadata, isConceptMapEvent) => ({ type: 'SELECT_CONTROL', metadata, isConceptMapEvent });
 
 export const selectSource = (concept, id) => ({ type: 'SELECT_SOURCE', concept, id });
 

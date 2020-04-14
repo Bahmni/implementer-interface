@@ -24,6 +24,7 @@ describe('controlDetails', () => {
       action = {
         type: 'SELECT_CONTROL',
         metadata,
+        isConceptMapEvent: true,
       };
       allObsControlEvents = [{ id: action.metadata.id,
         name: action.metadata.concept !== undefined ? action.metadata.concept.name : undefined,
@@ -60,6 +61,7 @@ describe('controlDetails', () => {
       action = {
         type: 'SELECT_CONTROL',
         metadata,
+        isConceptMapEvent: true,
       };
       allObsControlEvents = [{ id: action.metadata.id,
         name: undefined,

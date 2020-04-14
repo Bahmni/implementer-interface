@@ -6,14 +6,16 @@ const controlDetails = (store = {}, action) => {
     // eslint-disable-next-line no-case-declarations
     case 'SELECT_CONTROL':
       let storeClone = cloneDeep(store);
-      const obsControlEvents = formHelper.getObsControlEvents(action.metadata);
-      if (store.allObsControlEvents === undefined) {
-        storeClone.allObsControlEvents = obsControlEvents;
-      } else {
-        const obsControlEventIds = obsControlEvents.map(a => a.id);
-        storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
-           !obsControlEventIds.includes(control.id));
-        storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(obsControlEvents);
+      if (action.isConceptMapEvent) {
+        const obsControlEvents = formHelper.getObsControlEvents(action.metadata);
+        if (store.allObsControlEvents === undefined) {
+          storeClone.allObsControlEvents = obsControlEvents;
+        } else {
+          const obsControlEventIds = obsControlEvents.map(a => a.id);
+          storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
+            !obsControlEventIds.includes(control.id));
+          storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(obsControlEvents);
+        }
       }
       return Object.assign({}, storeClone, { selectedControl: action.metadata });
     case 'DESELECT_CONTROL':
