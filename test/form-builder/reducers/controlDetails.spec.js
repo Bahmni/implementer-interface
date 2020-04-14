@@ -3,11 +3,12 @@ import controlDetails from 'form-builder/reducers/controlDetails';
 
 describe('controlDetails', () => {
   let action = {};
+  let metadata = {};
   let expectedStoreState;
   let allObsControlEvents;
   describe('selectControl', () => {
     beforeEach(() => {
-      const metadata = {
+      metadata = {
         type: 'obsControl',
         concept: {
           uuid: 'someUuid',
@@ -48,7 +49,7 @@ describe('controlDetails', () => {
 
   describe('selectControl_metada_without_concept', () => {
     beforeEach(() => {
-      const metadata = {
+      metadata = {
         type: 'obsControl',
         id: 1,
         events: {
@@ -69,7 +70,7 @@ describe('controlDetails', () => {
     it('should add selected control id to store and assign all controls ' +
       'when allObsControlEvents are {}', () => {
       const state = controlDetails({}, action);
-      expect(state).to.be.eql(expectedStoreState);
+      expect(state).to.be.eql({ allObsControlEvents: [], selectedControl: metadata });
     });
 
     it('should add selected control id to store and assign all controls ' +
@@ -171,7 +172,7 @@ describe('controlDetails', () => {
       }];
       action = {
         type: 'DELETE_CONTROL',
-        id: controls[0].id,
+        controlIds: [controls[0].id],
       };
       allObsControlEvents = [{ id: controls[0].id,
         name: controls[0].name,

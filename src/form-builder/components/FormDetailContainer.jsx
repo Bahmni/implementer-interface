@@ -37,6 +37,7 @@ export class FormDetailContainer extends Component {
       referenceFormUuid: undefined, formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.getFormJson = this.getFormJson.bind(this);
     this.onSave = this.onSave.bind(this);
     this.openFormModal = this.openFormModal.bind(this);
     this.closeFormModal = this.closeFormModal.bind(this);
@@ -66,7 +67,7 @@ export class FormDetailContainer extends Component {
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
               this.formJson = this.getFormJson();
-              const formControlsArray = this.getObsControlEvents(this.formJson);
+              const formControlsArray = formHelper.getObsControlEvents(this.formJson);
               this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
@@ -152,28 +153,6 @@ export class FormDetailContainer extends Component {
 
   onPreview() {
     this.generateFormPreviewJson();
-  }
-
-
-  getObsControlEvents(control) {
-    let obsControlEvents = [];
-    if (control && control !== undefined && control.controls !== undefined) {
-      const childControls = control.controls;
-      const obsControls = childControls.filter(ctrl => ctrl.type === 'obsControl');
-      const nonObscontrols = childControls.filter(ctrl => ctrl.type !== 'obsControl');
-
-      nonObscontrols.forEach(ctrl => {
-        if (ctrl.controls !== undefined) {
-          const childObsControlEvents = this.getObsControlEvents(ctrl);
-          if (childObsControlEvents && childObsControlEvents !== undefined) {
-            obsControlEvents = obsControlEvents.concat(childObsControlEvents);
-          }
-        }
-      });
-      obsControlEvents = obsControlEvents.concat(obsControls.map(ctrl =>
-        ({ id: ctrl.id, name: ctrl.concept.name, events: ctrl.events })));
-    }
-    return obsControlEvents;
   }
 
   getFormJson() {
@@ -515,6 +494,7 @@ export class FormDetailContainer extends Component {
                     formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
+                    loadFormJson={this.getFormJson}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
                     updateFormEvents={(events) => this.updateFormEvents(events)}

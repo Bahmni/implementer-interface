@@ -119,9 +119,9 @@ describe('control', () => {
   describe('deleteControl', () => {
     it('should return the control id and action', () => {
       const ctrl = { id: 1, name, events: undefined };
-      const action = control.deleteControl(ctrl.id);
+      const action = control.deleteControl([ctrl.id]);
       expect(action.type).to.eql('DELETE_CONTROL');
-      expect(action.id).to.eql(ctrl.id);
+      expect(action.controlIds).to.eql([ctrl.id]);
     });
   });
 

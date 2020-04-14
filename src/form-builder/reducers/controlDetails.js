@@ -1,21 +1,19 @@
 import { cloneDeep } from 'lodash';
+import formHelper from '../helpers/formHelper';
+
 const controlDetails = (store = {}, action) => {
   switch (action.type) {
     // eslint-disable-next-line no-case-declarations
     case 'SELECT_CONTROL':
-      let storeClone;
+      let storeClone = cloneDeep(store);
+      const obsControlEvents = formHelper.getObsControlEvents(action.metadata);
       if (store.allObsControlEvents === undefined) {
-        storeClone = Object.assign({}, store, { allObsControlEvents: [{ id: action.metadata.id,
-          name: action.metadata.concept ? action.metadata.concept.name : undefined,
-          events: action.metadata.events }] });
+        storeClone.allObsControlEvents = obsControlEvents;
       } else {
-        storeClone = store;
+        const obsControlEventIds = obsControlEvents.map(a => a.id);
         storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
-          control.id !== action.metadata.id);
-        storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(
-          { id: action.metadata.id,
-            name: action.metadata.concept ? action.metadata.concept.name : undefined,
-            events: action.metadata.events });
+           !obsControlEventIds.includes(control.id));
+        storeClone.allObsControlEvents = storeClone.allObsControlEvents.concat(obsControlEvents);
       }
       return Object.assign({}, storeClone, { selectedControl: action.metadata });
     case 'DESELECT_CONTROL':
@@ -40,7 +38,7 @@ const controlDetails = (store = {}, action) => {
     case 'DELETE_CONTROL':
       storeClone = cloneDeep(store);
       storeClone.allObsControlEvents = storeClone.allObsControlEvents.filter(control =>
-          control.id !== action.id);
+        !action.controlIds.includes(control.id));
       return storeClone;
 
     case 'DRAG_SOURCE_CHANGED':

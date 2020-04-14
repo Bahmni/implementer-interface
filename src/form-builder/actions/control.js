@@ -40,4 +40,4 @@ export const formConditionsEventUpdate = (events) => ({ type: 'FORM_CONDITIONS_C
 
 export const formLoad = (controls) => ({ type: 'FORM_LOAD', controls });
 
-export const deleteControl = (id) => ({ type: 'DELETE_CONTROL', id });
+export const deleteControl = (controlIds) => ({ type: 'DELETE_CONTROL', controlIds });

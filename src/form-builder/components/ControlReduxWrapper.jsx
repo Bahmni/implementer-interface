@@ -175,6 +175,7 @@ export class ControlWrapper extends Draggable {
           controlName={this.props.metadata.name}
           deleteControl={this.props.deleteControl}
           dispatch={this.props.dispatch}
+          loadFormJson={this.props.loadFormJson}
         />
       );
     }
@@ -270,6 +271,7 @@ export class ControlWrapper extends Draggable {
           dragSourceCell= {this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator}
           isBeingDragged= {this.state.isBeingDragged}
+          loadFormJson={this.props.loadFormJson}
           metadata={ this.metadata }
           onControlDrop={this.handleControlDrop}
           onSelect={ this.onSelected }
@@ -296,6 +298,7 @@ ControlWrapper.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
+  loadFormJson: PropTypes.func,
   metadata: PropTypes.object,
   setError: PropTypes.func,
   showDeleteButton: PropTypes.bool,
