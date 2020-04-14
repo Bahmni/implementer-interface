@@ -43,7 +43,11 @@ export class ControlWrapper extends Draggable {
   }
 
   onSelected(event, metadata) {
-    this.props.dispatch(selectControl(metadata));
+    const newMetadata = metadata;
+    if (metadata.properties && metadata.properties.controlEvent) {
+      newMetadata.properties.controlEvent = false;
+    }
+    this.props.dispatch(selectControl(newMetadata));
     event.stopPropagation();
   }
 
@@ -181,62 +185,6 @@ export class ControlWrapper extends Draggable {
     return null;
   }
 
-  updateScript(script, properties) {
-    if (properties.id) {
-      this.props.dispatch(selectControl(this.metadata));
-      this.props.dispatch(sourceChangedProperty(script, properties.id));
-    } else {
-      const isSaveEvent = properties.property.formSaveEvent;
-      if (isSaveEvent) {
-        this.props.dispatch(saveEventUpdate(script));
-      } else {
-        this.props.dispatch(formEventUpdate(script));
-      }
-    }
-    this.closeScriptEditorDialog(properties.id);
-  }
-
-  closeScriptEditorDialog(id) {
-    if (id) {
-      this.props.dispatch(setChangedProperty({ controlEvent: false }, id));
-    } else {
-      this.props.dispatch(setChangedProperty({ formInitEvent: false }));
-      this.props.dispatch(setChangedProperty({ formSaveEvent: false }));
-    }
-  }
-
-  getScript(properties) {
-    const selectedControl = this.props.selectedControl;
-    if (properties.id && selectedControl) {
-      return selectedControl.events && selectedControl.events.onValueChange;
-    }
-    const formDetails = this.props.formDetails;
-    const isSaveEvent = properties.property.formSaveEvent;
-    return formDetails.events
-      && (isSaveEvent ? formDetails.events.onFormSave : formDetails.events.onFormInit);
-  }
-
-  showScriptEditorDialog() {
-    const properties = this.props.controlProperty;
-    if (properties && properties.property &&
-      (properties.id === this.metadata.id && properties.property.controlEvent)) {
-      return (
-        <Popup className="form-event-popup" closeOnDocumentClick={false}
-          closeOnEscape={false}
-          open={properties.id === this.metadata.id && properties.property.controlEvent}
-          position="top center"
-        >
-        <ScriptEditorModal
-          close={() => this.closeScriptEditorDialog(properties.id)}
-          script={this.getScript(properties)}
-          updateScript={(script) => this.updateScript(script, properties)}
-        />
-        </Popup>
-      );
-    }
-    return null;
-  }
-
   handleDragStart(e, onDragStart) {
     this.setState({ isBeingDragged: true });
     this.props.dispatch(dragSourceUpdate(this.props.parentRef));
@@ -280,7 +228,6 @@ export class ControlWrapper extends Draggable {
 
         />
         { this.showDeleteControlModal() }
-        { this.showScriptEditorDialog() }
       </div>
     );
   }

@@ -1,17 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { formEventUpdate, formLoad, saveEventUpdate } from 'form-builder/actions/control';
+import {
+  formEventUpdate,
+  formLoad,
+  saveEventUpdate,
+  sourceChangedProperty,
+} from 'form-builder/actions/control';
 import { setChangedProperty, formConditionsEventUpdate } from 'form-builder/actions/control';
 export const FormEventEditor = (props) => {
-  const { property, formDetails, closeEventEditor, formControlEvents, updateAllScripts } = props;
+  const { property, formDetails, formControlEvents,
+    updateAllScripts, selectedControlId } = props;
   const updateScript = (script) => {
-    props.updateScript(script, property);
+    props.updateScript(script, property, selectedControlId);
   };
-
+  const closeEventEditor = () => {
+    props.closeEventEditor(selectedControlId);
+  };
   return (
     <div>
-      {React.cloneElement(props.children, { property, formDetails, closeEventEditor,
+      {React.cloneElement(props.children, { property, formDetails,
+        closeEventEditor, selectedControlId,
         formControlEvents, updateScript, updateAllScripts })}
     </div>
   );
@@ -33,6 +42,7 @@ FormEventEditor.propTypes = {
     formSaveEvent: PropTypes.bool,
     formConditionsEvent: PropTypes.bool,
   }),
+  selectedControlId: PropTypes.string,
   updateAllScripts: PropTypes.func.isRequired,
   updateScript: PropTypes.func.isRequired,
 };
@@ -40,21 +50,27 @@ FormEventEditor.propTypes = {
 const mapStateToProps = (state) => ({
   property: state.controlProperty ? state.controlProperty.property : undefined,
   formDetails: state.formDetails, formControlEvents: state.controlDetails.allObsControlEvents,
+  selectedControlId: state.controlDetails.selectedControl
+    && state.controlDetails.selectedControl.id,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  closeEventEditor: () => {
+  closeEventEditor: (selectedControlId) => {
     dispatch(setChangedProperty({ formInitEvent: false }));
     dispatch(setChangedProperty({ formSaveEvent: false }));
     dispatch(setChangedProperty({ formConditionsEvent: false }));
+    dispatch(setChangedProperty({ controlEvent: false }, selectedControlId));
   },
-  updateScript: (script, property) => {
+  updateScript: (script, property, selectedControlId) => {
     if (property.formSaveEvent) {
       dispatch(saveEventUpdate(script));
     } else if (property.formInitEvent) {
       dispatch(formEventUpdate(script));
     } else if (property.formConditionsEvent) {
       dispatch(formConditionsEventUpdate(script));
+    }
+    if (property.controlEvent) {
+      dispatch(sourceChangedProperty(script, selectedControlId));
     }
   },
   updateAllScripts: ({ controlScripts, formSaveEventScript, formInitEventScript }) => {

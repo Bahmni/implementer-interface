@@ -44,7 +44,6 @@ describe('FormEventEditor', () => {
     expect(wrapper.find(DummyComponent).prop('formControlEvents')).to.eq(formControlEvents);
     expect(wrapper.find(DummyComponent).prop('formDetails')).to.eq(formDetails);
     expect(wrapper.find(DummyComponent).prop('property')).to.eq(property);
-    expect(wrapper.find(DummyComponent).prop('closeEventEditor')).to.eq(closeEventEditorSpy);
   });
 
   it('should invoke updatescript prop when child invoke updateScript', () => {
@@ -78,14 +77,17 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_true', () => {
 
   it('should update formInitEvent, formSaveEvent, formConditionsEvent property ' +
     'when closeEventEditor is called', () => {
-    wrapper.find('FormEventEditor').prop('closeEventEditor')();
-    sinon.assert.calledThrice(store.dispatch);
+    const controlId = 1;
+    wrapper.find('FormEventEditor').prop('closeEventEditor')(controlId);
+    sinon.assert.callCount(store.dispatch, 4);
     sinon.assert.calledOnce(store.dispatch
       .withArgs(setChangedProperty({ formInitEvent: false })));
     sinon.assert.calledOnce(store.dispatch
       .withArgs(setChangedProperty({ formSaveEvent: false })));
     sinon.assert.calledOnce(store.dispatch
       .withArgs(setChangedProperty({ formConditionsEvent: false })));
+    sinon.assert.calledOnce(store.dispatch
+      .withArgs(setChangedProperty({ controlEvent: false }, controlId)));
   });
 
   it('should update saveEventUpdate property when updateScript is called ' +

@@ -82,20 +82,29 @@ export default class FormDetail extends Component {
     }
   }
   render() {
-    const { formData, defaultLocale } = this.props;
+    const { formData, defaultLocale, formControlEvents } = this.props;
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
       const idGenerator = this.getIdGenerator(formResourceControls);
-      const getScript = (property, formDetails) => {
+      const getScript = (property, formDetails, selectedControlId) => {
+        const isControlEvent = property.controlEvent;
+        if (isControlEvent) {
+          const selectedFormControlEvent = formControlEvents
+            .find(control => control.id === selectedControlId);
+          return selectedFormControlEvent && selectedFormControlEvent.events
+            && selectedFormControlEvent.events.onValueChange;
+        }
         const isSaveEvent = property.formSaveEvent;
         return formDetails.events && (isSaveEvent ? formDetails.events.onFormSave
           : formDetails.events.onFormInit);
       };
       const FormEventEditorContent = (props) => {
-        const script = props.property ? getScript(props.property, props.formDetails) : '';
+        const script = props.property ? getScript(props.property,
+          props.formDetails, props.selectedControlId) : '';
         const showEditor = props.property && (props.property.formInitEvent
-          || props.property.formSaveEvent || props.property.formConditionsEvent);
+          || props.property.formSaveEvent || props.property.formConditionsEvent
+          || props.property.controlEvent);
         if (!showEditor) {
           return (<div></div>);
         }

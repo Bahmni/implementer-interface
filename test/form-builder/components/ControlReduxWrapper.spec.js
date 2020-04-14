@@ -7,15 +7,11 @@ import sinon from 'sinon';
 import { getStore } from 'test/utils/storeHelper';
 import {
   focusControl,
-  saveEventUpdate,
   selectControl,
-  setChangedProperty,
 } from 'form-builder/actions/control';
 import { formBuilderConstants } from 'form-builder/constants';
 import { ComponentStore } from 'bahmni-form-controls';
 import {
-  formEventUpdate,
-  sourceChangedProperty,
   dragSourceUpdate,
 } from 'form-builder/actions/control';
 import DragDropHelper from 'form-builder/helpers/dragDropHelper';
@@ -195,6 +191,22 @@ describe('ControlWrapper', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('1')));
   });
 
+  it('should always set the control event to false when control with controlEvent is selected', () => {
+    const store = getStore();
+    const controlWrapper = shallow(
+      <ControlWrapper
+        dispatch={ store.dispatch }
+        metadata={ metadata }
+        onUpdateMetadata={ () => {} }
+      />);
+
+    const controlMetadata = { properties: { controlEvent: true } };
+    controlWrapper.instance().onSelected({ stopPropagation: () => {} },
+      controlMetadata);
+    sinon.assert.calledOnce(store.dispatch);
+    expect(store.dispatch.getCall(0).args[0].metadata.properties.controlEvent).to.eq(false);
+  });
+
   it('should dispatch focused Control id', () => {
     const store = getStore();
     const controlWrapper = mount(
@@ -253,25 +265,6 @@ describe('ControlWrapper', () => {
     expect(controlWrapper.find('.control-wrapper')).to.have.descendants('DeleteControlModal');
   });
 
-  it('should show script editor if the property controlEvent equal true', () => {
-    const store = getStore();
-    const controlProperty = { id: '1', property: { controlEvent: true } };
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-
-    expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
-
-    const instance = controlWrapper.instance();
-    instance.childControl = { getJsonDefinition: () => metadata };
-    controlWrapper.setProps({ controlProperty,
-      selectedControl: { events: { onValueChange: '' } } });
-
-    expect(controlWrapper.find('.control-wrapper')).to.have.descendants('ScriptEditorModal');
-  });
-
   it('should not show script editor if the property id not equal metadata\'s id', () => {
     const store = getStore();
     const controlProperty = { id: '2', property: { controlEvent: true } };
@@ -289,138 +282,6 @@ describe('ControlWrapper', () => {
       selectedControl: { events: { onValueChange: '' } } });
 
     expect(controlWrapper.find('.control-wrapper')).to.not.have.descendants('ScriptEditorModal');
-  });
-
-  it('should show form init script if the form event equal true', () => {
-    const store = getStore();
-    const controlProperty = { property: { formInitEvent: true } };
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-
-    const instance = controlWrapper.instance();
-    instance.childControl = { getJsonDefinition: () => metadata };
-    controlWrapper.setProps({
-      controlProperty,
-      formDetails: { events: { onFormInit: '1' } },
-      selectedControl: { events: { onValueChange: '2' } },
-    });
-
-    expect(instance.getScript({ property: {} })).equal('1');
-    expect(instance.getScript({ id: 'someId' })).equal('2');
-  });
-
-  it('should show form save script if the form save event equal true', () => {
-    const store = getStore();
-    const controlProperty = { property: { formSaveEvent: true } };
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-
-    const instance = controlWrapper.instance();
-    instance.childControl = { getJsonDefinition: () => metadata };
-
-    controlWrapper.setProps({
-      controlProperty,
-      formDetails: { events: { onFormSave: '1' } },
-      selectedControl: { events: { onValueChange: '2' } },
-    });
-
-    expect(instance.getScript({ property: { formSaveEvent: true } })).equal('1');
-    expect(instance.getScript({ id: 'someId' })).equal('2');
-  });
-
-  it('should close script editor after updating script', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-    const instance = controlWrapper.instance();
-    const closeSpy = sinon.spy(instance, 'closeScriptEditorDialog');
-
-    instance.updateScript('', { id: '1' });
-
-    sinon.assert.calledOnce(closeSpy);
-  });
-
-  it('should dispatch setChangedProperty event after updating script for control event', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-    const instance = controlWrapper.instance();
-
-    instance.updateScript('', { id: '1' });
-
-    sinon.assert.calledWith(store.dispatch, setChangedProperty({ controlEvent: false }, '1'));
-  });
-
-  it('should dispatch setChangedProperty event after updating script for form event', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={store.dispatch}
-        metadata={metadata}
-      />);
-    const instance = controlWrapper.instance();
-
-    instance.updateScript('', { property: {} });
-
-    expect(store.dispatch.callCount).to.be.equal(3);
-    expect(store.dispatch.getCalls()[1].args[0])
-      .to.deep.eql(setChangedProperty({ formInitEvent: false }));
-    expect(store.dispatch.getCalls()[2].args[0])
-      .to.deep.eql(setChangedProperty({ formSaveEvent: false }));
-  });
-
-  it('should dispatch formEventUpdate when update script with empty id', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-    const instance = controlWrapper.instance();
-
-    instance.updateScript('', { property: {} });
-
-    sinon.assert.calledWith(store.dispatch, formEventUpdate(''));
-  });
-
-  it('should dispatch saveEventUpdate when update script with empty id', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-    const instance = controlWrapper.instance();
-
-    instance.updateScript('', { property: { formSaveEvent: true } });
-
-    sinon.assert.calledWith(store.dispatch, saveEventUpdate(''));
-  });
-
-  it('should dispatch sourceChangedProperty when update script with non-empty id', () => {
-    const store = getStore();
-    const controlWrapper = shallow(
-      <ControlWrapper
-        dispatch={ store.dispatch }
-        metadata={ metadata }
-      />);
-    const instance = controlWrapper.instance();
-
-    instance.updateScript('', { id: '1' });
-
-    sinon.assert.calledWith(store.dispatch, sourceChangedProperty('', '1'));
   });
 
   it('getJsonDefinition should return json if present', () => {
