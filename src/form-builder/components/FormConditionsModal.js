@@ -103,9 +103,9 @@ export default class FormConditionsModal extends Component {
   }
 
   updateErrorInMap(control, hasError) {
-    const newState = new Map(this.state.controlsWithEvents);
+    const newState = this.state.controlsWithEvents;
     newState.set(control.id, Object.assign({}, control, { hasError }));
-    this.setState({ ['controlsWithEvents']: newState });
+    this.setState({ controlsWithEvents: newState });
   }
 
   formConditionsSave() {
