@@ -144,7 +144,7 @@ export default class FormConditionsModal extends Component {
       this.props.updateAllScripts({ controlScripts, formSaveEventScript, formInitEventScript });
       this.props.close();
     } else {
-      this.setErrorMessage('Please Enter valid javascript function(s)');
+      this.setErrorMessage('Please enter valid javascript function(s)');
     }
   }
 

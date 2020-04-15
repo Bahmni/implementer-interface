@@ -5,7 +5,7 @@ const RemoveControlEventConfirmation = props => <div className="remove-control-e
   <h2 className="header-title">Remove Control Event Confirmation</h2>
   <div className="remove-control-event-body">
     <div className="content">
-      <span>Are you sure, you want to delete the control event?</span>
+      <span>Are you sure you want to delete the control event?</span>
     </div>
     <div className="button-wrapper">
       <button className="btn" onClick={props.removeAndClose}
