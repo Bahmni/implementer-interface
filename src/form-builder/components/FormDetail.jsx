@@ -150,7 +150,6 @@ export default class FormDetail extends Component {
                                       formResourceControls={formResourceControls}
                                       formUuid={ uuid }
                                       idGenerator={idGenerator}
-                                      loadFormJson={this.props.loadFormJson}
                                       ref={this.canvasRef}
                                       setError={this.props.setError}
                                       updateFormName = {this.props.updateFormName}
@@ -182,7 +181,6 @@ FormDetail.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
-  loadFormJson: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
   updateFormEvents: PropTypes.func,
   updateFormName: PropTypes.func,

@@ -168,12 +168,10 @@ export class ControlWrapper extends Draggable {
 
   showDeleteControlModal() {
     if (this.state.showDeleteModal) {
-      const controlJSon = this.childControl ? this.childControl.getJsonDefinition() : undefined;
       return (
         <DeleteControlModal
           closeModal={() => this.closeDeleteModal()}
           controlId={this.props.metadata.id}
-          controlJson={controlJSon}
           controlName={this.props.metadata.name}
           deleteControl={this.props.deleteControl}
           dispatch={this.props.dispatch}
@@ -272,7 +270,6 @@ export class ControlWrapper extends Draggable {
           dragSourceCell= {this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator}
           isBeingDragged= {this.state.isBeingDragged}
-          loadFormJson={this.props.loadFormJson}
           metadata={ this.metadata }
           onControlDrop={this.handleControlDrop}
           onSelect={ this.onSelected }
@@ -299,7 +296,6 @@ ControlWrapper.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
-  loadFormJson: PropTypes.func,
   metadata: PropTypes.object,
   setError: PropTypes.func,
   showDeleteButton: PropTypes.bool,

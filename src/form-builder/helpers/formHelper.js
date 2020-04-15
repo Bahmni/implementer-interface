@@ -41,15 +41,4 @@ export default class FormHelper {
     }
     return obsControlEvents;
   }
-
-  static getObsControlIdsForGivenControl(control) {
-    if (control === undefined) {
-      return [];
-    }
-    if (control.type === 'obsControl') {
-      return [control.id];
-    }
-    const obsControlEvents = this.getObsControlEvents(control);
-    return obsControlEvents.map(c => c.id);
-  }
 }

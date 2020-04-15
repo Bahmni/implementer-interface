@@ -17,7 +17,6 @@ describe('DeleteControlModal', () => {
   let dispatchSpy;
   let controlName;
   let controlId;
-  let loadFormJsonSpy;
   const formJsonData = {
     name: 'SectionForm',
     id: 1,
@@ -51,7 +50,6 @@ describe('DeleteControlModal', () => {
     closeModalSpy = sinon.spy();
     deleteControlSpy = sinon.spy();
     dispatchSpy = sinon.spy();
-    loadFormJsonSpy = () => formJsonData;
     controlId = 4;
     wrapper = shallow(
       <DeleteControlModal
@@ -60,7 +58,6 @@ describe('DeleteControlModal', () => {
         controlName={controlName}
         deleteControl={deleteControlSpy}
         dispatch={dispatchSpy}
-        loadFormJson={loadFormJsonSpy}
       />
     );
   });
@@ -91,15 +88,10 @@ describe('DeleteControlModal', () => {
   });
 
   it('should delete control when OK button clicked', () => {
-    const controlIds = [2];
-    const obsControlStub = sinon.stub(FormHelper, 'getObsControlIdsForGivenControl')
-      .returns(controlIds);
     wrapper.find('button').at(0).simulate('click', {
       preventDefault: () => {},
     });
     sinon.assert.calledWith(deleteControlSpy, controlId);
     sinon.assert.calledOnce(closeModalSpy);
-    sinon.assert.calledOnce(dispatchSpy.withArgs(deleteControl(controlIds)));
-    obsControlStub.restore();
   });
 });

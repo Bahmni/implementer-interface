@@ -494,7 +494,6 @@ export class FormDetailContainer extends Component {
                     formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
-                    loadFormJson={this.getFormJson}
                     ref={r => { this.formDetail = r; }}
                     setError={this.setErrorMessage}
                     updateFormEvents={(events) => this.updateFormEvents(events)}

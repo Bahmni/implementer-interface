@@ -95,7 +95,6 @@ export class Canvas extends Component {
           dragSourceCell={this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator }
           isBeingDragged= {this.state.isBeingDragged}
-          loadFormJson={this.props.loadFormJson}
           onControlDrop={this.handleControlDrop}
           ref={ this.gridReference }
           setError={this.props.setError}
@@ -116,7 +115,6 @@ Canvas.propTypes = {
   formResourceControls: PropTypes.array.isRequired,
   formUuid: PropTypes.string.isRequired,
   idGenerator: PropTypes.object.isRequired,
-  loadFormJson: PropTypes.func,
   setError: PropTypes.func,
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
