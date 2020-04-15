@@ -217,6 +217,18 @@ describe('Update All Scripts', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
     sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
   });
+
+  it('should dispatch all actions even when form init and save script are empty', () => {
+    wrapper.find('FormEventEditor').prop('updateAllScripts')({
+      controlScripts: [],
+      formSaveEventScript: '',
+      formInitEventScript: '',
+    });
+    sinon.assert.callCount(store.dispatch, 3);
+    sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
+    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('')));
+    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('')));
+  });
 });
 
 describe('FormEventEditorWithRedux_where_controlEvent_is_true', () => {

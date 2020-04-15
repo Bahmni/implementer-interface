@@ -74,15 +74,9 @@ const mapDispatchToProps = (dispatch) => ({
     }
   },
   updateAllScripts: ({ controlScripts, formSaveEventScript, formInitEventScript }) => {
-    if (formSaveEventScript) {
-      dispatch(saveEventUpdate(formSaveEventScript));
-    }
-    if (formInitEventScript) {
-      dispatch(formEventUpdate(formInitEventScript));
-    }
-    if (controlScripts) {
-      dispatch(formLoad(controlScripts));
-    }
+    dispatch(saveEventUpdate(formSaveEventScript));
+    dispatch(formEventUpdate(formInitEventScript));
+    dispatch(formLoad(controlScripts));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(FormEventEditor);
