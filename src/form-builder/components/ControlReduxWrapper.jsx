@@ -1,23 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { focusControl, selectControl, dragSourceUpdate } from 'form-builder/actions/control';
-import { blurControl, deselectControl, formEventUpdate, saveEventUpdate }
-  from 'form-builder/actions/control';
-import { Draggable } from 'bahmni-form-controls';
-import { ComponentStore } from 'bahmni-form-controls';
+import {
+  addSourceMap,
+  blurControl,
+  deselectControl,
+  dragSourceUpdate,
+  focusControl,
+  generateTranslations,
+  selectControl,
+} from 'form-builder/actions/control';
+import { ComponentStore, Draggable } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
-import { addSourceMap, setChangedProperty,
-  sourceChangedProperty, generateTranslations } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
-import ScriptEditorModal from './ScriptEditorModal';
 import DragDropHelper from '../helpers/dragDropHelper.js';
-import Popup from 'reactjs-popup';
 
 export class ControlWrapper extends Draggable {
   constructor(props) {

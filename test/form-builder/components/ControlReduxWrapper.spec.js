@@ -191,7 +191,8 @@ describe('ControlWrapper', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(selectControl('1')));
   });
 
-  it('should always set the control event to false when control with controlEvent is selected', () => {
+  it('should always set the control event to false when control ' +
+      'with controlEvent is selected', () => {
     const store = getStore();
     const controlWrapper = shallow(
       <ControlWrapper
