@@ -12,7 +12,7 @@ import {
   formLoad,
   saveEventUpdate,
   formConditionsEventUpdate,
-  setChangedProperty,
+  setChangedProperty, sourceChangedProperty,
 } from 'form-builder/actions/control';
 
 chai.use(chaiEnzyme());
@@ -216,5 +216,32 @@ describe('Update All Scripts', () => {
     sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
     sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
     sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
+  });
+});
+
+describe('FormEventEditorWithRedux_where_controlEvent_is_true', () => {
+  let wrapper;
+  const DummyComponent = () => <div></div>;
+  const formDetails = {};
+  let property;
+  let state;
+  let store;
+
+  beforeEach(() => {
+    property = { controlEvent: true, selectedControlId: '123' };
+    state = { controlProperty: { property }, formDetails, controlDetails: {} };
+    store = getStore(state);
+    wrapper = shallow(
+      <FormEventEditorWithRedux
+        children={<DummyComponent />}
+        store = {store}
+      />);
+  });
+  it('should update sourceChangedProperty when updateScript is called ' +
+    'with controlEvent is true', () => {
+    const script = 'abcd';
+    wrapper.find('FormEventEditor').prop('updateScript')(script, property, '123');
+    sinon.assert.calledOnce(store.dispatch);
+    sinon.assert.calledOnce(store.dispatch.withArgs(sourceChangedProperty(script, '123')));
   });
 });

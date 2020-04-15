@@ -314,6 +314,32 @@ describe('FormDetails', () => {
       .prop('updateAllScripts')).to.eq(wrapper.find('FormEventEditor').prop('updateAllScripts'));
   });
 
+  it('should render controlEvent for given control id', () => {
+    const dummyScript = 'function abcd(){ var a=1;}';
+    const property = { controlEvent: true };
+    const formDetails = { events: { onFormInit: dummyScript } };
+    const allObsControlEvents = [
+      { id: '1', name: 'name', events: { onValueChange: dummyScript } },
+      { id: '2', name: 'name2', events: undefined },
+    ];
+    const selectedControl = { id: '1' };
+    const state = { controlProperty: { property },
+      formDetails, controlDetails: { allObsControlEvents, selectedControl } };
+    const store = getStore(state);
+    wrapper = mount(
+      <Provider store={store}>
+        <FormDetail
+          formControlEvents={allObsControlEvents}
+          formData={formData}
+          publishForm={() => {}}
+          saveFormResource={() => {}}
+          setError={() => {}}
+        />
+      </Provider>);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('script')).to.eq(dummyScript);
+  });
+
   it('should render form details when form data is present', () => {
     const documentStub = sinon.stub(document, 'getElementsByClassName')
         .callsFake(() => [{ className: 'column-side' }]);
