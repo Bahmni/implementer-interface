@@ -7,8 +7,15 @@ import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
-import { blurControl, deselectControl, removeControlProperties, removeSourceMap, formLoad }
-    from 'form-builder/actions/control';
+import {
+  blurControl,
+  deselectControl,
+  removeControlProperties,
+  removeSourceMap,
+  formLoad,
+  setChangedProperty,
+}
+  from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -45,7 +52,7 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
-
+    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -463,6 +470,10 @@ export class FormDetailContainer extends Component {
             })
             .catch((error) => this.showErrors(error));
   }
+  handleUpdateFormControlEvents(formJson) {
+    const obsControlEvents = FormHelper.getObsControlEvents(formJson);
+    this.props.dispatch(formLoad(obsControlEvents));
+  }
 
   render() {
     const defaultLocale = this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
@@ -495,7 +506,9 @@ export class FormDetailContainer extends Component {
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
                     ref={r => { this.formDetail = r; }}
+                    resetProperty={(property) => this.props.dispatch(setChangedProperty(property))}
                     setError={this.setErrorMessage}
+                    updateFormControlEvents={this.handleUpdateFormControlEvents}
                     updateFormEvents={(events) => this.updateFormEvents(events)}
                     updateFormName={(formName) => this.updateFormName(formName)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}

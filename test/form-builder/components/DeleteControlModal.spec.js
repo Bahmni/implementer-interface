@@ -4,8 +4,6 @@ import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
-import FormHelper from 'form-builder/helpers/formHelper';
-import { deleteControl } from 'form-builder/actions/control';
 import sinon from 'sinon';
 
 chai.use(chaiEnzyme());
@@ -17,34 +15,6 @@ describe('DeleteControlModal', () => {
   let dispatchSpy;
   let controlName;
   let controlId;
-  const formJsonData = {
-    name: 'SectionForm',
-    id: 1,
-    type: 'section',
-    controls: [
-      {
-        type: 'section',
-        id: 4,
-        controls: [
-          {
-            type: 'obsControl',
-            id: 2,
-            concept: {
-              name: 'obs1',
-            },
-          },
-        ],
-      },
-      {
-        type: 'obsControl',
-        id: 3,
-        concept: {
-          name: 'obs2',
-        },
-        events: { onValueChange: 'func(){}' },
-      },
-    ],
-  };
 
   beforeEach(() => {
     closeModalSpy = sinon.spy();

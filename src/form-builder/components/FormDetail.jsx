@@ -11,13 +11,18 @@ import FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
 import ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
 import Popup from 'reactjs-popup';
 import FormConditionsModal from 'form-builder/components/FormConditionsModal';
+import { commonConstants } from 'common/constants';
+import NotificationContainer from 'common/Notification';
 
 
 export default class FormDetail extends Component {
   constructor() {
     super();
+    this.state = { errorMessage: {} };
     this.canvasRef = this.canvasRef.bind(this);
     this.canvas = undefined;
+    this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.handleFormConditionsLoad = this.handleFormConditionsLoad.bind(this);
     window.onscroll = () => {
       const getByClass = (elementClassName) => document.getElementsByClassName(elementClassName);
       const isViewMode = getByClass('info-view-mode-wrap').length === 1;
@@ -30,6 +35,17 @@ export default class FormDetail extends Component {
         element[0].className = 'column-side';
       }
     };
+  }
+
+  setErrorMessage(errorMessage) {
+    const errorNotification = {
+      message: errorMessage,
+      type: commonConstants.responseType.error,
+    };
+    this.setState({ errorMessage: errorNotification });
+    setTimeout(() => {
+      this.setState({ errorMessage: {} });
+    }, commonConstants.toastTimeout);
   }
 
   getFormJson() {
@@ -56,6 +72,15 @@ export default class FormDetail extends Component {
     return `${name} ${versionNumber} - ${status}`;
   }
 
+  handleFormConditionsLoad() {
+    try {
+      const formJson = this.getFormJson();
+      this.props.updateFormControlEvents(formJson);
+    } catch (e) {
+      this.setErrorMessage(e.message);
+      throw e;
+    }
+  }
   render() {
     const { formData, defaultLocale } = this.props;
     if (formData) {
@@ -110,7 +135,8 @@ export default class FormDetail extends Component {
       };
       return (
                 <div>
-                    <FormEventEditor children={<FormEventEditorContent />} />
+                   <NotificationContainer notification={this.state.errorMessage} />
+                  <FormEventEditor children={<FormEventEditorContent />} />
                     <div className="button-wrapper">
                     </div>
                     <div className={ classNames('container-main',
@@ -138,6 +164,7 @@ export default class FormDetail extends Component {
                                   eventProperty={'formConditionsEvent'}
                                   formTitle={this.props.formData.name}
                                   label={'Form Conditions'}
+                                  onEventLoad={this.handleFormConditionsLoad}
                                   updateFormEvents={this.props.updateFormEvents}
                                 />
                             </div>
@@ -182,6 +209,7 @@ FormDetail.propTypes = {
     events: PropTypes.object,
   }),
   setError: PropTypes.func.isRequired,
+  updateFormControlEvents: PropTypes.func,
   updateFormEvents: PropTypes.func,
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
