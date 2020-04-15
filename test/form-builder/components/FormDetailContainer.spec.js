@@ -919,5 +919,17 @@ describe('FormDetailContainer', () => {
       const notificationContainer = wrapper.find('NotificationContainer');
       expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
     });
+
+    it('should show preview button after publish', () => {
+      const wrapper = mount(
+          <Provider store={getStore()}>
+            <FormDetailContainer
+              {...defaultProps}
+            /></Provider>, { context }
+      );
+      wrapper.find('FormDetailContainer').setState({ httpReceived: false });
+      const previewButton = wrapper.find('.preview-button');
+      expect(previewButton).to.have.length(1);
+    });
   });
 });

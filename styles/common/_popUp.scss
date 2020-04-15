@@ -105,8 +105,9 @@
       }
       .placeholder{
         pointer-events: none;
+      }
+      .fa-cloud-upload{
         opacity: 0.5;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.24) !important; /* stylelint-disable-line declaration-no-important */
       }
     }
 
