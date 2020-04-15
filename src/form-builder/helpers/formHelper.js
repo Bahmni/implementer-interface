@@ -42,21 +42,14 @@ export default class FormHelper {
     return obsControlEvents;
   }
 
-  static getObsControlIdsForGivenControl(control, id) {
-    if (control.id === id && control.type === 'obsControl') {
-      return [control.id];
-    } else if (control.id === id) {
-      const obsControlEvents = this.getObsControlEvents(control);
-      return obsControlEvents.map(c => c.id);
-    } else if (control.controls !== undefined) {
-      const childControls = control.controls;
-      for (let i = 0; i < childControls.length; i++) {
-        const obsControlIds = this.getObsControlIdsForGivenControl(childControls[i], id);
-        if (obsControlIds !== null) {
-          return obsControlIds;
-        }
-      }
+  static getObsControlIdsForGivenControl(control) {
+    if (control === undefined) {
+      return [];
     }
-    return null;
+    if (control.type === 'obsControl') {
+      return [control.id];
+    }
+    const obsControlEvents = this.getObsControlEvents(control);
+    return obsControlEvents.map(c => c.id);
   }
 }

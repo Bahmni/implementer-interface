@@ -7,10 +7,9 @@ export default class DeleteControlModal extends Component {
 
   deleteControl(e) {
     e.preventDefault();
-    const formJson = this.props.loadFormJson();
     this.props.deleteControl(this.props.controlId);
     this.props.closeModal();
-    const controlIds = FormHelper.getObsControlIdsForGivenControl(formJson, this.props.controlId);
+    const controlIds = FormHelper.getObsControlIdsForGivenControl(this.props.controlJson);
     this.props.dispatch(deleteControl(controlIds));
   }
 
@@ -48,6 +47,7 @@ export default class DeleteControlModal extends Component {
 DeleteControlModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
   controlId: PropTypes.string,
+  controlJson: PropTypes.string,
   controlName: PropTypes.string,
   deleteControl: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,

@@ -130,7 +130,7 @@ describe('formHelper', () => {
 
     const estimatedObsControlIds = [2, 3];
 
-    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(control, 1);
+    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(control);
     expect(JSON.stringify(estimatedObsControlIds)).to.equal(JSON.stringify(obsControlIds));
   });
 
@@ -166,43 +166,14 @@ describe('formHelper', () => {
 
     const estimatedObsControlIds = [3];
 
-    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(control, 3);
+    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(control.controls[1]);
     expect(JSON.stringify(estimatedObsControlIds)).to.equal(JSON.stringify(obsControlIds));
   });
 
-  it('should return Obs Control Ids when non obs child control id is passed', () => {
-    const control = {
-      name: 'SectionForm',
-      id: 1,
-      type: 'section',
-      controls: [
-        {
-          id: 4,
-          type: 'section',
-          controls: [
-            {
-              type: 'obsControl',
-              id: 2,
-              concept: {
-                name: 'obs1',
-              },
-            },
-          ],
-        },
-        {
-          type: 'obsControl',
-          id: 3,
-          concept: {
-            name: 'obs2',
-          },
-          events: { onValueChange: 'func(){}' },
-        },
-      ],
-    };
+  it('should return Obs Control Ids when undefined is passed', () => {
+    const estimatedObsControlIds = [];
 
-    const estimatedObsControlIds = [2];
-
-    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(control, 4);
+    const obsControlIds = FormHelper.getObsControlIdsForGivenControl(undefined);
     expect(JSON.stringify(estimatedObsControlIds)).to.equal(JSON.stringify(obsControlIds));
   });
 });
