@@ -29,6 +29,11 @@ export default class FormConditionsModal extends Component {
     this.formConditionsSave = this.formConditionsSave.bind(this);
     this.updateErrorInMap = this.updateErrorInMap.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.rightPanelRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.rightPanelRef.current.scrollTo(0, 0);
   }
 
   setErrorMessage(errorMessage) {
@@ -173,7 +178,7 @@ export default class FormConditionsModal extends Component {
               { this.showObsControlScriptEditorModal(formDetailEvents.onFormSave, null,
                 'Save Event', this.saveEventRef, this.state.formEventsErrors.hasFormSaveError)}
             </div>
-            <div className="right-panel" >
+            <div className="right-panel" ref={this.rightPanelRef}>
               <div className="control-events-header">
                 <label className="label" >Control Events:</label>
 
