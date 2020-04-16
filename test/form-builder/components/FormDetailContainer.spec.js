@@ -182,6 +182,18 @@ describe('FormDetailContainer', () => {
     expect(publishButton).to.have.length(0);
   });
 
+  it('should show preview button before get formData', () => {
+    const wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetailContainer
+          {...defaultProps}
+        /></Provider>, { context }
+    );
+    wrapper.find('FormDetailContainer').setState({ httpReceived: false });
+    const previewButton = wrapper.find('.preview-button');
+    expect(previewButton).to.have.length(1);
+  });
+
   it('should call the appropriate endpoint to post formData', (done) => {
     sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
     const wrapper = shallow(
@@ -763,6 +775,58 @@ describe('FormDetailContainer', () => {
       sinon.assert.calledTwice(dispatch.withArgs(clearTranslations()));
     });
 
+    it('should set showPreview equal true when click preview button', () => {
+      const dispatch = sinon.spy();
+
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+          dispatch={dispatch}
+        />, { context, store: {} }
+      );
+      const json = {
+        name: 'Groovy',
+        id: 62,
+        uuid: 'a70e3e5c-70cf-49a7-b73b-4dc6d70643a7',
+        controls: [
+          {
+            type: 'obsControl',
+            label: {
+              translationKey: 'ANA,_HEIGHT_1',
+              value: 'ANA, Height',
+            },
+            properties: {
+              mandatory: false,
+            },
+            id: '1',
+            concept: {
+              name: 'ANA, Height',
+              uuid: 'f17466a5-5d1a-11ea-9bb4-080027405b36',
+              datatype: 'Numeric',
+              properties: {
+                allowDecimal: true,
+              },
+            },
+            events: {
+              onValueChange: 'function(form, interceptor) {\n  var x = form.get("ANA, Height")' +
+                  '.getValue();\n var y = form.get("SA, Penicillin");\n  if (parseInt(x) > 5) {\n' +
+                  '    y.setHidden(true);\n  } else\n y.setHidden(false);\n}',
+            },
+          },
+        ],
+        version: '43',
+      };
+      const formJsonSpy = sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => json);
+      const generateFormSpy = sinon.spy(wrapper.instance(), 'generateFormPreviewJson');
+
+      wrapper.setState({ formData: publishedFormData });
+      wrapper.find('.preview-button').simulate('click');
+
+      expect(wrapper.state().showPreview).to.equal(true);
+      sinon.assert.calledOnce(generateFormSpy);
+      sinon.assert.calledOnce(formJsonSpy);
+    });
+
     it('should show edit modal', (done) => {
       const wrapper = shallow(
         <FormDetailContainer
@@ -775,6 +839,22 @@ describe('FormDetailContainer', () => {
 
       setTimeout(() => {
         expect(editModal.prop('showModal')).to.equal(false);
+        done();
+      }, 1000);
+    });
+
+    it('should show preview modal', (done) => {
+      const wrapper = shallow(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context, store: {} }
+      );
+      wrapper.setState({ formData: publishedFormData });
+
+      const popup = wrapper.find('Popup');
+
+      setTimeout(() => {
+        expect(popup.prop('open')).to.equal(false);
         done();
       }, 1000);
     });
@@ -838,6 +918,18 @@ describe('FormDetailContainer', () => {
 
       const notificationContainer = wrapper.find('NotificationContainer');
       expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
+    });
+
+    it('should show preview button after publish', () => {
+      const wrapper = mount(
+          <Provider store={getStore()}>
+            <FormDetailContainer
+              {...defaultProps}
+            /></Provider>, { context }
+      );
+      wrapper.find('FormDetailContainer').setState({ httpReceived: false });
+      const previewButton = wrapper.find('.preview-button');
+      expect(previewButton).to.have.length(1);
     });
   });
 });
