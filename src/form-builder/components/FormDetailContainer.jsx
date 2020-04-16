@@ -20,6 +20,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
+import { saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
 
@@ -32,7 +33,7 @@ export class FormDetailContainer extends Component {
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
-      formPreviewJson: undefined };
+      referenceFormUuid: undefined, formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -56,8 +57,12 @@ export class FormDetailContainer extends Component {
     httpInterceptor
             .get(`${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`)
             .then((data) => {
+              const parsedFormValue = data.resources.length > 0 ?
+                JSON.parse(data.resources[0].value) : {};
               this.setState({ formData: data, httpReceived: true,
-                loading: false, originalFormName: data.name, referenceVersion: data.version });
+                loading: false, originalFormName: data.name,
+                referenceVersion: parsedFormValue.referenceVersion,
+                referenceFormUuid: parsedFormValue.referenceFormUuid });
               this.getFormJson();
             })
             .catch((error) => {
@@ -106,6 +111,8 @@ export class FormDetailContainer extends Component {
       const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                 this.state.formData.resources[0].uuid : '';
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
+      formJson.referenceVersion = this.state.referenceVersion;
+      formJson.referenceFormUuid = this.state.referenceFormUuid;
       const formResource = {
         form: {
           name: formName,
@@ -191,10 +198,11 @@ export class FormDetailContainer extends Component {
   }
 
   _createTranslationReqObject(container, locale) {
-    const { version, name } = this.state.formData;
+    const { version, name, uuid } = this.state.formData;
     const referenceVersion = this.state.referenceVersion;
-    const translations = Object.assign({}, container, { version, locale, referenceVersion },
-        { formName: name });
+    const referenceFormUuid = this.state.referenceFormUuid;
+    const translations = Object.assign({}, container, { formUuid: uuid,
+      formName: name, version, locale, referenceVersion, referenceFormUuid });
     return [translations];
   }
 
@@ -284,7 +292,9 @@ export class FormDetailContainer extends Component {
             { editable: true }
         );
     this.props.dispatch(clearTranslations());
-    this.setState({ formData: editableFormData });
+    this.setState({ formData: editableFormData,
+      referenceVersion: this.state.formData.version,
+      referenceFormUuid: this.state.formData.uuid });
   }
 
   generateFormPreviewJson() {
@@ -340,7 +350,7 @@ export class FormDetailContainer extends Component {
 
   _saveTranslationsAndPublishForm(formUuid, translations) {
     this.setState({ loading: true });
-    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations).then(() => {
+    saveTranslations(translations).then(() => {
       httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
         .then((response) => {
           const successNotification = {

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
@@ -17,6 +16,7 @@ import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
 import { commonConstants } from 'common/constants';
+import { saveTranslations, translationsFor } from 'common/apis/formTranslationApi';
 
 
 class FormTranslationsContainer extends Component {
@@ -57,7 +57,7 @@ class FormTranslationsContainer extends Component {
           this.name = name;
           this.version = version;
           const locale = localStorage.getItem('openmrsDefaultLocale');
-          this._getTranslations(name, version, locale);
+          this._getTranslations(name, version, locale, this.props.match.params.formUuid);
         }).catch(() => {
           this.setMessage('Failed to fetch form information', commonConstants.responseType.error);
         });
@@ -75,10 +75,9 @@ class FormTranslationsContainer extends Component {
   }
 
 
-  _getTranslations(name, version, locale) {
+  _getTranslations(name, version, locale, uuid) {
     this.setState({ loading: true });
-    httpInterceptor
-      .get(new UrlHelper().bahmniFormTranslateUrl(name, version, locale))
+    translationsFor(name, version, locale, uuid)
       .then((translations) => {
         this._createInitialValue(translations, locale);
         const { allowedLocales } = this.state;
@@ -152,15 +151,14 @@ class FormTranslationsContainer extends Component {
     this.setState({ loading: true });
     const { translations } = this.props;
 
-    httpInterceptor.post(formBuilderConstants.saveTranslationsUrl,
-      this._createTranslationReqObject(translations)).then(() => {
-        const message = 'Form translations saved successfully';
-        this.setMessage(message, commonConstants.responseType.success);
-        this.setState({ loading: false });
-      }).catch(() => {
-        this.setErrorMessage('Failed to save translations');
-        this.setState({ loading: false });
-      });
+    saveTranslations(this._createTranslationReqObject(translations)).then(() => {
+      const message = 'Form translations saved successfully';
+      this.setMessage(message, commonConstants.responseType.success);
+      this.setState({ loading: false });
+    }).catch(() => {
+      this.setErrorMessage('Failed to save translations');
+      this.setState({ loading: false });
+    });
   }
 
   _createTranslationReqObject(translations) {
@@ -168,6 +166,7 @@ class FormTranslationsContainer extends Component {
     return map(translations, (localeTranslation, locale) =>
       Object.assign(localeTranslation, {
         formName: name,
+        formUuid: this.props.match.params.formUuid,
         version, locale,
       }));
   }
@@ -175,7 +174,8 @@ class FormTranslationsContainer extends Component {
   _generateTranslation(element) {
     this.props.dispatch(removeLocaleTranslation(this.selectedLocale));
     this.selectedLocale = element.target.value;
-    this._getTranslations(this.name, this.version, this.selectedLocale);
+    this._getTranslations(this.name, this.version, this.selectedLocale,
+      this.props.match.params.formUuid);
   }
 
   _createLocaleOptions(allowedLocales) {

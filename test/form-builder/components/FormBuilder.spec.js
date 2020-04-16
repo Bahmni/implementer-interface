@@ -334,6 +334,85 @@ describe('Import form', () => {
       done();
     });
   });
+
+  it('should importValidForms valid forms ', (done) => {
+    const formBuilderInstance = wrapper.find('FormBuilder').instance();
+    const formJson = data[0];
+    const resource = {
+      name: data[0].name,
+      id: data[0].id,
+      uuid: data[0].uuid,
+      defaultLocale: 'en',
+      controls: [
+        {
+          type: 'obsControl',
+          label: {
+            translationKey: 'HEIGHT_1',
+            id: '1',
+            units: '',
+            type: 'label',
+            value: 'HEIGHT',
+          },
+          properties: {
+            location: {
+              column: 0,
+              row: 0,
+            },
+            abnormal: false,
+          },
+          id: '1',
+          concept: {
+            name: 'HEIGHT',
+            uuid: '5090AAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            datatype: 'Numeric',
+            conceptClass: 'Misc',
+            answers: [],
+            properties: {
+              allowDecimal: false,
+            },
+          },
+        },
+      ],
+      events: {},
+      translationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/translations',
+    };
+    formJson.value = resource;
+    formJson.formName = data[0].name;
+    formJson.translations = [
+      {
+        locale: 'en',
+        labels: {},
+        concepts: {
+          HEIGHT_1: 'HEIGHT',
+        },
+        formName: data[0].name,
+        formUuid: null,
+        version: data[0].version,
+        referenceVersion: null,
+        referenceFormUuid: null,
+      },
+    ];
+    sinon.stub(httpInterceptor, 'post').callsFake(() => {
+      const response = data[0];
+      return Promise.resolve(Object.assign({}, response, { uuid: 'new_uuid' }));
+    });
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      const firstArgumentOfSaveFormResource = saveFormResourceSpy.getCall(0).args[0];
+      const secondArgumentOfSaveFormResource = saveFormResourceSpy.getCall(0).args[1];
+      sinon.assert.calledOnce(saveFormResourceSpy);
+      expect(firstArgumentOfSaveFormResource.form.name).to.eq(data[0].name);
+      expect(firstArgumentOfSaveFormResource.form.uuid).to.eq('new_uuid');
+      expect(firstArgumentOfSaveFormResource.value).to.eq(JSON.stringify(formJson.value));
+      expect(firstArgumentOfSaveFormResource.uuid).to.eq('');
+      expect(secondArgumentOfSaveFormResource[0].referenceFormUuid).to.eq(null);
+      expect(secondArgumentOfSaveFormResource[0].referenceVersion).to.eq(null);
+      expect(secondArgumentOfSaveFormResource[0].version).to.eq(data[0].version);
+      expect(secondArgumentOfSaveFormResource[0].formName).to.eq(data[0].name);
+      expect(secondArgumentOfSaveFormResource[0].formUuid).to.eq('new_uuid');
+      done();
+    }, 500);
+  });
 });
 
 describe('Export Forms', () => {
