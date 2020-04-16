@@ -9,7 +9,7 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
-import { clearTranslations } from 'form-builder/actions/control';
+import { clearTranslations, formLoad } from 'form-builder/actions/control';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
@@ -18,6 +18,7 @@ import * as ControlPropertiesContainer from
 import * as FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 import * as Canvas from 'form-builder/components/Canvas.jsx';
 import * as FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
+import FormHelper from 'form-builder/helpers/formHelper';
 
 const routes = [
   {
@@ -501,6 +502,63 @@ describe('FormDetailContainer', () => {
       httpInterceptor.post.restore();
       done();
     }, 500);
+  });
+
+  it('should call formLoad redux action when handleUpdateFormControlEvents is called', () => {
+    const dispatch = sinon.spy();
+    const wrapper = shallow(
+      <FormDetailContainer
+        {...defaultProps}
+        dispatch={dispatch}
+      />, { context, store: {}, disableLifecycleMethods: true }
+    );
+
+    const instance = wrapper.instance();
+    const jsonForm = {
+      name: 'Test',
+      controls: [
+        {
+          type: 'obsGroupControl',
+          label: {
+            translationKey: 'SYSTOLIC_DATA_19',
+            type: 'label',
+            value: 'Systolic Data',
+            id: '19',
+          },
+
+          id: '19',
+          concept: {
+            name: 'Systolic Data',
+            uuid: 'c36ddb6d-3f10-11e4-adec-0800271c1b75',
+            datatype: 'N/A',
+            setMembers: [
+              {
+                name: 'Systolic',
+              },
+            ],
+          },
+          controls: [
+            {
+              type: 'obsControl',
+              id: '20',
+              concept: {
+                name: 'Systolic',
+              },
+              events: {
+                onValueChange: 'function(){\nconsole.log("test")}',
+              },
+            },
+          ],
+        },
+      ],
+      events: {},
+    };
+
+    instance.handleUpdateFormControlEvents(jsonForm);
+    const obsControlEvents = FormHelper.getObsControlEvents(jsonForm);
+    const formLoadAction = formLoad(obsControlEvents);
+    expect(dispatch.lastCall.args[0].type).to.eq(formLoadAction.type);
+    expect(dispatch.lastCall.args[0].controls).to.eql(formLoadAction.controls);
   });
 
   describe('when NOT published', () => {
