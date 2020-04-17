@@ -24,16 +24,18 @@ const controlDetails = (store = {}, action) => {
       return Object.assign({}, store, { focusedControl: action.id });
     case 'BLUR_CONTROL':
       return Object.assign({}, store, { focusedControl: undefined });
-    case 'SOURCE_CHANGED':
+    case 'SOURCE_CHANGED': {
+      const eventData = action.source === '' ? undefined : { onValueChange: action.source };
       // eslint-disable-next-line no-param-reassign
-      store.selectedControl.events = { onValueChange: action.source };
+      store.selectedControl.events = eventData;
       // eslint-disable-next-line no-param-reassign
       store.allObsControlEvents = store.allObsControlEvents.map(control =>
         (control.id === action.id ?
-          Object.assign({}, control, { events: { onValueChange: action.source } })
+          Object.assign({}, control, { events: eventData })
           : control)
       );
       return cloneDeep(store);
+    }
     case 'FORM_LOAD':
       return Object.assign({}, store, { allObsControlEvents: action.controls });
 

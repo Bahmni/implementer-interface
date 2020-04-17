@@ -134,7 +134,7 @@ describe('controlDetails', () => {
   describe('sourceChanged', () => {
     it('should change the source', () => {
       action = { type: 'SOURCE_CHANGED', source: 'test', id: 1 };
-      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: '' } },
+      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: 'init' } },
         { id: 2, name: 'ob2', events: { onValueChange: '' } }];
 
       const state = controlDetails({ allObsControlEvents, selectedControl: {} }, action);
@@ -142,6 +142,18 @@ describe('controlDetails', () => {
       expect(state.selectedControl.events).to.eql({ onValueChange: 'test' });
       const updatedControl = state.allObsControlEvents.filter(e => e.id === action.id);
       expect(updatedControl[0].events).to.eql({ onValueChange: 'test' });
+    });
+
+    it('should change the source to undefined when empty string passed', () => {
+      action = { type: 'SOURCE_CHANGED', source: '', id: 1 };
+      allObsControlEvents = [{ id: 1, name: 'ob1', events: { onValueChange: 'init' } },
+        { id: 2, name: 'ob2', events: { onValueChange: '' } }];
+
+      const state = controlDetails({ allObsControlEvents, selectedControl: {} }, action);
+
+      expect(state.selectedControl.events).to.eql(undefined);
+      const updatedControl = state.allObsControlEvents.filter(e => e.id === action.id);
+      expect(updatedControl[0].events).to.eql(undefined);
     });
   });
 
