@@ -11,3 +11,14 @@ export function translationsFor(formName, formVersion, locale, formUuid) {
 export function saveTranslations(translations) {
   return httpInterceptor.post(formBuilderConstants.saveTranslationsUrl, translations);
 }
+
+export function saveFormNameTranslations(nameTranslations, referenceUuid) {
+  return httpInterceptor.post(new UrlHelper()
+    .bahmniSaveFormNameTranslateUrl(referenceUuid), nameTranslations);
+}
+
+
+export function getFormNameTranslations(formName, formUuid) {
+  return httpInterceptor.get(new UrlHelper()
+      .bahmniFormNameTranslateUrl(formName, formUuid), 'text');
+}

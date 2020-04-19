@@ -63,6 +63,7 @@ class FormTranslationsGrid extends Component {
               {this._getHeaders(this.props.translationData.headers)}
             </tr>
             </thead>
+            <tbody>{this.getRows('formNames')}</tbody>
             <tbody>{this.getRows('concepts')}</tbody>
             <tbody>{this.getRows('labels')}</tbody>
           </table>
