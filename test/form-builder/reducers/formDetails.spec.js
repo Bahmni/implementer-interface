@@ -23,6 +23,13 @@ describe('formDetails', () => {
     expect(state).to.be.eql(expectedStoreState);
   });
 
+  it('should store the changed form observations control events', () => {
+    const action = { events: {}, type: 'FORM_CONDITIONS_CHANGED' };
+    const expectedStoreState = { events: { onFormConditionsUpdate: {} } };
+    const state = formDetails({}, action);
+    expect(state).to.be.eql(expectedStoreState);
+  });
+
   it('should return empty store when no type is passed', () => {
     const action = { events: {}, type: '' };
     const expectedStoreState = { events: { } };

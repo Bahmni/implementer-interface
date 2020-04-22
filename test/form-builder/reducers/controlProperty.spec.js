@@ -30,9 +30,8 @@ describe('propertyDetails', () => {
 
   it('should return empty object when REMOVE_CONTROL_PROPERTIES be triggered', () => {
     action.type = 'REMOVE_CONTROL_PROPERTIES';
-
     const state = controlProperty(undefined, action);
-
-    expect(state).to.be.eql({});
+    expect(state.id).to.be.eql(undefined);
+    expect(state.property).to.be.eql({ controlEvent: false, formConditionsEvent: undefined });
   });
 });

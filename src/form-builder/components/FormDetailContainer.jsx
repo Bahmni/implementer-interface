@@ -7,8 +7,15 @@ import FormDetail from 'form-builder/components/FormDetail.jsx';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { connect } from 'react-redux';
-import { blurControl, deselectControl, removeControlProperties, removeSourceMap }
-    from 'form-builder/actions/control';
+import {
+  blurControl,
+  deselectControl,
+  removeControlProperties,
+  removeSourceMap,
+  formLoad,
+  setChangedProperty,
+}
+  from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -18,7 +25,8 @@ import FormHelper from 'form-builder/helpers/formHelper';
 import formHelper from '../helpers/formHelper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { clearTranslations, formEventUpdate, saveEventUpdate } from '../actions/control';
+import { clearTranslations } from '../actions/control';
+import { formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
@@ -26,16 +34,17 @@ import Popup from 'reactjs-popup';
 
 
 export class FormDetailContainer extends Component {
-
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
+    this.formJson = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
-      httpReceived: false, loading: true, formList: [],
+      httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
       referenceFormUuid: undefined, formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.getFormJson = this.getFormJson.bind(this);
     this.onSave = this.onSave.bind(this);
     this.openFormModal = this.openFormModal.bind(this);
     this.closeFormModal = this.closeFormModal.bind(this);
@@ -43,6 +52,7 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
+    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -63,7 +73,9 @@ export class FormDetailContainer extends Component {
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
-              this.getFormJson();
+              this.formJson = this.getFormJson();
+              const formControlsArray = formHelper.getObsControlEvents(this.formJson);
+              this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
               this.setErrorMessage(error);
@@ -73,6 +85,7 @@ export class FormDetailContainer extends Component {
 
     this.getFormList();
   }
+
 
   componentWillUpdate(nextProps, nextState) {
     if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
@@ -457,6 +470,10 @@ export class FormDetailContainer extends Component {
             })
             .catch((error) => this.showErrors(error));
   }
+  handleUpdateFormControlEvents(formJson) {
+    const obsControlEvents = FormHelper.getObsControlEvents(formJson);
+    this.props.dispatch(formLoad(obsControlEvents));
+  }
 
   render() {
     const defaultLocale = this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
@@ -485,9 +502,13 @@ export class FormDetailContainer extends Component {
                     {this.showPreviewModal()}
                   <FormDetail
                     defaultLocale={defaultLocale}
+                    formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
+                    formDetails={this.props.formDetails}
                     ref={r => { this.formDetail = r; }}
+                    resetProperty={(property) => this.props.dispatch(setChangedProperty(property))}
                     setError={this.setErrorMessage}
+                    updateFormControlEvents={this.handleUpdateFormControlEvents}
                     updateFormEvents={(events) => this.updateFormEvents(events)}
                     updateFormName={(formName) => this.updateFormName(formName)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}
@@ -502,6 +523,10 @@ export class FormDetailContainer extends Component {
 FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
+  formControlEvents: PropTypes.array,
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
   match: PropTypes.shape({
     path: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
@@ -520,6 +545,8 @@ function mapStateToProps(state) {
   return {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
     translations: state.translations,
+    formDetails: state.formDetails,
+    formControlEvents: state.controlDetails.allObsControlEvents,
   };
 }
 

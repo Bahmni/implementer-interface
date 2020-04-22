@@ -10,12 +10,19 @@ import FormHelper from 'form-builder/helpers/formHelper';
 import FormEventEditor from 'form-builder/components/FormEventEditor.jsx';
 import ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
 import Popup from 'reactjs-popup';
+import FormConditionsModal from 'form-builder/components/FormConditionsModal';
+import { commonConstants } from 'common/constants';
+import NotificationContainer from 'common/Notification';
+
 
 export default class FormDetail extends Component {
   constructor() {
     super();
+    this.state = { errorMessage: {} };
     this.canvasRef = this.canvasRef.bind(this);
     this.canvas = undefined;
+    this.setErrorMessage = this.setErrorMessage.bind(this);
+    this.handleFormConditionsLoad = this.handleFormConditionsLoad.bind(this);
     window.onscroll = () => {
       const getByClass = (elementClassName) => document.getElementsByClassName(elementClassName);
       const isViewMode = getByClass('info-view-mode-wrap').length === 1;
@@ -28,6 +35,17 @@ export default class FormDetail extends Component {
         element[0].className = 'column-side';
       }
     };
+  }
+
+  setErrorMessage(errorMessage) {
+    const errorNotification = {
+      message: errorMessage,
+      type: commonConstants.responseType.error,
+    };
+    this.setState({ errorMessage: errorNotification });
+    setTimeout(() => {
+      this.setState({ errorMessage: {} });
+    }, commonConstants.toastTimeout);
   }
 
   getFormJson() {
@@ -54,21 +72,60 @@ export default class FormDetail extends Component {
     return `${name} ${versionNumber} - ${status}`;
   }
 
+  handleFormConditionsLoad() {
+    try {
+      const formJson = this.getFormJson();
+      this.props.updateFormControlEvents(formJson);
+    } catch (e) {
+      this.setErrorMessage(e.message);
+      throw e;
+    }
+  }
   render() {
-    const { formData, defaultLocale } = this.props;
+    const { formData, defaultLocale, formControlEvents } = this.props;
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
       const idGenerator = this.getIdGenerator(formResourceControls);
-      const getScript = (property, formDetails) => {
+      const getScript = (property, formDetails, selectedControlId) => {
+        const isControlEvent = property.controlEvent;
+        if (isControlEvent) {
+          const selectedFormControlEvent = formControlEvents
+            .find(control => control.id === selectedControlId);
+          return selectedFormControlEvent && selectedFormControlEvent.events
+            && selectedFormControlEvent.events.onValueChange;
+        }
         const isSaveEvent = property.formSaveEvent;
         return formDetails.events && (isSaveEvent ? formDetails.events.onFormSave
           : formDetails.events.onFormInit);
       };
       const FormEventEditorContent = (props) => {
-        const script = props.property ? getScript(props.property, props.formDetails) : '';
+        const script = props.property ? getScript(props.property,
+          props.formDetails, props.selectedControlId) : '';
         const showEditor = props.property && (props.property.formInitEvent
-          || props.property.formSaveEvent);
+          || props.property.formSaveEvent || props.property.formConditionsEvent
+          || props.property.controlEvent);
+        if (!showEditor) {
+          return (<div></div>);
+        }
+        if (props.property.formConditionsEvent) {
+          return (<div>
+            {showEditor &&
+            <Popup className="form-event-popup" closeOnDocumentClick={false}
+              closeOnEscape={false}
+              open={showEditor} position="top center"
+            >
+              <FormConditionsModal
+                close={props.closeEventEditor}
+                controlEvents={props.formControlEvents}
+                formDetails={props.formDetails}
+                formTitle={this.formTitle(name, version, published, editable)}
+                updateAllScripts={props.updateAllScripts}
+              />
+            </Popup>
+            }
+          </div>);
+        }
         return (<div>
           {showEditor &&
           <Popup className="form-event-popup" closeOnDocumentClick={false}
@@ -87,7 +144,8 @@ export default class FormDetail extends Component {
       };
       return (
                 <div>
-                    <FormEventEditor children={<FormEventEditorContent />} />
+                   <NotificationContainer notification={this.state.errorMessage} />
+                  <FormEventEditor children={<FormEventEditorContent />} />
                     <div className="button-wrapper">
                     </div>
                     <div className={ classNames('container-main',
@@ -109,6 +167,13 @@ export default class FormDetail extends Component {
                                 <FormEventContainer
                                   eventProperty={'formSaveEvent'}
                                   label={'Save Event'}
+                                  updateFormEvents={this.props.updateFormEvents}
+                                />
+                                <FormEventContainer
+                                  eventProperty={'formConditionsEvent'}
+                                  formTitle={this.props.formData.name}
+                                  label={'Form Conditions'}
+                                  onEventLoad={this.handleFormConditionsLoad}
                                   updateFormEvents={this.props.updateFormEvents}
                                 />
                             </div>
@@ -139,6 +204,7 @@ export default class FormDetail extends Component {
 
 FormDetail.propTypes = {
   defaultLocale: PropTypes.string,
+  formControlEvents: PropTypes.Array,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
@@ -148,7 +214,11 @@ FormDetail.propTypes = {
     version: PropTypes.string.isRequired,
     editable: PropTypes.bool,
   }),
+  formDetails: PropTypes.shape({
+    events: PropTypes.object,
+  }),
   setError: PropTypes.func.isRequired,
+  updateFormControlEvents: PropTypes.func,
   updateFormEvents: PropTypes.func,
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,

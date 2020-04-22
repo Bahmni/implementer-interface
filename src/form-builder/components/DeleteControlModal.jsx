@@ -45,4 +45,5 @@ DeleteControlModal.propTypes = {
   controlId: PropTypes.string,
   controlName: PropTypes.string,
   deleteControl: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };

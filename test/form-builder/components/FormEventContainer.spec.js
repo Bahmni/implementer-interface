@@ -37,6 +37,35 @@ describe('FormEventContainer', () => {
     sinon.assert.calledOnce(spy);
   });
 
+
+  it('should call onEventLoad prop when show the editor button in clicked', () => {
+    const onEventLoad = sinon.spy();
+    wrapper = shallow(
+     <FormEventContainer
+       dispatch={ getStore().dispatch }
+       onEventLoad={onEventLoad}
+       updateFormEvents={updateSpy}
+     />);
+    wrapper.find('.form-event-container').find('button').simulate('click');
+    sinon.assert.calledOnce(onEventLoad);
+  });
+
+
+  it('should call onEventLoad prop when show the editor button in clicked', () => {
+    const onEventLoad = sinon.stub().throws();
+    const store = getStore();
+    wrapper = shallow(
+      <FormEventContainer
+        dispatch={ store.dispatch }
+        eventProperty={'prop_key'}
+        onEventLoad={onEventLoad}
+        updateFormEvents={updateSpy}
+      />);
+    wrapper.find('.form-event-container').find('button').simulate('click');
+    sinon.assert.calledOnce(onEventLoad);
+    sinon.assert.calledWith(store.dispatch, setChangedProperty({ prop_key: false }));
+  });
+
   it('should call updateFormEvents once props events changed', () => {
     const events = { onFormInit: 'test' };
     wrapper.setProps({ formDetails: { events } });

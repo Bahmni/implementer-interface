@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import { ComponentStore } from 'bahmni-form-controls';
 import sinon from 'sinon';
 import * as ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
+import * as FormConditionsModal from 'form-builder/components/FormConditionsModal';
+import { commonConstants } from 'common/constants';
 
 chai.use(chaiEnzyme());
 
@@ -16,6 +18,7 @@ describe('FormDetails', () => {
   let getDesignerComponentStub;
   let getAllDesignerComponentsStub;
   let scriptEditorModalStub;
+  let formConditionsModalStub;
 
   const formData = {
     id: 1,
@@ -37,13 +40,17 @@ describe('FormDetails', () => {
     });
     getAllDesignerComponentsStub = sinon.stub(ComponentStore, 'getAllDesignerComponents');
     getAllDesignerComponentsStub.returns({});
-    scriptEditorModalStub = sinon.stub(ScriptEditorModal, 'default').returns(<div>A stub</div>);
+    scriptEditorModalStub = sinon.stub(ScriptEditorModal, 'default')
+      .returns(<div>A stub</div>);
+    formConditionsModalStub = sinon.stub(FormConditionsModal, 'default')
+      .returns(<div>formConditions stub</div>);
   });
 
   after(() => {
     getDesignerComponentStub.restore();
     getAllDesignerComponentsStub.restore();
     scriptEditorModalStub.restore();
+    formConditionsModalStub.restore();
   });
 
   it('should render form details when form data is present', () => {
@@ -51,9 +58,12 @@ describe('FormDetails', () => {
       <Provider store={getStore()}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>
     );
@@ -64,15 +74,59 @@ describe('FormDetails', () => {
     expect(wrapper.find('Canvas').props().formUuid).to.eql('someUuid');
   });
 
+  it('should render form title when form data is present without version', () => {
+    const formDataWithoutVersion = {
+      id: 1,
+      name: 'someFormName',
+      uuid: 'someUuid',
+      resources: [],
+      published: false,
+    };
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          formData={formDataWithoutVersion}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
+        />
+      </Provider>
+    );
+    expect(wrapper.find('.header-title').at(0).text()).to.eql('someFormName  - Draft');
+  });
+  it('should render null when form data is not present', () => {
+    wrapper = mount(
+      <Provider store={getStore()}>
+        <FormDetail
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
+        />
+      </Provider>
+    );
+    expect(wrapper).to.have.exactly(0).descendants('ControlPool');
+    expect(wrapper).to.have.exactly(0).descendants('ControlPropertiesContainer');
+    expect(wrapper).to.have.exactly(0).descendants('Canvas');
+  });
+
   it('should pass the given defaultLocale to Canvas', () => {
     wrapper = mount(
       <Provider store={getStore()}>
         <FormDetail
-          defaultLocale= "en"
+          defaultLocale="en"
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>
     );
@@ -86,9 +140,12 @@ describe('FormDetails', () => {
   it('should render nothing when form data is not preset', () => {
     wrapper = shallow(
       <FormDetail
-        publishForm={() => {}}
-        saveFormResource={() => {}}
-        setError={() => {}}
+        publishForm={() => {
+        }}
+        saveFormResource={() => {
+        }}
+        setError={() => {
+        }}
       />);
     expect(wrapper).to.be.blank();
   });
@@ -98,9 +155,12 @@ describe('FormDetails', () => {
       <Provider store={getStore()}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>
     );
@@ -113,7 +173,12 @@ describe('FormDetails', () => {
     expect(saveEventProps).to.have.property('label');
     expect(saveEventProps.label).to.be.equal('Save Event');
     expect(saveEventProps.eventProperty).to.be.equal('formSaveEvent');
-    expect(formEvents.length).to.be.equal(2);
+
+    const formConditionsEventProps = formEvents.at(2).props();
+    expect(formConditionsEventProps).to.have.property('label');
+    expect(formConditionsEventProps.label).to.be.equal('Form Conditions');
+    expect(formConditionsEventProps.eventProperty).to.be.equal('formConditionsEvent');
+    expect(formEvents.length).to.be.equal(3);
   });
 
   it('should create the idGenerator and pass it as props to required children', () => {
@@ -121,9 +186,12 @@ describe('FormDetails', () => {
       <Provider store={getStore()}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>
     );
@@ -143,9 +211,12 @@ describe('FormDetails', () => {
       <Provider store={store}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>);
 
@@ -160,44 +231,76 @@ describe('FormDetails', () => {
       <Provider store={store}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>);
 
     expect(wrapper.find('FormEventEditor').find('Popup').length).to.eq(1);
   });
 
-  it('should not render popup when formInitEvent and formSaveEvent are false', () => {
-    const property = { formInitEvent: false, formSaveEvent: false };
+  it('should render popup when formConditionsEvent is true', () => {
+    const property = { formConditionsEvent: true };
     const state = { controlProperty: { property }, formDetails: {}, controlDetails: {} };
     const store = getStore(state);
     wrapper = mount(
       <Provider store={store}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>);
-    expect(wrapper.find('FormEventEditor').find('Popup').length).to.eq(0);
+
+    expect(wrapper.find('FormEventEditor').find('Popup').length).to.eq(1);
   });
+
+  it('should not render popup when formInitEvent,formSaveEvent,formConditionsEvent are false',
+    () => {
+      const property = { formInitEvent: false, formSaveEvent: false, formConditionsEvent: false };
+      const state = { controlProperty: { property }, formDetails: {}, controlDetails: {} };
+      const store = getStore(state);
+      wrapper = mount(
+        <Provider store={store}>
+          <FormDetail
+            formData={formData}
+            publishForm={() => {
+            }}
+            saveFormResource={() => {
+            }}
+            setError={() => {
+            }}
+          />
+        </Provider>);
+      expect(wrapper.find('FormEventEditor').find('Popup').length).to.eq(0);
+    });
 
   it('should render script of onFormSave when formSaveEvent is true', () => {
     const dummyScript = 'function abcd(){ var a=1;}';
     const property = { formSaveEvent: true };
-    const state = { controlProperty: { property },
-      formDetails: { events: { onFormSave: dummyScript } }, controlDetails: {} };
+    const state = {
+      controlProperty: { property },
+      formDetails: { events: { onFormSave: dummyScript } }, controlDetails: {},
+    };
     const store = getStore(state);
     wrapper = mount(
       <Provider store={store}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
@@ -207,40 +310,178 @@ describe('FormDetails', () => {
   it('should render script of onFormInit when formInitEvent is true', () => {
     const dummyScript = 'function abcd(){ var a=1;}';
     const property = { formInitEvent: true };
-    const state = { controlProperty: { property },
-      formDetails: { events: { onFormInit: dummyScript } }, controlDetails: {} };
+    const state = {
+      controlProperty: { property },
+      formDetails: { events: { onFormInit: dummyScript } }, controlDetails: {},
+    };
     const store = getStore(state);
     wrapper = mount(
       <Provider store={store}>
         <FormDetail
           formData={formData}
-          publishForm={() => {}}
-          saveFormResource={() => {}}
-          setError={() => {}}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
         />
       </Provider>);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
       .prop('script')).to.eq(dummyScript);
   });
 
+  it('should render controlEvents and formDetails when formConditionsEvent is true', () => {
+    const dummyScript = '';
+    const property = { formConditionsEvent: true };
+    const formDetails = { events: { onFormInit: dummyScript } };
+    const allObsControlEvents = [{ id: '1', name: 'name', events: { onValueChange: '' } }];
+    const state = {
+      controlProperty: { property },
+      formDetails, controlDetails: { allObsControlEvents },
+    };
+    const store = getStore(state);
+    wrapper = mount(
+      <Provider store={store}>
+        <FormDetail
+          formData={formData}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
+        />
+      </Provider>);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('formDetails')).to.eq(formDetails);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('controlEvents')).to.eq(allObsControlEvents);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('script')).to.eq(undefined);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('updateAllScripts')).to.eq(wrapper.find('FormEventEditor').prop('updateAllScripts'));
+  });
+
+  it('should render controlEvent for given control id', () => {
+    const dummyScript = 'function abcd(){ var a=1;}';
+    const property = { controlEvent: true };
+    const formDetails = { events: { onFormInit: dummyScript } };
+    const allObsControlEvents = [
+      { id: '1', name: 'name', events: { onValueChange: dummyScript } },
+      { id: '2', name: 'name2', events: undefined },
+    ];
+    const selectedControl = { id: '1' };
+    const state = {
+      controlProperty: { property },
+      formDetails, controlDetails: { allObsControlEvents, selectedControl },
+    };
+    const store = getStore(state);
+    wrapper = mount(
+      <Provider store={store}>
+        <FormDetail
+          formControlEvents={allObsControlEvents}
+          formData={formData}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
+        />
+      </Provider>);
+    expect(wrapper.find('FormEventEditor').find('Popup').find('default')
+      .prop('script')).to.eq(dummyScript);
+  });
+
+
   it('should render form details when form data is present', () => {
     const documentStub = sinon.stub(document, 'getElementsByClassName')
-        .callsFake(() => [{ className: 'column-side' }]);
+      .callsFake(() => [{ className: 'column-side' }]);
     window.scrollY = 100;
 
     wrapper = mount(
-        <Provider store={getStore()}>
-          <FormDetail
-            formData={formData}
-            publishForm={() => {}}
-            saveFormResource={() => {}}
-            setError={() => {}}
-          />
-        </Provider>
+      <Provider store={getStore()}>
+        <FormDetail
+          formData={formData}
+          publishForm={() => {
+          }}
+          saveFormResource={() => {
+          }}
+          setError={() => {
+          }}
+        />
+      </Provider>
     );
     window.onscroll();
     expect(wrapper.find('.column-side').length).to.equal(1);
     sinon.assert.calledTwice(documentStub);
     documentStub.restore();
+  });
+
+  it('should call updateFormControlEvents on handleFormConditionsLoad', () => {
+    const updateFormControlEventsSpy = sinon.spy();
+    wrapper = shallow(
+      <FormDetail
+        formControlEvents={[]}
+        formData={formData}
+        publishForm={() => {
+        }}
+        saveFormResource={() => {
+        }}
+        setError={() => {
+        }}
+        updateFormControlEvents={updateFormControlEventsSpy}
+      />);
+    wrapper.instance().handleFormConditionsLoad();
+    sinon.assert.calledOnce(updateFormControlEventsSpy);
+  });
+
+  it('should call setErrorMessage on handleFormConditionsLoad exception', () => {
+    const updateFormControlEventsSpy = sinon.spy();
+    const error = new Error('error');
+    wrapper = shallow(
+      <FormDetail
+        formControlEvents={[]}
+        formData={formData}
+        publishForm={() => {
+        }}
+        saveFormResource={() => {
+        }}
+        setError={() => {
+        }}
+        updateFormControlEvents={updateFormControlEventsSpy}
+      />);
+    sinon.stub(wrapper.instance(), 'getFormJson').throws(error);
+    const setErrorMessageStub = sinon.stub(wrapper.instance(), 'setErrorMessage');
+    try {
+      wrapper.instance().handleFormConditionsLoad();
+    } catch (e) {
+      sinon.assert.calledOnce(setErrorMessageStub);
+    }
+    setErrorMessageStub.restore();
+  });
+
+  it('should set state errorMessage  on setErrorMessage', () => {
+    const updateFormControlEventsSpy = sinon.spy();
+    const errorMessage = 'error message';
+    wrapper = shallow(
+      <FormDetail
+        formControlEvents={[]}
+        formData={formData}
+        publishForm={() => {
+        }}
+        saveFormResource={() => {
+        }}
+        setError={() => {
+        }}
+        updateFormControlEvents={updateFormControlEventsSpy}
+      />);
+    const errorNotification = {
+      message: errorMessage,
+      type: commonConstants.responseType.error,
+    };
+    wrapper.instance().setErrorMessage(errorMessage);
+    expect(JSON.stringify(wrapper.state('errorMessage'))).to.eq(JSON.stringify(errorNotification));
   });
 });

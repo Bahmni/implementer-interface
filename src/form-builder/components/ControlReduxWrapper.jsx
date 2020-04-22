@@ -1,23 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { focusControl, selectControl, dragSourceUpdate } from 'form-builder/actions/control';
-import { blurControl, deselectControl, formEventUpdate, saveEventUpdate }
-  from 'form-builder/actions/control';
-import { Draggable } from 'bahmni-form-controls';
-import { ComponentStore } from 'bahmni-form-controls';
+import {
+  addSourceMap,
+  blurControl,
+  deselectControl,
+  dragSourceUpdate,
+  focusControl,
+  generateTranslations,
+  selectControl,
+} from 'form-builder/actions/control';
+import { ComponentStore, Draggable } from 'bahmni-form-controls';
 import { Exception } from 'form-builder/helpers/Exception';
 import { formBuilderConstants } from 'form-builder/constants';
-import { addSourceMap, setChangedProperty,
-  sourceChangedProperty, generateTranslations } from 'form-builder/actions/control';
 import { getConceptFromMetadata } from 'form-builder/helpers/componentMapper';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
-import ScriptEditorModal from './ScriptEditorModal';
 import DragDropHelper from '../helpers/dragDropHelper.js';
-import Popup from 'reactjs-popup';
 
 export class ControlWrapper extends Draggable {
   constructor(props) {
@@ -39,10 +40,15 @@ export class ControlWrapper extends Draggable {
     this.closeDeleteModal = this.closeDeleteModal.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleControlDrop = this.handleControlDrop.bind(this);
+    this.controlEventFor = this.controlEventFor.bind(this);
   }
 
   onSelected(event, metadata) {
-    this.props.dispatch(selectControl(metadata));
+    const newMetadata = metadata;
+    if (metadata.properties && metadata.properties.controlEvent) {
+      newMetadata.properties.controlEvent = false;
+    }
+    this.props.dispatch(selectControl(newMetadata));
     event.stopPropagation();
   }
 
@@ -53,11 +59,24 @@ export class ControlWrapper extends Draggable {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.updateEvents(nextProps, this.props, this.metadata.id);
     const activeControl = (this.metadata.id === nextProps.focusedControl);
     if (!activeControl && nextProps.parentRef) {
       this.setState({ isBeingDragged: nextProps.parentRef.props.isBeingDragged });
     }
     this.setState({ active: activeControl });
+  }
+
+  updateEvents(nextProps, prevProps, metadataId) {
+    if (nextProps.allObsControlEvents && prevProps.allObsControlEvents) {
+      const newControl = nextProps.allObsControlEvents.find(control => control.id === metadataId);
+      const oldControl = prevProps.allObsControlEvents.find(control => control.id === metadataId);
+      if (newControl && oldControl) {
+        if (newControl.events !== oldControl.events) {
+          this.metadata.events = newControl && newControl.events;
+        }
+      }
+    }
   }
 
   conditionallyAddConcept(newProps) {
@@ -69,7 +88,7 @@ export class ControlWrapper extends Draggable {
         this.props.idGenerator
       );
       this.metadata = newMetadata;
-      this.props.dispatch(selectControl(this.metadata));
+      this.props.dispatch(selectControl(this.metadata, true));
     }
   }
 
@@ -103,6 +122,11 @@ export class ControlWrapper extends Draggable {
     this.updateProperties(newProps);
   }
 
+  controlEventFor(controlId) {
+    const control = this.props.allObsControlEvents.find(obsControl => obsControl.id === controlId);
+    return control && control.events;
+  }
+
   getJsonDefinition(isBeingMoved) {
     if (this.childControl) {
       const controlJsonDefinition = this.childControl.getJsonDefinition();
@@ -111,6 +135,9 @@ export class ControlWrapper extends Draggable {
         throw new Exception(conceptMissingMessage);
       }
       this.props.dispatch(generateTranslations(controlJsonDefinition));
+      if (this.props.allObsControlEvents) {
+        controlJsonDefinition.events = this.controlEventFor(this.metadata.id);
+      }
       return controlJsonDefinition;
     }
     return undefined;
@@ -152,63 +179,8 @@ export class ControlWrapper extends Draggable {
           controlId={this.props.metadata.id}
           controlName={this.props.metadata.name}
           deleteControl={this.props.deleteControl}
+          dispatch={this.props.dispatch}
         />
-      );
-    }
-    return null;
-  }
-
-  updateScript(script, properties) {
-    if (properties.id) {
-      this.props.dispatch(selectControl(this.metadata));
-      this.props.dispatch(sourceChangedProperty(script));
-    } else {
-      const isSaveEvent = properties.property.formSaveEvent;
-      if (isSaveEvent) {
-        this.props.dispatch(saveEventUpdate(script));
-      } else {
-        this.props.dispatch(formEventUpdate(script));
-      }
-    }
-    this.closeScriptEditorDialog(properties.id);
-  }
-
-  closeScriptEditorDialog(id) {
-    if (id) {
-      this.props.dispatch(setChangedProperty({ controlEvent: false }, id));
-    } else {
-      this.props.dispatch(setChangedProperty({ formInitEvent: false }));
-      this.props.dispatch(setChangedProperty({ formSaveEvent: false }));
-    }
-  }
-
-  getScript(properties) {
-    const selectedControl = this.props.selectedControl;
-    if (properties.id && selectedControl) {
-      return selectedControl.events && selectedControl.events.onValueChange;
-    }
-    const formDetails = this.props.formDetails;
-    const isSaveEvent = properties.property.formSaveEvent;
-    return formDetails.events
-      && (isSaveEvent ? formDetails.events.onFormSave : formDetails.events.onFormInit);
-  }
-
-  showScriptEditorDialog() {
-    const properties = this.props.controlProperty;
-    if (properties && properties.property &&
-      (properties.id === this.metadata.id && properties.property.controlEvent)) {
-      return (
-        <Popup className="form-event-popup" closeOnDocumentClick={false}
-          closeOnEscape={false}
-          open={properties.id === this.metadata.id && properties.property.controlEvent}
-          position="top center"
-        >
-        <ScriptEditorModal
-          close={() => this.closeScriptEditorDialog(properties.id)}
-          script={this.getScript(properties)}
-          updateScript={(script) => this.updateScript(script, properties)}
-        />
-        </Popup>
       );
     }
     return null;
@@ -257,7 +229,6 @@ export class ControlWrapper extends Draggable {
 
         />
         { this.showDeleteControlModal() }
-        { this.showScriptEditorDialog() }
       </div>
     );
   }
@@ -287,6 +258,7 @@ function mapStateToProps(state) {
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
     dragSourceCell: state.controlDetails.dragSourceCell,
+    allObsControlEvents: state.controlDetails.allObsControlEvents,
   };
 }
 

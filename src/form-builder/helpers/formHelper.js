@@ -18,4 +18,27 @@ export default class FormHelper {
     const pattern = /^[^\.\/\-\^\s][^\.\/\-\^]*$/;
     return pattern.test(formName);
   }
+
+  static getObsControlEvents(control) {
+    let obsControlEvents = [];
+    if (control.type === 'obsControl' && control.concept !== undefined) {
+      obsControlEvents = obsControlEvents.concat({
+        id: control.id, name: control.concept.name,
+        events: control.events,
+      });
+    } else if (control.controls !== undefined) {
+      const childControls = control.controls;
+      const obsControls = childControls.filter(ctrl => ctrl.type === 'obsControl');
+      const nonObscontrols = childControls.filter(ctrl => ctrl.type !== 'obsControl');
+      nonObscontrols.forEach(ctrl => {
+        if (ctrl.controls !== undefined) {
+          const childObsControlEvents = this.getObsControlEvents(ctrl);
+          obsControlEvents = obsControlEvents.concat(childObsControlEvents);
+        }
+      });
+      obsControlEvents = obsControlEvents.concat(obsControls.map(ctrl =>
+        ({ id: ctrl.id, name: ctrl.concept.name, events: ctrl.events })));
+    }
+    return obsControlEvents;
+  }
 }
