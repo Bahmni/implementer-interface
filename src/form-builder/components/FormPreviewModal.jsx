@@ -15,10 +15,12 @@ export default class FormPreviewModal extends React.Component {
 
   constructor(props) {
     super(props);
+    const defaultLocale = (window.localStorage
+      && window.localStorage.getItem('openmrsDefaultLocale')) || 'en';
     this.state = {
       formData: {},
       container: {},
-      defaultLocale: localStorage.getItem('openmrsDefaultLocale'),
+      defaultLocale,
     };
     this.onSave = this.onSave.bind(this);
     this.setContainer = this.setContainer.bind(this);
