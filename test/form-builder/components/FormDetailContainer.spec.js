@@ -10,7 +10,6 @@ import { formBuilderConstants } from 'form-builder/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import { getStore } from 'test/utils/storeHelper';
 import { clearTranslations, formLoad } from 'form-builder/actions/control';
-import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import * as ControlPropertiesContainer from
@@ -44,10 +43,6 @@ const routes = [
     siblingPath: '/form-builder/:formUuid',
   },
 ];
-
-window.localStorage = {
-  getItem: sinon.stub(),
-};
 
 chai.use(chaiEnzyme());
 
@@ -148,26 +143,6 @@ describe('FormDetailContainer', () => {
     expect(formBuilderBreadcrumbs).to.have.prop('routes');
     httpInterceptor.get.restore();
   });
-
-  it('should get defaultLocale from local storage if its not present in props', () => {
-    localStorage.getItem.returns('en');
-    sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
-    const wrapper = mount(
-      <MemoryRouter>
-      <FormDetailContainer
-        {...defaultProps}
-        defaultLocale={undefined}
-      /></MemoryRouter>, { context }
-    );
-
-    const formDetail = wrapper.find('FormDetail');
-    expect(formDetail.prop('formData')).to.equal(undefined);
-    expect(formDetail).to.have.prop('setError');
-    expect(formDetail).to.have.prop('defaultLocale').to.equal('en');
-    sinon.assert.calledOnce(localStorage.getItem.withArgs('openmrsDefaultLocale'));
-    httpInterceptor.get.restore();
-  });
-
 
   it('should not show publish button & save button before get formData', () => {
     const wrapper = mount(
@@ -755,49 +730,6 @@ describe('FormDetailContainer', () => {
         const formNameTranslateSaveUrl = new UrlHelper()
           .bahmniSaveFormNameTranslateUrl('ref-uuid');
         sinon.assert.notCalled(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
-        postStub.restore();
-        done();
-      }, 500);
-    });
-
-    it('should pick defaultLocale from local storage when its not present in' +
-        ' props during form publish', (done) => {
-      window.localStorage = {
-        getItem: sinon.stub(),
-      };
-      localStorage.getItem.returns('fr');
-
-      const resources = [{
-        dataType: formBuilderConstants.formResourceDataType,
-        value: '{"controls": [{}]}',
-      }];
-      const updatedForm = Object.assign({}, formData, { resources });
-      const postStub = sinon.stub(httpInterceptor, 'post');
-      postStub.onFirstCall().returns(Promise.resolve({}))
-        .onSecondCall(1).returns(Promise.resolve(updatedForm));
-      const wrapper = shallow(
-        <FormDetailContainer
-          {...defaultProps}
-          defaultLocale={undefined}
-        />, { context }
-      );
-      wrapper.setState({ httpReceived: true });
-      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
-      let publishButton = undefined;
-      wrapper.setState({ formData: updatedForm },
-        () => {
-          publishButton = wrapper.find('.publish-button');
-        });
-      wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
-      publishButton.simulate('click');
-      setTimeout(() => {
-        sinon.assert.calledTwice(httpInterceptor.post);
-        sinon.assert.callOrder(
-          postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
-            [{ formName: 'someFormName', locale: 'fr', version: '1', referenceVersion: '1',
-              referenceFormUuid: 'ref-uuid', formUuid: 'someUuid' }]),
-          postStub.withArgs(new UrlHelper().bahmniFormPublishUrl(formData.uuid))
-        );
         postStub.restore();
         done();
       }, 500);
