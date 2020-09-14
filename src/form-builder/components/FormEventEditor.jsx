@@ -6,6 +6,7 @@ import {
   formLoad,
   saveEventUpdate,
   sourceChangedProperty,
+  formPrivilegesEventUpdate,
 } from 'form-builder/actions/control';
 import { setChangedProperty, formConditionsEventUpdate } from 'form-builder/actions/control';
 export const FormEventEditor = (props) => {
@@ -14,6 +15,9 @@ export const FormEventEditor = (props) => {
   const updateScript = (script) => {
     props.updateScript(script, property, selectedControlId);
   };
+  const updateFormPrivileges = (formPrivileges) =>{
+    props.updateFormPrivileges(formPrivileges,property);
+  };
   const closeEventEditor = () => {
     props.closeEventEditor(selectedControlId);
   };
@@ -21,7 +25,7 @@ export const FormEventEditor = (props) => {
     <div>
       {React.cloneElement(props.children, { property, formDetails,
         closeEventEditor, selectedControlId,
-        formControlEvents, updateScript, updateAllScripts })}
+        formControlEvents, updateScript, updateAllScripts , updateFormPrivileges })}
     </div>
   );
 };
@@ -35,21 +39,26 @@ FormEventEditor.propTypes = {
       onFormInit: PropTypes.string,
       onFormSave: PropTypes.string,
       onFormConditionsUpdate: PropTypes.string,
+      onFormPrivilegesUpdate: PropTypes.string,
     }),
   }),
   property: PropTypes.shape({
     formInitEvent: PropTypes.bool,
     formSaveEvent: PropTypes.bool,
     formConditionsEvent: PropTypes.bool,
+    formPrivilegesEvent: PropTypes.bool,
   }),
   selectedControlId: PropTypes.string,
   updateAllScripts: PropTypes.func.isRequired,
   updateScript: PropTypes.func.isRequired,
+  updateFormPrivileges: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   property: state.controlProperty ? state.controlProperty.property : undefined,
-  formDetails: state.formDetails, formControlEvents: state.controlDetails.allObsControlEvents,
+  formDetails: state.formDetails,
+  formPrivileges: state.formPrivileges,
+  formControlEvents: state.controlDetails.allObsControlEvents,
   selectedControlId: state.controlDetails.selectedControl
     && state.controlDetails.selectedControl.id,
 });
@@ -59,6 +68,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setChangedProperty({ formInitEvent: false }));
     dispatch(setChangedProperty({ formSaveEvent: false }));
     dispatch(setChangedProperty({ formConditionsEvent: false }));
+    dispatch(setChangedProperty({ formPrivilegesEvent: false}));
     dispatch(setChangedProperty({ controlEvent: false }, selectedControlId));
   },
   updateScript: (script, property, selectedControlId) => {
@@ -72,6 +82,11 @@ const mapDispatchToProps = (dispatch) => ({
     if (property.controlEvent) {
       dispatch(sourceChangedProperty(script, selectedControlId));
     }
+  },
+  updateFormPrivileges :(formPrivileges, property) =>{
+  if (property.formPrivilegesEvent){
+        dispatch(formPrivilegesEventUpdate(formPrivileges));
+   }
   },
   updateAllScripts: ({ controlScripts, formSaveEventScript, formInitEventScript }) => {
     dispatch(saveEventUpdate(formSaveEventScript));

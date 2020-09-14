@@ -41,7 +41,7 @@ export class FormDetailContainer extends Component {
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
-      referenceFormUuid: undefined, formPreviewJson: undefined };
+      referenceFormUuid: undefined, formPreviewJson: undefined ,formPrivileges: undefined};
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.getFormJson = this.getFormJson.bind(this);
@@ -126,6 +126,7 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
+      formJson.privileges = this.state.formPrivileges;
       const formResource = {
         form: {
           name: formName,
@@ -179,7 +180,16 @@ export class FormDetailContainer extends Component {
     }
     return null;
   }
-
+getFormPrivileges() {
+    if (this.state.formData && this.state.formData.formPrivileges) {
+      const formPrivilege = this.state.formData.privileges[0];
+      if (formPrivilege) {
+        const formPrivileges =  JSON.parse(formPrivilege);
+        return formPrivileges;
+      }
+    }
+    return null;
+  }
   setErrorMessage(error) {
     const errorNotification = { message: error.message, type: commonConstants.responseType.error };
     this.setState({ notification: errorNotification });
@@ -524,6 +534,7 @@ FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
   formControlEvents: PropTypes.array,
+  formPrivileges: PropTypes.array,
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
