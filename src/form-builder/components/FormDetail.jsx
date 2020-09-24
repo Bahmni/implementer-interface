@@ -135,13 +135,11 @@ export default class FormDetail extends Component {
                       open={showEditor} position="top center"
                     >
                       <FormPrivilegesEditorModal
-                        close={props.closeEventEditor}
-                        formPrivileges = {props.formPrivileges}
-                                                         formData = {props.formData}
-                                                         formId={id}
-                                                         formName={name}
-                                                         formUuid={ uuid }
-                        formDetails={this.props.formDetails}
+                         close={props.closeEventEditor}
+                         formId={formData.id}
+                         formName={name}
+                         formUuid={ uuid }
+                         formPrivileges = {this.props.formPrivileges}
                       />
                     </Popup>
                     }
@@ -199,12 +197,12 @@ export default class FormDetail extends Component {
                                 />
                                 <FormPrivilegesContainer
                                 eventProperty={'formPrivilegesEventUpdate'}
-                                 formPrivileges = {this.props.formPrivileges}
                                  formData = {formData}
                                  formId={id}
                                  formName={name}
                                  formUuid={ uuid }
                                  formDetails = {this.props.formDetails}
+                                 formPrivileges = {this.props.formPrivileges}
                                  />
 
                             </div>
@@ -236,7 +234,10 @@ export default class FormDetail extends Component {
 FormDetail.propTypes = {
   defaultLocale: PropTypes.string,
   formControlEvents: PropTypes.Array,
-  formPrivileges: PropTypes.Array,
+  formPrivileges: PropTypes.array,
+  formId: PropTypes.number,
+  formName: PropTypes.string.isRequired,
+  formUuid: PropTypes.string.isRequired,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
@@ -249,12 +250,6 @@ FormDetail.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
-  formPrivilege: PropTypes.shape({
-        formUuid: PropTypes.string.isRequired,
-        formName: PropTypes.string.isRequired,
-        isEditable: PropTypes.bool,
-        isViewable:PropTypes.bool,
-      }),
   setError: PropTypes.func.isRequired,
   updateFormControlEvents: PropTypes.func,
   updateFormEvents: PropTypes.func,

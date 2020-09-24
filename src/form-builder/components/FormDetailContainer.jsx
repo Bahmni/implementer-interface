@@ -41,7 +41,7 @@ export class FormDetailContainer extends Component {
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
-      referenceFormUuid: undefined, formPreviewJson: undefined ,formPrivileges: undefined};
+      referenceFormUuid: undefined, formPreviewJson: undefined ,formPrivileges: []};
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.getFormJson = this.getFormJson.bind(this);
@@ -72,8 +72,9 @@ export class FormDetailContainer extends Component {
               this.setState({ formData: data, httpReceived: true,
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
-                referenceFormUuid: parsedFormValue.referenceFormUuid });
-              this.formJson = this.getFormJson();
+                referenceFormUuid: parsedFormValue.referenceFormUuid,
+                formPrivileges: parsedFormValue.privileges});
+                this.formJson = this.getFormJson();
               const formControlsArray = formHelper.getObsControlEvents(this.formJson);
               this.props.dispatch(formLoad(formControlsArray));
             })
@@ -85,7 +86,6 @@ export class FormDetailContainer extends Component {
 
     this.getFormList();
   }
-
 
   componentWillUpdate(nextProps, nextState) {
     if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
@@ -104,6 +104,11 @@ export class FormDetailContainer extends Component {
         }
         this.formEvents = updatedFormEvents;
       }
+      const updatedFormPrivileges = this.getFormPrivileges();
+       if(updatedFormPrivileges){
+       this.props.dispatch(formPrivilegesEventUpdate(updatedFormPrivileges));
+       this.formPrivileges = updatedFormPrivileges;
+       }
     }
   }
 
@@ -437,8 +442,12 @@ getFormPrivileges() {
     return currentFormName;
   }
 
+
   updateFormEvents(events) {
     this.setState({ formEvents: events });
+  }
+  updateFormPrivileges(privileges){
+    this.setState({formPrivileges: privileges})
   }
 
   showErrors(error) {
@@ -515,6 +524,7 @@ getFormPrivileges() {
                     formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
+                    formPrivileges={this.state.formPrivileges}
                     ref={r => { this.formDetail = r; }}
                     resetProperty={(property) => this.props.dispatch(setChangedProperty(property))}
                     setError={this.setErrorMessage}
@@ -522,6 +532,7 @@ getFormPrivileges() {
                     updateFormEvents={(events) => this.updateFormEvents(events)}
                     updateFormName={(formName) => this.updateFormName(formName)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}
+
                   />
                 </div>
               </div>
@@ -558,6 +569,7 @@ function mapStateToProps(state) {
     translations: state.translations,
     formDetails: state.formDetails,
     formControlEvents: state.controlDetails.allObsControlEvents,
+    formPrivileges: state.formPrivileges,
   };
 }
 

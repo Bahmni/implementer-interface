@@ -21,17 +21,15 @@ import jsBeautifier from 'js-beautify';
 import { connect } from 'react-redux';
 window.JSHINT = JSHINT;
 
-export class FormPrivilegesEditorModal extends Component {
+export default class FormPrivilegesEditorModal extends Component {
   constructor(props) {
     super(props);
     this.state = { notification: {},
                     codeMirrorEditor: {},
                     displayConfirmationPopup: false ,
-                    formPrivileges: {},
-                    formDetails: undefined,
-                    formData: undefined,
                     formName:'',
                     formId:'',
+                    formUuid:'',
     };
     this.codeMirrorEditor = null;
     this.closeEditor = this.closeEditor.bind(this);
@@ -42,7 +40,6 @@ export class FormPrivilegesEditorModal extends Component {
   componentDidMount() {
   }
   componentWillUnmount() {
-
   }
 
   closeEditor() {
@@ -71,68 +68,42 @@ export class FormPrivilegesEditorModal extends Component {
   }
 
   render() {
-   const formPrivileges = this.props.formDetails.privileges ? this.props.formDetails.privileges
-        : { formPrivileges: {}};
-    const {formData,formId,formName,formUuid,formDetails} = this.props;
+
+    const {formId,formName,formUuid,formPrivileges} = this.props;
     return (
       <div className="form-privileges-modal-container">
-         <label>Manage Privileges</label>
-        <div className="form-privileges-container" >
+         <h2 className="header-title">Manage Privileges</h2>
+         <div className="form-privileges-container" >
            <FormPrivilegeTable
-           formPrivileges = {formPrivileges}
-            formData = {formData}
             formId={formId}
             formName={formName}
             formUuid={ formUuid }
-            formDetails={formDetails}
+            formPrivileges={formPrivileges}
+
            />
         </div>
-        <span className="line-break-2" />
-        {this.showConfirmationPopup()}
+        <div>
+            <button className="btn" onClick={this.props.close} type="reset"> Cancel </button>
+        </div>
       </div>
     );
   }
 }
 
 FormPrivilegesEditorModal.propTypes = {
- formData: PropTypes.shape({
-         id: PropTypes.number,
-         name: PropTypes.string.isRequired,
-         published: PropTypes.bool.isRequired,
-         resources: PropTypes.array,
-         uuid: PropTypes.string.isRequired,
-         version: PropTypes.string.isRequired,
-         editable: PropTypes.bool,
-       }),
-
-         formDetails: PropTypes.shape({
-            events: PropTypes.object,
-        }),
        formId: PropTypes.number,
        formName: PropTypes.string.isRequired,
-       formResourceControls: PropTypes.array.isRequired,
        formUuid: PropTypes.string.isRequired,
-     data: PropTypes.array.isRequired,
-  formPrivileges: PropTypes.Array,
-  formPrivilege: PropTypes.shape({
-        uuid: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        isEditable: PropTypes.bool,
-        isViewable: PropTypes.bool,
-      }),
-
+       formPrivileges: PropTypes.array,
 };
 function mapStateToProps(state) {
   return {
-    formDetails: state.formDetails,
-    formPrivileges: state.formPrivileges,
-    formData: state.formData,
-
-    formId:state.formName,
+    formUuid:state.formUuid,
+    formId:state.formId,
     formName: state.formName,
   };
 }
 FormPrivilegesEditorModal.defaultProps = {
   formDetails: { privileges: {} },
 };
-export default connect(mapStateToProps)(FormPrivilegesEditorModal);
+

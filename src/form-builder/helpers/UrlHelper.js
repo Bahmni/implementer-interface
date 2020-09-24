@@ -24,7 +24,5 @@ export class UrlHelper {
     return formBuilderConstants.saveNameTranslationsUrl +
       (referenceUuid ? `?referenceFormUuid=${referenceUuid}` : '');
   }
-  getPrivilegesRepresentation(conceptName){
-  return '/openmrs/admin/users/privilege.form?privilege='+`${conceptName}`;
-  }
+
 }
