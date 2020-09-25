@@ -173,7 +173,6 @@ fetchFormPrivilegesFromProps() {
   this.state.formPrivileges.push(newPrivilegeItem);
   this.setState(this.state.formPrivileges);
   this.setState({selectedPrivilegeOption: newPrivilegeItem.privilegeName});
-  this.adjustAvailablePrivilegeList();
   };
 
   adjustAvailablePrivilegeList(){
@@ -205,6 +204,7 @@ fetchFormPrivilegesFromProps() {
              const formJson = this.getFormJson();
              const formName = this.state.formData ? this.state.formData.name : 'FormName';
              const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+             const formId = this.state.formData ? this.state.formData.id : undefined;
              const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                              this.state.formData.resources[0].uuid : '';
              formJson.privileges = this.state.formPrivileges;
@@ -213,13 +213,14 @@ fetchFormPrivilegesFromProps() {
                form: {
                  name: formName,
                  uuid: formUuid,
+                 id:formId,
                },
                value: JSON.stringify(formJson),
                uuid: formResourceUuid,
              };
              console.log("Before _save"+JSON.stringify(formJson));
              this._saveFormResource(formResource);
-
+             console.log("After _save"+JSON.stringify(formJson));
            } catch (e) {
              console.log("errrrrrrrrrrrrrrrrrrrr"+e);
            }
@@ -258,7 +259,8 @@ fetchFormPrivilegesFromProps() {
                       this.setErrorMessage(error);
                       this.setState({ loading: false });
                     });
-                    this._saveFormPrivileges(this.formPrivileges);
+                    this._saveFormPrivileges(this.state.formPrivileges);
+
           }
       _saveFormPrivileges(formPrivileges) {
               const self = this;
@@ -274,7 +276,8 @@ fetchFormPrivilegesFromProps() {
 
 
         _createReqObject(formPrivileges) {
-            const { formId,privilegeName, version ,} = this.state.formData;
+            const { privilegeName, version} = this.state.formData;
+            const formId = this.state.formData.id;
             const formPrivilegeObj = [];
             const formJson = this.getFormJson();
 
