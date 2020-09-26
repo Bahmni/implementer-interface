@@ -39,7 +39,7 @@ const routes = [
     siblingPath: '/form-builder/:formUuid',
   },
   {
-      component: FormPrivilegesContainer,
+      component: FormPrivilegesPreviewContainer,
       exact: true,
       path: '/form-builder/:formUuid/privilege',
       title: 'Form Privileges',

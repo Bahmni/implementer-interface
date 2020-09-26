@@ -40,6 +40,8 @@ export default class FormList extends Component {
           </a>
           <b className="translate-icon" hidden={!rowItem.isLatestPublished}>
             {this._translateIcon(rowItem)}</b>
+          <b className="privilege-icon" hidden={!rowItem.isLatestPublished}>
+            {this._privilegesIcon(rowItem)}</b>
         </td>
       </tr>
     ));
@@ -103,6 +105,13 @@ export default class FormList extends Component {
       </Link>
     );
   }
+   _privilegesIcon(rowItem) {
+      return (
+        <Link to={{ pathname: `form-builder/${rowItem.uuid}/privilege` }} >
+          <i className="fa fa-users" title="Show Form Privileges" />
+        </Link>
+      );
+    }
 
   _getFormStatus(rowItem) {
     if (rowItem.published) {

@@ -4,7 +4,6 @@ import { AutoComplete } from 'bahmni-form-controls';
 import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
 import { selectSource, setChangedProperty } from 'form-builder/actions/control';
-import  FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { commonConstants } from 'common/constants';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
@@ -20,12 +19,7 @@ export class FormPrivilegesContainer extends Component {
   }
 
   componentWillUpdate(newProps) {
-//        const updatedFormPrivileges = newProps.formPrivileges;
-//        if (updatedFormPrivileges && this.state.formPrivileges !== updatedFormPrivileges) {
-//          this.setState({ formPrivileges: formPrivileges });
-//         this.props.updatedFormPrivileges(formPrivileges);
-//        }
-     }
+}
    updateProperty() {
       let properties = { [this.props.eventProperty]: true };
       if (this.props.onEventLoad) {

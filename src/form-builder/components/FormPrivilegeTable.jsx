@@ -256,7 +256,7 @@ fetchFormPrivilegesFromProps() {
                       }, commonConstants.toastTimeout);
                     })
                     .catch((error) => {
-                      this.setErrorMessage(error);
+                      //this.setErrorMessage(error);
                       this.setState({ loading: false });
                     });
                     this._saveFormPrivileges(this.state.formPrivileges);
@@ -269,7 +269,7 @@ fetchFormPrivilegesFromProps() {
                         this.setMessage(message, commonConstants.responseType.success);
                         this.setState({ loading: false });
                       }).catch(() => {
-                        this.setErrorMessage('Failed to save translations');
+                        //this.setErrorMessage('Failed to save translations');
                         this.setState({ loading: false });
                       });
                 }
@@ -284,7 +284,7 @@ fetchFormPrivilegesFromProps() {
            for(var i = 0; i <formPrivileges.length;i++){
               const privilege = formPrivileges[i];
               const privilegeCopy = {
-                formId: formJson.id,
+                formId: formId,
                 privilegeName: privilege.privilegeName,
                 editable:privilege.editable,
                 viewable:privilege.viewable,
