@@ -31,13 +31,16 @@ import { Exception } from 'form-builder/helpers/Exception';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
-
+import {
+  getFormPrivileges
+} from 'common/apis/formPrivilegesApi';
 
 export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
     this.formJson = undefined;
+    this.formPrivileges = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
@@ -50,6 +53,7 @@ export class FormDetailContainer extends Component {
     this.closeFormModal = this.closeFormModal.bind(this);
     this.onPublish = this.onPublish.bind(this);
     this.cloneFormResource = this.cloneFormResource.bind(this);
+    this._getFormPrivilegesPromise = this._getFormPrivilegesPromise.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
     this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
@@ -73,7 +77,8 @@ export class FormDetailContainer extends Component {
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid,
-                formPrivileges: parsedFormValue.privileges});
+                });
+                this._getFormPrivilegesFromDB(data.id);
                 this.formJson = this.getFormJson();
               const formControlsArray = formHelper.getObsControlEvents(this.formJson);
               this.props.dispatch(formLoad(formControlsArray));
@@ -145,6 +150,40 @@ export class FormDetailContainer extends Component {
       this.setErrorMessage(e.getException());
     }
   }
+  _getFormPrivilegesFromDB(formId){
+  const getFormPrivilegesPromise = this._getFormPrivilegesPromise(formId);
+        Promise.all([getFormPrivilegesPromise])
+             .then(formPrivilegeResponse => {
+              const formPrivilegeFetchResponse = formPrivilegeResponse[0];
+           if (formPrivilegeFetchResponse) {
+               this.state.formPrivileges = formPrivilegeFetchResponse;
+           }
+        })
+ }
+_getFormPrivilegesPromise(formId) {
+    return this.formPrivileges
+      ? Promise.resolve(this.formPrivileges)
+      : getFormPrivileges(formId);
+  }
+  _createReqObject(formPrivileges) {
+              const { privilegeName, version} = this.state.formData;
+              const formId = this.state.formData.id;
+              const formPrivilegeObj = [];
+              const formJson = this.getFormJson();
+
+             for(var i = 0; i <formPrivileges.length;i++){
+                const privilege = formPrivileges[i];
+                const privilegeCopy = {
+                  formId: formId,
+                  privilegeName: privilege.privilegeName,
+                  editable:privilege.editable,
+                  viewable:privilege.viewable,
+                }
+                formPrivilegeObj.push(privilegeCopy);
+              }
+              console.log("formPrivilegeObj"+formPrivilegeObj);
+              return formPrivilegeObj;
+            }
 
   onPublish() {
     try {
