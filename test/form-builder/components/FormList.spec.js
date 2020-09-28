@@ -184,5 +184,15 @@ describe('FormList', () => {
     expect(getItem(1, 0).find('input').prop('type')).to.eql('checkbox');
     expect(getItem(2, 0).find('input').prop('type')).to.eql('checkbox');
   });
+
+  it('should render privilege icon when form published', () => {
+      wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
+
+      expect(getItem(0, 5).find('.privilege-icon').prop('hidden')).to.eql(true);
+      expect(getItem(1, 5).find('.privilege-icon').prop('hidden')).to.eql(false);
+      expect(getItem(2, 5).find('.privilege-icon').prop('hidden')).to.eql(false);
+      expect(getItem(1, 5).find('.privilege-icon').find('Link').find('i').prop('className')).to.eql('fa fa-users');
+      expect(getItem(2, 5).find('.privilege-icon').find('Link').find('i').prop('className')).to.eql('fa fa-users');
+    });
 });
 
