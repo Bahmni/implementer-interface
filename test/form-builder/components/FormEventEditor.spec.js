@@ -71,33 +71,35 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_true', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
 
-  it('should update formInitEvent, formSaveEvent, formConditionsEvent property ' +
+  it('should update formInitEvent, formSaveEvent, formConditionsEvent , formPrivilegesEvent property ' +
     'when closeEventEditor is called', () => {
-    const controlId = 1;
-    wrapper.find('FormEventEditor').prop('closeEventEditor')(controlId);
-    sinon.assert.callCount(store.dispatch, 4);
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(setChangedProperty({ formInitEvent: false })));
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(setChangedProperty({ formSaveEvent: false })));
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(setChangedProperty({ formConditionsEvent: false })));
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(setChangedProperty({ controlEvent: false }, controlId)));
-  });
+      const controlId = 1;
+      wrapper.find('FormEventEditor').prop('closeEventEditor')(controlId);
+      sinon.assert.callCount(store.dispatch, 5);
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(setChangedProperty({ formInitEvent: false })));
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(setChangedProperty({ formSaveEvent: false })));
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(setChangedProperty({ formConditionsEvent: false })));
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(setChangedProperty({ formPrivilegesEvent: false })));
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(setChangedProperty({ controlEvent: false }, controlId)));
+    });
 
   it('should update saveEventUpdate property when updateScript is called ' +
     'and formSaveEvent is true', () => {
-    const script = 'abcd';
-    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
-    sinon.assert.calledOnce(store.dispatch);
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(saveEventUpdate(script)));
-  });
+      const script = 'abcd';
+      wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+      sinon.assert.calledOnce(store.dispatch);
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(saveEventUpdate(script)));
+    });
 });
 
 
@@ -113,16 +115,16 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_false', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
 
   it('should update saveEventUpdate property when updateScript ' +
     'is called and formSaveEvent is false', () => {
-    const script = 'abcd';
-    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
-    sinon.assert.callCount(store.dispatch, 0);
-  });
+      const script = 'abcd';
+      wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+      sinon.assert.callCount(store.dispatch, 0);
+    });
 });
 
 describe('FormEventEditorWithRedux_where_formConditionsEvent_is_true', () => {
@@ -140,17 +142,17 @@ describe('FormEventEditorWithRedux_where_formConditionsEvent_is_true', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
   it('should update formConditionsEvent property when updateScript is called ' +
     'and formConditionsEvent is true', () => {
-    const script = 'abcd';
-    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
-    sinon.assert.calledOnce(store.dispatch);
-    sinon.assert.calledOnce(store.dispatch
-      .withArgs(formConditionsEventUpdate(script)));
-  });
+      const script = 'abcd';
+      wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+      sinon.assert.calledOnce(store.dispatch);
+      sinon.assert.calledOnce(store.dispatch
+        .withArgs(formConditionsEventUpdate(script)));
+    });
 });
 
 describe('FormEventEditorWithRedux_where_formConditionsEvent_is_false', () => {
@@ -165,16 +167,16 @@ describe('FormEventEditorWithRedux_where_formConditionsEvent_is_false', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
 
   it('should update formConditionsEvent property when updateScript ' +
     'is called and formConditionsEvent is false', () => {
-    const script = 'abcd';
-    wrapper.find('FormEventEditor').prop('updateScript')(script, property);
-    sinon.assert.callCount(store.dispatch, 0);
-  });
+      const script = 'abcd';
+      wrapper.find('FormEventEditor').prop('updateScript')(script, property);
+      sinon.assert.callCount(store.dispatch, 0);
+    });
 });
 
 describe('Update All Scripts', () => {
@@ -187,7 +189,7 @@ describe('Update All Scripts', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
 
@@ -246,14 +248,14 @@ describe('FormEventEditorWithRedux_where_controlEvent_is_true', () => {
     wrapper = shallow(
       <FormEventEditorWithRedux
         children={<DummyComponent />}
-        store = {store}
+        store={store}
       />);
   });
   it('should update sourceChangedProperty when updateScript is called ' +
     'with controlEvent is true', () => {
-    const script = 'abcd';
-    wrapper.find('FormEventEditor').prop('updateScript')(script, property, '123');
-    sinon.assert.calledOnce(store.dispatch);
-    sinon.assert.calledOnce(store.dispatch.withArgs(sourceChangedProperty(script, '123')));
-  });
+      const script = 'abcd';
+      wrapper.find('FormEventEditor').prop('updateScript')(script, property, '123');
+      sinon.assert.calledOnce(store.dispatch);
+      sinon.assert.calledOnce(store.dispatch.withArgs(sourceChangedProperty(script, '123')));
+    });
 });
