@@ -64,7 +64,7 @@ describe('Form Privileges Preview Grid', () => {
         sinon.assert.called(mockHttp.get.withArgs(optionsUrl));
     });
 
-    it('arrange privileges', () => {
+    it('order form by version', () => {
         let wrapper;
 
         wrapper = mount(<FormPrivilegesPreviewGrid {...defaultProps} />);
