@@ -35,6 +35,21 @@ describe('Form Privileges Preview Grid', () => {
         mockHttp.post.restore();
     });
 
+    it('should fetch data from form', () => {
+        let wrapper;
+        wrapper = mount(<FormPrivilegesPreviewGrid {...defaultProps} />);
+
+        const params =
+            'v=custom:(id,uuid,name,version,published,auditInfo,' +
+            'resources:(value,dataType,uuid))';
+        const optionsUrl = `${formBuilderConstants.formUrl}/${defaultProps.formUuid}?${params}`;
+
+        mockHttp.get.withArgs(optionsUrl).returns(Promise.resolve({}));
+        wrapper.instance().fetchFormData();
+
+        sinon.assert.called(mockHttp.get.withArgs(optionsUrl));
+    });
+
     it('should fetch privileges', () => {
         let wrapper;
 
