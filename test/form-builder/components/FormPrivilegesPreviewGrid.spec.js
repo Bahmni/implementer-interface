@@ -63,4 +63,26 @@ describe('Form Privileges Preview Grid', () => {
 
         sinon.assert.called(mockHttp.get.withArgs(optionsUrl));
     });
+
+    it('arrange privileges', () => {
+        let wrapper;
+
+        wrapper = mount(<FormPrivilegesPreviewGrid {...defaultProps} />);
+
+        const itemList = [{
+            value: 1,
+            uuid: 'form_uuid1',
+            label: 1
+        },
+        {
+            value: 2,
+            uuid: 'form_uuid2',
+            label: 2
+        }
+        ];
+
+        const privilege = [{ display: 1, uuid: 'form_uuid1' }, { display: 2, uuid: 'form_uuid2' }];
+
+        expect(wrapper.instance().orderFormByVersion(privilege)).to.be.eql(itemList);
+    });
 });
