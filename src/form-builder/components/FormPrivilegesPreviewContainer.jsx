@@ -25,10 +25,10 @@ super(props);
 this.state ={formPrivileges: {}, notification: {}, loading: true,};
 }
 componentWillMount(){
-   // this.fetchFormData();
+
 }
 componentDidMount() {
-   // this.fetchFormPrivilegesFromProps();
+
   }
 render() {
   const { formPrivileges } = this.state;

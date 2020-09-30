@@ -7,11 +7,13 @@ const FormBuilderBreadcrumbs = (props) => {
   const indexOfCurrentRoute = routes.findIndex(route => route.path === props.match.path);
   const breadcrumbItems = routes.slice(0, indexOfCurrentRoute)
     .filter(route => route.siblingPath !== props.match.path);
+
   return (<div className="breadcrumbs">
     {breadcrumbItems.map((breadcrumbItem, index) => (<span key={index}>
       <NavLink to={breadcrumbItem.path}>{breadcrumbItem.title}</NavLink>
      </span>)
     )}
+
     <span>{routes[indexOfCurrentRoute].title}</span>
   </div>);
 };

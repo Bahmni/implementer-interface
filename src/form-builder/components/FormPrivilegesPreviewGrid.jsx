@@ -43,7 +43,7 @@ fetchFormData(){
                     .then((data) => {
                       const parsedFormValue = data.resources.length > 0 ?
                         JSON.parse(data.resources[0].value) : {};
-                      var formPrivilegesParsedValue = parsedFormValue.privileges;
+                      var formPrivilegesParsedValue = parsedFormValue.privilege;
                       if(formPrivilegesParsedValue == undefined){
                          formPrivilegesParsedValue = [{
                           formId: "",

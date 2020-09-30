@@ -16,19 +16,20 @@ import { formBuilderConstants } from 'form-builder/constants';
 import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
 import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
-
+import NotificationContainer from 'common/Notification';
 export default class FormPrivilegeTable extends Component {
 constructor(props){
 super(props);
 
 this.state = { formData: {},
+                errorMessage: {},
                formName: '',
                httpReceived: false,
                loading: true,
                referenceVersion: undefined,
                referenceFormUuid: undefined,
                formPrivileges:[{
-                               formId:"",
+                               formId:this.props.formId,
                                privilegeName: "",
                                editable:false,
                                viewable:false,
@@ -39,13 +40,14 @@ this.state = { formData: {},
  } ;
 
  this.state.value = '';
+ this.setErrorMessage = this.setErrorMessage.bind(this);
  this.handleRemoveSpecificRow = this.handleRemoveSpecificRow.bind(this);
  this.handleAddRow = this.handleAddRow.bind(this);
  this.handleTag = this.handleTag.bind(this);
  this.formSave = this.formSave.bind(this);
  this.fetchFormPrivilegesFromDB=this.fetchFormPrivilegesFromDB.bind(this);
  this.removeSelectedPrivilege = this.removeSelectedPrivilege.bind(this);
- this.adjustAvailablePrivilegeList = this.adjustAvailablePrivilegeList.bind(this);
+
 }
 componentWillMount(){
     this.fetchFormData();
@@ -55,6 +57,9 @@ componentDidMount() {
     this.fetchFormPrivilegesFromProps();
 }
 fetchFormData(){
+        if (this.props.formPrivileges.length == 0){
+            this.fetchFormPrivilegesFromDB();
+        }
         const params =
                     'v=custom:(id,uuid,name,version,published,auditInfo,' +
                     'resources:(value,dataType,uuid))';
@@ -63,26 +68,13 @@ fetchFormData(){
                     .then((data) => {
                       const parsedFormValue = data.resources.length > 0 ?
                         JSON.parse(data.resources[0].value) : {};
-                      var formPrivilegesParsedValue = parsedFormValue.privileges;
-                      if(formPrivilegesParsedValue == undefined){
-                         formPrivilegesParsedValue = [{
-                          formId: "",
-                          privilegeName: "",
-                          editable: false,
-                          viewable: false,
-                        }];
 
-                      }
-                      this.setState({   formData: data,
-                                        httpReceived: true,
-                                        loading: false,
-                                        formName: data.name,
-                                        formPrivileges:formPrivilegesParsedValue,
-                                        referenceVersion: parsedFormValue.referenceVersion,
-                                        referenceFormUuid: parsedFormValue.referenceFormUuid
+                      this.setState({
+                                formData: data,
                                     });
 
                     })
+
                     .catch((error) => {
                       this.setErrorMessage(error);
                       this.setState({ loading: false });
@@ -94,25 +86,29 @@ fetchFormData(){
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
      httpInterceptor.get(optionsUrl)
         .then((initialPrivileges) => {
-               this.setState({ availablePrivileges: this.orderFormByVersion(initialPrivileges.results), loading: false });
+               this.setState({ availablePrivileges: this.arrangePrivileges(initialPrivileges.results), loading: false });
         })
 
 }
 fetchFormPrivilegesFromDB() {
     let initialPrivilegesFromDB = [];
     const queryParams = `?=`;
+    var initialPrivileges = [];
     const formId = this.props.formId;
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${this.props.formId}`;
      httpInterceptor.get(optionsUrl)
         .then((initialPrivilegesFromDB) => {
-               this.setState({ formPrivileges : (initialPrivilegesFromDB.results), loading: false });
+               initialPrivilegesFromDB.forEach(function(privilege, key) {
+                             initialPrivileges.push(privilege)
+                           })
+               this.setState({ formPrivileges : (initialPrivileges), loading: false });
         })
 
 }
 fetchFormPrivilegesFromProps() {
         if(this.props.formPrivileges == undefined){
         const formPrivileges = [{
-              formId: "",
+              formId: this.props.formId,
               privilegeName: "",
               editable: false,
               viewable: false,
@@ -120,7 +116,7 @@ fetchFormPrivilegesFromProps() {
     this.setState({formPrivileges: formPrivileges})
     }else{this.setState({formPrivileges : this.props.formPrivileges})}
 }
- orderFormByVersion(privilege) {
+ arrangePrivileges(privilege) {
     const sampleList=[];
      privilege.forEach((privilege) => {
        const item ={
@@ -157,7 +153,7 @@ fetchFormPrivilegesFromProps() {
        }
        if(event != undefined && (event.event == undefined)){
             formPrivileges[idx].privilegeName = event.value;
-            formPrivileges[idx].formId = this.state.formData.id;
+            formPrivileges[idx].formId = this.props.formId;
             this.setState({selectedPrivilegeOption: event.value});
        }
           this.setState({formPrivileges:formPrivileges});
@@ -165,7 +161,7 @@ fetchFormPrivilegesFromProps() {
      };
  handleAddRow(){
     const newPrivilegeItem = {
-      formId: this.state.formData.id,
+      formId: this.props.formId,
       privilegeName: "",
       editable: false,
       viewable: false,
@@ -174,19 +170,6 @@ fetchFormPrivilegesFromProps() {
   this.setState(this.state.formPrivileges);
   this.setState({selectedPrivilegeOption: newPrivilegeItem.privilegeName});
   };
-
-  adjustAvailablePrivilegeList(){
-          const tempPrivList = this.state.formPrivileges;
-
-          if(tempPrivList != null && tempPrivList != undefined){}
-          for(var i = 0; i <tempPrivList.length;i++){
-                        const privilege = tempPrivList[i];
-                        if(privilege.privilegeName != ""){
-                        this.removeSelectedPrivilege(privilege.privilegeName);
-                        }
-
-          }
-          }
 
   handleRemoveSpecificRow(idx) {
     const formPrivileges = this.state.formPrivileges
@@ -202,6 +185,7 @@ fetchFormPrivilegesFromProps() {
     formSave(formPrivileges) {
        try {
              const formJson = this.getFormJson();
+             if(formJson != null){
              const formName = this.state.formData ? this.state.formData.name : 'FormName';
              const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
              const formId = this.state.formData ? this.state.formData.id : undefined;
@@ -213,13 +197,19 @@ fetchFormPrivilegesFromProps() {
                form: {
                  name: formName,
                  uuid: formUuid,
-                 id:formId,
+
                },
                value: JSON.stringify(formJson),
                uuid: formResourceUuid,
              };
              console.log("Before _save"+JSON.stringify(formJson));
              this._saveFormResource(formResource);
+             this._saveFormPrivileges(this.state.formPrivileges);
+             }else{
+               this.setErrorMessage("Please submit the main form before adding privileges");
+              }
+
+
              console.log("After _save"+JSON.stringify(formJson));
            } catch (e) {
              console.log("errrrrrrrrrrrrrrrrrrrr"+e);
@@ -256,31 +246,60 @@ fetchFormPrivilegesFromProps() {
                       }, commonConstants.toastTimeout);
                     })
                     .catch((error) => {
-                      //this.setErrorMessage(error);
+                      this.setErrorMessage(error);
                       this.setState({ loading: false });
                     });
-                    this._saveFormPrivileges(this.state.formPrivileges);
+
 
           }
       _saveFormPrivileges(formPrivileges) {
               const self = this;
                   saveFormPrivileges(this._createReqObject(this.state.formPrivileges)).then(() => {
-                        const message = 'Form translations saved successfully';
+                        const message = 'Form Privileges saved successfully';
                         this.setMessage(message, commonConstants.responseType.success);
                         this.setState({ loading: false });
                       }).catch(() => {
-                        //this.setErrorMessage('Failed to save translations');
+                        this.setErrorMessage('Failed to save translations');
                         this.setState({ loading: false });
                       });
                 }
 
-
+showErrors(error) {
+    if (error.response) {
+      error.response.json().then((data) => {
+        const message = get(data, 'error.globalErrors[0].message') || error.message;
+        this.setErrorMessage({ message });
+      });
+    } else {
+      this.setErrorMessage({ message: error.message });
+    }
+  }
+  setErrorMessage(errorMessage) {
+      const errorNotification = {
+        message: errorMessage,
+        type: commonConstants.responseType.error,
+      };
+      this.setState({ errorMessage: errorNotification });
+      setTimeout(() => {
+        this.setState({ errorMessage: {} });
+      }, commonConstants.toastTimeout);
+    }
         _createReqObject(formPrivileges) {
-            const { privilegeName, version} = this.state.formData;
+
             const formId = this.state.formData.id;
+            const privilege = undefined;
             const formPrivilegeObj = [];
             const formJson = this.getFormJson();
-
+           if(formPrivileges.length == 0){
+           const privilegeCopy = {
+                           formId: formId,
+                           privilegeName: "",
+                           editable:false,
+                           viewable:false,
+                         }
+               formPrivilegeObj.push(privilegeCopy);
+               return formPrivilegeObj;
+           }
            for(var i = 0; i <formPrivileges.length;i++){
               const privilege = formPrivileges[i];
               const privilegeCopy = {
@@ -289,10 +308,12 @@ fetchFormPrivilegesFromProps() {
                 editable:privilege.editable,
                 viewable:privilege.viewable,
               }
+
               formPrivilegeObj.push(privilegeCopy);
             }
             console.log("formPrivilegeObj"+formPrivilegeObj);
             return formPrivilegeObj;
+
           }
 
           removeSelectedPrivilege(e){
@@ -309,8 +330,18 @@ fetchFormPrivilegesFromProps() {
         const { selectedPrivilegeOption } = this.state;
         const { availablePrivileges } = this.state;
         const options = availablePrivileges;
+        if(this.state.formPrivileges == undefined){
+            const newPrivilegeItem = {
+               formId: this.state.formData.id,
+               privilegeName: "",
+               editable: false,
+               viewable: false,
+             };
+           this.state.formPrivileges.push(newPrivilegeItem);
+        }
         return (
       <div className="form-privilege-table-container">
+      <NotificationContainer notification={this.state.errorMessage} />
                   <table className="form-privilege-table" id="tab_logic">
                   <thead>
                       <tr>
@@ -375,22 +406,9 @@ fetchFormPrivilegesFromProps() {
   }
 }
 FormPrivilegeTable.propTypes = {
-    formData: PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string.isRequired,
-        published: PropTypes.bool.isRequired,
-        resources: PropTypes.array,
-        uuid: PropTypes.string.isRequired,
-        version: PropTypes.string.isRequired,
-        editable: PropTypes.bool,
-      }),
       formPrivileges: PropTypes.array,
       formId: PropTypes.number,
-      formName: PropTypes.string.isRequired,
-      formResourceControls: PropTypes.array.isRequired,
-      formUuid: PropTypes.string.isRequired,
-        data: PropTypes.array.isRequired,
-};
+}
 FormPrivilegeTable.contextTypes = {
       router: PropTypes.object.isRequired,
     };

@@ -108,7 +108,7 @@ export default class FormList extends Component {
    _privilegesIcon(rowItem) {
       return (
         <Link to={{ pathname: `form-builder/${rowItem.uuid}/privilege` }} >
-          <i className="fa fa-users" title="Show Form Privileges" />
+          <i className="fa fa-users" title="Form Privileges" />
         </Link>
       );
     }

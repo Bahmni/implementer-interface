@@ -236,8 +236,6 @@ FormDetail.propTypes = {
   formControlEvents: PropTypes.Array,
   formPrivileges: PropTypes.array,
   formId: PropTypes.number,
-  formName: PropTypes.string.isRequired,
-  formUuid: PropTypes.string.isRequired,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
