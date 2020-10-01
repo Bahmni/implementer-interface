@@ -22,4 +22,7 @@ export const formBuilderConstants = {
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
   saveNameTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation',
   exportUrl: '/openmrs/ws/rest/v1/bahmniie/form/export',
+  jsonToPdfConvertionUrl:'/openmrs/ws/rest/v1/bahmniie/form/jsonToPdf',
+  pdfDownloadUrl:'/openmrs/ws/rest/v1/bahmniie/form/download/',
+
 };
