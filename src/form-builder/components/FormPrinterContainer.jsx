@@ -36,11 +36,11 @@ class FormPrinterContainer extends Component {
           let fileName=response.pdfName;
           let link = formBuilderConstants.pdfDownloadUrl+fileName;
           self.setState({ downloadLink: link });
-          self.setState({ status: "Complete" })
+          self.setState({ status: "Completed" });
         });
 
       } catch (error) {
-
+        self.setState({ status: "Error" })
       }
     };
     reader.readAsText(file);

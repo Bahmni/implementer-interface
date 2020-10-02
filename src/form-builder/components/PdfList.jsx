@@ -24,7 +24,7 @@ export default class FormList extends Component {
             <tr >
               <td>{this.props.status}</td>
               <td>
-                <button onClick={this.downloadFile}>Download</button>
+                <button onClick={this.downloadFile} disabled={this.props.status!='Completed'} >Download</button>
               </td>
             </tr>
 
