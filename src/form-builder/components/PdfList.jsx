@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import fileDownload from 'react-file-download';
-import { Link } from 'react-router-dom';
 
 export default class FormList extends Component {
   constructor(props) {
@@ -8,9 +6,8 @@ export default class FormList extends Component {
 
     this.downloadFile = this.downloadFile.bind(this);
   }
-  downloadFile() {
-    fileDownload([this.props.downloadLink], `fileName.pdf`);
-
+  downloadFile(){
+    window.open(this.props.downloadLink);
   }
   render() {
     return (

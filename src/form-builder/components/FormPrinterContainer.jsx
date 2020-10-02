@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FormBuilderHeader from 'form-builder/components/FormBuilderHeader.jsx';
 import PdfList from 'form-builder/components/PdfList.jsx';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { commonConstants } from '../../common/constants';
+import  {formBuilderConstants}  from 'form-builder/constants';
 
 class FormPrinterContainer extends Component {
 
@@ -27,16 +27,14 @@ class FormPrinterContainer extends Component {
     this.setState({ importBtnStatus: "clicked" });
     const self = this;
     const reader = new FileReader();
-
     // eslint-disable-next-line
     reader.onload = function () {
       try {
 
         const formData = JSON.parse(reader.result);
-        httpInterceptor.post(commonConstants.jsonToPdfConvertionUrl, formData).then((response) => {
-
-          let fileName=response.data;
-          let link = commonConstants.downloadLink+fileName;
+        httpInterceptor.post(formBuilderConstants.jsonToPdfConvertionUrl, formData).then((response) => {
+          let fileName=response.pdfName;
+          let link = formBuilderConstants.pdfDownloadUrl+fileName;
           self.setState({ downloadLink: link });
           self.setState({ status: "Complete" })
         });
