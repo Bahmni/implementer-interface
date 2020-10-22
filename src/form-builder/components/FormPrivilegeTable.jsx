@@ -95,7 +95,8 @@ fetchFormPrivilegesFromDB() {
     const queryParams = `?=`;
     var initialPrivileges = [];
     const formId = this.props.formId;
-    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${this.props.formId}`;
+    const formVersion = this.props.formData.version;
+    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
      httpInterceptor.get(optionsUrl)
         .then((initialPrivilegesFromDB) => {
                initialPrivilegesFromDB.forEach(function(privilege, key) {
@@ -153,7 +154,7 @@ fetchFormPrivilegesFromProps() {
        }
        if(event != undefined && (event.event == undefined)){
             formPrivileges[idx].privilegeName = event.value;
-            formPrivileges[idx].formId = this.props.formId;
+            formPrivileges[idx].formId = this.state.formData.id;
             this.setState({selectedPrivilegeOption: event.value});
        }
           this.setState({formPrivileges:formPrivileges});
@@ -187,11 +188,12 @@ fetchFormPrivilegesFromProps() {
              const formJson = this.getFormJson();
              if(formJson != null){
              const formName = this.state.formData ? this.state.formData.name : 'FormName';
+             const formVersion = this.state.formData ? this.state.formData.version: 'FormVersion';
              const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
              const formId = this.state.formData ? this.state.formData.id : undefined;
              const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                              this.state.formData.resources[0].uuid : '';
-             formJson.privileges = this.state.formPrivileges;
+             formJson.privilege = this.state.formPrivileges;
              console.log("formJson"+formJson);
              const formResource = {
                form: {
@@ -256,24 +258,19 @@ fetchFormPrivilegesFromProps() {
               const self = this;
                   saveFormPrivileges(this._createReqObject(this.state.formPrivileges)).then(() => {
                         const message = 'Form Privileges saved successfully';
-                        this.setMessage(message, commonConstants.responseType.success);
-                        this.setState({ loading: false });
+                        const successNotification = {
+                                                message: message,
+                                                type: commonConstants.responseType.success,
+                                              };
+                        this.setState(notification: successNotification,
+                                         loading: false);
+
                       }).catch(() => {
                         this.setErrorMessage('Failed to save translations');
                         this.setState({ loading: false });
                       });
                 }
 
-showErrors(error) {
-    if (error.response) {
-      error.response.json().then((data) => {
-        const message = get(data, 'error.globalErrors[0].message') || error.message;
-        this.setErrorMessage({ message });
-      });
-    } else {
-      this.setErrorMessage({ message: error.message });
-    }
-  }
   setErrorMessage(errorMessage) {
       const errorNotification = {
         message: errorMessage,
@@ -287,6 +284,7 @@ showErrors(error) {
         _createReqObject(formPrivileges) {
 
             const formId = this.state.formData.id;
+            const formVersion = this.state.formData.version;
             const privilege = undefined;
             const formPrivilegeObj = [];
             const formJson = this.getFormJson();
@@ -296,6 +294,7 @@ showErrors(error) {
                            privilegeName: "",
                            editable:false,
                            viewable:false,
+                           formVersion:formVersion,
                          }
                formPrivilegeObj.push(privilegeCopy);
                return formPrivilegeObj;
@@ -307,6 +306,7 @@ showErrors(error) {
                 privilegeName: privilege.privilegeName,
                 editable:privilege.editable,
                 viewable:privilege.viewable,
+                formVersion:formVersion,
               }
 
               formPrivilegeObj.push(privilegeCopy);
@@ -324,7 +324,16 @@ showErrors(error) {
               availablePrivileges: array
             })
           };
-
+showErrors(error) {
+    if (error.response) {
+      error.response.json().then((data) => {
+        const message = get(data, 'error.globalErrors[0].message') || error.message;
+        this.setErrorMessage({ message });
+      });
+    } else {
+      this.setErrorMessage({ message: error.message });
+    }
+  }
   render() {
         const { formPrivileges } = this.state;
         const { selectedPrivilegeOption } = this.state;

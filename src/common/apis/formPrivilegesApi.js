@@ -5,7 +5,7 @@ import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 export function saveFormPrivileges(formPrivileges) {
   return httpInterceptor.post(formBuilderConstants.saveFormPrivilegesUrl, formPrivileges);
 }
-export function getFormPrivileges(formId) {
+export function getFormPrivileges(formId, formVersion) {
   return httpInterceptor.get(new UrlHelper()
-      .getFormPrivilegesUrl(formId), 'text');
+      .getFormPrivilegesUrl(formId, formUuid), 'text');
 }

@@ -40,7 +40,7 @@ export default class FormList extends Component {
           </a>
           <b className="translate-icon" hidden={!rowItem.isLatestPublished}>
             {this._translateIcon(rowItem)}</b>
-          <b className="privilege-icon" hidden={!rowItem.isLatestPublished}>
+          <b className="privilege-icon" hidden={!rowItem.published}>
             {this._privilegesIcon(rowItem)}</b>
         </td>
       </tr>
