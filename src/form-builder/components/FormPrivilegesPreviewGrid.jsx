@@ -153,8 +153,6 @@ getValue(privilege){
                         </tbody>
                           </table>
                    </div>
-
-
     );
   }
 }

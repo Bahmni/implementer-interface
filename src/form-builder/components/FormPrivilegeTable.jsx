@@ -210,11 +210,9 @@ fetchFormPrivilegesFromProps() {
              }else{
                this.setErrorMessage("Please submit the main form before adding privileges");
               }
-
-
              console.log("After _save"+JSON.stringify(formJson));
            } catch (e) {
-             console.log("errrrrrrrrrrrrrrrrrrrr"+e);
+             
            }
       }
     getFormJson() {

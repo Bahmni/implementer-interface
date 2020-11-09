@@ -140,6 +140,7 @@ export default class FormDetail extends Component {
                          formName={name}
                          formUuid={ uuid }
                          formPrivileges = {this.props.formPrivileges}
+                         formData = {this.props.formData}
                       />
                     </Popup>
                     }

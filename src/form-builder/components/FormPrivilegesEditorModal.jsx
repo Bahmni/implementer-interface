@@ -79,6 +79,7 @@ export default class FormPrivilegesEditorModal extends Component {
             formName={formName}
             formUuid={ formUuid }
             formPrivileges={formPrivileges}
+            formData={formData}
 
            />
         </div>
@@ -95,12 +96,14 @@ FormPrivilegesEditorModal.propTypes = {
        formName: PropTypes.string.isRequired,
        formUuid: PropTypes.string.isRequired,
        formPrivileges: PropTypes.array,
+       formData:PropTypes.formData,
 };
 function mapStateToProps(state) {
   return {
     formUuid:state.formUuid,
     formId:state.formId,
     formName: state.formName,
+    formData: state.formData,
   };
 }
 FormPrivilegesEditorModal.defaultProps = {

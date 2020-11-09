@@ -11,7 +11,6 @@ const formBuilder = {
   controlProperty,
   formDetails,
   translations,
-  formPrivileges,
-};
+  };
 
 export default formBuilder;

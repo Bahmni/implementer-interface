@@ -158,8 +158,7 @@ export class FormDetailContainer extends Component {
         let initialPrivilegesFromDB = [];
         const queryParams = `?=`;
         var initialPrivileges = [];
-
-        const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${this.state.formData.id}`;
+        const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
         httpInterceptor.get(optionsUrl)
         .then((initialPrivilegesFromDB) => {
             initialPrivilegesFromDB.forEach(function(privilege, key) {
@@ -213,6 +212,7 @@ export class FormDetailContainer extends Component {
           localStorage.getItem('openmrsDefaultLocale');
       const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
