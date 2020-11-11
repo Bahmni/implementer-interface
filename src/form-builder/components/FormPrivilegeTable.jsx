@@ -399,7 +399,7 @@ showErrors(error) {
                         </tbody>
                           </table>
 
-                              <button onClick={this.handleAddRow} className="btn">
+                              <button id="add-btn" onClick={this.handleAddRow} className="btn">
                                 Add Row
                               </button>
 
