@@ -111,6 +111,7 @@ input[type="checkbox"] {
 .container-columns {
   @include clearfix();
   margin: 10px;
+  overflow: scroll;
 }
 
 .column-side {

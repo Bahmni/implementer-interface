@@ -8,6 +8,7 @@ import Dashboard from 'common/Dashboard';
 import FormBuilderContainer from 'form-builder/components/FormBuilderContainer.jsx';
 import FormDetailContainer from 'form-builder/components/FormDetailContainer.jsx';
 import FormTranslationsContainer from 'form-builder/components/FormTranslationsContainer.jsx';
+import FormPrivilegesPreviewContainer from 'form-builder/components/FormPrivilegesPreviewContainer.jsx';
 import 'bahmni-form-controls';
 const store = createStore(implementerInterface);
 const routes = [
@@ -37,6 +38,13 @@ const routes = [
     title: 'Form Translation',
     siblingPath: '/form-builder/:formUuid',
   },
+  {
+      component: FormPrivilegesPreviewContainer,
+      exact: true,
+      path: '/form-builder/:formUuid/privilege',
+      title: 'Show Form Privileges',
+      siblingPath: '/form-builder/:formUuid',
+    },
 ];
 
 ReactDOM.render(
