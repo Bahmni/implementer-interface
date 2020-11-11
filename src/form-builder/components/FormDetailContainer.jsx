@@ -31,21 +31,17 @@ import { Exception } from 'form-builder/helpers/Exception';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
-import {
-  getFormPrivileges,
-  saveFormPrivileges,
-} from 'common/apis/formPrivilegesApi';
+
 
 export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
     this.formJson = undefined;
-    this.formPrivileges = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
-      referenceFormUuid: undefined, formPreviewJson: undefined ,formPrivileges: []};
+      referenceFormUuid: undefined, formPreviewJson: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.getFormJson = this.getFormJson.bind(this);
@@ -76,9 +72,8 @@ export class FormDetailContainer extends Component {
               this.setState({ formData: data, httpReceived: true,
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
-                referenceFormUuid: parsedFormValue.referenceFormUuid});
-                this._getFormPrivilegesFromDB(data.id,data.version);
-                this.formJson = this.getFormJson();
+                referenceFormUuid: parsedFormValue.referenceFormUuid });
+              this.formJson = this.getFormJson();
               const formControlsArray = formHelper.getObsControlEvents(this.formJson);
               this.props.dispatch(formLoad(formControlsArray));
             })
@@ -90,6 +85,7 @@ export class FormDetailContainer extends Component {
 
     this.getFormList();
   }
+
 
   componentWillUpdate(nextProps, nextState) {
     if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
@@ -108,11 +104,6 @@ export class FormDetailContainer extends Component {
         }
         this.formEvents = updatedFormEvents;
       }
-      const updatedFormPrivileges = this.getFormPrivileges();
-       if(updatedFormPrivileges){
-       this.props.dispatch(formPrivilegesEventUpdate(updatedFormPrivileges));
-       this.formPrivileges = updatedFormPrivileges;
-       }
     }
   }
 
@@ -135,10 +126,6 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      if(this.state.formPrivileges.length ==0){
-        this._getFormPrivilegesFromDB((this.state.formData.id - 1),(this.state.formData.version -1));
-      }
-      formJson.privilege = this.state.formPrivileges;
       const formResource = {
         form: {
           name: formName,
@@ -148,56 +135,10 @@ export class FormDetailContainer extends Component {
         uuid: formResourceUuid,
       };
       this._saveFormResource(formResource);
-      this._saveFormPrivileges(this.state.formData.id,this.state.formData.version,this.state.formPrivileges);
-
-    } catch(error) {
-      this.setErrorMessage(error.getException());
+    } catch (e) {
+      this.setErrorMessage(e.getException());
     }
   }
-  _getFormPrivilegesFromDB(formId ,formVersion){
-        let initialPrivilegesFromDB = [];
-        const queryParams = `?=`;
-        var initialPrivileges = [];
-        const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
-        httpInterceptor.get(optionsUrl)
-        .then((initialPrivilegesFromDB) => {
-            initialPrivilegesFromDB.forEach(function(privilege, key) {
-            initialPrivileges.push(privilege)
-         })
-        this.setState({ formPrivileges : (initialPrivileges), loading: false });
-        })
-
-}
- _saveFormPrivileges(formId,formVersion,formPrivileges) {
-              const self = this;
-                  saveFormPrivileges(this._createReqObject(formId,formVersion,this.state.formPrivileges)).then(() => {
-                        const message = 'Form Privileges saved successfully';
-                        this.setMessage(message, commonConstants.responseType.success);
-                        this.setState({ loading: false });
-                      }).catch(() => {
-                        this.setErrorMessage('Failed to save translations');
-                        this.setState({ loading: false });
-                      });
-                }
-  _createReqObject(formId,formVersion,formPrivileges) {
-
-              const formPrivilegeObj = [];
-              const formJson = this.getFormJson();
-
-             for(var i = 0; i <formPrivileges.length;i++){
-                const privilege = formPrivileges[i];
-                const privilegeCopy = {
-                  formId: formId,
-                  privilegeName: privilege.privilegeName,
-                  editable:privilege.editable,
-                  viewable:privilege.viewable,
-                  formVersion:formVersion,
-                }
-                formPrivilegeObj.push(privilegeCopy);
-              }
-              console.log("formPrivilegeObj"+formPrivilegeObj);
-              return formPrivilegeObj;
-            }
 
   onPublish() {
     try {
@@ -212,7 +153,6 @@ export class FormDetailContainer extends Component {
           localStorage.getItem('openmrsDefaultLocale');
       const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
-
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -239,16 +179,7 @@ export class FormDetailContainer extends Component {
     }
     return null;
   }
-getFormPrivileges() {
-    if (this.state.formData && this.state.formData.formPrivileges) {
-      const formPrivilege = this.state.formData.privileges[0];
-      if (formPrivilege) {
-        const formPrivileges =  JSON.parse(formPrivilege);
-        return formPrivileges;
-      }
-    }
-    return null;
-  }
+
   setErrorMessage(error) {
     const errorNotification = { message: error.message, type: commonConstants.responseType.error };
     this.setState({ notification: errorNotification });
@@ -456,7 +387,7 @@ getFormPrivileges() {
             notification: successNotification,
             formData: publishedFormData, loading: false,
           });
-          //this._saveFormPrivileges(publishedFormData.formId,publishedFormData.version,this.state.formPrivileges);
+
           clearTimeout(this.timeoutID);
           this.timeoutID = setTimeout(() => {
             this.setState({ notification: {} });
@@ -471,7 +402,6 @@ getFormPrivileges() {
   _formResourceMapper(responseObject) {
     const form = Object.assign({}, responseObject.form);
     const formResource = { name: form.name,
-      id:responseObject.form.id,
       dataType: responseObject.dataType,
       value: responseObject.value,
       uuid: responseObject.uuid };
@@ -497,12 +427,8 @@ getFormPrivileges() {
     return currentFormName;
   }
 
-
   updateFormEvents(events) {
     this.setState({ formEvents: events });
-  }
-  updateFormPrivileges(privileges){
-    this.setState({formPrivileges: privileges})
   }
 
   showErrors(error) {
@@ -579,7 +505,6 @@ getFormPrivileges() {
                     formControlEvents={this.props.formControlEvents}
                     formData={this.state.formData}
                     formDetails={this.props.formDetails}
-                    formPrivileges={this.state.formPrivileges}
                     ref={r => { this.formDetail = r; }}
                     resetProperty={(property) => this.props.dispatch(setChangedProperty(property))}
                     setError={this.setErrorMessage}
@@ -587,7 +512,6 @@ getFormPrivileges() {
                     updateFormEvents={(events) => this.updateFormEvents(events)}
                     updateFormName={(formName) => this.updateFormName(formName)}
                     validateNameLength={(formName) => this.validateNameLength(formName)}
-
                   />
                 </div>
               </div>
@@ -600,7 +524,6 @@ FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
   formControlEvents: PropTypes.array,
-  formPrivileges: PropTypes.array,
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
@@ -624,7 +547,6 @@ function mapStateToProps(state) {
     translations: state.translations,
     formDetails: state.formDetails,
     formControlEvents: state.controlDetails.allObsControlEvents,
-    formPrivileges: state.formPrivileges,
   };
 }
 

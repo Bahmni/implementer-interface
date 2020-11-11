@@ -15,11 +15,6 @@ const formDetails = (store = {}, action) => {
         events: Object.assign({}, store.events,
           { onFormConditionsUpdate: action.events }),
       });
-      case 'FORM_PRIVILEGES_CHANGED':
-            return Object.assign({}, store, {
-              events: Object.assign({}, store.events,
-                { onFormPrivilegesUpdate: action.events }),
-            });
     case 'SET_DEFAULT_LOCALE':
       return Object.assign({}, store, { defaultLocale: action.locale });
     default:

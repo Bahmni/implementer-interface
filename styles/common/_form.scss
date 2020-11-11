@@ -81,29 +81,6 @@
     }
   }
 }
-.form-privileges-container {
-  padding: 10px;
-  box-sizing: border-box;
-  border-top: 1px solid $gray300;
-  position: relative;
-  overflow: hidden;
-  label {
-    font-size: 16px;
-    vertical-align: middle;
-    padding-top: 5px;
-    float: left;
-  }
-  button {
-    background: transparent;
-    padding: 5px;
-    color: $gray500;
-    float: right;
-    &:hover {
-      background: $gray300;
-      color: $gray600;
-    }
-  }
-  }
 .control-event-button {
   background: transparent;
   padding: 5px;
