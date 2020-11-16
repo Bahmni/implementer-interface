@@ -350,8 +350,8 @@ showErrors(error) {
                   <thead>
                       <tr>
                         <th> Privilege </th>
-                        <th> isEditable </th>
-                        <th> isViewable </th>
+                        <th> Editable </th>
+                        <th> Viewable </th>
                         <th>  Delete    </th>
                       </tr>
                   </thead>
@@ -395,14 +395,22 @@ showErrors(error) {
                             ))}
                         </tbody>
                           </table>
-
+                              <br />
+                              <br />
+                              <br />
+                              <br />
+                                <br />
+                                <br />
                               <button id="add-btn" onClick={this.handleAddRow} className="btn">
                                 Add Row
                               </button>
 
-                              <button className="btn" onClick={() => this.formSave(this.state.formPrivileges)} type="submit">
+                              <button class="button btn--highlight" onClick={() => this.formSave(this.state.formPrivileges)} type="submit">
                                 Save
                               </button>
+                               <div>
+                                <button className="btn" onClick={this.props.close} type="reset"> Cancel </button>
+                               </div>
                    </div>
 
 

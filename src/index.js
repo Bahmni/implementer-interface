@@ -43,7 +43,7 @@ const routes = [
       exact: true,
       path: '/form-builder/:formUuid/privilege',
       title: 'Show Form Privileges',
-      siblingPath: '/form-builder/:formUuid',
+      siblingPath: '/form-builder',
     },
 ];
 
