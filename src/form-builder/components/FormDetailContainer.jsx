@@ -195,7 +195,6 @@ export class FormDetailContainer extends Component {
                 }
                 formPrivilegeObj.push(privilegeCopy);
               }
-              console.log("formPrivilegeObj"+formPrivilegeObj);
               return formPrivilegeObj;
             }
 
@@ -456,7 +455,7 @@ getFormPrivileges() {
             notification: successNotification,
             formData: publishedFormData, loading: false,
           });
-          //this._saveFormPrivileges(publishedFormData.formId,publishedFormData.version,this.state.formPrivileges);
+
           clearTimeout(this.timeoutID);
           this.timeoutID = setTimeout(() => {
             this.setState({ notification: {} });

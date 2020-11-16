@@ -194,7 +194,6 @@ fetchFormPrivilegesFromProps() {
              const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                              this.state.formData.resources[0].uuid : '';
              formJson.privilege = this.state.formPrivileges;
-             console.log("formJson"+formJson);
              const formResource = {
                form: {
                  name: formName,
@@ -204,13 +203,12 @@ fetchFormPrivilegesFromProps() {
                value: JSON.stringify(formJson),
                uuid: formResourceUuid,
              };
-             console.log("Before _save"+JSON.stringify(formJson));
+
              this._saveFormResource(formResource);
              this._saveFormPrivileges(this.state.formPrivileges);
              }else{
                this.setErrorMessage("Please submit the main form before adding privileges");
               }
-             console.log("After _save"+JSON.stringify(formJson));
            } catch (e) {
              
            }
@@ -264,7 +262,7 @@ fetchFormPrivilegesFromProps() {
                                          loading: false);
 
                       }).catch(() => {
-                        this.setErrorMessage('Failed to save translations');
+                        this.setErrorMessage('Failed to save privileges');
                         this.setState({ loading: false });
                       });
                 }
@@ -309,7 +307,6 @@ fetchFormPrivilegesFromProps() {
 
               formPrivilegeObj.push(privilegeCopy);
             }
-            console.log("formPrivilegeObj"+formPrivilegeObj);
             return formPrivilegeObj;
 
           }

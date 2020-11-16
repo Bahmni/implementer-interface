@@ -24,12 +24,13 @@ window.JSHINT = JSHINT;
 export default class FormPrivilegesEditorModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { notification: {},
-                    codeMirrorEditor: {},
-                    displayConfirmationPopup: false ,
-                    formName:'',
-                    formId:'',
-                    formUuid:'',
+    this.state = {
+                notification: {},
+                codeMirrorEditor: {},
+                displayConfirmationPopup: false ,
+                formName:'',
+                formId:'',
+                formUuid:'',
     };
     this.codeMirrorEditor = null;
     this.closeEditor = this.closeEditor.bind(this);
@@ -69,7 +70,7 @@ export default class FormPrivilegesEditorModal extends Component {
 
   render() {
 
-    const {formId,formName,formUuid,formPrivileges} = this.props;
+    const {formId,formName,formUuid,formPrivileges,formData} = this.props;
     return (
       <div className="form-privileges-modal-container">
          <h2 className="header-title">Manage Privileges</h2>

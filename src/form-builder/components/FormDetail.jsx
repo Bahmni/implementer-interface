@@ -16,7 +16,6 @@ import FormConditionsModal from 'form-builder/components/FormConditionsModal';
 import { commonConstants } from 'common/constants';
 import NotificationContainer from 'common/Notification';
 
-
 export default class FormDetail extends Component {
   constructor() {
     super();
