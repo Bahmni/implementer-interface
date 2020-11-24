@@ -3,9 +3,9 @@ import React from 'react';
 import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
-import FormPrivilegesPreviewGrid from '../../../src/form-builder/components/FormPrivilegesPreviewGrid.jsx';
+import FormPrivilegesPreviewGrid from'form-builder/components/FormPrivilegesPreviewGrid.jsx';
 import { mount } from 'enzyme';
-import { formBuilderConstants } from '../../../src/form-builder/constants';
+import { formBuilderConstants } from 'form-builder/constants';
 
 chai.use(chaiEnzyme());
 
