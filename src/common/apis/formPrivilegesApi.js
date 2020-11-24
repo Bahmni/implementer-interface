@@ -7,5 +7,10 @@ export function saveFormPrivileges(formPrivileges) {
 }
 export function getFormPrivileges(formId, formVersion) {
   return httpInterceptor.get(new UrlHelper()
-      .getFormPrivilegesUrl(formId, formUuid), 'text');
+      .getFormPrivilegesUrl(formId, formVersion), 'text');
+}
+
+export function getFormPrivilegesFromUuid(formUuid) {
+  return httpInterceptor.get(new UrlHelper()
+      .getFormPrivilegesFromUuidUrl(formUuid), 'text');
 }

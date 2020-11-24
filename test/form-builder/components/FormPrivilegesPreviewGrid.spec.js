@@ -42,7 +42,7 @@ describe('Form Privileges Preview Grid', () => {
         const params =
             'v=custom:(id,uuid,name,version,published,auditInfo,' +
             'resources:(value,dataType,uuid))';
-        const optionsUrl = `${formBuilderConstants.formUrl}/${defaultProps.formUuid}?${params}`;
+        const optionsUrl = `${formBuilderConstants.getFormPrivilegesFromUuidUrl}/${defaultProps.formUuid}`;
 
         mockHttp.get.withArgs(optionsUrl).returns(Promise.resolve({}));
         wrapper.instance().fetchFormData();

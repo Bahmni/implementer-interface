@@ -24,12 +24,13 @@ window.JSHINT = JSHINT;
 export default class FormPrivilegesEditorModal extends Component {
   constructor(props) {
     super(props);
-    this.state = { notification: {},
-                    codeMirrorEditor: {},
-                    displayConfirmationPopup: false ,
-                    formName:'',
-                    formId:'',
-                    formUuid:'',
+    this.state = {
+                notification: {},
+                codeMirrorEditor: {},
+                displayConfirmationPopup: false ,
+                formName:'',
+                formId:'',
+                formUuid:'',
     };
     this.codeMirrorEditor = null;
     this.closeEditor = this.closeEditor.bind(this);
@@ -69,12 +70,13 @@ export default class FormPrivilegesEditorModal extends Component {
 
   render() {
 
-    const {formId,formName,formUuid,formPrivileges} = this.props;
+    const {formId,formName,formUuid,formPrivileges,formData} = this.props;
     return (
       <div className="form-privileges-modal-container">
          <h2 className="header-title">Manage Privileges</h2>
          <div className="form-privileges-container" >
            <FormPrivilegeTable
+           close={this.props.close}
             formId={formId}
             formName={formName}
             formUuid={ formUuid }
@@ -83,15 +85,14 @@ export default class FormPrivilegesEditorModal extends Component {
 
            />
         </div>
-        <div>
-            <button className="btn" onClick={this.props.close} type="reset"> Cancel </button>
-        </div>
+
       </div>
     );
   }
 }
 
 FormPrivilegesEditorModal.propTypes = {
+       close: PropTypes.func.isRequired,
        formId: PropTypes.number,
        formName: PropTypes.string.isRequired,
        formUuid: PropTypes.string.isRequired,

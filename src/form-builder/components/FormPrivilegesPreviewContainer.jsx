@@ -49,7 +49,7 @@ render() {
           <div className="info-view-mode">
             <i className="fa fa-info-circle fl"></i>
             <span className="info-message">
-             Please save the changes before selecting a locale.
+             Form Specific Privileges.
             </span>
           </div>
         </div>
@@ -59,21 +59,7 @@ render() {
   }
 }
 FormPrivilegesPreviewContainer.propTypes = {
-    formData: PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string.isRequired,
-        published: PropTypes.bool.isRequired,
-        resources: PropTypes.array,
-        uuid: PropTypes.string.isRequired,
-        version: PropTypes.string.isRequired,
-        editable: PropTypes.bool,
-      }),
-      formPrivileges: PropTypes.array,
-      formId: PropTypes.number,
-      formName: PropTypes.string.isRequired,
-      formResourceControls: PropTypes.array.isRequired,
       formUuid: PropTypes.string.isRequired,
-        data: PropTypes.array.isRequired,
 };
 
     const mapStateToProps = (state) => ({

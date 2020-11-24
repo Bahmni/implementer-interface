@@ -27,44 +27,26 @@ this.state ={
 }
 
 componentWillMount(){
-    this.fetchFormData();
+    this.fetchFormPrivilegesFromDB();
     this.fetchPrivileges();
 }
 componentDidMount() {
-   // this.fetchFormPrivilegesFromProps();
 }
-fetchFormData(){
+fetchFormPrivilegesFromDB() {
+    let initialPrivilegesFromDB = [];
+    const queryParams = `?=`;
+    var initialPrivileges = [];
+    const formUuid = this.props.formUuid;
 
-        const params =
-                    'v=custom:(id,uuid,name,version,published,auditInfo,' +
-                    'resources:(value,dataType,uuid))';
-            httpInterceptor
-                    .get(`${formBuilderConstants.formUrl}/${this.props.formUuid}?${params}`)
-                    .then((data) => {
-                      const parsedFormValue = data.resources.length > 0 ?
-                        JSON.parse(data.resources[0].value) : {};
-                      var formPrivilegesParsedValue = parsedFormValue.privilege;
-                      if(formPrivilegesParsedValue == undefined){
-                         formPrivilegesParsedValue = [{
-                          formId: "",
-                          privilegeName: "",
-                          editable: false,
-                          viewable: false,
-                        }];
+    const optionsUrl = `${formBuilderConstants.getFormPrivilegesFromUuidUrl}?formUuid=${formUuid}`;
+     httpInterceptor.get(optionsUrl)
+        .then((initialPrivilegesFromDB) => {
+               initialPrivilegesFromDB.forEach(function(privilege, key) {
+                             initialPrivileges.push(privilege)
+                           })
+               this.setState({ formPrivileges : (initialPrivileges), loading: false });
+        })
 
-                      }
-                      this.setState({
-                                        formPrivileges:formPrivilegesParsedValue,
-
-                                    });
-                                    console.log("formPrivileges from state"+formPrivileges);
-
-                    })
-
-                    .catch((error) => {
-                      this.setErrorMessage(error);
-                      this.setState({ loading: false });
-                    });
 }
   fetchPrivileges() {
     let initialPrivileges = [];
@@ -157,21 +139,7 @@ getValue(privilege){
   }
 }
 FormPrivilegesPreviewGrid.propTypes = {
-    formData: PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string.isRequired,
-        published: PropTypes.bool.isRequired,
-        resources: PropTypes.array,
-        uuid: PropTypes.string.isRequired,
-        version: PropTypes.string.isRequired,
-        editable: PropTypes.bool,
-      }),
-      formPrivileges: PropTypes.array,
-      formId: PropTypes.number,
-      formName: PropTypes.string.isRequired,
-      formResourceControls: PropTypes.array.isRequired,
       formUuid: PropTypes.string.isRequired,
-        data: PropTypes.array.isRequired,
 };
 const mapStateToProps = (state) => ({
   formUuid: state.formUuid,
