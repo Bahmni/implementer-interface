@@ -46,4 +46,4 @@ describe('FormPrivilegeTable', () => {
         expect(wrapper.state('formPrivileges')[0].privilegeName).to.eql("abcd");
     });
 });
->>>>>>> Stashed changes
+
