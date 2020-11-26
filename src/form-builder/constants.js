@@ -22,4 +22,8 @@ export const formBuilderConstants = {
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
   saveNameTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/name/saveTranslation',
   exportUrl: '/openmrs/ws/rest/v1/bahmniie/form/export',
+  formPrivilegeUrl: '/openmrs/ws/rest/v1/privilege',
+  saveFormPrivilegesUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveFormPrivileges',
+  getFormPrivilegesUrl: '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivileges',
+  getFormPrivilegesFromUuidUrl: '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid'
 };

@@ -76,3 +76,52 @@
     font-size: 16px;
   }
 }
+
+.form-privilege-table {
+    table-layout:fixed;
+
+    border:1px solid #000000;
+    width: 800px;
+  th, td {
+      table-layout:fixed;
+      width:100%;
+      border:1px solid #000000;
+      word-wrap:break-word;
+      font-size: 12px;
+      text-align: center;
+      border-collapse: collapse;
+      padding: 10px;
+  }
+  thead {
+    th {
+      font-weight: 900;
+      color: #fff;
+      background: #669999;
+      border-color: #669999;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  tbody {
+    tr {
+     border: 1px solid #000000;
+     borderColor:#aaaaaa;
+     borderStyle:solid;
+      &.selected {
+        td {
+          color: inherit;
+          background: #298dd5;
+          border-color: #298dd5;
+          overflow: scroll;
+          display: inline-block;
+
+        }
+      }
+    }
+  }
+}
+.form-privilege-table-container {
+  padding-top: 10px;
+  width: 100%;
+}
+
