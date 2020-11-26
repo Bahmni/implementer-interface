@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import classNames from 'classnames';
+import FormPrivilegesEditorModal from 'form-builder/components/FormPrivilegesEditorModal.jsx';
+import FormPrivilegesContainer from 'form-builder/components/FormPrivilegesContainer.jsx'
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';
 import { IDGenerator } from 'form-builder/helpers/idGenerator';
@@ -82,7 +84,7 @@ export default class FormDetail extends Component {
     }
   }
   render() {
-    const { formData, defaultLocale, formControlEvents } = this.props;
+    const { formData, defaultLocale, formControlEvents , formPrivileges } = this.props;
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
@@ -104,7 +106,7 @@ export default class FormDetail extends Component {
           props.formDetails, props.selectedControlId) : '';
         const showEditor = props.property && (props.property.formInitEvent
           || props.property.formSaveEvent || props.property.formConditionsEvent
-          || props.property.controlEvent);
+          || props.property.controlEvent || props.property.formPrivilegesEventUpdate);
         if (!showEditor) {
           return (<div></div>);
         }
@@ -125,7 +127,25 @@ export default class FormDetail extends Component {
             </Popup>
             }
           </div>);
-        }
+        }if (props.property.formPrivilegesEventUpdate) {
+                  return (<div>
+                    {
+                    <Popup className="form-event-popup" closeOnDocumentClick={false}
+                      closeOnEscape={false}
+                      open={showEditor} position="top center"
+                    >
+                      <FormPrivilegesEditorModal
+                         close={props.closeEventEditor}
+                         formId={formData.id}
+                         formName={name}
+                         formUuid={ uuid }
+                         formPrivileges = {this.props.formPrivileges}
+                         formData = {this.props.formData}
+                      />
+                    </Popup>
+                    }
+                  </div>);
+            }
         return (<div>
           {showEditor &&
           <Popup className="form-event-popup" closeOnDocumentClick={false}
@@ -176,6 +196,16 @@ export default class FormDetail extends Component {
                                   onEventLoad={this.handleFormConditionsLoad}
                                   updateFormEvents={this.props.updateFormEvents}
                                 />
+                                <FormPrivilegesContainer
+                                eventProperty={'formPrivilegesEventUpdate'}
+                                 formData = {formData}
+                                 formId={id}
+                                 formName={name}
+                                 formUuid={ uuid }
+                                 formDetails = {this.props.formDetails}
+                                 formPrivileges = {this.props.formPrivileges}
+                                 />
+
                             </div>
                             <div className="container-column-main">
                                 <div className="column-main">
@@ -205,6 +235,8 @@ export default class FormDetail extends Component {
 FormDetail.propTypes = {
   defaultLocale: PropTypes.string,
   formControlEvents: PropTypes.Array,
+  formPrivileges: PropTypes.array,
+  formId: PropTypes.number,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,

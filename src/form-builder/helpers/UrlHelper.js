@@ -24,4 +24,13 @@ export class UrlHelper {
     return formBuilderConstants.saveNameTranslationsUrl +
       (referenceUuid ? `?referenceFormUuid=${referenceUuid}` : '');
   }
+  getFormPrivilegesUrl(formId , formVersion) {
+      return '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivileges?' +
+        `formId=${formId}&formVersion=${formVersion}`;
+  }
+
+  getFormPrivilegesUuidUrl(formUuid) {
+      return '/openmrs/ws/rest/v1/bahmniie/form/getFormFromUuid?' +
+        `formUuid=${formUuid}`;
+  }
 }
