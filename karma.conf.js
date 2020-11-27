@@ -36,10 +36,10 @@ module.exports = function (config) {
       ],
       check: {
         global: {
-          statements: 95.0,
-          branches: 93.0,
-          functions: 94.4,
-          lines: 90.5,
+          statements: 92.0,
+          branches: 90.0,
+          functions: 91.0,
+          lines: 88.0,
         },
       },
     },

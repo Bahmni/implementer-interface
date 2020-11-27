@@ -14,28 +14,28 @@ export class FormPrivilegesContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-            formPrivileges: {},
+      formPrivileges: {},
     };
   }
 
   componentWillUpdate(newProps) {
-}
-   updateProperty() {
-      let properties = { [this.props.eventProperty]: true };
-      if (this.props.onEventLoad) {
-        try {
-          this.props.onEventLoad();
-        } catch (e) {
-          properties = { [this.props.eventProperty]: false };
-        }
+  }
+  updateProperty() {
+    let properties = { [this.props.eventProperty]: true };
+    if (this.props.onEventLoad) {
+      try {
+        this.props.onEventLoad();
+      } catch (e) {
+        properties = { [this.props.eventProperty]: false };
       }
-      this.props.dispatch(setChangedProperty(properties));
     }
+    this.props.dispatch(setChangedProperty(properties));
+  }
   render() {
     const name = this.props.label;
     return (
       <div className="form-privileges-container">
-        <label>{"Manage Privileges"}</label>
+        <label>{'Manage Privileges'}</label>
         <button onClick={() => this.updateProperty()}>
           <i aria-hidden="true" className="fa fa-code" />
         </button>
@@ -50,11 +50,11 @@ FormPrivilegesContainer.propTypes = {
   onEventLoad: PropTypes.func,
   eventProperty: PropTypes.string,
   formPrivilege: PropTypes.shape({
-      uid: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      isEditable: PropTypes.bool,
-      isViewable: PropTypes.bool,
-    }),
+    uid: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    isEditable: PropTypes.bool,
+    isViewable: PropTypes.bool,
+  }),
 };
 
 const mapStateToProps = (state) => ({

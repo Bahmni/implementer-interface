@@ -14,8 +14,7 @@ import {
   removeSourceMap,
   formLoad,
   setChangedProperty,
-}
-from 'form-builder/actions/control';
+} from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -28,13 +27,13 @@ import isEqual from 'lodash/isEqual';
 import { clearTranslations } from '../actions/control';
 import { formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
-import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
+import {
+  saveFormNameTranslations,
+  saveTranslations,
+} from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
-import {
-  getFormPrivileges,
-  saveFormPrivileges,
-} from 'common/apis/formPrivilegesApi';
+import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
 
 export class FormDetailContainer extends Component {
   constructor(props) {
@@ -42,10 +41,22 @@ export class FormDetailContainer extends Component {
     this.timeoutId = undefined;
     this.formJson = undefined;
     this.formPrivileges = undefined;
-    this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
-      httpReceived: false, loading: true, formList: [], formControls: [],
-      originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
-      referenceFormUuid: undefined, formPreviewJson: undefined ,formPrivileges: []};
+    this.state = {
+      formData: undefined,
+      showModal: false,
+      showPreview: false,
+      notification: {},
+      httpReceived: false,
+      loading: true,
+      formList: [],
+      formControls: [],
+      originalFormName: undefined,
+      formEvents: {},
+      referenceVersion: undefined,
+      referenceFormUuid: undefined,
+      formPreviewJson: undefined,
+      formPrivileges: [],
+    };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.getFormJson = this.getFormJson.bind(this);
@@ -56,7 +67,9 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
-    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
+    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(
+      this
+    );
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -66,31 +79,36 @@ export class FormDetailContainer extends Component {
 
   componentDidMount() {
     const params =
-            'v=custom:(id,uuid,name,version,published,auditInfo,' +
-            'resources:(value,dataType,uuid))';
+      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'resources:(value,dataType,uuid))';
     httpInterceptor
-            .get(`${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`)
-            .then((data) => {
-              const parsedFormValue = data.resources.length > 0 ?
-                JSON.parse(data.resources[0].value) : {};
-              this.setState({ formData: data, httpReceived: true,
-                loading: false, originalFormName: data.name,
-                referenceVersion: parsedFormValue.referenceVersion,
-                referenceFormUuid: parsedFormValue.referenceFormUuid});
-                this._getFormPrivilegesFromDB(data.id,data.version);
-                this.formJson = this.getFormJson();
-              const formControlsArray = formHelper.getObsControlEvents(this.formJson);
-              this.props.dispatch(formLoad(formControlsArray));
-            })
-            .catch((error) => {
-              this.setErrorMessage(error);
-              this.setState({ loading: false });
-            });
-        // .then is untested
+      .get(
+        `${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`
+      )
+      .then((data) => {
+        const parsedFormValue =
+          data.resources.length > 0 ? JSON.parse(data.resources[0].value) : {};
+        this.setState({
+          formData: data,
+          httpReceived: true,
+          loading: false,
+          originalFormName: data.name,
+          referenceVersion: parsedFormValue.referenceVersion,
+          referenceFormUuid: parsedFormValue.referenceFormUuid,
+        });
+        this._getFormPrivilegesFromDB(data.id, data.version);
+        this.formJson = this.getFormJson();
+        const formControlsArray = formHelper.getObsControlEvents(this.formJson);
+        this.props.dispatch(formLoad(formControlsArray));
+      })
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
+    // .then is untested
 
     this.getFormList();
   }
-
 
   componentWillUpdate(nextProps, nextState) {
     if (!isEqual(nextProps, this.props) || !isEqual(nextState, this.state)) {
@@ -110,10 +128,10 @@ export class FormDetailContainer extends Component {
         this.formEvents = updatedFormEvents;
       }
       const updatedFormPrivileges = this.getFormPrivileges();
-       if(updatedFormPrivileges){
-       this.props.dispatch(formPrivilegesEventUpdate(updatedFormPrivileges));
-       this.formPrivileges = updatedFormPrivileges;
-       }
+      if (updatedFormPrivileges) {
+        this.props.dispatch(formPrivilegesEventUpdate(updatedFormPrivileges));
+        this.formPrivileges = updatedFormPrivileges;
+      }
     }
   }
 
@@ -125,19 +143,29 @@ export class FormDetailContainer extends Component {
     try {
       const formJson = this.getFormJson();
       if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+        const emptySectionOrTable =
+          formBuilderConstants.exceptionMessages.emptySectionOrTable;
         throw new Exception(emptySectionOrTable);
       }
       formJson.events = this.state.formEvents;
-      const formName = this.state.formData ? this.state.formData.name : 'FormName';
-      const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
-                this.state.formData.resources[0].uuid : '';
+      const formName = this.state.formData
+        ? this.state.formData.name
+        : 'FormName';
+      const formUuid = this.state.formData
+        ? this.state.formData.uuid
+        : undefined;
+      const formResourceUuid =
+        this.state.formData && this.state.formData.resources.length > 0
+          ? this.state.formData.resources[0].uuid
+          : '';
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      if(this.state.formPrivileges.length ==0){
-        this._getFormPrivilegesFromDB((this.state.formData.id),(this.state.formData.version));
+      if (this.state.formPrivileges.length === 0) {
+        this._getFormPrivilegesFromDB(
+          this.state.formData.id,
+          this.state.formData.version
+        );
       }
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
@@ -149,68 +177,79 @@ export class FormDetailContainer extends Component {
         uuid: formResourceUuid,
       };
       this._saveFormResource(formResource);
-      this._saveFormPrivileges(this.state.formData.id,this.state.formData.version,this.state.formPrivileges);
-
-    } catch(error) {
+      this._saveFormPrivileges(
+        this.state.formData.id,
+        this.state.formData.version,
+        this.state.formPrivileges
+      );
+    } catch (error) {
       this.setErrorMessage(error.getException());
     }
   }
-  _getFormPrivilegesFromDB(formId ,formVersion){
-        let initialPrivilegesFromDB = [];
-        const queryParams = `?=`;
-        var initialPrivileges = [];
-        const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
-        httpInterceptor.get(optionsUrl)
-        .then((initialPrivilegesFromDB) => {
-            initialPrivilegesFromDB.forEach(function(privilege, key) {
-            initialPrivileges.push(privilege)
-         })
-        this.setState({ formPrivileges : (initialPrivileges), loading: false });
-        })
+  _getFormPrivilegesFromDB(formId, formVersion) {
+    const initialPrivilegesFromDB = [];
+    const queryParams = '?=';
+    const initialPrivileges = [];
+    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+    httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
+      initialPrivilegesFromDB.forEach((privilege, key) => {
+        initialPrivileges.push(privilege);
+      });
+      this.setState({ formPrivileges: initialPrivileges, loading: false });
+    });
+  }
+  _saveFormPrivileges(formId, formVersion, formPrivileges) {
+    const self = this;
+    saveFormPrivileges(
+      this._createReqObject(formId, formVersion, this.state.formPrivileges)
+    )
+      .then(() => {
+        const message = 'Form Privileges saved successfully';
+        this.setMessage(message, commonConstants.responseType.success);
+        this.setState({ loading: false });
+      })
+      .catch(() => {
+        this.setErrorMessage('Failed to save translations');
+        this.setState({ loading: false });
+      });
+  }
+  _createReqObject(formId, formVersion, formPrivileges) {
+    const formPrivilegeObj = [];
+    const formJson = this.getFormJson();
 
-}
- _saveFormPrivileges(formId,formVersion,formPrivileges) {
-              const self = this;
-                  saveFormPrivileges(this._createReqObject(formId,formVersion,this.state.formPrivileges)).then(() => {
-                        const message = 'Form Privileges saved successfully';
-                        this.setMessage(message, commonConstants.responseType.success);
-                        this.setState({ loading: false });
-                      }).catch(() => {
-                        this.setErrorMessage('Failed to save translations');
-                        this.setState({ loading: false });
-                      });
-                }
-  _createReqObject(formId,formVersion,formPrivileges) {
-
-              const formPrivilegeObj = [];
-              const formJson = this.getFormJson();
-
-             for(var i = 0; i <formPrivileges.length;i++){
-                const privilege = formPrivileges[i];
-                const privilegeCopy = {
-                  formId: formId,
-                  privilegeName: privilege.privilegeName,
-                  editable:privilege.editable,
-                  viewable:privilege.viewable,
-                  formVersion:formVersion,
-                }
-                formPrivilegeObj.push(privilegeCopy);
-              }
-              return formPrivilegeObj;
-            }
+    for (let i = 0; i < formPrivileges.length; i++) {
+      const privilege = formPrivileges[i];
+      const privilegeCopy = {
+        formId,
+        privilegeName: privilege.privilegeName,
+        editable: privilege.editable,
+        viewable: privilege.viewable,
+        formVersion,
+      };
+      formPrivilegeObj.push(privilegeCopy);
+    }
+    return formPrivilegeObj;
+  }
 
   onPublish() {
     try {
       const formJson = this.getFormJson();
       if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+        const emptySectionOrTable =
+          formBuilderConstants.exceptionMessages.emptySectionOrTable;
         throw new Exception(emptySectionOrTable);
       }
-      const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+      const formUuid = this.state.formData
+        ? this.state.formData.uuid
+        : undefined;
       const { translations } = this.props;
-      const defaultLocale = this.props.defaultLocale ||
-          localStorage.getItem('openmrsDefaultLocale');
-      const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
+      const defaultLocale =
+        this.props.defaultLocale ||
+        localStorage.getItem('openmrsDefaultLocale');
+      const defaultTranslations = this._createTranslationReqObject(
+        translations,
+        defaultLocale
+      );
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
     } catch (e) {
       this.setErrorMessage(e.getException());
@@ -238,18 +277,21 @@ export class FormDetailContainer extends Component {
     }
     return null;
   }
-getFormPrivileges() {
+  getFormPrivileges() {
     if (this.state.formData && this.state.formData.formPrivileges) {
       const formPrivilege = this.state.formData.privileges[0];
       if (formPrivilege) {
-        const formPrivileges =  JSON.parse(formPrivilege);
+        const formPrivileges = JSON.parse(formPrivilege);
         return formPrivileges;
       }
     }
     return null;
   }
   setErrorMessage(error) {
-    const errorNotification = { message: error.message, type: commonConstants.responseType.error };
+    const errorNotification = {
+      message: error.message,
+      type: commonConstants.responseType.error,
+    };
     this.setState({ notification: errorNotification });
     setTimeout(() => {
       this.setState({ notification: {} });
@@ -258,18 +300,20 @@ getFormPrivileges() {
 
   getFormList() {
     httpInterceptor
-            .get(formBuilderConstants.formUrl)
-            .then((response) => {
-              this.setState({ formList: response.results });
-            })
-            .catch((error) => this.showErrors(error));
+      .get(formBuilderConstants.formUrl)
+      .then((response) => {
+        this.setState({ formList: response.results });
+      })
+      .catch((error) => this.showErrors(error));
   }
 
   hasEmptyBlocks(formJson) {
     const controls = formJson.controls;
     return controls.some((control) => {
-      if ((control.type === 'section' || control.type === 'table')
-          && control.controls.length === 0) {
+      if (
+        (control.type === 'section' || control.type === 'table') &&
+        control.controls.length === 0
+      ) {
         return true;
       } else if (control.controls && control.controls.length > 0) {
         return this.hasEmptyBlocks(control);
@@ -282,8 +326,14 @@ getFormPrivileges() {
     const { version, name, uuid } = this.state.formData;
     const referenceVersion = this.state.referenceVersion;
     const referenceFormUuid = this.state.referenceFormUuid;
-    const translations = Object.assign({}, container, { formUuid: uuid,
-      formName: name, version, locale, referenceVersion, referenceFormUuid });
+    const translations = Object.assign({}, container, {
+      formUuid: uuid,
+      formName: name,
+      version,
+      locale,
+      referenceVersion,
+      referenceFormUuid,
+    });
     return [translations];
   }
 
@@ -300,16 +350,24 @@ getFormPrivileges() {
   }
 
   showPublishButton() {
-    const isPublished = this.state.formData ? this.state.formData.published : false;
-    const isEditable = this.state.formData ? this.state.formData.editable : false;
-    const resourceData = FormHelper.getFormResourceControls(this.state.formData);
+    const isPublished = this.state.formData
+      ? this.state.formData.published
+      : false;
+    const isEditable = this.state.formData
+      ? this.state.formData.editable
+      : false;
+    const resourceData = FormHelper.getFormResourceControls(
+      this.state.formData
+    );
     if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
-                <button
-                  className="publish-button"
-                  disabled={ isPublished || isEmpty(resourceData) }
-                  onClick={ this.onPublish }
-                >Publish</button>
+        <button
+          className="publish-button"
+          disabled={isPublished || isEmpty(resourceData)}
+          onClick={this.onPublish}
+        >
+          Publish
+        </button>
       );
     }
     return null;
@@ -317,65 +375,80 @@ getFormPrivileges() {
 
   showPreviewButton() {
     return (
-      <button
-        className="preview-button"
-        onClick={ this.onPreview }
-      >Preview</button>
+      <button className="preview-button" onClick={this.onPreview}>
+        Preview
+      </button>
     );
   }
 
   showSaveButton() {
-    const isEditable = this.state.formData ? this.state.formData.editable : false;
-    const isPublished = this.state.formData ? this.state.formData.published : false;
+    const isEditable = this.state.formData
+      ? this.state.formData.editable
+      : false;
+    const isPublished = this.state.formData
+      ? this.state.formData.published
+      : false;
     if ((!isPublished || isEditable) && this.state.httpReceived) {
       return (
-                <button
-                  className="fr save-button btn--highlight"
-                  onClick={ this.state.formData &&
-                    this.state.originalFormName !== this.state.formData.name ?
-                        this.cloneFormResource : this.onSave }
-                >Save</button>
+        <button
+          className="fr save-button btn--highlight"
+          onClick={
+            this.state.formData &&
+            this.state.originalFormName !== this.state.formData.name
+              ? this.cloneFormResource
+              : this.onSave
+          }
+        >
+          Save
+        </button>
       );
     }
     return null;
   }
 
   showEditButton() {
-    const isEditable = this.state.formData ? this.state.formData.editable : false;
-    const isPublished = this.state.formData ? this.state.formData.published : false;
+    const isEditable = this.state.formData
+      ? this.state.formData.editable
+      : false;
+    const isPublished = this.state.formData
+      ? this.state.formData.published
+      : false;
     if (isPublished && !isEditable) {
       return (
-                <div className="info-view-mode-wrap">
-                  <div className="info-view-mode">
-                    <i className="fa fa-info-circle fl"></i>
-                    <span className="info-message">
-              This Form is a Published version.
-              For editing click on
+        <div className="info-view-mode-wrap">
+          <div className="info-view-mode">
+            <i className="fa fa-info-circle fl"></i>
+            <span className="info-message">
+              This Form is a Published version. For editing click on
             </span>
-                    <button className="fr edit-button"
-                      onClick={() => this.openFormModal()}
-                    >Edit</button>
-                    <EditModal
-                      closeModal={() => this.closeFormModal()}
-                      editForm={() => this.editForm()}
-                      showModal={this.state.showModal}
-                    />
-                  </div>
-                </div>
+            <button
+              className="fr edit-button"
+              onClick={() => this.openFormModal()}
+            >
+              Edit
+            </button>
+            <EditModal
+              closeModal={() => this.closeFormModal()}
+              editForm={() => this.editForm()}
+              showModal={this.state.showModal}
+            />
+          </div>
+        </div>
       );
     }
     return null;
   }
 
   editForm() {
-    const editableFormData = Object.assign(
-            {}, this.state.formData,
-            { editable: true }
-        );
+    const editableFormData = Object.assign({}, this.state.formData, {
+      editable: true,
+    });
     this.props.dispatch(clearTranslations());
-    this.setState({ formData: editableFormData,
+    this.setState({
+      formData: editableFormData,
       referenceVersion: this.state.formData.version,
-      referenceFormUuid: this.state.formData.uuid });
+      referenceFormUuid: this.state.formData.uuid,
+    });
   }
 
   generateFormPreviewJson() {
@@ -393,40 +466,49 @@ getFormPrivileges() {
   }
 
   showPreviewModal() {
-    return (<Popup className="form-preview-popup"
-      closeOnDocumentClick={false}
-      onClose={() => this.closePreview()}
-      open={this.state.showPreview}
-      position="top center"
-    >
-      <FormPreviewModal close={() => this.closePreview()}
-        formJson={this.state.formPreviewJson} setErrorMessage={this.setErrorMessage}
-      />
-    </Popup>);
+    return (
+      <Popup
+        className="form-preview-popup"
+        closeOnDocumentClick={false}
+        onClose={() => this.closePreview()}
+        open={this.state.showPreview}
+        position="top center"
+      >
+        <FormPreviewModal
+          close={() => this.closePreview()}
+          formJson={this.state.formPreviewJson}
+          setErrorMessage={this.setErrorMessage}
+        />
+      </Popup>
+    );
   }
 
   _saveFormResource(formJson) {
     this.setState({ loading: true });
-    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-            .then((response) => {
-              const updatedUuid = response.form.uuid;
-              this.context.router.history.push(`/form-builder/${updatedUuid}`);
-              const successNotification = {
-                message: commonConstants.saveSuccessMessage,
-                type: commonConstants.responseType.success,
-              };
-              this.setState({ notification: successNotification,
-                formData: this._formResourceMapper(response), loading: false });
+    httpInterceptor
+      .post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+      .then((response) => {
+        const updatedUuid = response.form.uuid;
+        this.context.router.history.push(`/form-builder/${updatedUuid}`);
+        const successNotification = {
+          message: commonConstants.saveSuccessMessage,
+          type: commonConstants.responseType.success,
+        };
+        this.setState({
+          notification: successNotification,
+          formData: this._formResourceMapper(response),
+          loading: false,
+        });
 
-              clearTimeout(this.timeoutID);
-              this.timeoutID = setTimeout(() => {
-                this.setState({ notification: {} });
-              }, commonConstants.toastTimeout);
-            })
-            .catch((error) => {
-              this.setErrorMessage(error);
-              this.setState({ loading: false });
-            });
+        clearTimeout(this.timeoutID);
+        this.timeoutID = setTimeout(() => {
+          this.setState({ notification: {} });
+        }, commonConstants.toastTimeout);
+      })
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
   }
 
   _saveTranslationsAndPublishForm(formUuid, translations) {
@@ -435,45 +517,58 @@ getFormPrivileges() {
       form: {
         name: this.state.originalFormName,
         uuid: this.props.match.params.formUuid,
-      }, value: '',
+      },
+      value: '',
     };
     const translationsPromises = [saveTranslations(translations)];
     if (this.state.referenceFormUuid && this.state.formData.version !== '1') {
-      translationsPromises.push(saveFormNameTranslations(formNameTranslations,
-        this.state.referenceFormUuid));
+      translationsPromises.push(
+        saveFormNameTranslations(
+          formNameTranslations,
+          this.state.referenceFormUuid
+        )
+      );
     }
-    Promise.all(translationsPromises).then(() => {
-      httpInterceptor.post(new UrlHelper().bahmniFormPublishUrl(formUuid))
-        .then((response) => {
-          const successNotification = {
-            message: commonConstants.publishSuccessMessage,
-            type: commonConstants.responseType.success,
-          };
-          const publishedFormData = Object.assign({}, this.state.formData,
-            { published: response.published, version: response.version });
-          this.setState({
-            notification: successNotification,
-            formData: publishedFormData, loading: false,
-          });
+    Promise.all(translationsPromises)
+      .then(() => {
+        httpInterceptor
+          .post(new UrlHelper().bahmniFormPublishUrl(formUuid))
+          .then((response) => {
+            const successNotification = {
+              message: commonConstants.publishSuccessMessage,
+              type: commonConstants.responseType.success,
+            };
+            const publishedFormData = Object.assign({}, this.state.formData, {
+              published: response.published,
+              version: response.version,
+            });
+            this.setState({
+              notification: successNotification,
+              formData: publishedFormData,
+              loading: false,
+            });
 
-          clearTimeout(this.timeoutID);
-          this.timeoutID = setTimeout(() => {
-            this.setState({ notification: {} });
-          }, commonConstants.toastTimeout);
-        });
-    }).catch((error) => {
-      this.setErrorMessage(error);
-      this.setState({ loading: false });
-    });
+            clearTimeout(this.timeoutID);
+            this.timeoutID = setTimeout(() => {
+              this.setState({ notification: {} });
+            }, commonConstants.toastTimeout);
+          });
+      })
+      .catch((error) => {
+        this.setErrorMessage(error);
+        this.setState({ loading: false });
+      });
   }
 
   _formResourceMapper(responseObject) {
     const form = Object.assign({}, responseObject.form);
-    const formResource = { name: form.name,
-      id:responseObject.form.id,
+    const formResource = {
+      name: form.name,
+      id: responseObject.form.id,
       dataType: responseObject.dataType,
       value: responseObject.value,
-      uuid: responseObject.uuid };
+      uuid: responseObject.uuid,
+    };
     form.resources = [formResource];
     return form;
   }
@@ -482,16 +577,22 @@ getFormPrivileges() {
     let currentFormName = formName;
     if (formHelper.validateFormName(formName)) {
       const existForms = this.state.formList.filter(
-                form => form.display === formName && this.state.originalFormName !== formName);
+        (form) =>
+          form.display === formName && this.state.originalFormName !== formName
+      );
       if (existForms.length > 0) {
         this.setErrorMessage({ message: 'Form with same name already exists' });
         currentFormName = this.state.originalFormName;
       }
     } else {
-      this.setErrorMessage({ message: 'Leading or trailing spaces and ^/-. are not allowed' });
+      this.setErrorMessage({
+        message: 'Leading or trailing spaces and ^/-. are not allowed',
+      });
       currentFormName = this.state.originalFormName;
     }
-    const newFormData = Object.assign({}, this.state.formData, { name: currentFormName });
+    const newFormData = Object.assign({}, this.state.formData, {
+      name: currentFormName,
+    });
     this.setState({ formData: newFormData });
     return currentFormName;
   }
@@ -499,14 +600,15 @@ getFormPrivileges() {
   updateFormEvents(events) {
     this.setState({ formEvents: events });
   }
-  updateFormPrivileges(privileges){
-    this.setState({formPrivileges: privileges})
+  updateFormPrivileges(privileges) {
+    this.setState({ formPrivileges: privileges });
   }
 
   showErrors(error) {
     if (error.response) {
       error.response.json().then((data) => {
-        const message = get(data, 'error.globalErrors[0].message') || error.message;
+        const message =
+          get(data, 'error.globalErrors[0].message') || error.message;
         this.setErrorMessage({ message });
       });
     } else {
@@ -516,7 +618,9 @@ getFormPrivileges() {
 
   validateNameLength(value) {
     if (value.length === 50) {
-      this.setErrorMessage({ message: 'Form name shall not exceed 50 characters' });
+      this.setErrorMessage({
+        message: 'Form name shall not exceed 50 characters',
+      });
       return true;
     }
 
@@ -532,15 +636,22 @@ getFormPrivileges() {
       published: isPublished,
     };
     httpInterceptor
-            .post(formBuilderConstants.formUrl, form)
-            .then((response) => {
-              const newFormData = Object.assign({}, this.state.formData,
-                { uuid: response.uuid, id: response.id, published: isPublished,
-                  version: newVersion, resources: [] });
-              this.setState({ formData: newFormData, originalFormName: newFormData.name });
-              this.onSave();
-            })
-            .catch((error) => this.showErrors(error));
+      .post(formBuilderConstants.formUrl, form)
+      .then((response) => {
+        const newFormData = Object.assign({}, this.state.formData, {
+          uuid: response.uuid,
+          id: response.id,
+          published: isPublished,
+          version: newVersion,
+          resources: [],
+        });
+        this.setState({
+          formData: newFormData,
+          originalFormName: newFormData.name,
+        });
+        this.onSave();
+      })
+      .catch((error) => this.showErrors(error));
   }
   handleUpdateFormControlEvents(formJson) {
     const obsControlEvents = FormHelper.getObsControlEvents(formJson);
@@ -548,47 +659,55 @@ getFormPrivileges() {
   }
 
   render() {
-    const defaultLocale = this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
+    const defaultLocale =
+      this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
     return (
-            <div>
-              <Spinner show={this.state.loading} />
-              <NotificationContainer
-                notification={this.state.notification}
+      <div>
+        <Spinner show={this.state.loading} />
+        <NotificationContainer notification={this.state.notification} />
+        <FormBuilderHeader />
+        <div className="breadcrumb-wrap">
+          <div className="breadcrumb-inner">
+            <div className="fl">
+              <FormBuilderBreadcrumbs
+                match={this.props.match}
+                routes={this.props.routes}
               />
-              <FormBuilderHeader />
-              <div className="breadcrumb-wrap">
-                <div className="breadcrumb-inner">
-                  <div className="fl">
-                    <FormBuilderBreadcrumbs match={this.props.match} routes={this.props.routes} />
-                  </div>
-                  <div className="fr">
-                      {this.showSaveButton()}
-                      {this.showPublishButton()}
-                      {this.showPreviewButton()}
-                  </div>
-                </div>
-              </div>
-              <div className="container-content-wrap">
-                <div className="container-content">
-                    {this.showEditButton()}
-                    {this.showPreviewModal()}
-                  <FormDetail
-                    defaultLocale={defaultLocale}
-                    formControlEvents={this.props.formControlEvents}
-                    formData={this.state.formData}
-                    formDetails={this.props.formDetails}
-                    formPrivileges={this.state.formPrivileges}
-                    ref={r => { this.formDetail = r; }}
-                    resetProperty={(property) => this.props.dispatch(setChangedProperty(property))}
-                    setError={this.setErrorMessage}
-                    updateFormControlEvents={this.handleUpdateFormControlEvents}
-                    updateFormEvents={(events) => this.updateFormEvents(events)}
-                    updateFormName={(formName) => this.updateFormName(formName)}
-                    validateNameLength={(formName) => this.validateNameLength(formName)}
-                  />
-                </div>
-              </div>
             </div>
+            <div className="fr">
+              {this.showSaveButton()}
+              {this.showPublishButton()}
+              {this.showPreviewButton()}
+            </div>
+          </div>
+        </div>
+        <div className="container-content-wrap">
+          <div className="container-content">
+            {this.showEditButton()}
+            {this.showPreviewModal()}
+            <FormDetail
+              defaultLocale={defaultLocale}
+              formControlEvents={this.props.formControlEvents}
+              formData={this.state.formData}
+              formDetails={this.props.formDetails}
+              formPrivileges={this.state.formPrivileges}
+              ref={(r) => {
+                this.formDetail = r;
+              }}
+              resetProperty={(property) =>
+                this.props.dispatch(setChangedProperty(property))
+              }
+              setError={this.setErrorMessage}
+              updateFormControlEvents={this.handleUpdateFormControlEvents}
+              updateFormEvents={(events) => this.updateFormEvents(events)}
+              updateFormName={(formName) => this.updateFormName(formName)}
+              validateNameLength={(formName) =>
+                this.validateNameLength(formName)
+              }
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 }

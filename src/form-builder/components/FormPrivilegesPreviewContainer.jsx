@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 import Popup from 'reactjs-popup';
-import { render } from "react-dom";
+import { render } from 'react-dom';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AutoComplete } from 'bahmni-form-controls';
@@ -20,16 +20,16 @@ import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 
 class FormPrivilegesPreviewContainer extends Component {
-constructor(props){
-super(props);
-this.state ={formPrivileges: {}, notification: {}, loading: true,};
-}
-componentWillMount(){
-}
-componentDidMount() {
- }
-render() {
-  const { formPrivileges } = this.state;
+  constructor(props) {
+    super(props);
+    this.state = { formPrivileges: {}, notification: {}, loading: true };
+  }
+  componentWillMount() {
+  }
+  componentDidMount() {
+  }
+  render() {
+    const { formPrivileges } = this.state;
     return (<div>
       <NotificationContainer
         notification={this.state.notification}
@@ -48,17 +48,17 @@ render() {
             <i className="fa fa-info-circle fl"></i>
           </div>
         </div>
-         <FormPrivilegesPreviewGrid formUuid={ this.props.match.params.formUuid }/>
+         <FormPrivilegesPreviewGrid formUuid={ this.props.match.params.formUuid } />
       </div>
     </div>);
   }
 }
 FormPrivilegesPreviewContainer.propTypes = {
-      formUuid: PropTypes.string.isRequired,
+  formUuid: PropTypes.string.isRequired,
 };
 
-    const mapStateToProps = (state) => ({
-      formUuid: state.formUuid,
-    });
+const mapStateToProps = (state) => ({
+  formUuid: state.formUuid,
+});
 export default connect(mapStateToProps)(FormPrivilegesPreviewContainer);
 
