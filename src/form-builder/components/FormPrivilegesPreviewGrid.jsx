@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 import Popup from 'reactjs-popup';
-import { render } from "react-dom";
+import { render } from 'react-dom';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AutoComplete } from 'bahmni-form-controls';
@@ -17,76 +17,73 @@ import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
 
 export default class FormPrivilegesPreviewGrid extends Component {
-constructor(props){
-super(props);
-this.state ={
-    formPrivileges: {},
-    searchDisabled: false,
-    availablePrivileges: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      formPrivileges: {},
+      searchDisabled: false,
+      availablePrivileges: [],
     };
-}
+  }
 
-componentWillMount(){
+  componentWillMount() {
     this.fetchFormPrivilegesFromDB();
     this.fetchPrivileges();
-}
-componentDidMount() {
-}
-fetchFormPrivilegesFromDB() {
-    let initialPrivilegesFromDB = [];
-    const queryParams = `?=`;
-    var initialPrivileges = [];
+  }
+  componentDidMount() {
+  }
+  fetchFormPrivilegesFromDB() {
+    const initialPrivilegesFromDB = [];
+    const queryParams = '?=';
+    const initialPrivileges = [];
     const formUuid = this.props.formUuid;
 
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesFromUuidUrl}?formUuid=${formUuid}`;
-     httpInterceptor.get(optionsUrl)
+    httpInterceptor.get(optionsUrl)
         .then((initialPrivilegesFromDB) => {
-               initialPrivilegesFromDB.forEach(function(privilege, key) {
-                             initialPrivileges.push(privilege)
-                           })
-               this.setState({ formPrivileges : (initialPrivileges), loading: false });
-        })
-
-}
+          initialPrivilegesFromDB.forEach((privilege, key) => {
+            initialPrivileges.push(privilege);
+          });
+          this.setState({ formPrivileges: (initialPrivileges), loading: false });
+        });
+  }
   fetchPrivileges() {
-    let initialPrivileges = [];
+    const initialPrivileges = [];
     const availablePrivileges = {};
-    const queryParams = `?=`;
+    const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
-     httpInterceptor.get(optionsUrl)
+    httpInterceptor.get(optionsUrl)
         .then((initialPrivileges) => {
-               this.setState({ availablePrivileges: this.orderFormByVersion(initialPrivileges.results), loading: false });
-        })
-
-}
- orderFormByVersion(privilege) {
-    const sampleList=[];
-     privilege.forEach((privilege) => {
-       const item ={
-                 value:privilege.display,
-                 uuid: privilege.uuid,
-                 label:privilege.display,
-                 }
-       sampleList.push(item);
-       });
+          this.setState({ availablePrivileges: this.orderFormByVersion(initialPrivileges.results), loading: false });
+        });
+  }
+  orderFormByVersion(privilege) {
+    const sampleList = [];
+    privilege.forEach((privilege) => {
+      const item = {
+        value: privilege.display,
+        uuid: privilege.uuid,
+        label: privilege.display,
+      };
+      sampleList.push(item);
+    });
     return sampleList;
   }
-getValue(privilege){
-    if(privilege!= undefined && privilege.privilegeName == ''){
-       const selectedPrivilegeOption = "Select a privilege";
-       return (selectedPrivilegeOption);
-   }return privilege.privilegeName;
-  };
+  getValue(privilege) {
+    if (privilege != undefined && privilege.privilegeName == '') {
+      const selectedPrivilegeOption = 'Select a privilege';
+      return (selectedPrivilegeOption);
+    } return privilege.privilegeName;
+  }
   render() {
+    const { availablePrivileges } = this.state;
+    const options = availablePrivileges;
+    const { searchDisabled } = this.state;
+    if (this.state.formPrivileges.map == undefined) {
+      return null;
+    }
 
-        const { availablePrivileges } = this.state;
-        const options = availablePrivileges;
-        const {searchDisabled} = this.state;
-        if (this.state.formPrivileges.map == undefined) {
-          return null
-        }
-
-        return (
+    return (
       <div className="translations-table-container">
                   <table className="form-privilege-table">
                   <thead>
@@ -103,11 +100,11 @@ getValue(privilege){
                             <tr id="addr0" key={idx} >
                                 <td>
                                     <Select
-                                     onChange={(e) => this.handleTag(e , idx)}
-                                     options={availablePrivileges}
-                                     disabled="true"
-                                     value={this.getValue(privilege)}
-                                     />
+                                      onChange={(e) => this.handleTag(e, idx)}
+                                      options={availablePrivileges}
+                                      disabled="true"
+                                      value={this.getValue(privilege)}
+                                    />
                                </td>
                               <td>
                                     <input
@@ -139,7 +136,7 @@ getValue(privilege){
   }
 }
 FormPrivilegesPreviewGrid.propTypes = {
-      formUuid: PropTypes.string.isRequired,
+  formUuid: PropTypes.string.isRequired,
 };
 const mapStateToProps = (state) => ({
   formUuid: state.formUuid,

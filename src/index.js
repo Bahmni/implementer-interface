@@ -39,12 +39,12 @@ const routes = [
     siblingPath: '/form-builder/:formUuid',
   },
   {
-      component: FormPrivilegesPreviewContainer,
-      exact: true,
-      path: '/form-builder/:formUuid/privilege',
-      title: 'Show Form Privileges',
-      siblingPath: '/form-builder',
-    },
+    component: FormPrivilegesPreviewContainer,
+    exact: true,
+    path: '/form-builder/:formUuid/privilege',
+    title: 'Show Form Privileges',
+    siblingPath: '/form-builder',
+  },
 ];
 
 ReactDOM.render(

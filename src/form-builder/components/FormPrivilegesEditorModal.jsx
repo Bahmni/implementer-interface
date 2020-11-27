@@ -13,7 +13,7 @@ import 'codemirror/addon/lint/javascript-lint.js';
 import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
-import FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx'
+import FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx';
 import _ from 'lodash';
 import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
@@ -25,12 +25,12 @@ export default class FormPrivilegesEditorModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-                notification: {},
-                codeMirrorEditor: {},
-                displayConfirmationPopup: false ,
-                formName:'',
-                formId:'',
-                formUuid:'',
+      notification: {},
+      codeMirrorEditor: {},
+      displayConfirmationPopup: false,
+      formName: '',
+      formId: '',
+      formUuid: '',
     };
     this.codeMirrorEditor = null;
     this.closeEditor = this.closeEditor.bind(this);
@@ -69,19 +69,18 @@ export default class FormPrivilegesEditorModal extends Component {
   }
 
   render() {
-
-    const {formId,formName,formUuid,formPrivileges,formData} = this.props;
+    const { formId, formName, formUuid, formPrivileges, formData } = this.props;
     return (
       <div className="form-privileges-modal-container">
          <h2 className="header-title">Manage Privileges</h2>
          <div className="form-privileges-container" >
            <FormPrivilegeTable
-           close={this.props.close}
-            formId={formId}
-            formName={formName}
-            formUuid={ formUuid }
-            formPrivileges={formPrivileges}
-            formData={formData}
+             close={this.props.close}
+             formId={formId}
+             formName={formName}
+             formUuid={ formUuid }
+             formPrivileges={formPrivileges}
+             formData={formData}
 
            />
         </div>
@@ -92,17 +91,17 @@ export default class FormPrivilegesEditorModal extends Component {
 }
 
 FormPrivilegesEditorModal.propTypes = {
-       close: PropTypes.func.isRequired,
-       formId: PropTypes.number,
-       formName: PropTypes.string.isRequired,
-       formUuid: PropTypes.string.isRequired,
-       formPrivileges: PropTypes.array,
-       formData:PropTypes.formData,
+  close: PropTypes.func.isRequired,
+  formId: PropTypes.number,
+  formName: PropTypes.string.isRequired,
+  formUuid: PropTypes.string.isRequired,
+  formPrivileges: PropTypes.array,
+  formData: PropTypes.formData,
 };
 function mapStateToProps(state) {
   return {
-    formUuid:state.formUuid,
-    formId:state.formId,
+    formUuid: state.formUuid,
+    formId: state.formId,
     formName: state.formName,
     formData: state.formData,
   };
