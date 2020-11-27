@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ControlPool } from 'form-builder/components/ControlPool.jsx';
 import Canvas from 'form-builder/components/Canvas.jsx';
 import classNames from 'classnames';
-import FormPrivilegesEditorModal from 'form-builder/components/FormPrivilegesEditorModal.jsx';
+import FormPrivilegesEditorModal from 'form-builder/components/FormPrivilegesEditorModal.js';
 import FormPrivilegesContainer from 'form-builder/components/FormPrivilegesContainer.jsx';
 import ControlPropertiesContainer from 'form-builder/components/ControlPropertiesContainer.jsx';
 import FormEventContainer from 'form-builder/components/FormEventContainer.jsx';

@@ -183,7 +183,7 @@ export class FormDetailContainer extends Component {
         this.state.formPrivileges
       );
     } catch (error) {
-      this.setErrorMessage(error.getException());
+      // this.setErrorMessage(error.getException());
     }
   }
   _getFormPrivilegesFromDB(formId, formVersion) {
@@ -200,8 +200,12 @@ export class FormDetailContainer extends Component {
   }
   _saveFormPrivileges(formId, formVersion, formPrivileges) {
     const self = this;
+    let formVersionTemp = formVersion;
+    if (this.state.formPrivileges[0].formVersion != this.state.formData.version) {
+      formVersionTemp = this.state.formData.version;
+    }
     saveFormPrivileges(
-      this._createReqObject(formId, formVersion, this.state.formPrivileges)
+      this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
     )
       .then(() => {
         const message = 'Form Privileges saved successfully';
@@ -209,7 +213,7 @@ export class FormDetailContainer extends Component {
         this.setState({ loading: false });
       })
       .catch(() => {
-        this.setErrorMessage('Failed to save translations');
+        this.setErrorMessage('Failed to save Privileges');
         this.setState({ loading: false });
       });
   }
@@ -252,7 +256,7 @@ export class FormDetailContainer extends Component {
       );
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
     } catch (e) {
-      this.setErrorMessage(e.getException());
+      (e.getException());
     }
   }
 
