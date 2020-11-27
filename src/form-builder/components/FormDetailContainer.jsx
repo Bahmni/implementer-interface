@@ -15,7 +15,7 @@ import {
   formLoad,
   setChangedProperty,
 }
-  from 'form-builder/actions/control';
+from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
 import EditModal from 'form-builder/components/EditModal.jsx';
@@ -137,7 +137,7 @@ export class FormDetailContainer extends Component {
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
       if(this.state.formPrivileges.length ==0){
-        this._getFormPrivilegesFromDB((this.state.formData.id - 1),(this.state.formData.version -1));
+        this._getFormPrivilegesFromDB((this.state.formData.id),(this.state.formData.version));
       }
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
