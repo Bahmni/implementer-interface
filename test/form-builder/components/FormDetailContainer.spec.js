@@ -254,7 +254,7 @@ describe('FormDetailContainer', () => {
     wrapper.instance().onSave();
 
     const notificationContainer = wrapper.find('NotificationContainer');
-    expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
+    expect(notificationContainer.prop('notification').message).to.equal(undefined);
   });
 
   it('should return true when formJson have section with no inner controls', () => {
@@ -958,7 +958,7 @@ describe('FormDetailContainer', () => {
       wrapper.instance().onPublish();
 
       const notificationContainer = wrapper.find('NotificationContainer');
-      expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
+      expect(notificationContainer.prop('notification').message).to.equal(undefined);
     });
 
     it('should show preview button after publish', () => {
