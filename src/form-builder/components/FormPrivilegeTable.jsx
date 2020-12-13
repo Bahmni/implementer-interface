@@ -25,6 +25,7 @@ export default class FormPrivilegeTable extends Component {
       errorMessage: {},
       formName: '',
       httpReceived: false,
+      notification: {},
       loading: true,
       referenceVersion: undefined,
       referenceFormUuid: undefined,
@@ -37,6 +38,7 @@ export default class FormPrivilegeTable extends Component {
       availablePrivileges: [],
       selectedPrivilegeOption: 'Select a privilege',
       displayConfirmationPopup: false,
+      firstSave: true,
     };
 
     this.state.value = '';
@@ -186,17 +188,6 @@ export default class FormPrivilegeTable extends Component {
         const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
                              this.state.formData.resources[0].uuid : '';
         formJson.privilege = this.state.formPrivileges;
-        const formResource = {
-          form: {
-            name: formName,
-            uuid: formUuid,
-
-          },
-          value: JSON.stringify(formJson),
-          uuid: formResourceUuid,
-        };
-
-        this._saveFormResource(formResource);
         this._saveFormPrivileges(this.state.formPrivileges);
       } else {
         this.setErrorMessage('Please submit the main form before adding privileges');
@@ -216,40 +207,15 @@ export default class FormPrivilegeTable extends Component {
     }
     return null;
   }
-
-  _saveFormResource(formJson) {
-    this.setState({ loading: true });
-    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
-                    .then((response) => {
-                      const updatedUuid = response.form.uuid;
-                      this.context.router.history.push(`/form-builder/${updatedUuid}`);
-                      const successNotification = {
-                        message: commonConstants.saveSuccessMessage,
-                        type: commonConstants.responseType.success,
-                      };
-                      this.setState({ notification: successNotification,
-                        formData: this._formResourceMapper(response), loading: false });
-
-                      clearTimeout(this.timeoutID);
-                      this.timeoutID = setTimeout(() => {
-                        this.setState({ notification: {} });
-                      }, commonConstants.toastTimeout);
-                    })
-                    .catch((error) => {
-                      this.setErrorMessage(error);
-                      this.setState({ loading: false });
-                    });
-  }
   _saveFormPrivileges(formPrivileges) {
     const self = this;
     saveFormPrivileges(this._createReqObject(this.state.formPrivileges)).then(() => {
-      const message = 'Form Privileges saved successfully';
+      const message = 'Form Privileges saved successfully. Please save the form again before publishing';
       const successNotification = {
-        message,
+        message: commonConstants.saveSuccessMessage,
         type: commonConstants.responseType.success,
       };
-      this.setState({ notification: successNotification,
-        loading: false });
+      this.setState({ notification: successNotification, loading: false });
     }).catch(() => {
       this.setErrorMessage('Failed to save privileges');
       this.setState({ loading: false });
@@ -261,18 +227,22 @@ export default class FormPrivilegeTable extends Component {
       message: errorMessage,
       type: commonConstants.responseType.error,
     };
-    this.setState({ errorMessage: errorNotification });
+    this.setState({ notification: errorNotification });
     setTimeout(() => {
       this.setState({ errorMessage: {} });
     }, commonConstants.toastTimeout);
   }
   _createReqObject(formPrivileges) {
-    const formId = this.state.formData.id;
-    const formVersion = this.state.formData.version;
-    const privilege = undefined;
+    let formVersion = this.state.formData.version;
+    let formId = this.state.formData.id;
+    if ((this.state.firstSave === true) && (this.state.formData.published === true)) {
+      formVersion++;
+      formVersion = formVersion.toString();
+      formId++;
+      this.setState({ firstSave: false });
+    }
     const formPrivilegeObj = [];
-    const formJson = this.getFormJson();
-    if (formPrivileges.length == 0) {
+    if (formPrivileges.length === 0) {
       const privilegeCopy = {
         formId,
         privilegeName: '',
@@ -330,7 +300,7 @@ export default class FormPrivilegeTable extends Component {
     }
     return (
       <div className="form-privilege-table-container">
-      <NotificationContainer notification={this.state.errorMessage} />
+      <NotificationContainer notification={this.state.notification} />
                   <table className="form-privilege-table" id="tab_logic">
                   <thead>
                       <tr>

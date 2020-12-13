@@ -161,12 +161,10 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      if (this.state.formPrivileges.length === 0) {
-        this._getFormPrivilegesFromDB(
-          this.state.formData.id,
-          this.state.formData.version
-        );
-      }
+      this._getFormPrivilegesFromDB(
+        this.state.formData.id,
+        this.state.formData.version
+      );
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
         form: {
@@ -177,11 +175,23 @@ export class FormDetailContainer extends Component {
         uuid: formResourceUuid,
       };
       this._saveFormResource(formResource);
-      this._saveFormPrivileges(
+
+      if (this.state.formPrivileges.length === 0) {
+        let version = this.state.formData.version;
+        version--;
+        version = version.toString();
+        this._saveFormPrivileges(
+        this.state.formData.id,
+        version,
+        this.state.formPrivileges
+       );
+      } else {
+        this._saveFormPrivileges(
         this.state.formData.id,
         this.state.formData.version,
         this.state.formPrivileges
       );
+      }
     } catch (error) {
       // this.setErrorMessage(error.getException());
     }
@@ -192,18 +202,12 @@ export class FormDetailContainer extends Component {
     const initialPrivileges = [];
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
-      initialPrivilegesFromDB.forEach((privilege, key) => {
-        initialPrivileges.push(privilege);
-      });
       this.setState({ formPrivileges: initialPrivileges, loading: false });
     });
   }
   _saveFormPrivileges(formId, formVersion, formPrivileges) {
     const self = this;
     let formVersionTemp = formVersion;
-    if (this.state.formPrivileges[0].formVersion != this.state.formData.version) {
-      formVersionTemp = this.state.formData.version;
-    }
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
     )
@@ -255,6 +259,7 @@ export class FormDetailContainer extends Component {
         defaultLocale
       );
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+      this._saveFormPrivileges(this.state.formData.id, this.state.formData.version, this.state.formPrivileges);
     } catch (e) {
       (e.getException());
     }

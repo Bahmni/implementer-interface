@@ -58,6 +58,50 @@
     text-decoration: none
   }
 }
+.form-privileges-container {
+  padding: 10px;
+  box-sizing: border-box;
+  border-top: 1px solid $gray300;
+  position: relative;
+  overflow: hidden;
+  label {
+    font-size: 14px;
+    vertical-align: middle;
+    padding-top: 5px;
+    float: left;
+  }
+  button {
+    background: transparent;
+    padding: 5px;
+    color: $gray500;
+    float: right;
+    &:hover {
+      background: $gray300;
+      color: $gray600;
+    }
+  }
+  }
+.control-event-button {
+  background: transparent;
+  padding: 5px;
+  color: $gray500;
+  float: right;
+  &:hover {
+    background: $gray300;
+    color: $gray600;
+  }
+}
+.exportBtn {
+  float: right;
+  margin: 0 4px 0 4px;
+  width: 100px;
+
+  &:hover {
+    color: $gray800;
+    background: $gray200;
+    border-color: $gray400;
+  }
+}
 .form-event-container {
   padding: 10px;
   box-sizing: border-box;
