@@ -29,7 +29,7 @@ const routes = [
     exact: true,
     path: '/form-builder/:formUuid',
     title: 'Form Details',
-    siblingPath: '/form-builder',
+    siblingPath: '/form-builder/:formUuid/translate',
   },
   {
     component: FormTranslationsContainer,
@@ -43,7 +43,7 @@ const routes = [
     exact: true,
     path: '/form-builder/:formUuid/privilege',
     title: 'Show Form Privileges',
-    siblingPath: '/form-builder',
+    siblingPath: '/form-builder/:formUuid',
   },
 ];
 
