@@ -67,9 +67,7 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
-    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(
-      this
-    );
+    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -161,10 +159,12 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      this._getFormPrivilegesFromDB(
-        this.state.formData.id,
-        this.state.formData.version
-      );
+      if (this.state.formPrivileges.length === 0) {
+        this._getFormPrivilegesFromDB(
+          this.state.formData.id,
+          this.state.formData.version
+        );
+      }
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
         form: {
@@ -202,6 +202,9 @@ export class FormDetailContainer extends Component {
     const initialPrivileges = [];
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
+      initialPrivilegesFromDB.forEach((privilege, key) => {
+        initialPrivileges.push(privilege);
+      });
       this.setState({ formPrivileges: initialPrivileges, loading: false });
     });
   }
