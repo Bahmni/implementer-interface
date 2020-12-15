@@ -67,9 +67,7 @@ export class FormDetailContainer extends Component {
     this.cloneFormResource = this.cloneFormResource.bind(this);
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
-    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(
-      this
-    );
+    this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -161,12 +159,12 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      if (this.state.formPrivileges.length === 0) {
-        this._getFormPrivilegesFromDB(
-          this.state.formData.id,
-          this.state.formData.version
-        );
-      }
+
+      this._getFormPrivilegesFromDB(
+        this.state.formData.id,
+        this.state.formData.version
+      );
+
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
         form: {
@@ -201,9 +199,6 @@ export class FormDetailContainer extends Component {
   _saveFormPrivileges(formId, formVersion, formPrivileges) {
     const self = this;
     let formVersionTemp = formVersion;
-    if (this.state.formPrivileges[0].formVersion != this.state.formData.version) {
-      formVersionTemp = this.state.formData.version;
-    }
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
     )
@@ -255,6 +250,7 @@ export class FormDetailContainer extends Component {
         defaultLocale
       );
       this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+      this._saveFormPrivileges(this.state.formData.id, this.state.formData.version, this.state.formPrivileges);
     } catch (e) {
       (e.getException());
     }

@@ -675,7 +675,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledThrice(httpInterceptor.post);
+        sinon.assert.callCount(httpInterceptor.post, 4);
         const formNameTranslations = {
           form: { name: wrapper.state().originalFormName, uuid: 'FID' },
           value: '',
@@ -721,7 +721,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.calledThrice(httpInterceptor.post);
         const formNameTranslations = {
           form: { name: wrapper.state().originalFormName, uuid: 'FID' },
           value: '',
