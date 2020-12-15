@@ -159,12 +159,12 @@ export class FormDetailContainer extends Component {
       formJson.translationsUrl = formBuilderConstants.translationsUrl;
       formJson.referenceVersion = this.state.referenceVersion;
       formJson.referenceFormUuid = this.state.referenceFormUuid;
-      if (this.state.formPrivileges.length === 0) {
-        this._getFormPrivilegesFromDB(
-          this.state.formData.id,
-          this.state.formData.version
-        );
-      }
+
+      this._getFormPrivilegesFromDB(
+        this.state.formData.id,
+        this.state.formData.version
+      );
+
       formJson.privilege = this.state.formPrivileges;
       const formResource = {
         form: {
@@ -175,23 +175,11 @@ export class FormDetailContainer extends Component {
         uuid: formResourceUuid,
       };
       this._saveFormResource(formResource);
-
-      if (this.state.formPrivileges.length === 0) {
-        let version = this.state.formData.version;
-        version--;
-        version = version.toString();
-        this._saveFormPrivileges(
-        this.state.formData.id,
-        version,
-        this.state.formPrivileges
-       );
-      } else {
-        this._saveFormPrivileges(
+      this._saveFormPrivileges(
         this.state.formData.id,
         this.state.formData.version,
         this.state.formPrivileges
       );
-      }
     } catch (error) {
       // this.setErrorMessage(error.getException());
     }

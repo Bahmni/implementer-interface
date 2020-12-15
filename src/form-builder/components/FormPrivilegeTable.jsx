@@ -58,7 +58,7 @@ export default class FormPrivilegeTable extends Component {
     this.fetchFormPrivilegesFromProps();
   }
   fetchFormData() {
-    if (this.props.formPrivileges.length == 0) {
+    if ((this.props.formPrivileges == null) || (this.props.formPrivileges.length == 0)) {
       this.fetchFormPrivilegesFromDB();
     }
     const params =
@@ -210,9 +210,9 @@ export default class FormPrivilegeTable extends Component {
   _saveFormPrivileges(formPrivileges) {
     const self = this;
     saveFormPrivileges(this._createReqObject(this.state.formPrivileges)).then(() => {
-      const message = 'Form Privileges saved successfully. Please save the form again before publishing';
+      const msg = 'Form Privileges saved successfully. Please save the form again before publishing';
       const successNotification = {
-        message: commonConstants.saveSuccessMessage,
+        message: msg,
         type: commonConstants.responseType.success,
       };
       this.setState({ notification: successNotification, loading: false });
