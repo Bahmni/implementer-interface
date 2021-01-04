@@ -127,6 +127,7 @@ export class FormBuilderContainer extends Component {
         const updatedTranslations = map(formTranslations, (translation) => {
           const formTranslation = translation;
           formTranslation.version = form.form.version || translation.version;
+          formTranslation.formUuid = form.form.uuid;
           return formTranslation;
         });
         self.saveTranslations(updatedTranslations, formNameTranslationsResource);
