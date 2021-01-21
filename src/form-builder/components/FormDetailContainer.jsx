@@ -183,8 +183,6 @@ export class FormDetailContainer extends Component {
     }
   }
   _getFormPrivilegesFromDB(formId, formVersion) {
-    const initialPrivilegesFromDB = [];
-    const queryParams = '?=';
     const initialPrivileges = [];
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
@@ -194,8 +192,7 @@ export class FormDetailContainer extends Component {
       this.setState({ formPrivileges: initialPrivileges, loading: false });
     });
   }
-  _saveFormPrivileges(formId, formVersion, formPrivileges) {
-    const self = this;
+  _saveFormPrivileges(formId, formVersion) {
     let formVersionTemp = formVersion;
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
@@ -212,8 +209,6 @@ export class FormDetailContainer extends Component {
   }
   _createReqObject(formId, formVersion, formPrivileges) {
     const formPrivilegeObj = [];
-    const formJson = this.getFormJson();
-
     for (let i = 0; i < formPrivileges.length; i++) {
       const privilege = formPrivileges[i];
       const privilegeCopy = {
@@ -279,8 +274,7 @@ export class FormDetailContainer extends Component {
     if (this.state.formData && this.state.formData.formPrivileges) {
       const formPrivilege = this.state.formData.privileges[0];
       if (formPrivilege) {
-        const formPrivileges = JSON.parse(formPrivilege);
-        return formPrivileges;
+        return JSON.parse(formPrivilege);
       }
     }
     return null;
