@@ -471,9 +471,7 @@ export default class FormBuilder extends Component {
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
                 <input
-                  accept={this.
-
-                   + this.zipFormats}
+                  accept={this.jsonFormat + this.zipFormats}
                   id="formImportBtn"
                   onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
