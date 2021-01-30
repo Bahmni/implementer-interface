@@ -24,7 +24,7 @@ export default class FormBuilder extends Component {
     this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
 
-    this.jsonFormat = 'application/json';
+    this.jsonFormat = 'application/json,';
     this.zipFormats = 'application/zip,application/octet-stream,' +
       'application/x-zip,application/x-zip-compressed';
     this.importErrors = [];
@@ -428,7 +428,7 @@ export default class FormBuilder extends Component {
     httpInterceptor.get(`${formBuilderConstants.exportUrl}?${params}`)
           .then((exportResponse) => {
             if (exportResponse.errorFormList.length > 0) {
-              this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()} . 
+              this.setMessage(`Export Failed for ${exportResponse.errorFormList.toString()} .
                 Please verify ${commonConstants.logPath} for details`,
                   commonConstants.responseType.error);
             }
@@ -471,7 +471,9 @@ export default class FormBuilder extends Component {
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
                 <input
-                  accept={this.jsonFormat + this.zipFormats}
+                  accept={this.
+
+                   + this.zipFormats}
                   id="formImportBtn"
                   onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
