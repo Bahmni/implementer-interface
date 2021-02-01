@@ -23,7 +23,6 @@ export default class FormBuilder extends Component {
     super(props);
     this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
-
     this.jsonFormat = 'application/json';
     this.concat = ',';
     this.zipFormats = 'application/zip,application/octet-stream,' +
