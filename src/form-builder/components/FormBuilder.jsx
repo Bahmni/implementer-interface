@@ -23,8 +23,8 @@ export default class FormBuilder extends Component {
     super(props);
     this.state = { showModal: false, selectedForms: [], notification: {}, loading: false };
     this.setState = this.setState.bind(this);
-
-    this.jsonFormat = 'application/json,';
+    this.jsonFormat = 'application/json';
+    this.concat = ',';
     this.zipFormats = 'application/zip,application/octet-stream,' +
       'application/x-zip,application/x-zip-compressed';
     this.importErrors = [];
@@ -471,7 +471,7 @@ export default class FormBuilder extends Component {
             <button className="importBtn">
               <label htmlFor="formImportBtn">Import
                 <input
-                  accept={this.jsonFormat + this.zipFormats}
+                  accept={this.jsonFormat + this.concat + this.zipFormats}
                   id="formImportBtn"
                   onChange={(e) => this.import(e.target.files)}
                   onClick={(e) => {
