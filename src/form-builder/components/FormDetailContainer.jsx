@@ -39,7 +39,6 @@ export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
-    this.formJson = undefined;
     this.formPrivileges = undefined;
     this.state = {
       formData: undefined,
@@ -68,6 +67,7 @@ export class FormDetailContainer extends Component {
     this.onPreview = this.onPreview.bind(this);
     this.generateFormPreviewJson = this.generateFormPreviewJson.bind(this);
     this.handleUpdateFormControlEvents = this.handleUpdateFormControlEvents.bind(this);
+    this.getFormResource = this.getFormResource.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -95,8 +95,7 @@ export class FormDetailContainer extends Component {
           referenceFormUuid: parsedFormValue.referenceFormUuid,
         });
         this._getFormPrivilegesFromDB(data.id, data.version);
-        this.formJson = this.getFormJson();
-        const formControlsArray = formHelper.getObsControlEvents(this.formJson);
+        const formControlsArray = formHelper.getObsControlEvents(parsedFormValue);
         this.props.dispatch(formLoad(formControlsArray));
       })
       .catch((error) => {
@@ -137,56 +136,53 @@ export class FormDetailContainer extends Component {
     clearTimeout(this.timeoutID);
   }
 
+  getFormResource() {
+    const formJson = this.getFormJson();
+    if (this.hasEmptyBlocks(formJson)) {
+      const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+      throw new Exception(emptySectionOrTable);
+    }
+    formJson.events = this.state.formEvents;
+    const formName = this.state.formData ? this.state.formData.name : 'FormName';
+    const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+    const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
+        this.state.formData.resources[0].uuid : '';
+    formJson.translationsUrl = formBuilderConstants.translationsUrl;
+    formJson.referenceVersion = this.state.referenceVersion;
+    formJson.referenceFormUuid = this.state.referenceFormUuid;
+    formJson.privilege = this.state.privilege;
+    return {
+      form: {
+        name: formName,
+        uuid: formUuid,
+      },
+      value: JSON.stringify(formJson),
+      uuid: formResourceUuid,
+    };
+  }
+
   onSave() {
     try {
-      const formJson = this.getFormJson();
-      if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable =
-          formBuilderConstants.exceptionMessages.emptySectionOrTable;
-        throw new Exception(emptySectionOrTable);
-      }
-      formJson.events = this.state.formEvents;
-      const formName = this.state.formData
-        ? this.state.formData.name
-        : 'FormName';
-      const formUuid = this.state.formData
-        ? this.state.formData.uuid
-        : undefined;
-      const formResourceUuid =
-        this.state.formData && this.state.formData.resources.length > 0
-          ? this.state.formData.resources[0].uuid
-          : '';
-      formJson.translationsUrl = formBuilderConstants.translationsUrl;
-      formJson.referenceVersion = this.state.referenceVersion;
-      formJson.referenceFormUuid = this.state.referenceFormUuid;
-
-      this._getFormPrivilegesFromDB(
-        this.state.formData.id,
-        this.state.formData.version
-      );
-
-      formJson.privilege = this.state.formPrivileges;
-      const formResource = {
-        form: {
-          name: formName,
-          uuid: formUuid,
-        },
-        value: JSON.stringify(formJson),
-        uuid: formResourceUuid,
-      };
-      this._saveFormResource(formResource);
-      this._saveFormPrivileges(
-        this.state.formData.id,
-        this.state.formData.version,
-        this.state.formPrivileges
-      );
+      const initialPrivileges = [];
+      const formId = this.state.formData.id;
+      const formVersion = this.state.formData.version;
+      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+      httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
+        initialPrivilegesFromDB.forEach((privilege) => {
+          initialPrivileges.push(privilege);
+        });
+        this.setState({ formPrivileges: initialPrivileges, loading: false });
+        const formResource = this.getFormResource();
+        this._saveFormResource(formResource);
+        this._saveFormPrivileges(this.state.formData.id,
+            this.state.formData.version, this.state.formPrivileges);
+      });
     } catch (error) {
       // this.setErrorMessage(error.getException());
     }
   }
+
   _getFormPrivilegesFromDB(formId, formVersion) {
-    const initialPrivilegesFromDB = [];
-    const queryParams = '?=';
     const initialPrivileges = [];
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
@@ -196,8 +192,7 @@ export class FormDetailContainer extends Component {
       this.setState({ formPrivileges: initialPrivileges, loading: false });
     });
   }
-  _saveFormPrivileges(formId, formVersion, formPrivileges) {
-    const self = this;
+  _saveFormPrivileges(formId, formVersion) {
     let formVersionTemp = formVersion;
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
@@ -212,10 +207,9 @@ export class FormDetailContainer extends Component {
         this.setState({ loading: false });
       });
   }
+
   _createReqObject(formId, formVersion, formPrivileges) {
     const formPrivilegeObj = [];
-    const formJson = this.getFormJson();
-
     for (let i = 0; i < formPrivileges.length; i++) {
       const privilege = formPrivileges[i];
       const privilegeCopy = {
@@ -232,28 +226,55 @@ export class FormDetailContainer extends Component {
 
   onPublish() {
     try {
-      const formJson = this.getFormJson();
-      if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable =
-          formBuilderConstants.exceptionMessages.emptySectionOrTable;
-        throw new Exception(emptySectionOrTable);
-      }
-      const formUuid = this.state.formData
-        ? this.state.formData.uuid
-        : undefined;
-      const { translations } = this.props;
-      const defaultLocale =
-        this.props.defaultLocale ||
-        localStorage.getItem('openmrsDefaultLocale');
-      const defaultTranslations = this._createTranslationReqObject(
-        translations,
-        defaultLocale
-      );
-      this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
-      this._saveFormPrivileges(this.state.formData.id, this.state.formData.version, this.state.formPrivileges);
+      const initialPrivileges = [];
+      const formId = this.state.formData.id;
+      const formVersion = this.state.formData.version;
+      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+      httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
+        initialPrivilegesFromDB.forEach((privilege) => {
+          initialPrivileges.push(privilege);
+        });
+        this.setState({ formPrivileges: initialPrivileges, loading: false });
+        const formJson = this.getFormResource();
+        httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+            .then((response) => {
+              this.setFormData(response);
+              const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+              const { translations } = this.props;
+              const defaultLocale = this.props.defaultLocale ||
+                  localStorage.getItem('openmrsDefaultLocale');
+              const defaultTranslations =
+                  this._createTranslationReqObject(translations, defaultLocale);
+              this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+              this._saveFormPrivileges(this.state.formData.id,
+                  this.state.formData.version, this.state.formPrivileges);
+            })
+            .catch((error) => {
+              this.setErrorMessage(error);
+              this.setState({ loading: false });
+            });
+      });
     } catch (e) {
       (e.getException());
     }
+  }
+
+  setFormData(response) {
+    const updatedUuid = response.form.uuid;
+    this.context.router.history.push(`/form-builder/${updatedUuid}`);
+    const successNotification = {
+      message: commonConstants.saveSuccessMessage,
+      type: commonConstants.responseType.success,
+    };
+    this.setState({
+      notification: successNotification,
+      formData: this._formResourceMapper(response), loading: false,
+    });
+
+    clearTimeout(this.timeoutID);
+    this.timeoutID = setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
 
   onPreview() {
@@ -281,8 +302,7 @@ export class FormDetailContainer extends Component {
     if (this.state.formData && this.state.formData.formPrivileges) {
       const formPrivilege = this.state.formData.privileges[0];
       if (formPrivilege) {
-        const formPrivileges = JSON.parse(formPrivilege);
-        return formPrivileges;
+        return JSON.parse(formPrivilege);
       }
     }
     return null;
