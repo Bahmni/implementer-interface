@@ -6,7 +6,11 @@ const FormBuilderBreadcrumbs = (props) => {
   const { routes } = props;
   const indexOfCurrentRoute = routes.findIndex(route => route.path === props.match.path);
   const breadcrumbItems = routes.slice(0, indexOfCurrentRoute)
-    .filter(route => route.siblingPath !== props.match.path);
+    // eslint-disable-next-line array-callback-return,consistent-return
+    .filter(route => {
+      if (!route.siblingPath) return route;
+      if (!route.siblingPath.includes(props.match.path)) return route;
+    });
   return (<div className="breadcrumbs">
     {breadcrumbItems.map((breadcrumbItem, index) => (<span key={index}>
       <NavLink to={breadcrumbItem.path}>{breadcrumbItem.title}</NavLink>
