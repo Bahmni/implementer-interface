@@ -91,8 +91,12 @@ export class FormDetailContainer extends Component {
           httpReceived: true,
           loading: false,
           originalFormName: data.name,
-          referenceVersion: parsedFormValue.referenceVersion,
-          referenceFormUuid: parsedFormValue.referenceFormUuid,
+          // eslint-disable-next-line eqeqeq
+          referenceVersion: data.version == 1 ?
+              0 : parsedFormValue.referenceVersion,
+          // eslint-disable-next-line eqeqeq
+          referenceFormUuid: data.version == 1 ?
+              data.uuid : parsedFormValue.referenceFormUuid,
         });
         this._getFormPrivilegesFromDB(data.id, data.version);
         const formControlsArray = formHelper.getObsControlEvents(parsedFormValue);
