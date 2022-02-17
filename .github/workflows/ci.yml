@@ -1,0 +1,41 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - master
+      - BAH-1410
+env:
+  BAHMNI_VERSION: 0.94
+  BRANCH_NAME: master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+      - name: Package
+        run: yarn ci
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: implementer-interface-${{ github.sha }}
+          path: ./dist/implementer_interface.zip
+      - name: Build Docker Image
+        run: ./package/docker/scripts/docker_build.sh
+      - name: Publish Docker Image
+        run: ./package/docker/scripts/docker_publish.sh
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN}}
