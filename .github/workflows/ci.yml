@@ -6,7 +6,6 @@ on:
       - BAH-1410
 env:
   BAHMNI_VERSION: 0.94
-  BRANCH_NAME: master
 
 jobs:
   build:
@@ -15,8 +14,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_NAME }}
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
