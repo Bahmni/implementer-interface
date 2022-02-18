@@ -19,17 +19,10 @@ jobs:
         with:
           node-version: "12.x"
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Run tests
         run: yarn test
       - name: Package
-        run: yarn ci
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: implementer-interface-${{ github.sha }}
-          path: ./dist/implementer_interface.zip
-      - name: Build Docker Image
         run: ./package/docker/scripts/docker_build.sh
       - name: Publish Docker Image
         run: ./package/docker/scripts/docker_publish.sh

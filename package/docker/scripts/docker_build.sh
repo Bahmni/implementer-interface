@@ -1,7 +1,8 @@
 #!/bin/bash
 set -xe
 
-# Build Artifact `implementer-interface.zip` should be placed in dist directory in the root of repository
+yarn install --frozen-lockfile
+yarn ci
 
 #Building Docker images
 IMPLEMENTER_INTERFACE_IMAGE_TAG=${BAHMNI_VERSION:?}-${GITHUB_RUN_NUMBER:?}
