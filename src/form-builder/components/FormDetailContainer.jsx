@@ -190,7 +190,7 @@ export class FormDetailContainer extends Component {
     const initialPrivileges = [];
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
-      initialPrivilegesFromDB.forEach((privilege, key) => {
+      initialPrivilegesFromDB.forEach((privilege) => {
         initialPrivileges.push(privilege);
       });
       this.setState({ formPrivileges: initialPrivileges, loading: false });

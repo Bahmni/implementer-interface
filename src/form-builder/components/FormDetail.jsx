@@ -136,11 +136,11 @@ export default class FormDetail extends Component {
                     >
                       <FormPrivilegesEditorModal
                         close={props.closeEventEditor}
+                        formData = {this.props.formData}
                         formId={formData.id}
                         formName={name}
-                        formUuid={ uuid }
-                        formData = {this.props.formData}
                         formPrivileges = {this.props.formPrivileges}
+                        formUuid={ uuid }
                       />
                     </Popup>
                     }
@@ -199,11 +199,11 @@ export default class FormDetail extends Component {
                                 <FormPrivilegesContainer
                                   eventProperty={'formPrivilegesEventUpdate'}
                                   formData = {formData}
+                                  formDetails = {this.props.formDetails}
                                   formId={id}
                                   formName={name}
-                                  formUuid={ uuid }
                                   formPrivileges = {this.props.formPrivileges}
-                                  formDetails = {this.props.formDetails}
+                                  formUuid={ uuid }
 
                                 />
 
@@ -236,7 +236,6 @@ export default class FormDetail extends Component {
 FormDetail.propTypes = {
   defaultLocale: PropTypes.string,
   formControlEvents: PropTypes.Array,
-  formId: PropTypes.number,
   formData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string.isRequired,
@@ -249,6 +248,7 @@ FormDetail.propTypes = {
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
+  formId: PropTypes.number,
   formPrivileges: PropTypes.array,
   setError: PropTypes.func.isRequired,
   updateFormControlEvents: PropTypes.func,
