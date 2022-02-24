@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - BAH-1410
 
 env:
   BAHMNI_VERSION: 0.94
