@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build and Publish
 on:
   push:
     branches:
@@ -8,8 +8,8 @@ env:
   BAHMNI_VERSION: 0.94
 
 jobs:
-  build:
-    name: Build
+  docker-build-publish:
+    name: Docker Build & Publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

@@ -1,11 +1,11 @@
-name: PR Validation
+name: Validate PR
 on:
   pull_request:
     branches: [master]
     types: [opened, synchronize, reopened]
 jobs:
-  build:
-    name: Build
+  build-package:
+    name: Build & Package
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
