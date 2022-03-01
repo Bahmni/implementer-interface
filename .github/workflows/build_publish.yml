@@ -18,9 +18,11 @@ jobs:
         with:
           node-version: "12.x"
       - name: Install dependencies
-        run: yarn install --frozen-lockfile && yarn ci
+        run: yarn install --frozen-lockfile 
       - name: Run tests
         run: yarn test
+      - name: Package
+        run: yarn ci
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
