@@ -2,7 +2,7 @@
 set -xe
 
 # yarn install --frozen-lockfile
-# yarn ci
+yarn ci
 
 #Building Docker images
 IMPLEMENTER_INTERFACE_IMAGE_TAG=${BAHMNI_VERSION:?}-${GITHUB_RUN_NUMBER:?}
