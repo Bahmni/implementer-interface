@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - BAH-1410
 
 env:
   BAHMNI_VERSION: 0.94
@@ -19,20 +18,18 @@ jobs:
         with:
           node-version: "12.x"
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile && yarn ci
       - name: Run tests
         run: yarn test
-      - name: Package
-        run: ./package/docker/scripts/docker_build.sh
-      - name: Publish Docker Image
-        run: ./package/docker/scripts/docker_publish.sh
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN}}
-      # - name: Docker Build and push
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: .
-      #     file: package/docker/Dockerfile
-      #     push: true
-      #     tags: bahmni/implementer-interface-${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Docker Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: package/docker/Dockerfile
+          push: true
+          tags: bahmni/implementer-interface:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
