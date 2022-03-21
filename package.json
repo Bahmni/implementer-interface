@@ -4,7 +4,12 @@
   "description": "App for implementer interfaces like form builder, reports, etc.",
   "license": "GPL-2.0",
   "main": "index.js",
+	"engines": {
+		"yarn": ">=1.22.0",
+		"node": "12.x"
+	},
   "scripts": {
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
     "clean": "rimraf dist/*",
     "upgrade-form-control": "yarn upgrade bahmni-form-controls@0.93",
     "copy": "copyfiles -f ./index.html ./dist",

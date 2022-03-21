@@ -12,7 +12,7 @@ describe('FormPreviewModal', () => {
   let wrapper;
   let closeSpy;
   let setErrorMessageSpy;
-  let renderWithControlsCounter = 0;
+  let updateContainerStub;
 
   const formJson = {
     name: 'Groovy',
@@ -52,14 +52,17 @@ describe('FormPreviewModal', () => {
   beforeEach(() => {
     closeSpy = sinon.spy();
     setErrorMessageSpy = sinon.spy();
-    renderWithControlsCounter = 0;
-    window.renderWithControls = function renderWithControls() {
-      renderWithControlsCounter++;
-      return 'container';
-    };
+  });
+
+  afterEach(() => {
+    if (updateContainerStub) {
+      updateContainerStub.restore();
+    }
   });
 
   function mountComponent(formJsonMetadata) {
+    updateContainerStub = sinon.stub(FormPreviewModal.prototype, 'updateContainer')
+        .callsFake(() => {});
     wrapper = mount(
       <FormPreviewModal
         close={closeSpy}
@@ -74,7 +77,6 @@ describe('FormPreviewModal', () => {
     const container = wrapper.find('.preview-container');
     expect(container).to.have.length(1);
     expect(container.children().length).to.be.equal(3);
-    expect(renderWithControlsCounter).to.be.equal(1);
   });
 
   it('should not render create form modal when form data doesnot exist', () => {
@@ -83,7 +85,6 @@ describe('FormPreviewModal', () => {
     const container = wrapper.find('Container');
     expect(container).to.be.length(0);
     expect(modal).to.be.length(0);
-    expect(renderWithControlsCounter).to.be.equal(0);
   });
 
   it('should call close modal function when close button is clicked', () => {
@@ -109,7 +110,7 @@ describe('FormPreviewModal', () => {
   it('should call 3 window methods and set container to state on click of save button', () => {
     mountComponent(formJson);
     const button = wrapper.find('.btn--highlight');
-    wrapper.setState({ container: { state: { data: {} } } });
+    wrapper.setState({ recordTree: { record: '' } });
     let runEventScriptCounter = 0;
     let unMountFormCounter = 0;
     let getObservationsCounter = 0;
@@ -129,13 +130,6 @@ describe('FormPreviewModal', () => {
     expect(unMountFormCounter).to.equal(1);
     expect(getObservationsCounter).to.equal(1);
   });
-
-  it('should set renderWithControls return value to state variable container on componentDidMount',
-    () => {
-      mountComponent(formJson);
-      expect(renderWithControlsCounter).to.be.equal(1);
-      expect(wrapper.state().container).to.equal('container');
-    });
 
   it('should return error message for single error object', () => {
     const errorMessage = FormPreviewModal.formatErrors({ message: 'It is an error' });
@@ -162,7 +156,7 @@ describe('FormPreviewModal', () => {
   it('should call setErrorMessage when runEventScript throws exception', () => {
     mountComponent(formJson);
     const button = wrapper.find('.btn--highlight');
-    wrapper.setState({ container: { state: { data: {} } } });
+    wrapper.setState({ recordTree: { record: '' } });
     window.runEventScript = function runEventScript() {
       throw Object.assign(new Error('Error'));
     };
@@ -172,16 +166,6 @@ describe('FormPreviewModal', () => {
     };
 
     button.simulate('click');
-
-    sinon.assert.calledOnce(setErrorMessageSpy);
-    sinon.assert.calledWith(setErrorMessageSpy, { type: 'Exception', message: 'Error' });
-  });
-
-  it('should call setErrorMessage when renderWithControls throws exception', () => {
-    window.renderWithControls = function renderWithControls() {
-      throw Object.assign(new Error('Error'));
-    };
-    mountComponent(formJson);
 
     sinon.assert.calledOnce(setErrorMessageSpy);
     sinon.assert.calledWith(setErrorMessageSpy, { type: 'Exception', message: 'Error' });

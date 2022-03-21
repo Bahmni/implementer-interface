@@ -8,6 +8,7 @@ import Dashboard from 'common/Dashboard';
 import FormBuilderContainer from 'form-builder/components/FormBuilderContainer.jsx';
 import FormDetailContainer from 'form-builder/components/FormDetailContainer.jsx';
 import FormTranslationsContainer from 'form-builder/components/FormTranslationsContainer.jsx';
+import FormPrivilegesPreviewContainer from 'form-builder/components/FormPrivilegesPreviewContainer.jsx';
 import FormPrinterContainer from 'form-builder/components/FormPrinterContainer.jsx';
 import 'bahmni-form-controls';
 const store = createStore(implementerInterface);
@@ -35,14 +36,21 @@ const routes = [
     exact: true,
     path: '/form-builder/:formUuid',
     title: 'Form Details',
-    siblingPath: '/form-builder/:formUuid/translate',
+    siblingPath: ['/form-builder/:formUuid/translate', '/form-builder/:formUuid/privilege'],
   },
   {
     component: FormTranslationsContainer,
     exact: true,
     path: '/form-builder/:formUuid/translate',
     title: 'Form Translation',
-    siblingPath: '/form-builder/:formUuid',
+    siblingPath: ['/form-builder/:formUuid', '/form-builder/:formUuid/privilege'],
+  },
+  {
+    component: FormPrivilegesPreviewContainer,
+    exact: true,
+    path: '/form-builder/:formUuid/privilege',
+    title: 'Show Form Privileges',
+    siblingPath: ['/form-builder/:formUuid'],
   },
 ];
 
