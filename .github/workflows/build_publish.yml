@@ -58,7 +58,7 @@ jobs:
           context: .
           file: package/docker/Dockerfile
           push: true
-          tags: bahmni/implementer-interface:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
+          tags: bahmni/implementer-interface:${{env.ARTIFACT_VERSION}},bahmni/implementer-interface:latest
 
   rpm-build-publish:
     name: RPM Build Publish
