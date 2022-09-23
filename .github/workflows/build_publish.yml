@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - master
-
-env:
-  BAHMNI_VERSION: 0.94
+      - 'release-*'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   docker-build-publish:
@@ -13,18 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set artifact version
+        run: |
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
           node-version: "12.x"
       - name: Install dependencies
-        run: yarn install --frozen-lockfile 
+        run: yarn install --frozen-lockfile
       - name: Run tests
         run: yarn test
       - name: Package
         run: yarn ci
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -34,4 +39,4 @@ jobs:
           context: .
           file: package/docker/Dockerfile
           push: true
-          tags: bahmni/implementer-interface:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
+          tags: bahmni/implementer-interface:${{env.ARTIFACT_VERSION}},bahmni/implementer-interface:latest
