@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - BAH-2365
 
 env:
   BAHMNI_VERSION: 0.94
+  HELM_CHART_PATH: package/helm/
 
 jobs:
   docker-build-publish:
@@ -13,6 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Verify app version
+        run: |
+          APP_VERSION=$(cat package/.appversion)
+          if [ $(git tag -l "$APP_VERSION") ]; then 
+            echo "App version $APP_VERSION already released. Please update app version in package/.appversion to represent next major/minor/patch increment"
+            exit 1
+          else
+            echo "setting artifact version to $(echo $APP_VERSION-${{github.run_number}})"
+            echo "ARTIFACT_VERSION=$(echo $APP_VERSION-${{github.run_number}})" >> $GITHUB_ENV
+          fi
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
@@ -35,3 +47,32 @@ jobs:
           file: package/docker/Dockerfile
           push: true
           tags: bahmni/implementer-interface:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
+      
+      - name: Helm - Update Version and Image Tag
+        run: |
+          yq --inplace '.image.tag = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/values.yaml
+          yq --inplace '.version = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/Chart.yaml
+      - name: Helm Lint
+        run: helm lint $HELM_CHART_PATH
+      - name: Helm Package
+        run: helm package $HELM_CHART_PATH
+      - name: Helm - Checkout Charts Repository
+        uses: actions/checkout@v2
+        with:
+          repository: Bahmni/helm-charts
+          ref: gh-pages
+          path: helm-charts
+          persist-credentials: false
+      - name: Helm - Copy chart
+        run: mkdir -p helm-charts/implementer-interface/ && cp implementer-interface-${{ env.ARTIFACT_VERSION }}.tgz helm-charts/implementer-interface/
+      - name: Helm - reIndex
+        working-directory: helm-charts/
+        run: helm repo index --merge index.yaml --url https://bahmni.github.io/helm-charts/  .
+      - name: Helm - Publish Chart
+        working-directory: helm-charts/
+        run: |
+          git config user.name ${{ secrets.BAHMNI_USERNAME}}
+          git config user.email ${{ secrets.BAHMNI_EMAIL}}
+          git add .
+          git commit -m "Release of bahmni-web-${{ env.ARTIFACT_VERSION }}"
+          git push 'https://${{ secrets.BAHMNI_USERNAME}}:${{ secrets.BAHMNI_PAT}}@github.com/bahmni/helm-charts.git' gh-pages
