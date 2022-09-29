@@ -5,7 +5,6 @@ on:
       - master
 
 env:
-  BAHMNI_VERSION: 0.94
   HELM_CHART_PATH: package/helm/
 
 jobs:
@@ -45,7 +44,7 @@ jobs:
           context: .
           file: package/docker/Dockerfile
           push: true
-          tags: bahmni/implementer-interface:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/implementer-interface:latest
+          tags: bahmni/implementer-interface:${{env.ARTIFACT_VERSION}},bahmni/implementer-interface:latest
       
       - name: Helm - Update Version and Image Tag
         run: |
