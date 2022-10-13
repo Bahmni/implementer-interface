@@ -39,4 +39,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Docker Build and compare
-        run: ./.github/check.sh
+        run: |
+          ./.github/check.sh
+          echo $REBUILD
+
