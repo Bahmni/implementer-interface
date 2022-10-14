@@ -4,17 +4,21 @@ on:
     branches:
       - master
       - image_update
-
 jobs:
-  base-image-update-check:
+  check_update:    
     name: Check for Base Image Updates
     runs-on: ubuntu-latest
+    outputs:
+      rebuild: ${{ steps.compare.outputs.rebuild }}
     steps:
       - uses: actions/checkout@v2
-      - name: Docker Build and compare
+      - name: compare
         run: |
           ./.github/check.sh
-          echo $REBUILD "Printing in same step"
-      - name: checking variable
-        run:  echo $REBUILD
-
+          echo "::set-output name=rebuild::$REBUILD"
+  
+  call-workflow-passing-data:
+    needs: check_update
+    uses: ./.github/workflows/build_publish.yml
+    with:
+      rebuild: false #${{ needs.check_update.outputs.rebuild }}
