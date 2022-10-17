@@ -4,23 +4,26 @@ on:
     branches:
       - master
       - image_update
-
+  schedule:
+    # Runs "At 21:00 IST on every day-of-week. Below time is mentioned in UTC time zone" (see https://crontab.guru)
+    - cron: '30 15 * * *'
   workflow_dispatch:
+    
 
 jobs:
   check_update:    
     name: Check for Base Image Updates
     runs-on: ubuntu-latest
     outputs:
-      rebuild: ${{ steps.compare.outputs.rebuild }}
+      rebuild: ${{ steps.set-output.outputs.rebuild }}
     steps:
       - uses: actions/checkout@v2
-      - name: run script
+      - name: compare docker images
         run: |
-          ./.github/check.sh
-      - id: compare
+          ./.github/compare_images.sh bahmni implementer-interface latest library httpd 2.4-alpine
+      - id: set-output
+        name: Set output
         run: |
-          echo $REBUILD
           echo "rebuild=$REBUILD" >> $GITHUB_OUTPUT
   
   call-workflow-passing-data:
