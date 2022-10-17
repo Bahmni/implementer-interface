@@ -11,9 +11,17 @@ on:
     inputs:
       rebuild:
         description: 'This should be true for a workflow to run for base-image update'
-        required: false
-        type: string #boolean    
-    
+        required: true
+        type: string
+        default: 'update'
+  
+  workflow_dispatch:
+    inputs:
+      rebuild:
+        description: 'This should be true for a workflow to run for base-image update'
+        required: true
+        type: string
+        default: 'update'
 
 jobs:
   docker-build-publish:
@@ -23,20 +31,17 @@ jobs:
       HELM_CHART_PATH: package/helm/
     steps:
       - uses: actions/checkout@v2
-      - name: check rebuild values
-        run: echo ${{ inputs.rebuild }}
-      - name: testing
+      - name: match default value
+        run: |
+          echo  ${{ inputs.rebuild == 'update'}}
+          echo ${{ inputs.rebuild }}
+
+      - name: Set env.ARTIFACT_VERSION
         if: ${{ inputs.rebuild == 'update'}}
         run: |
-          echo everyting fine with value of rebuild as: ${{ inputs.rebuild }}
-      - name: check values
-        run: echo ${{ inputs.rebuild == 'update'}} ${{ inputs.rebuild }}
-
-      # - name: Set env.ARTIFACT_VERSION
-      #   run: |
-      #     wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
-      #     ./setArtifactVersion.sh
-      #     rm setArtifactVersion.sh
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
       # - name: Use Node.js 12
       #   uses: actions/setup-node@v1
       #   with:
@@ -44,6 +49,7 @@ jobs:
       # - name: Install dependencies
       #   run: yarn install --frozen-lockfile
       # - name: Run tests
+      #   if: ${{ inputs.rebuild }} == 'update'
       #   run: yarn test
       # - name: Package
       #   run: yarn ci
@@ -57,7 +63,7 @@ jobs:
       #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
       #     password: ${{ secrets.DOCKER_HUB_TOKEN }}
       # - name: Docker Build and push
-      #   if: ${{ inputs.rebuild }} != 'false'
+      #   if: ${{ inputs.rebuild }} == 'update'
       #   uses: docker/build-push-action@v3
       #   with:
       #     context: .
@@ -87,7 +93,7 @@ jobs:
       #   working-directory: helm-charts/
       #   run: helm repo index --merge index.yaml --url https://bahmni.github.io/helm-charts/  .
       # - name: Helm - Publish Chart
-      #   if: ${{ inputs.rebuild }} != 'false'
+      #   if: ${{ inputs.rebuild }} == 'update'
       #   working-directory: helm-charts/
       #   run: |
       #     git config user.name ${{ secrets.BAHMNI_USERNAME}}
