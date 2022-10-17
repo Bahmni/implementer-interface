@@ -25,7 +25,6 @@ jobs:
   
   call-workflow-passing-data:
     needs: check_update
+    if: ${{ needs.check_update.outputs.rebuild == 'update'}}
     uses: ./.github/workflows/build_publish.yml
-    with:
-      rebuild: ${{ needs.check_update.outputs.rebuild }}
     secrets: inherit

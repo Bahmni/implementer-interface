@@ -7,16 +7,9 @@ on:
       
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-
+    
   workflow_call:
-    inputs:
-      rebuild:
-        description: 'This should be true for a workflow to run for base-image update'
-        required: true
-        type: string
-        default: 'update'
 
-  
 jobs:
   docker-build-publish:
     name: Docker Build & Publish
@@ -25,7 +18,6 @@ jobs:
       HELM_CHART_PATH: package/helm/
     steps:
       - uses: actions/checkout@v2
-   
       - name: Set env.ARTIFACT_VERSION
         run: |
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
@@ -52,7 +44,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Docker Build and push
-        if: ${{ inputs.rebuild == 'update'}}
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -82,7 +73,6 @@ jobs:
         working-directory: helm-charts/
         run: helm repo index --merge index.yaml --url https://bahmni.github.io/helm-charts/  .
       - name: Helm - Publish Chart
-        if: ${{ inputs.rebuild == 'update'}}
         working-directory: helm-charts/
         run: |
           git config user.name ${{ secrets.BAHMNI_USERNAME}}
