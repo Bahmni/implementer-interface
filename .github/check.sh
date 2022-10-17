@@ -5,9 +5,9 @@ base_image_data=$(echo $(curl -X GET https://hub.docker.com/v2/repositories/libr
 base_image_creation_time=$(date -d $base_image_data +%s)
 
 if expr "$bahmni_image_creation_time" "<=" "$base_image_creation_time" >/dev/null; then
-    echo "REBUILD=true"  >> $GITHUB_ENV
+    echo "REBUILD=update"  >> $GITHUB_ENV
     echo "bahmni image was created earlier than base image"
 else
-    echo "REBUILD=false" >> $GITHUB_ENV
+    echo "REBUILD=noUpdate" >> $GITHUB_ENV
     echo "bahmni image was created later than base image"
 fi

@@ -12,7 +12,7 @@ on:
       rebuild:
         description: 'This should be true for a workflow to run for base-image update'
         required: false
-        type: boolean    
+        type: string #boolean    
     
 
 jobs:
@@ -23,11 +23,14 @@ jobs:
       HELM_CHART_PATH: package/helm/
     steps:
       - uses: actions/checkout@v2
+      - name: check rebuild values
+        run: echo ${{ inputs.rebuild }}
       - name: testing
-        if: ${{ inputs.rebuild }}
+        if: ${{ inputs.rebuild == 'update'}}
         run: |
           echo everyting fine with value of rebuild as: ${{ inputs.rebuild }}
-          
+      - name: check values
+        run: echo ${{ inputs.rebuild == 'update'}} ${{ inputs.rebuild }}
 
       # - name: Set env.ARTIFACT_VERSION
       #   run: |
