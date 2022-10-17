@@ -4,6 +4,9 @@ on:
     branches:
       - master
       - image_update
+
+  workflow_dispatch:
+
 jobs:
   check_update:    
     name: Check for Base Image Updates
@@ -25,3 +28,4 @@ jobs:
     uses: ./.github/workflows/build_publish.yml
     with:
       rebuild: ${{ needs.check_update.outputs.rebuild }}
+    secrets: inherit

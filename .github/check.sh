@@ -8,6 +8,6 @@ if expr "$bahmni_image_creation_time" "<=" "$base_image_creation_time" >/dev/nul
     echo "REBUILD=update"  >> $GITHUB_ENV
     echo "bahmni image was created earlier than base image"
 else
-    echo "REBUILD=update" >> $GITHUB_ENV
+    echo "REBUILD=noUpdate" >> $GITHUB_ENV
     echo "bahmni image was created later than base image"
 fi
