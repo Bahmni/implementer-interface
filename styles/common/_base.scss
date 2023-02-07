@@ -180,6 +180,16 @@ em {
 .fl, .left {float: left;}
 .fr, .right {float: right;}
 
+.property {
+  width: 100px;
+  background-color: $bahmniPageBg;
+  border: 1px solid $gray400;
+  @include box-shadow-for-section;
+  border-radius: 3px;
+  display: inline-block;
+  position: relative;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
