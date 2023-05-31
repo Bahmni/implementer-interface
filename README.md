@@ -32,3 +32,7 @@ service httpd restart
 ### Setup using Bahmni on Docker:
 
 In order to setup developement environment for implementer-interface by running Bahmni on Docker, run the build in watch mode and follow the instructions mentioned [here](https://github.com/Bahmni/bahmni-package/blob/master/bahmni-docker/README.md#development-setup-for-implementer-interface)
+
+### SNOMED Integration Support
+
+Implementer-interface also helps implementers and administrators to create custom forms that leverages SNOMED terminologies using the Forms 2.0 framework in Bahmni. More details can be found in [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/3132686337/SNOMED+FHIR+Terminology+Server+Integration+with+Bahmni) Wiki link
