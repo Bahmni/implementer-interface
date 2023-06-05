@@ -43,7 +43,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: package/docker/Dockerfile
           push: true
-          tags: bahmni/implementer-interface:snomed-${{ github.run_number }},bahmni/implementer-interface:snomed-latest
+          tags: bahmni/implementer-interface:snomed-1.0.0,bahmni/implementer-interface:snomed-latest
 
   trigger:
     name: Trigger Deployment Workflow to SNOMED environment
