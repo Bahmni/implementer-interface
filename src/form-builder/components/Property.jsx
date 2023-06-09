@@ -37,7 +37,9 @@ export class Property extends Component {
           className="fr"
           defaultValue={this.props.value}
           key={`${this.props.name}:${this.props.id}`}
-          onChange={(e) => this.updateProperty(e, elementType)}
+          {...(this.props.name === 'url'
+              ? { onBlur: e => this.updateProperty(e, elementType) }
+              : { onChange: e => this.updateProperty(e, elementType) })}
           type="text"
         />);
       default:
