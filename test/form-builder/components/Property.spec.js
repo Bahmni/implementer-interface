@@ -84,6 +84,20 @@ describe('Property', () => {
     sinon.assert.calledWith(spy, { someProperty: 'someText' });
   });
 
+  it('should call update property on blur of text box if the name is url', () => {
+    const spy = sinon.spy();
+    const type = 'text';
+
+    wrapper = shallow(<Property
+        elementType={type}
+        name="url"
+        onPropertyUpdate={spy}
+        value={false}
+    />);
+    wrapper.find('input').props().onBlur({ target: { value: 'someText' } }, type);
+    sinon.assert.calledWith(spy, { url: 'someText' });
+  });
+
   it('should render select dropdown when given property with dropdown', () => {
     const type = 'dropdown';
 
