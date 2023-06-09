@@ -89,10 +89,10 @@ describe('Property', () => {
     const type = 'text';
 
     wrapper = shallow(<Property
-        elementType={type}
-        name="url"
-        onPropertyUpdate={spy}
-        value={false}
+      elementType={type}
+      name="url"
+      onPropertyUpdate={spy}
+      value={false}
     />);
     wrapper.find('input').props().onBlur({ target: { value: 'someText' } }, type);
     sinon.assert.calledWith(spy, { url: 'someText' });
