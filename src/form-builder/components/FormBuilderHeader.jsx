@@ -7,7 +7,7 @@ const Header = () =>
         <nav className="nav">
           <ul>
             <li>
-              <a className="back-btn" href="/home">
+              <a className="back-btn" href="/bahmni/home">
                 <i className="fa fa-home"></i>
               </a>
             </li>

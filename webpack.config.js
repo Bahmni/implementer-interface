@@ -39,7 +39,7 @@ module.exports = {
     new ExtractTextPlugin('styles.css', { allChunks: true }),
     new CopyWebpackPlugin([
       {
-        from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, '../dist/fonts'),
+        from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, 'dist/fonts'),
       },
     ], { copyUnmodified: true }
     ),
