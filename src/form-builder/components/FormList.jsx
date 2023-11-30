@@ -34,7 +34,7 @@ export default class FormList extends Component {
         <td>
           <b className="edit-icon">{this._editOrReuseIcon(rowItem)}</b>
           <a hidden={!rowItem.published}
-            onClick={() => this.downloadFile(index)}
+            onClick={() => this.downloadFile(index)} title="Export Form"
           >
             <i className="fa fa-download" title="Export Form" />
           </a>
