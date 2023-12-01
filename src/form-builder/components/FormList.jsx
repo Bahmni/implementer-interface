@@ -43,7 +43,7 @@ export default class FormList extends Component {
           <b className="privilege-icon" hidden={!rowItem.published}>
             {this._privilegesIcon(rowItem)}</b>
           <a hidden={!rowItem.published}
-                      onClick={() => this.pdfPreview(index)}
+            onClick={() => this.pdfPreview(index)}
           >
              <i className="fa fa-file-pdf-o" title="Download PDF Form" />
           </a>
@@ -61,33 +61,33 @@ export default class FormList extends Component {
     }, commonConstants.toastTimeout);
   }
 
-   downloadPDFFile(index) {
-         const form = this.props.data[index];
-         const params =
-           'v=custom:(id,uuid,name,version,published,auditInfo,' +
-           'resources:(value,dataType,uuid))';
-         const fileName = `${form.name}_${form.version}`;
-         httpInterceptor
-           .get(`${formBuilderConstants.formUrl}/${form.uuid}?${params}`)
-           .then((formJson) => {
-             const translationParams =
-               `formName=${form.name}&formVersion=${form.version}&formUuid=${form.uuid}`;
-             httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`)
-               .then((translations) => {
-                 const formData = { formJson, translations };
-                 console.log(formData);
-               try {
-                 httpInterceptor.post(formBuilderConstants.jsonToPdfConvertionUrl, formData).then((response) => {
-                   let fileName = response.pdfName;
-                   let link = formBuilderConstants.pdfDownloadUrl+fileName;
-                   window.open("/pdf/" + fileName,'_self');
-                 });
-               } catch (error) {
-                 console.log('error state');
-                 }
-              })
-      })
-    }
+  downloadPDFFile(index) {
+    const form = this.props.data[index];
+    const params =
+       'v=custom:(id,uuid,name,version,published,auditInfo,' +
+       'resources:(value,dataType,uuid))';
+    const fileName = `${form.name}_${form.version}`;
+    httpInterceptor
+       .get(`${formBuilderConstants.formUrl}/${form.uuid}?${params}`)
+       .then((formJson) => {
+         const translationParams =
+           `formName=${form.name}&formVersion=${form.version}&formUuid=${form.uuid}`;
+         httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`)
+           .then((translations) => {
+             const formData = { formJson, translations };
+             console.log(formData);
+             try {
+               httpInterceptor.post(formBuilderConstants.jsonToPdfConvertionUrl, formData).then((response) => {
+                 let fileName = response.pdfName;
+                 const link = formBuilderConstants.pdfDownloadUrl + fileName;
+                 window.open(`/pdf/${fileName}`, '_self');
+               });
+             } catch (error) {
+               console.log('error state');
+             }
+           });
+       });
+  }
 
   downloadFile(index) {
     const form = this.props.data[index];

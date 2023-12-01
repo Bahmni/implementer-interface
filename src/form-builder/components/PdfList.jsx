@@ -6,7 +6,7 @@ export default class FormList extends Component {
 
     this.downloadFile = this.downloadFile.bind(this);
   }
-  downloadFile(){
+  downloadFile() {
     window.open(this.props.downloadLink);
   }
   render() {
@@ -24,7 +24,7 @@ export default class FormList extends Component {
             <tr >
               <td>{this.props.status}</td>
               <td>
-                <button onClick={this.downloadFile} disabled={this.props.status!='Completed'} >Download</button>
+                <button onClick={this.downloadFile} disabled={this.props.status != 'Completed'} >Download</button>
               </td>
             </tr>
 

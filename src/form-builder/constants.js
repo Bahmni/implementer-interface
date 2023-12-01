@@ -26,7 +26,7 @@ export const formBuilderConstants = {
   saveFormPrivilegesUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveFormPrivileges',
   getFormPrivilegesUrl: '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivileges',
   getFormPrivilegesFromUuidUrl: '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid',
-  jsonToPdfConvertionUrl:'/openmrs/ws/rest/v1/bahmniie/form/jsonToPdf',
-  pdfDownloadUrl:'/openmrs/ws/rest/v1/bahmniie/form/download/',
+  jsonToPdfConvertionUrl: '/openmrs/ws/rest/v1/bahmniie/form/jsonToPdf',
+  pdfDownloadUrl: '/openmrs/ws/rest/v1/bahmniie/form/download/',
 
 };
