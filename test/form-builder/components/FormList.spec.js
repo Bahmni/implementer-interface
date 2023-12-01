@@ -102,9 +102,10 @@ describe('FormList', () => {
   it('should render Export when form published', () => {
     wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
 
-    expect(getItem(0, 5).find('a').prop('hidden')).to.eql(true);
-    expect(getItem(1, 5).find('a').prop('hidden')).to.eql(false);
-    expect(getItem(1, 5).find('a').find('i').prop('className')).to.eql('fa fa-download');
+    expect(getItem(0, 5).find('a[title="Export Form"]').prop('hidden')).to.eql(true);
+    expect(getItem(1, 5).find('a[title="Export Form"]').prop('hidden')).to.eql(false);
+    expect(getItem(1, 5).find('a[title="Export Form"]')
+        .find('i').prop('className')).to.eql('fa fa-download');
   });
 
   it('should call downloadFile when export be clicked', (done) => {
@@ -113,7 +114,7 @@ describe('FormList', () => {
       .onSecondCall(1).returns(Promise.resolve([]));
 
     wrapper = shallow(<FormList data={data} />);
-    const exportElement = getItem(0, 5).find('a');
+    const exportElement = getItem(0, 5).find('a[title="Export Form"]');
     exportElement.simulate('click');
     const params =
       'v=custom:(id,uuid,name,version,published,auditInfo,' +
@@ -142,7 +143,7 @@ describe('FormList', () => {
     wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
     const spy = sinon.spy(wrapper.instance(), 'setMessage');
 
-    const exportElement = getItem(1, 5).find('a');
+    const exportElement = getItem(1, 5).find('a[title="Export Form"]');
     exportElement.simulate('click');
 
     setTimeout(() => {

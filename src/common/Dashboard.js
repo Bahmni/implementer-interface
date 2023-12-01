@@ -8,6 +8,10 @@ const Dashboard = () =>
           <i className="fa fa-user-secret"></i>
           Form Builder
       </Link>
+      <Link to="form-printer">
+          <i className="fa fa-user-secret"></i>
+          Print Form
+      </Link>
     </div>
   </div>;
 
