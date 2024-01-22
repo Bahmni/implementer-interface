@@ -7,7 +7,7 @@ export class UrlHelper {
 
   getFullConceptRepresentation(conceptName) {
     return '/openmrs/ws/rest/v1/concept?' +
-            `s=byFullySpecifiedName&locale=en&name=${conceptName}&v=bahmni`;
+            `s=byFullySpecifiedName&name=${conceptName}&v=bahmni`;
   }
 
   bahmniFormTranslateUrl(formName, formVersion, locale, formUuid) {
