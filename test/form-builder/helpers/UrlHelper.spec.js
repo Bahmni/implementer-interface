@@ -13,7 +13,7 @@ describe('UrlHelper', () => {
   it('should return full concept representation', () => {
     const conceptRepresentation = urlHelper.getFullConceptRepresentation('someConcept');
     const expectedUrl = '/openmrs/ws/rest/v1/concept?' +
-        's=byFullySpecifiedName&locale=en&name=someConcept&v=bahmni';
+        's=byFullySpecifiedName&name=someConcept&v=bahmni';
     expect(conceptRepresentation).to.eql(expectedUrl);
   });
 
