@@ -20,8 +20,8 @@ export class Property extends Component {
         ><i aria-hidden="true" className="fa fa-code" /></button>);
       case 'dropdown':
         return (
-          <select
-            className="fr"
+         <select
+            className="fr property"
             defaultValue={this.props.value}
             key={`${this.props.name}:${this.props.id}`}
             onChange={(e) => this.updateProperty(e, elementType)}
@@ -42,6 +42,14 @@ export class Property extends Component {
               : { onChange: e => this.updateProperty(e, elementType) })}
           type="text"
         />);
+      case 'number':
+        return (<input
+          className="fr property"
+          defaultValue={this.props.value}
+          key={`${this.props.name}:${this.props.id}`}
+          onChange={(e) => this.updateProperty(e, elementType)}
+          type="number"
+        />);
       default:
         return (<input
           checked={this.props.value}
@@ -54,7 +62,7 @@ export class Property extends Component {
 
   updateProperty(e, elementType) {
     const { name } = this.props;
-    if (elementType === 'text' || elementType === 'dropdown') {
+    if (elementType === 'text' || elementType === 'dropdown' || elementType === 'number') {
       this.props.onPropertyUpdate({ [name]: e.target.value });
     } else {
       this.props.onPropertyUpdate({ [name]: e.target.checked });
