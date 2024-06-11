@@ -387,7 +387,7 @@ export class FormDetailContainer extends Component {
       return (
         <button
           className="publish-button"
-          disabled={isPublished || isEmpty(resourceData)}
+          disabled={isPublished}
           onClick={this.onPublish}
         >
           Publish
