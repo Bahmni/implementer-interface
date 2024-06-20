@@ -38,9 +38,8 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('styles.css', { allChunks: true }),
     new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, 'dist/fonts'),
-      },
+      { from: path.join(__dirname, 'styles/fonts'), to: path.join(__dirname, 'dist/fonts') }, 
+      { from: path.join(__dirname, './public/favicon.ico'), to: path.join(__dirname, 'dist/favicon.ico') }
     ], { copyUnmodified: true }
     ),
       new StyleLintPlugin(),
