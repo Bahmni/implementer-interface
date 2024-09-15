@@ -1,6 +1,6 @@
 {
   "name": "implementer-interface",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "App for implementer interfaces like form builder, reports, etc.",
   "license": "GPL-2.0",
   "main": "index.js",
