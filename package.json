@@ -23,7 +23,9 @@
     "eslintFix": "eslint --ext .js --ext .jsx ./src ./test --fix",
     "start": "webpack-dev-server --hot --progress --colors",
     "ci": "yarn run clean && yarn run build && yarn run compress",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "watch-dev": "webpack --watch --config webpack.dev.config.js",
+    "watch-dev-form-controls": "webpack --watch --config webpack.dev-form-controls.config.js"
   },
   "author": "",
   "devDependencies": {
