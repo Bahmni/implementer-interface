@@ -94,7 +94,7 @@ export default class FormPrivilegeTable extends Component {
 
   collectAllPrivileges(initialPrivileges, allPrivileges) {
     allPrivileges.push(...initialPrivileges.results);
-    if (initialPrivileges.links.length > 0 && initialPrivileges.links[0].rel === "next") {
+    if (initialPrivileges.links.length > 0 && initialPrivileges.links.find(link => link.rel === "next") !== undefined) {
       httpInterceptor.get(initialPrivileges.links[0].uri)
         .then((privileges) => {
              return this.collectAllPrivileges(privileges, allPrivileges)
