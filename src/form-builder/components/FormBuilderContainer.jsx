@@ -35,15 +35,38 @@ export class FormBuilderContainer extends Component {
   }
 
   getFormData() {
-    return httpInterceptor
-      .get(`${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`)
-      .then((data) => {
-        this.setState({ data: this.orderFormByVersion(data.results), loading: false });
+    let initialForms = [];
+    let forms = [];
+    const queryParams = '?=';
+    const fetchFormsUrl = `${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`;
+    return httpInterceptor.get(fetchFormsUrl)
+      .then((initialForms) => {
+        this.collectAllForms(initialForms, forms);
       })
       .catch((error) => {
         this.showErrors(error);
         this.setState({ loading: false });
       });
+  }
+
+  collectAllForms(initialForms, forms) {
+    forms.push(...initialForms.results);
+    if (forms.length === formBuilderConstants.dataLimit) {
+      this.setState({ data: this.orderFormByVersion(forms), loading: false });
+      return;
+    }
+    if (initialForms.links !== undefined && initialForms.links.length > 0 && initialForms.links.find(link => link.rel === "next") !== undefined) {
+      httpInterceptor.get(initialForms.links[0].uri)
+        .then((privileges) => {
+          return this.collectAllForms(privileges, forms)
+        })
+        .catch((error) => {
+          this.showErrors(error);
+          this.setState({ loading: false });
+        });
+    } else {
+      this.setState({ data: this.orderFormByVersion(forms), loading: false });
+    }
   }
 
   getDefaultLocale() {
