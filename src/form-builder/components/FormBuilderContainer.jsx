@@ -55,11 +55,9 @@ export class FormBuilderContainer extends Component {
       this.setState({ data: this.orderFormByVersion(forms), loading: false });
       return;
     }
-    if (initialForms.links !== undefined && initialForms.links.length > 0 && initialForms.links.find(link => link.rel === "next") !== undefined) {
+    if (initialForms.links !== undefined && initialForms.links.length > 0 && initialForms.links.find(link => link.rel === 'next') !== undefined) {
       httpInterceptor.get(initialForms.links[0].uri)
-        .then((privileges) => {
-          return this.collectAllForms(privileges, forms)
-        })
+        .then((privileges) => this.collectAllForms(privileges, forms))
         .catch((error) => {
           this.showErrors(error);
           this.setState({ loading: false });

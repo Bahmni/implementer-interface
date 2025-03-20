@@ -98,11 +98,9 @@ export default class FormPrivilegeTable extends Component {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
       return;
     }
-    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0 && initialPrivileges.links.find(link => link.rel === "next") !== undefined) {
+    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0 && initialPrivileges.links.find(link => link.rel === 'next') !== undefined) {
       httpInterceptor.get(initialPrivileges.links[0].uri)
-        .then((privileges) => {
-             return this.collectAllPrivileges(privileges, allPrivileges)
-        });
+        .then((privileges) => this.collectAllPrivileges(privileges, allPrivileges));
     } else {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
     }
