@@ -80,15 +80,32 @@ export default class FormPrivilegeTable extends Component {
                       this.setState({ loading: false });
                     });
   }
+
   fetchPrivileges() {
     let initialPrivileges = [];
+    let privileges = [];
     const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
     httpInterceptor.get(optionsUrl)
-        .then((initialPrivileges) => {
-          this.setState({ availablePrivileges: this.arrangePrivileges(initialPrivileges.results), loading: false });
-        });
+      .then((initialPrivileges) => {
+        this.collectAllPrivileges(initialPrivileges, privileges);
+      });
   }
+
+  collectAllPrivileges(initialPrivileges, allPrivileges) {
+    allPrivileges.push(...initialPrivileges.results);
+    if (allPrivileges.length === formBuilderConstants.dataLimit) {
+      this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
+      return;
+    }
+    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0 && initialPrivileges.links.find(link => link.rel === 'next') !== undefined) {
+      httpInterceptor.get(initialPrivileges.links[0].uri)
+        .then((privileges) => this.collectAllPrivileges(privileges, allPrivileges));
+    } else {
+      this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
+    }
+  }
+
   fetchFormPrivilegesFromDB() {
     let initialPrivilegesFromDB = [];
     const queryParams = '?=';
