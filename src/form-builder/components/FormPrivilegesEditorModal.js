@@ -70,6 +70,18 @@ export default class FormPrivilegesEditorModal extends Component {
 
   render() {
     const { formId, formName, formUuid, formPrivileges, formData } = this.props;
+    if (formData.published) {
+      return (
+        <div className="dialog dialog--no-header">
+          <div className="dialog--container">
+              Please save the form first to create a new version to manage privileges.
+          </div>
+          <div>
+              <button className="btn" onClick={this.props.close} type="reset"> Close </button>
+           </div>
+      </div>
+      );
+    }
     return (
       <div className="form-privileges-modal-container">
          <h2 className="header-title">Manage Privileges</h2>

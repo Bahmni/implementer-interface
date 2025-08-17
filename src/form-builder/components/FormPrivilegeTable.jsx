@@ -98,8 +98,14 @@ export default class FormPrivilegeTable extends Component {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
       return;
     }
-    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0 && initialPrivileges.links.find(link => link.rel === 'next') !== undefined) {
-      httpInterceptor.get(initialPrivileges.links[0].uri)
+    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0) {
+      const nextLink = initialPrivileges.links.find(link => link.rel === 'next');
+      if (!nextLink) {
+        this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
+        return;
+      }
+      const nextUri = this.getNextPaginationRequestUrl(nextLink.uri);
+      httpInterceptor.get(nextUri)
         .then((privileges) => this.collectAllPrivileges(privileges, allPrivileges));
     } else {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
@@ -253,6 +259,7 @@ export default class FormPrivilegeTable extends Component {
     let formVersion = this.state.formData.version;
     let formId = this.state.formData.id;
     if ((this.state.firstSave === true) && (this.state.formData.published === true)) {
+      console.error('Form is still marked as published. Execution should not be able to arrive at this point');
       formVersion++;
       formVersion = formVersion.toString();
       formId++;
@@ -283,6 +290,17 @@ export default class FormPrivilegeTable extends Component {
       formPrivilegeObj.push(privilegeCopy);
     }
     return formPrivilegeObj;
+  }
+
+  getNextPaginationRequestUrl(uri) {
+    if (uri.indexOf('http') === -1) {
+      return uri;
+    }
+    const parsedUrl = new URL(uri);
+    if (parsedUrl.protocol != window.location.protocol) {
+      parsedUrl.protocol = window.location.protocol;
+    }
+    return parsedUrl.toString();
   }
 
   removeSelectedPrivilege(e) {
