@@ -83,7 +83,7 @@
     "babel-preset-react": "^6.11.1",
     "bahmni-form-controls": "^0.93.17",
     "classnames": "^2.2.5",
-    "codemirror": "^5.51.0",
+    "codemirror": "^5.58.2",
     "core-js": "^2.4.1",
     "file-saver": "^2.0.2",
     "jshint": "^2.11.0",
