@@ -15,6 +15,7 @@ import Popup from 'reactjs-popup';
 import FormConditionsModal from 'form-builder/components/FormConditionsModal';
 import { commonConstants } from 'common/constants';
 import NotificationContainer from 'common/Notification';
+import { base64ToUtf8, utf8ToBase64 } from 'common/utils/encodingUtils';
 
 
 export default class FormDetail extends Component {
@@ -83,27 +84,42 @@ export default class FormDetail extends Component {
       throw e;
     }
   }
+
+  getScript(property, formDetails, controlEvents, selectedControlId, formDefinitionVersion) {
+    const definitionVersion = formDefinitionVersion || 1.0;
+    const isControlEvent = property.controlEvent;
+    if (isControlEvent) {
+      const selectedFormControlEvent = controlEvents
+        .find(control => control.id === selectedControlId);
+      const controlEventScript = selectedFormControlEvent && selectedFormControlEvent.events
+        && selectedFormControlEvent.events.onValueChange;
+      if (controlEventScript == undefined) {
+        return '';
+      }
+      return definitionVersion > 1.0 ? base64ToUtf8(controlEventScript) : controlEventScript;
+    }
+    if (property.formSaveEvent === undefined && property.formInitEvent === undefined) {
+      return '';
+    }
+    const isSaveEvent = property.formSaveEvent;
+    const formEventScript = formDetails.events && (isSaveEvent ? formDetails.events.onFormSave
+      : formDetails.events.onFormInit);
+    if (formEventScript == undefined) {
+      return '';
+    }
+    return definitionVersion > 1.0 ? base64ToUtf8(formEventScript) : formEventScript;
+  }
+
   render() {
     const { formData, defaultLocale, formControlEvents } = this.props;
     if (formData) {
       const { name, uuid, id, version, published, editable } = this.props.formData;
       const formResourceControls = FormHelper.getFormResourceControls(this.props.formData);
+      const formDefVersion = this.props.formDetails && this.props.formDetails.formDefVersion;
       const idGenerator = this.getIdGenerator(formResourceControls);
-      const getScript = (property, formDetails, selectedControlId) => {
-        const isControlEvent = property.controlEvent;
-        if (isControlEvent) {
-          const selectedFormControlEvent = formControlEvents
-            .find(control => control.id === selectedControlId);
-          return selectedFormControlEvent && selectedFormControlEvent.events
-            && selectedFormControlEvent.events.onValueChange;
-        }
-        const isSaveEvent = property.formSaveEvent;
-        return formDetails.events && (isSaveEvent ? formDetails.events.onFormSave
-          : formDetails.events.onFormInit);
-      };
       const FormEventEditorContent = (props) => {
-        const script = props.property ? getScript(props.property,
-          props.formDetails, props.selectedControlId) : '';
+        const script = props.property ? this.getScript(props.property,
+          props.formDetails, formControlEvents, props.selectedControlId, formDefVersion) : '';
         const showEditor = props.property && (props.property.formInitEvent
           || props.property.formSaveEvent || props.property.formConditionsEvent
           || props.property.controlEvent || props.property.formPrivilegesEventUpdate);
@@ -123,6 +139,7 @@ export default class FormDetail extends Component {
                 formDetails={props.formDetails}
                 formTitle={this.formTitle(name, version, published, editable)}
                 updateAllScripts={props.updateAllScripts}
+                formDefVersion={formDefVersion}
               />
             </Popup>
             }

@@ -22,6 +22,8 @@ const formDetails = (store = {}, action) => {
       });
     case 'SET_DEFAULT_LOCALE':
       return Object.assign({}, store, { defaultLocale: action.locale });
+    case 'FORM_DEFINITION_VERSION_UPDATE':
+      return Object.assign({}, store, { formDefVersion: action.version });
     default:
       return store;
   }

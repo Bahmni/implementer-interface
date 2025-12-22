@@ -14,6 +14,7 @@ import {
   removeSourceMap,
   formLoad,
   setChangedProperty,
+  formDefVersionUpdate,
 } from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
@@ -55,6 +56,7 @@ export class FormDetailContainer extends Component {
       referenceFormUuid: undefined,
       formPreviewJson: undefined,
       formPrivileges: [],
+      formDefinitionVersion: undefined,
     };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
@@ -77,7 +79,7 @@ export class FormDetailContainer extends Component {
 
   componentDidMount() {
     const params =
-      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'v=custom:(id,uuid,build,name,version,published,auditInfo,' +
       'resources:(value,dataType,uuid))';
     httpInterceptor
       .get(
@@ -86,6 +88,7 @@ export class FormDetailContainer extends Component {
       .then((data) => {
         const parsedFormValue =
           data.resources.length > 0 ? JSON.parse(data.resources[0].value) : {};
+        const formDefVersion = parsedFormValue.formDefVersion || 1.0;
         this.setState({
           formData: data,
           httpReceived: true,
@@ -97,9 +100,11 @@ export class FormDetailContainer extends Component {
           // eslint-disable-next-line eqeqeq
           referenceFormUuid: data.version == 1 ?
               data.uuid : parsedFormValue.referenceFormUuid,
+          formDefinitionVersion: formDefVersion,
         });
         this._getFormPrivilegesFromDB(data.id, data.version);
         const formControlsArray = formHelper.getObsControlEvents(parsedFormValue);
+        this.props.dispatch(formDefVersionUpdate(formDefVersion));
         this.props.dispatch(formLoad(formControlsArray));
       })
       .catch((error) => {
@@ -147,6 +152,8 @@ export class FormDetailContainer extends Component {
       throw new Exception(emptySectionOrTable);
     }
     formJson.events = this.state.formEvents;
+    const formDefVersion = (this.props.formDetails && this.props.formDetails.formDefVersion) || this.state.formDefinitionVersion;
+    formJson.formDefVersion = formDefVersion;
     const formName = this.state.formData ? this.state.formData.name : 'FormName';
     const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
     const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?

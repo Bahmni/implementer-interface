@@ -4,6 +4,7 @@ import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScrip
 import _ from 'lodash';
 import NotificationContainer from 'common/Notification';
 import { commonConstants } from 'common/constants';
+import { base64ToUtf8 } from 'common/utils/encodingUtils';
 
 export default class FormConditionsModal extends Component {
   constructor(props) {
@@ -94,12 +95,13 @@ export default class FormConditionsModal extends Component {
 
   showObsControlScriptEditorModal(controlScript, controlEventTitleId,
                                   controlEventTitleName, editorRef, hasError) {
+    const eventScript = (controlEventTitleId == undefined && controlEventTitleName == undefined) ? '' : base64ToUtf8(controlScript);
     return (<ObsControlScriptEditorModal
       close={this.props.close}
       hasError={hasError}
       key={`${controlEventTitleName}_${controlEventTitleId}`}
       removeControlEvent={this.removeControlEvent}
-      script={controlScript}
+      script={eventScript}
       textAreaRef={editorRef}
       titleId={controlEventTitleId}
       titleName={controlEventTitleName}
@@ -228,6 +230,7 @@ FormConditionsModal.propTypes = {
   }),
   formTitle: PropTypes.string,
   updateAllScripts: PropTypes.func.isRequired,
+  formDefVersion: PropTypes.number,
 };
 
 FormConditionsModal.defaultProps = {

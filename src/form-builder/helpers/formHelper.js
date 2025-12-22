@@ -41,4 +41,21 @@ export default class FormHelper {
     }
     return obsControlEvents;
   }
+
+  static getFormDefinitionVersion(formData) {
+    if (formData) {
+      const { resources } = formData;
+      const formResources = filter(resources,
+        (resource) => resource.dataType === formBuilderConstants.formResourceDataType);
+      const valueAsString = get(formResources, ['0', 'value']);
+      if (valueAsString) {
+        const formDefVersion = JSON.parse(valueAsString).formDefVersion;
+        if (formDefVersion !== undefined) {
+          return formDefVersion;
+        }
+      }
+    }
+    return 1.0;
+  }
+
 }

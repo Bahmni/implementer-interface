@@ -6,8 +6,11 @@ import {
   formLoad,
   saveEventUpdate,
   sourceChangedProperty,
+  formDefVersionUpdate,
 } from 'form-builder/actions/control';
 import { setChangedProperty, formConditionsEventUpdate } from 'form-builder/actions/control';
+import { formBuilderConstants } from 'form-builder/constants';
+import { utf8ToBase64 } from 'common/utils/encodingUtils';
 export const FormEventEditor = (props) => {
   const { property, formDetails, formControlEvents,
     updateAllScripts, selectedControlId } = props;
@@ -54,6 +57,23 @@ const mapStateToProps = (state) => ({
     && state.controlDetails.selectedControl.id,
 });
 
+function encodeControlScipts(controlScripts) {
+  if (!controlScripts) {
+    return [];
+  }
+  return controlScripts.map(control => {
+    if (control.events) {
+      const encodedEvents = {};
+      Object.keys(control.events).forEach(eventKey => {
+        encodedEvents[eventKey] = utf8ToBase64(control.events[eventKey]);
+      });
+      const _ctrl = Object.assign({}, control, { events: encodedEvents });
+      return _ctrl;
+    }
+    return control;
+  });
+}
+
 const mapDispatchToProps = (dispatch) => ({
   closeEventEditor: (selectedControlId) => {
     dispatch(setChangedProperty({ formInitEvent: false }));
@@ -63,20 +83,21 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updateScript: (script, property, selectedControlId) => {
     if (property.formSaveEvent) {
-      dispatch(saveEventUpdate(script));
+      dispatch(saveEventUpdate(utf8ToBase64(script)));
     } else if (property.formInitEvent) {
-      dispatch(formEventUpdate(script));
+      dispatch(formEventUpdate(utf8ToBase64(script)));
     } else if (property.formConditionsEvent) {
-      dispatch(formConditionsEventUpdate(script));
+      dispatch(formConditionsEventUpdate(utf8ToBase64(script)));
     }
     if (property.controlEvent) {
       dispatch(sourceChangedProperty(script, selectedControlId));
     }
   },
   updateAllScripts: ({ controlScripts, formSaveEventScript, formInitEventScript }) => {
-    dispatch(saveEventUpdate(formSaveEventScript));
-    dispatch(formEventUpdate(formInitEventScript));
-    dispatch(formLoad(controlScripts));
+    dispatch(saveEventUpdate(utf8ToBase64(formSaveEventScript)));
+    dispatch(formEventUpdate(utf8ToBase64(formInitEventScript)));
+    dispatch(formLoad(encodeControlScipts(controlScripts)));
+    dispatch(formDefVersionUpdate(formBuilderConstants.formDefinitionVersion));
   },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(FormEventEditor);
