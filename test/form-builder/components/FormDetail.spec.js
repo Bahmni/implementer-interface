@@ -10,6 +10,7 @@ import sinon from 'sinon';
 import * as ScriptEditorModal from 'form-builder/components/ScriptEditorModal';
 import * as FormConditionsModal from 'form-builder/components/FormConditionsModal';
 import { commonConstants } from 'common/constants';
+import { utf8ToBase64 } from 'common/utils/encodingUtils';
 
 chai.use(chaiEnzyme());
 
@@ -285,10 +286,11 @@ describe('FormDetails', () => {
 
   it('should render script of onFormSave when formSaveEvent is true', () => {
     const dummyScript = 'function abcd(){ var a=1;}';
+    const encodedScript = utf8ToBase64(dummyScript);
     const property = { formSaveEvent: true };
     const state = {
       controlProperty: { property },
-      formDetails: { events: { onFormSave: dummyScript } }, controlDetails: {},
+      formDetails: { events: { onFormSave: encodedScript } }, controlDetails: {},
     };
     const store = getStore(state);
     wrapper = mount(
@@ -304,15 +306,16 @@ describe('FormDetails', () => {
         />
       </Provider>);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
-      .prop('script')).to.eq(dummyScript);
+      .prop('script')).to.eq(encodedScript);
   });
 
   it('should render script of onFormInit when formInitEvent is true', () => {
     const dummyScript = 'function abcd(){ var a=1;}';
+    const encodedScript = utf8ToBase64(dummyScript);
     const property = { formInitEvent: true };
     const state = {
       controlProperty: { property },
-      formDetails: { events: { onFormInit: dummyScript } }, controlDetails: {},
+      formDetails: { events: { onFormInit: encodedScript } }, controlDetails: {},
     };
     const store = getStore(state);
     wrapper = mount(
@@ -328,7 +331,7 @@ describe('FormDetails', () => {
         />
       </Provider>);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
-      .prop('script')).to.eq(dummyScript);
+      .prop('script')).to.eq(encodedScript);
   });
 
   it('should render controlEvents and formDetails when formConditionsEvent is true', () => {
@@ -365,10 +368,11 @@ describe('FormDetails', () => {
 
   it('should render controlEvent for given control id', () => {
     const dummyScript = 'function abcd(){ var a=1;}';
+    const encodedScript = utf8ToBase64(dummyScript);
     const property = { controlEvent: true };
     const formDetails = { events: { onFormInit: dummyScript } };
     const allObsControlEvents = [
-      { id: '1', name: 'name', events: { onValueChange: dummyScript } },
+      { id: '1', name: 'name', events: { onValueChange: encodedScript } },
       { id: '2', name: 'name2', events: undefined },
     ];
     const selectedControl = { id: '1' };
@@ -391,7 +395,7 @@ describe('FormDetails', () => {
         />
       </Provider>);
     expect(wrapper.find('FormEventEditor').find('Popup').find('default')
-      .prop('script')).to.eq(dummyScript);
+      .prop('script')).to.eq(encodedScript);
   });
 
 

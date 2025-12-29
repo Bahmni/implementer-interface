@@ -6,6 +6,7 @@ import FormEventEditorWithRedux, { FormEventEditor }
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import { getStore } from 'test/utils/storeHelper';
+import { utf8ToBase64 } from 'common/utils/encodingUtils';
 
 import {
   formEventUpdate,
@@ -93,10 +94,11 @@ describe('FormEventEditorWithRedux_where_formSaveEvent_is_true', () => {
   it('should update saveEventUpdate property when updateScript is called ' +
     'and formSaveEvent is true', () => {
     const script = 'abcd';
+    const encodedScript = utf8ToBase64(script);
     wrapper.find('FormEventEditor').prop('updateScript')(script, property);
     sinon.assert.calledOnce(store.dispatch);
     sinon.assert.calledOnce(store.dispatch
-      .withArgs(saveEventUpdate(script)));
+      .withArgs(saveEventUpdate(encodedScript)));
   });
 });
 
@@ -146,10 +148,11 @@ describe('FormEventEditorWithRedux_where_formConditionsEvent_is_true', () => {
   it('should update formConditionsEvent property when updateScript is called ' +
     'and formConditionsEvent is true', () => {
     const script = 'abcd';
+    const encodedScript = utf8ToBase64(script);
     wrapper.find('FormEventEditor').prop('updateScript')(script, property);
     sinon.assert.calledOnce(store.dispatch);
     sinon.assert.calledOnce(store.dispatch
-      .withArgs(formConditionsEventUpdate(script)));
+      .withArgs(formConditionsEventUpdate(encodedScript)));
   });
 });
 
@@ -198,12 +201,12 @@ describe('Update All Scripts', () => {
 
   it('should save form save event in redux', () => {
     wrapper.find('FormEventEditor').prop('updateAllScripts')({ formSaveEventScript: 'Save Event' });
-    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
+    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate(utf8ToBase64('Save Event'))));
   });
 
   it('should save form init event in redux', () => {
     wrapper.find('FormEventEditor').prop('updateAllScripts')({ formInitEventScript: 'Init Event' });
-    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
+    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate(utf8ToBase64('Init Event'))));
   });
 
   it('should save control events, form save event and form init event in redux', () => {
@@ -212,10 +215,10 @@ describe('Update All Scripts', () => {
       formSaveEventScript: 'Save Event',
       formInitEventScript: 'Init Event',
     });
-    sinon.assert.callCount(store.dispatch, 3);
+    sinon.assert.callCount(store.dispatch, 4);
     sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
-    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('Save Event')));
-    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('Init Event')));
+    sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate(utf8ToBase64('Save Event'))));
+    sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate(utf8ToBase64('Init Event'))));
   });
 
   it('should dispatch all actions even when form init and save script are empty', () => {
@@ -224,7 +227,7 @@ describe('Update All Scripts', () => {
       formSaveEventScript: '',
       formInitEventScript: '',
     });
-    sinon.assert.callCount(store.dispatch, 3);
+    sinon.assert.callCount(store.dispatch, 4);
     sinon.assert.calledOnce(store.dispatch.withArgs(formLoad([])));
     sinon.assert.calledOnce(store.dispatch.withArgs(saveEventUpdate('')));
     sinon.assert.calledOnce(store.dispatch.withArgs(formEventUpdate('')));

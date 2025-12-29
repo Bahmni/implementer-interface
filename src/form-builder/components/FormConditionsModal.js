@@ -4,6 +4,7 @@ import ObsControlScriptEditorModal from 'form-builder/components/ObsControlScrip
 import _ from 'lodash';
 import NotificationContainer from 'common/Notification';
 import { commonConstants } from 'common/constants';
+import { base64ToUtf8 } from 'common/utils/encodingUtils';
 
 export default class FormConditionsModal extends Component {
   constructor(props) {
@@ -15,6 +16,7 @@ export default class FormConditionsModal extends Component {
     this.addToMap = this.addToMap.bind(this);
     this.removeFromMap = this.removeFromMap.bind(this);
     this.removeControlEvent = this.removeControlEvent.bind(this);
+    this.formDefVersion = props.formDefVersion || 1.0;
     props.controlEvents.forEach(control => {
       this[`${control.id}_ref`] = React.createRef();
     });
@@ -92,14 +94,22 @@ export default class FormConditionsModal extends Component {
     this.addToMap('controlsWithoutEvents', control);
   }
 
+  decodeEventScript(controlScript) {
+    if (this.formDefVersion < 2.0) {
+      return controlScript;
+    }
+    return base64ToUtf8(controlScript);
+  }
+
   showObsControlScriptEditorModal(controlScript, controlEventTitleId,
                                   controlEventTitleName, editorRef, hasError) {
+    const eventScript = (controlEventTitleId == undefined && controlEventTitleName == undefined) ? '' : this.decodeEventScript(controlScript);
     return (<ObsControlScriptEditorModal
       close={this.props.close}
       hasError={hasError}
       key={`${controlEventTitleName}_${controlEventTitleId}`}
       removeControlEvent={this.removeControlEvent}
-      script={controlScript}
+      script={eventScript}
       textAreaRef={editorRef}
       titleId={controlEventTitleId}
       titleName={controlEventTitleName}
@@ -228,6 +238,7 @@ FormConditionsModal.propTypes = {
   }),
   formTitle: PropTypes.string,
   updateAllScripts: PropTypes.func.isRequired,
+  formDefVersion: PropTypes.number,
 };
 
 FormConditionsModal.defaultProps = {

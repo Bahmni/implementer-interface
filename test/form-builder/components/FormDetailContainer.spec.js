@@ -193,7 +193,7 @@ describe('FormDetailContainer', () => {
 
   it('should call the appropriate endpoint to fetch the formData', (done) => {
     const params =
-      'v=custom:(id,uuid,name,version,published,auditInfo,' +
+      'v=custom:(id,uuid,build,name,version,published,auditInfo,' +
       'resources:(value,dataType,uuid))';
     const formResourceURL = `${formBuilderConstants.formUrl}/${'FID'}?${params}`;
     sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(formData));
