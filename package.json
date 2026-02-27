@@ -2,7 +2,7 @@
   "name": "implementer-interface",
   "version": "1.2.0",
   "description": "App for implementer interfaces like form builder, reports, etc.",
-  "license": "GPL-2.0",
+  "license": "MPL-2.0",
   "main": "index.js",
   "engines": {
     "yarn": ">=1.22.0",
