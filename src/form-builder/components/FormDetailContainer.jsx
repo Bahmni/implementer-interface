@@ -28,6 +28,7 @@ import isEqual from 'lodash/isEqual';
 import { clearTranslations } from '../actions/control';
 import { formEventUpdate, saveEventUpdate } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
+import { unescapeFormResourceValue } from 'common/utils/encodingUtils';
 import {
   saveFormNameTranslations,
   saveTranslations,
@@ -86,6 +87,9 @@ export class FormDetailContainer extends Component {
         `${formBuilderConstants.formUrl}/${this.props.match.params.formUuid}?${params}`
       )
       .then((data) => {
+        if (data.resources.length > 0 && data.resources[0].value) {
+          data.resources[0].value = unescapeFormResourceValue(data.resources[0].value);
+        }
         const parsedFormValue =
           data.resources.length > 0 ? JSON.parse(data.resources[0].value) : {};
         const formDefVersion = parsedFormValue.formDefVersion || 1.0;
@@ -597,7 +601,7 @@ export class FormDetailContainer extends Component {
       name: form.name,
       id: responseObject.form.id,
       dataType: responseObject.dataType,
-      value: responseObject.value,
+      value: unescapeFormResourceValue(responseObject.value),
       uuid: responseObject.uuid,
     };
     form.resources = [formResource];

@@ -9,6 +9,42 @@ export function utf8ToBase64(str) {
   return btoa(binaryString);
 }
 
+export function unescapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
+export function deepUnescapeStrings(obj) {
+  if (typeof obj === 'string') {
+    return unescapeHtml(obj);
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(deepUnescapeStrings);
+  }
+  if (typeof obj === 'object' && obj !== null) {
+    const result = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = deepUnescapeStrings(obj[key]);
+    }
+    return result;
+  }
+  return obj;
+}
+
+export function unescapeFormResourceValue(valueString) {
+  if (!valueString) return valueString;
+  try {
+    const parsed = JSON.parse(valueString);
+    const unescaped = deepUnescapeStrings(parsed);
+    return JSON.stringify(unescaped);
+  } catch (e) {
+    return valueString;
+  }
+}
+
 export function base64ToUtf8(b64) {
   if (b64 === undefined || b64 === null || b64 === '') {
     return '';
