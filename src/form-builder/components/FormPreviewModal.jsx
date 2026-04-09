@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import 'bahmni-form-controls/dist/helpers.js';
+import 'bahmni-form-controls/helpers.js';
 import { Exception } from 'form-builder/helpers/Exception';
 import { Container } from 'bahmni-form-controls';
 
