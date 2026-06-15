@@ -1,3 +1,5 @@
+export const bahmniHomePath = '/bahmni/home';
+
 const noOfFormsExportLimit = 20;
 export const commonConstants = {
   responseType: {
