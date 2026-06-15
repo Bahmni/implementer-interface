@@ -11,7 +11,7 @@ import React from 'react';
 import {bahmniHomePath} from '../../common/constants';
 
 const Header = () => {
-  const homeUrl = localStorage.getItem('homeUrl') || bahmniHomePath;
+  const homeUrl = (typeof localStorage !== 'undefined' && localStorage.getItem('homeUrl')) || bahmniHomePath;
   return <div>
     <div className="header-wrap">
       <header className="header">
