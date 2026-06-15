@@ -7,6 +7,8 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
+export const bahmniHomePath = '/bahmni/home';
+
 const noOfFormsExportLimit = 20;
 export const commonConstants = {
   responseType: {
