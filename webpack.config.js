@@ -94,6 +94,7 @@ module.exports = {
       common: `${srcPath}/common/`,
       'form-builder': `${srcPath}/form-builder/`,
       test: testPath,
+      'bahmni-form-controls': 'bahmni-form-controls-cure',
     },
   },
 };
