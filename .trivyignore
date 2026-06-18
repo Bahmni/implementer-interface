@@ -1,0 +1,75 @@
+# Trivy vulnerability ignore list for implementer-interface
+#
+# This project uses Node 12.x with legacy dependencies that cannot be easily
+# upgraded. Vulnerabilities are grouped by rationale below.
+#
+# --- Build/dev-time only (not bundled into production artifact) ---
+# These exist only in the webpack/karma/babel/eslint toolchain.
+
+# babel-traverse (transitive from babel-core, build-time transpiler)
+CVE-2023-45133
+
+# form-data (transitive from webpack-dev-server / fetch-mock)
+CVE-2025-7783
+CVE-2026-12143
+
+# hawk / hoek (transitive from old npm auth libraries, dev tooling)
+CVE-2022-29167
+CVE-2020-36604
+
+# immutable (transitive from webpack)
+CVE-2026-29063
+
+# ini (transitive from node/npm build tooling)
+CVE-2020-7788
+
+# json5 (transitive from babel / webpack config parsing)
+CVE-2022-46175
+
+# loader-utils (webpack internal utility)
+CVE-2022-37601
+CVE-2022-37599
+CVE-2022-37603
+
+# minimatch (transitive from karma, mocha, eslint)
+CVE-2022-3517
+CVE-2026-26996
+CVE-2026-27903
+CVE-2026-27904
+
+# minimist (transitive from dev CLI tools)
+CVE-2021-44906
+
+# path-to-regexp (transitive from webpack-dev-server)
+CVE-2024-45296
+
+# qs (transitive from express / webpack-dev-server middleware)
+CVE-2022-24999
+
+# semver (transitive from npm/yarn/node dev tooling)
+CVE-2022-25883
+
+# shelljs (transitive from some build tool)
+CVE-2022-0144
+
+# static-eval (transitive from a webpack plugin)
+GHSA-x9hc-rw35-f44h
+
+# underscore (transitive from karma / mocha test runners)
+CVE-2021-23358
+CVE-2026-27601
+
+# --- Production bundle deps (attack vectors do not apply to a client-side admin SPA) ---
+
+# jsonpath: arbitrary code execution requires untrusted jsonpath expressions;
+# in this app expressions are authored by admins in the form builder.
+CVE-2026-1615
+
+# lodash: prototype pollution / arbitrary execution via untrusted template input;
+# this app does not accept external lodash templates.
+CVE-2026-4800
+
+# moment: path traversal affects server-side locale loading; not applicable to
+# a browser bundle.
+CVE-2022-24785
+CVE-2022-31129
