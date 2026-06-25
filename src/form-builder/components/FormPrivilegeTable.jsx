@@ -91,7 +91,7 @@ export default class FormPrivilegeTable extends Component {
   }
 
   fetchPrivileges() {
-    let initialPrivileges = [];
+    const initialPrivileges = [];
     let privileges = [];
     const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
@@ -122,9 +122,9 @@ export default class FormPrivilegeTable extends Component {
   }
 
   fetchFormPrivilegesFromDB() {
-    let initialPrivilegesFromDB = [];
+    const initialPrivilegesFromDB = [];
     const queryParams = '?=';
-    let initialPrivileges = [];
+    const initialPrivileges = [];
     const formId = this.props.formId;
     const formVersion = this.props.formData.version;
     const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
@@ -313,7 +313,7 @@ export default class FormPrivilegeTable extends Component {
   }
 
   removeSelectedPrivilege(e) {
-    let array = this.state.availablePrivileges.filter((item) => item.label !== e);
+    const array = this.state.availablePrivileges.filter((item) => item.label !== e);
     this.setState({
       availablePrivileges: array,
     });

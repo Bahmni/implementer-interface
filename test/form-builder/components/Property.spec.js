@@ -79,6 +79,34 @@ describe('Property', () => {
     expect(wrapper.find('input').props().defaultValue).to.eql('someText');
   });
 
+  it('should apply property-text-row class only for text type and not for others', () => {
+    const textWrapper = shallow(<Property
+      elementType="text"
+      name="url"
+      onPropertyUpdate={() => {}}
+      value=""
+    />);
+    expect(textWrapper.find('div').prop('className')).to.eql('property-text-row');
+
+    const checkboxWrapper = shallow(<Property
+      elementType="checkbox"
+      name="mandatory"
+      onPropertyUpdate={() => {}}
+      value={false}
+    />);
+    expect(checkboxWrapper.find('div').prop('className')).to.equal(undefined);
+  });
+
+  it('should not have className attribute on non-text wrapper div', () => {
+    wrapper = shallow(<Property
+      elementType="checkbox"
+      name="mandatory"
+      onPropertyUpdate={() => {}}
+      value={false}
+    />);
+    expect(wrapper.find('div').prop('className')).to.equal(undefined);
+  });
+
   it('should call update property on change of text box', () => {
     const spy = sinon.spy();
     const type = 'text';
@@ -105,6 +133,20 @@ describe('Property', () => {
     />);
     wrapper.find('input').props().onBlur({ target: { value: 'someText' } }, type);
     sinon.assert.calledWith(spy, { url: 'someText' });
+  });
+
+  it('should call update property on blur of text box if the name is hyperlinkUrl', () => {
+    const spy = sinon.spy();
+    const type = 'text';
+
+    wrapper = shallow(<Property
+      elementType={type}
+      name="hyperlinkUrl"
+      onPropertyUpdate={spy}
+      value=""
+    />);
+    wrapper.find('input').props().onBlur({ target: { value: 'https://example.com' } }, type);
+    sinon.assert.calledWith(spy, { hyperlinkUrl: 'https://example.com' });
   });
 
   it('should render select dropdown when given property with dropdown', () => {

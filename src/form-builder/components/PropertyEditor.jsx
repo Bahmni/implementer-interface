@@ -28,6 +28,7 @@ export class PropertyEditor extends Component {
     return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;
       const value = get(properties, name, attribute.defaultValue);
+      const isInputDisabled = name === 'hyperlinkLabel' && !get(properties, 'hyperlinkUrl', '');
       return (
         <Property
           id={id}
@@ -36,6 +37,7 @@ export class PropertyEditor extends Component {
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
           value={value}
           {...attribute}
+          inputDisabled={isInputDisabled}
         />
       );
     });

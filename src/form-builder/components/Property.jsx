@@ -44,6 +44,7 @@ export class Property extends Component {
       case 'text':
         return (<input
           defaultValue={this.props.value}
+          disabled={this.props.inputDisabled}
           key={`${this.props.name}:${this.props.id}`}
           {...(this.props.name === 'url' || this.props.name === 'hyperlinkUrl'
               ? { onBlur: e => this.updateProperty(e, elementType) }
@@ -72,7 +73,7 @@ export class Property extends Component {
   render() {
     const { name, elementType } = this.props;
     return (
-      <div className={elementType === 'text' ? 'property-text-row' : ''}>
+      <div className={elementType === 'text' ? 'property-text-row' : undefined}>
         <label>{name}</label>
         {this.getElement(elementType)}
       </div>
@@ -84,6 +85,7 @@ Property.propTypes = {
   elementName: PropTypes.string,
   elementType: PropTypes.string,
   id: PropTypes.any.isRequired,
+  inputDisabled: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
   options: PropTypes.array,

@@ -213,7 +213,7 @@ export class FormDetailContainer extends Component {
     });
   }
   _saveFormPrivileges(formId, formVersion) {
-    let formVersionTemp = formVersion;
+    const formVersionTemp = formVersion;
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
     )
