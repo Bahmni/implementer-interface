@@ -9,6 +9,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { formBuilderConstants } from 'form-builder/constants';
 
 export class Property extends Component {
 
@@ -46,7 +47,7 @@ export class Property extends Component {
           defaultValue={this.props.value}
           disabled={this.props.inputDisabled}
           key={`${this.props.name}:${this.props.id}`}
-          {...(this.props.name === 'url' || this.props.name === 'hyperlinkUrl'
+          {...(this.props.name === 'url' || this.props.name === formBuilderConstants.hyperlinkUrlProperty
               ? { onBlur: e => this.updateProperty(e, elementType) }
               : { onChange: e => this.updateProperty(e, elementType) })}
           type="text"

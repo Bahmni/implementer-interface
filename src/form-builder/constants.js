@@ -39,4 +39,7 @@ export const formBuilderConstants = {
   pdfDownloadUrl: '/openmrs/ws/rest/v1/bahmniie/form/download/',
   dataLimit: 9999,
   formDefinitionVersion: 2.0,
+  hyperlinkUrlProperty: 'hyperlinkUrl',
+  hyperlinkLabelProperty: 'hyperlinkLabel',
+
 };
