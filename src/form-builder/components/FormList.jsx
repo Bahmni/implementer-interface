@@ -87,7 +87,7 @@ export default class FormList extends Component {
              console.log(formData);
              try {
                httpInterceptor.post(formBuilderConstants.jsonToPdfConvertionUrl, formData).then((response) => {
-                 const fileName = response.pdfName;
+                 let fileName = response.pdfName;
                  const link = formBuilderConstants.pdfDownloadUrl + fileName;
                  window.open(`/pdf/${fileName}`, '_self');
                });
