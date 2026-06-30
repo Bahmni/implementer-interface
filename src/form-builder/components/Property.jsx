@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { formBuilderConstants } from 'form-builder/constants';
 
 export class Property extends Component {
 
@@ -34,10 +35,10 @@ export class Property extends Component {
         </select>);
       case 'text':
         return (<input
-          className="fr"
           defaultValue={this.props.value}
+          disabled={this.props.inputDisabled}
           key={`${this.props.name}:${this.props.id}`}
-          {...(this.props.name === 'url'
+          {...(this.props.name === 'url' || this.props.name === formBuilderConstants.hyperlinkUrlProperty
               ? { onBlur: e => this.updateProperty(e, elementType) }
               : { onChange: e => this.updateProperty(e, elementType) })}
           type="text"
@@ -64,7 +65,7 @@ export class Property extends Component {
   render() {
     const { name, elementType } = this.props;
     return (
-      <div>
+      <div className={elementType === 'text' ? 'property-text-row' : undefined}>
         <label>{name}</label>
         {this.getElement(elementType)}
       </div>
@@ -76,6 +77,7 @@ Property.propTypes = {
   elementName: PropTypes.string,
   elementType: PropTypes.string,
   id: PropTypes.any.isRequired,
+  inputDisabled: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
   options: PropTypes.array,

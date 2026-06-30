@@ -28,5 +28,7 @@ export const formBuilderConstants = {
   getFormPrivilegesFromUuidUrl: '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid',
   jsonToPdfConvertionUrl: '/openmrs/ws/rest/v1/bahmniie/form/jsonToPdf',
   pdfDownloadUrl: '/openmrs/ws/rest/v1/bahmniie/form/download/',
+  hyperlinkUrlProperty: 'hyperlinkUrl',
+  hyperlinkLabelProperty: 'hyperlinkLabel',
 
 };

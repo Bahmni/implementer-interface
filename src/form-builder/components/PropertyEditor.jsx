@@ -7,6 +7,7 @@ import remove from 'lodash/remove';
 import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
 import { ComponentStore } from 'bahmni-form-controls';
+import { formBuilderConstants } from 'form-builder/constants';
 
 export class PropertyEditor extends Component {
   /* eslint-disable no-param-reassign */
@@ -19,6 +20,8 @@ export class PropertyEditor extends Component {
     return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;
       const value = get(properties, name, attribute.defaultValue);
+      const isInputDisabled = name === formBuilderConstants.hyperlinkLabelProperty &&
+        !get(properties, formBuilderConstants.hyperlinkUrlProperty, '');
       return (
         <Property
           id={id}
@@ -27,6 +30,7 @@ export class PropertyEditor extends Component {
           onPropertyUpdate={(property) => this.props.onPropertyUpdate(property)}
           value={value}
           {...attribute}
+          inputDisabled={isInputDisabled}
         />
       );
     });
