@@ -32,11 +32,11 @@ export class ControlPropertiesContainer extends Component {
             // Find and apply short name if it exists
             const shortName = concept.names && 
                 concept.names.find(name => name.conceptNameType === 'SHORT');
+
             if (shortName) {
                 concept.display = shortName.name;
                 if (concept.name) {
                     concept.name = Object.assign({}, concept.name, {
-                        name: shortName.name,
                         display: shortName.name
                     });
                 }
