@@ -83,3 +83,30 @@
     min-height: 40px;
   }
 }
+
+[data-bahmni-hyperlink],
+.form-builder-hyperlink-preview {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.obs-attached-label {
+  display: block;
+  text-align: right;
+  min-height: 23px;
+
+  .control-wrapper-content {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .remove-control-button {
+    position: static;
+    margin-left: 4px;
+    top: auto;
+    right: auto;
+  }
+}

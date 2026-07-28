@@ -41,5 +41,8 @@ export const formBuilderConstants = {
   formDefinitionVersion: 2.0,
   hyperlinkUrlProperty: 'hyperlinkUrl',
   hyperlinkLabelProperty: 'hyperlinkLabel',
+  hyperlinkAllowedDomainsGP: 'bahmni.forms.hyperlink.allowedDomains',
+  allowedDomainsGPUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=bahmni.forms.hyperlink.allowedDomains',
+  clinicalAppConfigUrl: '/bahmni_config/openmrs/apps/clinical/app.json',
 
 };

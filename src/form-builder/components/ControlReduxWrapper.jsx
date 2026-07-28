@@ -222,7 +222,9 @@ export class ControlWrapper extends Draggable {
         tabIndex="1"
       >
         <this.control
+          allowedDomains={this.props.allowedDomains}
           clearSelectedControl={ this.clearSelectedControl}
+          controlProperty={this.props.controlProperty}
           deleteControl={ this.confirmDelete }
           dispatch={this.clearControlProperties}
           dragSourceCell= {this.props.dragSourceCell}
@@ -232,6 +234,7 @@ export class ControlWrapper extends Draggable {
           onControlDrop={this.handleControlDrop}
           onSelect={ this.onSelected }
           ref={ this.storeChildRef }
+          selectedControlId={ this.props.selectedControl && this.props.selectedControl.id }
           setError={this.props.setError}
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
@@ -244,6 +247,10 @@ export class ControlWrapper extends Draggable {
 }
 
 ControlWrapper.propTypes = {
+  allowedDomains: PropTypes.arrayOf(PropTypes.string),
+  selectedControl: PropTypes.shape({
+    id: PropTypes.string,
+  }),
   controlProperty: PropTypes.shape({
     id: PropTypes.string,
     property: PropTypes.object,
