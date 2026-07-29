@@ -25,10 +25,6 @@ export function validateFormHyperlinks(formJson, allowedDomains) {
 export function fetchAllowedDomains() {
   return httpInterceptor
     .get(formBuilderConstants.allowedDomainsGPUrl, 'text')
-    .then((data) => {
-      return (data || '').split(',').map((d) => d.trim()).filter(Boolean);
-    })
-    .catch(() => {
-      return [];
-    });
+    .then((data) => (data || '').split(',').map((d) => d.trim()).filter(Boolean))
+    .catch(() => []);
 }
