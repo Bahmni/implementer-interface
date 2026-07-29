@@ -19,6 +19,7 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
+import { fetchAllowedDomains } from '../helpers/hyperlinkValidationHelper';
 import { connect } from 'react-redux';
 import { setDefaultLocale } from '../actions/control';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
@@ -36,19 +37,9 @@ export class FormBuilderContainer extends Component {
     this.getFormData().then(() => {
       this.getDefaultLocale();
     });
-    this.getAllowedDomains();
-  }
-
-  getAllowedDomains() {
-    httpInterceptor
-      .get(formBuilderConstants.allowedDomainsGPUrl, 'text')
-      .then((data) => {
-        const allowedDomains = (data || '').split(',').map((d) => d.trim()).filter(Boolean);
-        this.setState({ allowedDomains });
-      })
-      .catch(() => {
-        this.setState({ allowedDomains: [] });
-      });
+    fetchAllowedDomains().then((allowedDomains) => {
+      this.setState({ allowedDomains });
+    });
   }
 
   onValidationError(message) {

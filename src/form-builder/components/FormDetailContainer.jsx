@@ -44,7 +44,7 @@ import {
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
 import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
-import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
+import { validateFormHyperlinks, fetchAllowedDomains } from 'form-builder/helpers/hyperlinkValidationHelper';
 
 export class FormDetailContainer extends Component {
   constructor(props) {
@@ -124,19 +124,9 @@ export class FormDetailContainer extends Component {
     // .then is untested
 
     this.getFormList();
-    this.getAllowedDomains();
-  }
-
-  getAllowedDomains() {
-    httpInterceptor
-      .get(formBuilderConstants.allowedDomainsGPUrl, 'text')
-      .then((data) => {
-        const allowedDomains = (data || '').split(',').map((d) => d.trim()).filter(Boolean);
-        this.setState({ allowedDomains });
-      })
-      .catch(() => {
-        this.setState({ allowedDomains: [] });
-      });
+    fetchAllowedDomains().then((allowedDomains) => {
+      this.setState({ allowedDomains });
+    });
   }
 
   componentWillUpdate(nextProps, nextState) {

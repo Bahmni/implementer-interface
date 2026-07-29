@@ -1,4 +1,6 @@
 import { validateHyperlink } from 'bahmni-form-controls';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from 'form-builder/constants';
 
 function collectHyperlinkUrls(controls, acc) {
   if (!controls) return acc;
@@ -18,4 +20,15 @@ export function validateFormHyperlinks(formJson, allowedDomains) {
     .map((url) => validateHyperlink(url, allowedDomains))
     .filter((result) => !result.valid)
     .map((result) => `Invalid hyperlink: ${result.error}`);
+}
+
+export function fetchAllowedDomains() {
+  return httpInterceptor
+    .get(formBuilderConstants.allowedDomainsGPUrl, 'text')
+    .then((data) => {
+      return (data || '').split(',').map((d) => d.trim()).filter(Boolean);
+    })
+    .catch(() => {
+      return [];
+    });
 }
