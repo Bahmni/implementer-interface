@@ -21,7 +21,7 @@ import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
 import { fetchAllowedDomains } from '../helpers/hyperlinkValidationHelper';
 import { connect } from 'react-redux';
-import { setDefaultLocale } from '../actions/control';
+import { setDefaultLocale, setAllowedDomains } from '../actions/control';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 
 
@@ -29,7 +29,7 @@ export class FormBuilderContainer extends Component {
 
   constructor() {
     super();
-    this.state = { data: [], notification: {}, loading: true, allowedDomains: [] };
+    this.state = { data: [], notification: {}, loading: true };
     this.setState = this.setState.bind(this);
   }
 
@@ -38,7 +38,7 @@ export class FormBuilderContainer extends Component {
       this.getDefaultLocale();
     });
     fetchAllowedDomains().then((allowedDomains) => {
-      this.setState({ allowedDomains });
+      this.props.dispatch(setAllowedDomains(allowedDomains));
     });
   }
 
@@ -177,7 +177,7 @@ export class FormBuilderContainer extends Component {
           notification={this.state.notification}
         />
         <FormBuilder
-          allowedDomains={this.state.allowedDomains}
+          allowedDomains={this.props.allowedDomains}
           data={this.state.data}
           dispatch={this.props.dispatch}
           match={this.props.match}
@@ -207,4 +207,10 @@ FormBuilderContainer.propTypes = {
   routes: PropTypes.array,
 };
 
-export default connect()(FormBuilderContainer);
+function mapStateToProps(state) {
+  return {
+    allowedDomains: state.formDetails && state.formDetails.allowedDomains,
+  };
+}
+
+export default connect(mapStateToProps)(FormBuilderContainer);

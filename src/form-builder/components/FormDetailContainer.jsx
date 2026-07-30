@@ -24,6 +24,7 @@ import {
   formLoad,
   setChangedProperty,
   formDefVersionUpdate,
+  setAllowedDomains,
 } from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
@@ -67,6 +68,7 @@ export class FormDetailContainer extends Component {
       formPreviewJson: undefined,
       formPrivileges: [],
       formDefinitionVersion: undefined,
+      allowedDomains: [],
     };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
@@ -125,7 +127,7 @@ export class FormDetailContainer extends Component {
 
     this.getFormList();
     fetchAllowedDomains().then((allowedDomains) => {
-      this.setState({ allowedDomains });
+      this.props.dispatch(setAllowedDomains(allowedDomains));
     });
   }
 
@@ -189,7 +191,7 @@ export class FormDetailContainer extends Component {
     try {
       const formResource = this.getFormResource();
       const hyperlinkErrors = validateFormHyperlinks(
-        JSON.parse(formResource.value), this.state.allowedDomains || []
+        JSON.parse(formResource.value), this.props.allowedDomains || []
       );
       if (hyperlinkErrors.length > 0) {
         this.setErrorMessage(hyperlinkErrors.join('; '));
@@ -259,7 +261,7 @@ export class FormDetailContainer extends Component {
     try {
       const formJson = this.getFormResource();
       const hyperlinkErrors = validateFormHyperlinks(
-        JSON.parse(formJson.value), this.state.allowedDomains || []
+        JSON.parse(formJson.value), this.props.allowedDomains || []
       );
       if (hyperlinkErrors.length > 0) {
         this.setErrorMessage(hyperlinkErrors.join('; '));
@@ -533,7 +535,7 @@ export class FormDetailContainer extends Component {
         position="top center"
       >
         <FormPreviewModal
-          allowedDomains={this.state.allowedDomains}
+          allowedDomains={this.props.allowedDomains}
           close={() => this.closePreview()}
           formJson={this.state.formPreviewJson}
           setErrorMessage={this.setErrorMessage}
@@ -796,6 +798,7 @@ FormDetailContainer.contextTypes = {
 function mapStateToProps(state) {
   return {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
+    allowedDomains: state.formDetails && state.formDetails.allowedDomains,
     translations: state.translations,
     formDetails: state.formDetails,
     formControlEvents: state.controlDetails.allObsControlEvents,

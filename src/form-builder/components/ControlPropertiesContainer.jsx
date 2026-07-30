@@ -79,17 +79,12 @@ export class ControlPropertiesContainer extends Component {
     );
   }
 
-  getPropertyEditorMetadata() {
-    const { selectedControl } = this.props;
-    return selectedControl;
-  }
-
   displayPropertyEditor() {
     const { selectedControl, selectedControl: { id, concept } } = this.props;
     if (concept || selectedControl.type === 'section' || selectedControl.type === 'label') {
       return (
         <PropertyEditor
-          metadata={this.getPropertyEditorMetadata()}
+          metadata={selectedControl}
           onPropertyUpdate={(property) => this.onPropertyUpdate(property, id)}
         />
       );

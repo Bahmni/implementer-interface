@@ -33,6 +33,8 @@ const formDetails = (store = {}, action) => {
       return Object.assign({}, store, { defaultLocale: action.locale });
     case 'FORM_DEFINITION_VERSION_UPDATE':
       return Object.assign({}, store, { formDefVersion: action.version });
+    case 'SET_ALLOWED_DOMAINS':
+      return Object.assign({}, store, { allowedDomains: action.domains });
     default:
       return store;
   }
