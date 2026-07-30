@@ -40,8 +40,6 @@ export const formBuilderConstants = {
   dataLimit: 9999,
   formDefinitionVersion: 2.0,
   hyperlinkUrlProperty: 'hyperlinkUrl',
-  hyperlinkLabelProperty: 'hyperlinkLabel',
-  hyperlinkAllowedDomainsGP: 'bahmni.forms.hyperlink.allowedDomains',
   allowedDomainsGPUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=bahmni.forms.hyperlink.allowedDomains',
 
 };
