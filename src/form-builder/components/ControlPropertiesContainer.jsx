@@ -34,9 +34,6 @@ onSelect(concept) {
                 concept.names.find(name => name.conceptNameType === 'SHORT');
 
             if (shortName) {
-                // Only modify display for answers, NOT the parent concept
-                // Check if this concept has a parent (is an answer or setMember)
-                // by checking if it has a 'parent' property or by checking if it's in the answers array
                 if (concept.name) {
                     concept.name = Object.assign({}, concept.name, {
                         display: shortName.name
@@ -45,8 +42,6 @@ onSelect(concept) {
                 if (concept.displayString) {
                     concept.displayString = shortName.name;
                 }
-                // DO NOT modify concept.display for the parent
-                // Only set it if this is NOT the top-level concept
             }
             
             // Recursively process nested answers and set members
