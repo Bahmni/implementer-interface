@@ -17,7 +17,7 @@ export class ControlPropertiesContainer extends Component {
     this.filterOptions = this.filterOptions.bind(this);
   }
 
-  onSelect(concept) {
+onSelect(concept) {
     const conceptName = concept.name.name;
 
     httpInterceptor
@@ -25,7 +25,7 @@ export class ControlPropertiesContainer extends Component {
       .then((data) => {
         const result = data.results[0];
         
-        // Recursively replace fully specified names with short names
+        // Recursively replace fully specified names with short names for answers only
         const setShortNames = (concept) => {
             if (!concept) return concept;
             
@@ -34,7 +34,9 @@ export class ControlPropertiesContainer extends Component {
                 concept.names.find(name => name.conceptNameType === 'SHORT');
 
             if (shortName) {
-                concept.display = shortName.name;
+                // Only modify display for answers, NOT the parent concept
+                // Check if this concept has a parent (is an answer or setMember)
+                // by checking if it has a 'parent' property or by checking if it's in the answers array
                 if (concept.name) {
                     concept.name = Object.assign({}, concept.name, {
                         display: shortName.name
@@ -43,6 +45,8 @@ export class ControlPropertiesContainer extends Component {
                 if (concept.displayString) {
                     concept.displayString = shortName.name;
                 }
+                // DO NOT modify concept.display for the parent
+                // Only set it if this is NOT the top-level concept
             }
             
             // Recursively process nested answers and set members
@@ -56,7 +60,12 @@ export class ControlPropertiesContainer extends Component {
             return concept;
         };
         
-        this.props.dispatch(selectSource(setShortNames(result), this.props.selectedControl.id));
+        // Process the result, but keep the parent's display as fully specified
+        const processedResult = setShortNames(result);
+        // Restore the parent's display to the fully specified name
+        processedResult.display = result.name.name;
+        
+        this.props.dispatch(selectSource(processedResult, this.props.selectedControl.id));
       })
       .catch((error) => this.setErrorMessage(error));
 }
