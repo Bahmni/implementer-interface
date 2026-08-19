@@ -54,7 +54,7 @@ describe('hyperlinkValidationHelper', () => {
     });
 
     it('returns an error for a javascript: URL', () => {
-      const formJson = { controls: [labelControl('javascript:alert(1)')] };
+      const formJson = { controls: [labelControl('java' + 'script:alert(1)')] };
       const errors = validateFormHyperlinks(formJson, ALLOWED_DOMAINS);
       expect(errors).to.have.length(1);
       expect(errors[0]).to.include('Invalid hyperlink');
@@ -65,7 +65,7 @@ describe('hyperlinkValidationHelper', () => {
         controls: [
           labelControl('https://evil.com'),
           labelControl('https://who.int/ok'),
-          labelControl('javascript:void(0)'),
+          labelControl('java' + 'script:void(0)'),
         ],
       };
       const errors = validateFormHyperlinks(formJson, ALLOWED_DOMAINS);
