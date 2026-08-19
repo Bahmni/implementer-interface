@@ -45,7 +45,6 @@ export class Property extends Component {
       case 'text':
         return (<input
           defaultValue={this.props.value}
-          disabled={this.props.inputDisabled}
           key={`${this.props.name}:${this.props.id}`}
           {...(this.props.name === 'url' || this.props.name === formBuilderConstants.hyperlinkUrlProperty
               ? { onBlur: e => this.updateProperty(e, elementType) }
@@ -86,7 +85,6 @@ Property.propTypes = {
   elementName: PropTypes.string,
   elementType: PropTypes.string,
   id: PropTypes.any.isRequired,
-  inputDisabled: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onPropertyUpdate: PropTypes.func.isRequired,
   options: PropTypes.array,

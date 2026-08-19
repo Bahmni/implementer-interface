@@ -275,6 +275,7 @@ function mapStateToProps(state) {
     selectedControl: state.controlDetails.selectedControl,
     dragSourceCell: state.controlDetails.dragSourceCell,
     allObsControlEvents: state.controlDetails.allObsControlEvents,
+    allowedDomains: state.formDetails && state.formDetails.allowedDomains,
   };
 }
 

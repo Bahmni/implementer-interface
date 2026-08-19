@@ -68,7 +68,6 @@ export class FormDetailContainer extends Component {
       formPreviewJson: undefined,
       formPrivileges: [],
       formDefinitionVersion: undefined,
-      allowedDomains: [],
     };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
@@ -126,9 +125,11 @@ export class FormDetailContainer extends Component {
     // .then is untested
 
     this.getFormList();
-    fetchAllowedDomains().then((allowedDomains) => {
-      this.props.dispatch(setAllowedDomains(allowedDomains));
-    });
+    if (!this.props.allowedDomains) {
+      fetchAllowedDomains().then((allowedDomains) => {
+        this.props.dispatch(setAllowedDomains(allowedDomains));
+      });
+    }
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -194,7 +195,7 @@ export class FormDetailContainer extends Component {
         JSON.parse(formResource.value), this.props.allowedDomains || []
       );
       if (hyperlinkErrors.length > 0) {
-        this.setErrorMessage(hyperlinkErrors.join('; '));
+        this.setErrorMessage({ message: hyperlinkErrors.join('; ') });
         return;
       }
       const initialPrivileges = [];
@@ -264,7 +265,7 @@ export class FormDetailContainer extends Component {
         JSON.parse(formJson.value), this.props.allowedDomains || []
       );
       if (hyperlinkErrors.length > 0) {
-        this.setErrorMessage(hyperlinkErrors.join('; '));
+        this.setErrorMessage({ message: hyperlinkErrors.join('; ') });
         return;
       }
       const initialPrivileges = [];

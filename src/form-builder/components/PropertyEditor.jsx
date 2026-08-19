@@ -16,7 +16,6 @@ import remove from 'lodash/remove';
 import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
 import { ComponentStore } from 'bahmni-form-controls';
-import { formBuilderConstants } from 'form-builder/constants';
 
 export class PropertyEditor extends Component {
   /* eslint-disable no-param-reassign */
