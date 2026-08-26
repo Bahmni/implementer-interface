@@ -81,7 +81,7 @@ export class ControlPropertiesContainer extends Component {
 
   displayPropertyEditor() {
     const { selectedControl, selectedControl: { id, concept } } = this.props;
-    if (concept || selectedControl.type === 'section') {
+    if (concept || selectedControl.type === 'section' || selectedControl.type === 'label') {
       return (
         <PropertyEditor
           metadata={selectedControl}

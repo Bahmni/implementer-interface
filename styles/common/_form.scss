@@ -6,6 +6,22 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
+.property-text-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+
+  label {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-right: 8px;
+  }
+
+  input[type='text'] {
+    flex: 1;
+    min-width: 0;
+  }
+}
 
 .form-field{
   padding: 5px 0;

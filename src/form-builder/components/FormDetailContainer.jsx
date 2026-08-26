@@ -24,6 +24,7 @@ import {
   formLoad,
   setChangedProperty,
   formDefVersionUpdate,
+  setAllowedDomains,
 } from 'form-builder/actions/control';
 import NotificationContainer from 'common/Notification';
 import Spinner from 'common/Spinner';
@@ -44,6 +45,7 @@ import {
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
 import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
+import { validateFormHyperlinks, fetchAllowedDomains } from 'form-builder/helpers/hyperlinkValidationHelper';
 
 export class FormDetailContainer extends Component {
   constructor(props) {
@@ -123,6 +125,11 @@ export class FormDetailContainer extends Component {
     // .then is untested
 
     this.getFormList();
+    if (!this.props.allowedDomains) {
+      fetchAllowedDomains().then((allowedDomains) => {
+        this.props.dispatch(setAllowedDomains(allowedDomains));
+      });
+    }
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -183,6 +190,14 @@ export class FormDetailContainer extends Component {
 
   onSave() {
     try {
+      const formResource = this.getFormResource();
+      const hyperlinkErrors = validateFormHyperlinks(
+        JSON.parse(formResource.value), this.props.allowedDomains || []
+      );
+      if (hyperlinkErrors.length > 0) {
+        this.setErrorMessage({ message: hyperlinkErrors.join('; ') });
+        return;
+      }
       const initialPrivileges = [];
       const formId = this.state.formData.id;
       const formVersion = this.state.formData.version;
@@ -192,7 +207,6 @@ export class FormDetailContainer extends Component {
           initialPrivileges.push(privilege);
         });
         this.setState({ formPrivileges: initialPrivileges, loading: false });
-        const formResource = this.getFormResource();
         this._saveFormResource(formResource);
         this._saveFormPrivileges(this.state.formData.id,
             this.state.formData.version, this.state.formPrivileges);
@@ -246,6 +260,14 @@ export class FormDetailContainer extends Component {
 
   onPublish() {
     try {
+      const formJson = this.getFormResource();
+      const hyperlinkErrors = validateFormHyperlinks(
+        JSON.parse(formJson.value), this.props.allowedDomains || []
+      );
+      if (hyperlinkErrors.length > 0) {
+        this.setErrorMessage({ message: hyperlinkErrors.join('; ') });
+        return;
+      }
       const initialPrivileges = [];
       const formId = this.state.formData.id;
       const formVersion = this.state.formData.version;
@@ -255,7 +277,6 @@ export class FormDetailContainer extends Component {
           initialPrivileges.push(privilege);
         });
         this.setState({ formPrivileges: initialPrivileges, loading: false });
-        const formJson = this.getFormResource();
         httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
             .then((response) => {
               this.setFormData(response);
@@ -515,6 +536,7 @@ export class FormDetailContainer extends Component {
         position="top center"
       >
         <FormPreviewModal
+          allowedDomains={this.props.allowedDomains}
           close={() => this.closePreview()}
           formJson={this.state.formPreviewJson}
           setErrorMessage={this.setErrorMessage}
@@ -777,6 +799,7 @@ FormDetailContainer.contextTypes = {
 function mapStateToProps(state) {
   return {
     defaultLocale: state.formDetails && state.formDetails.defaultLocale,
+    allowedDomains: state.formDetails && state.formDetails.allowedDomains,
     translations: state.translations,
     formDetails: state.formDetails,
     formControlEvents: state.controlDetails.allObsControlEvents,
