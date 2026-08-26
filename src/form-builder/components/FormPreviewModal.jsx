@@ -60,7 +60,9 @@ export default class FormPreviewModal extends React.Component {
       const container = React.createElement(Container,
         { metadata, observations, validate: true, validateForm: false,
           collapse: false, patient: null, locale: this.state.defaultLocale, translations: '',
-          onValueUpdated: this.onValueUpdated });
+          onValueUpdated: this.onValueUpdated,
+          allowedDomains: this.props.allowedDomains || [],
+          showValidationErrors: true });
       ReactDOM.render(container, document.getElementById('form-container'));
     }
   }
@@ -91,6 +93,7 @@ export default class FormPreviewModal extends React.Component {
 }
 
 FormPreviewModal.propTypes = {
+  allowedDomains: PropTypes.arrayOf(PropTypes.string),
   close: PropTypes.func.isRequired,
   formJson: PropTypes.object,
   setErrorMessage: PropTypes.func.isRequired,

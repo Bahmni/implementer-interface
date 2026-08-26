@@ -82,7 +82,7 @@ export default class FormPrivilegeTable extends Component {
   }
 
   fetchPrivileges() {
-    let initialPrivileges = [];
+    const initialPrivileges = [];
     let privileges = [];
     const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;

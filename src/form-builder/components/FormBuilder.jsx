@@ -16,6 +16,7 @@ import NotificationContainer from 'common/Notification';
 import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
+import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
 
 export default class FormBuilder extends Component {
 
@@ -290,6 +291,13 @@ export default class FormBuilder extends Component {
   saveFormJson(form, value, formName, translations, nameTranslations) {
     const self = this;
     const val = value;
+    const hyperlinkErrors = validateFormHyperlinks(val, this.props.allowedDomains || []);
+    if (hyperlinkErrors.length > 0) {
+      this.props.onValidationError(
+        `Import failed for form "${formName}": ${hyperlinkErrors.join('; ')}`
+      );
+      return Promise.resolve();
+    }
     return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
       val.uuid = response.uuid;
       const formResource = {
@@ -503,6 +511,7 @@ export default class FormBuilder extends Component {
 }
 
 FormBuilder.propTypes = {
+  allowedDomains: PropTypes.arrayOf(PropTypes.string),
   data: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired,
   match: PropTypes.shape({

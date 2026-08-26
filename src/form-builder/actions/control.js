@@ -44,3 +44,4 @@ export const formLoad = (controls) => ({ type: 'FORM_LOAD', controls });
 export const deleteControl = (controlIds) => ({ type: 'DELETE_CONTROL', controlIds });
 
 export const formDefVersionUpdate = (version) => ({ type: 'FORM_DEFINITION_VERSION_UPDATE', version });
+export const setAllowedDomains = (domains) => ({ type: 'SET_ALLOWED_DOMAINS', domains });

@@ -10,8 +10,9 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import formHelper from '../helpers/formHelper';
+import { fetchAllowedDomains } from '../helpers/hyperlinkValidationHelper';
 import { connect } from 'react-redux';
-import { setDefaultLocale } from '../actions/control';
+import { setDefaultLocale, setAllowedDomains } from '../actions/control';
 import { saveFormNameTranslations, saveTranslations } from 'common/apis/formTranslationApi';
 
 
@@ -26,6 +27,9 @@ export class FormBuilderContainer extends Component {
   componentDidMount() {
     this.getFormData().then(() => {
       this.getDefaultLocale();
+    });
+    fetchAllowedDomains().then((allowedDomains) => {
+      this.props.dispatch(setAllowedDomains(allowedDomains));
     });
   }
 
@@ -153,9 +157,7 @@ export class FormBuilderContainer extends Component {
         });
         self.saveTranslations(updatedTranslations, formNameTranslationsResource);
       })
-      .catch(() => {
-        this.setMessage('Error Importing Form', commonConstants.responseType.error);
-      });
+      .catch((error) => this.showErrors(error));
   }
 
   render() {
@@ -166,6 +168,7 @@ export class FormBuilderContainer extends Component {
           notification={this.state.notification}
         />
         <FormBuilder
+          allowedDomains={this.props.allowedDomains}
           data={this.state.data}
           dispatch={this.props.dispatch}
           match={this.props.match}
@@ -195,4 +198,10 @@ FormBuilderContainer.propTypes = {
   routes: PropTypes.array,
 };
 
-export default connect()(FormBuilderContainer);
+function mapStateToProps(state) {
+  return {
+    allowedDomains: state.formDetails && state.formDetails.allowedDomains,
+  };
+}
+
+export default connect(mapStateToProps)(FormBuilderContainer);
