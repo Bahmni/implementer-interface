@@ -26,18 +26,53 @@ export class ControlPropertiesContainer extends Component {
     this.filterOptions = this.filterOptions.bind(this);
   }
 
-  onSelect(concept) {
+onSelect(concept) {
     const conceptName = concept.name.name;
+
     httpInterceptor
       .get(new UrlHelper().getFullConceptRepresentation(conceptName))
       .then((data) => {
         const result = data.results[0];
-        result.display = result.name.name;
-        this.props.dispatch(selectSource(result, this.props.selectedControl.id));
+        
+        // Recursively replace fully specified names with short names for answers only
+        const setShortNames = (concept) => {
+            if (!concept) return concept;
+            
+            // Find and apply short name if it exists
+            const shortName = concept.names && 
+                concept.names.find(name => name.conceptNameType === 'SHORT');
+
+            if (shortName) {
+                if (concept.name) {
+                    concept.name = Object.assign({}, concept.name, {
+                        display: shortName.name
+                    });
+                }
+                if (concept.displayString) {
+                    concept.displayString = shortName.name;
+                }
+            }
+            
+            // Recursively process nested answers and set members
+            if (concept.answers && concept.answers.length) {
+                concept.answers = concept.answers.map(setShortNames);
+            }
+            if (concept.setMembers && concept.setMembers.length) {
+                concept.setMembers = concept.setMembers.map(setShortNames);
+            }
+            
+            return concept;
+        };
+        
+        // Process the result, but keep the parent's display as fully specified
+        const processedResult = setShortNames(result);
+        // Restore the parent's display to the fully specified name
+        processedResult.display = result.name.name;
+        
+        this.props.dispatch(selectSource(processedResult, this.props.selectedControl.id));
       })
       .catch((error) => this.setErrorMessage(error));
-  }
-
+}
   onPropertyUpdate(properties, id) {
     this.props.dispatch(setChangedProperty(properties, id));
   }
