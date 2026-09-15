@@ -42,4 +42,8 @@ export class UrlHelper {
     return '/openmrs/ws/rest/v1/bahmniie/form/getFormFromUuid?' +
         `formUuid=${formUuid}`;
   }
+
+  getFormPrivilegesFromUuidUrl(formUuid) {
+    return `${formBuilderConstants.getFormPrivilegesFromUuidUrl}?formUuid=${formUuid}`;
+  }
 }

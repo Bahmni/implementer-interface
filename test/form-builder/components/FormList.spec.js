@@ -15,6 +15,7 @@ import FormList from 'form-builder/components/FormList.jsx';
 import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from '../../../src/form-builder/constants';
+import { UrlHelper } from '../../../src/form-builder/helpers/UrlHelper';
 import { MemoryRouter } from 'react-router-dom';
 
 chai.use(chaiEnzyme());
@@ -118,9 +119,13 @@ describe('FormList', () => {
   });
 
   it('should call downloadFile when export be clicked', (done) => {
+    const privileges = [{ formId: 1, privilegeName: 'sample', editable: false, viewable: false }];
+    const formJson = { name: 'Vitals', version: '1' };
     const getStub = sinon.stub(httpInterceptor, 'get');
-    getStub.onFirstCall().returns(Promise.resolve({ name: 'Vitals', version: '1' }))
-      .onSecondCall(1).returns(Promise.resolve([]));
+    getStub.onFirstCall().returns(Promise.resolve(formJson))
+      .onSecondCall(1).returns(Promise.resolve([]))
+      .onThirdCall().returns(Promise.resolve(privileges));
+    const stringifySpy = sinon.spy(JSON, 'stringify');
 
     wrapper = shallow(<FormList data={data} />);
     const exportElement = getItem(0, 5).find('a[title="Export Form"]');
@@ -131,13 +136,23 @@ describe('FormList', () => {
     const formUrl = `${formBuilderConstants.formUrl}/someUuid-1?${params}`;
     const translationParams = 'formName=Vitals&formVersion=1.1&formUuid=someUuid-1';
     const translationUrl = `${formBuilderConstants.translationsUrl}?${translationParams}`;
+    const privilegesUrl = new UrlHelper().getFormPrivilegesFromUuidUrl('someUuid-1');
     setTimeout(() => {
-      sinon.assert.calledTwice(httpInterceptor.get);
+      sinon.assert.calledThrice(httpInterceptor.get);
       sinon.assert.callOrder(
         getStub.withArgs(formUrl),
-        getStub.withArgs(translationUrl)
+        getStub.withArgs(translationUrl),
+        getStub.withArgs(privilegesUrl)
       );
+      // JSON.stringify is called on the payload just before it's handed to fileDownload,
+      // so inspecting that call's argument verifies the actual downloaded content
+      // (rather than just that the privileges endpoint was called).
+      const stringifyCall = stringifySpy.getCalls()
+        .find((call) => call.args[0] && call.args[0].formJson);
+      expect(stringifyCall).not.to.eql(undefined);
+      expect(stringifyCall.args[0].formJson.privileges).to.deep.eql(privileges);
       getStub.restore();
+      stringifySpy.restore();
       done();
     }, 500);
   });

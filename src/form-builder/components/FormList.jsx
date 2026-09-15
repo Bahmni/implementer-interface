@@ -20,6 +20,7 @@ import { formBuilderConstants } from '../constants';
 import fileDownload from 'react-file-download';
 import NotificationContainer from 'common/Notification';
 import { commonConstants } from '../../common/constants';
+import { getFormPrivilegesFromUuid } from '../../common/apis/formPrivilegesApi';
 
 export default class FormList extends Component {
 
@@ -112,9 +113,18 @@ export default class FormList extends Component {
           `formName=${form.name}&formVersion=${form.version}&formUuid=${form.uuid}`;
         httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`)
           .then((translations) => {
-            const formData = { formJson, translations };
-            fileDownload(JSON.stringify(formData), `${fileName}.json`);
-            this.setMessage('Export Successfully', commonConstants.responseType.success);
+            getFormPrivilegesFromUuid(form.uuid)
+              .then((privileges) => {
+                const formData = {
+                  formJson: Object.assign({}, formJson, { privileges }),
+                  translations,
+                };
+                fileDownload(JSON.stringify(formData), `${fileName}.json`);
+                this.setMessage('Export Successfully', commonConstants.responseType.success);
+              })
+              .catch(() => {
+                this.setMessage('Export Failed', commonConstants.responseType.error);
+              });
           })
           .catch(() => {
             this.setMessage('Export Failed', commonConstants.responseType.error);
