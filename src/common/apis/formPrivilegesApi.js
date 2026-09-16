@@ -21,5 +21,5 @@ export function getFormPrivileges(formId, formVersion) {
 
 export function getFormPrivilegesFromUuid(formUuid) {
   return httpInterceptor.get(new UrlHelper()
-      .getFormPrivilegesFromUuidUrl(formUuid), 'text');
+      .getFormPrivilegesFromUuidUrl(formUuid));
 }

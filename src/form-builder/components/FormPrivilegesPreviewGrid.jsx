@@ -24,6 +24,7 @@ import sortBy from 'lodash/sortBy';
 import { formBuilderConstants } from 'form-builder/constants';
 import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
+import { getFormPrivilegesFromUuid } from 'common/apis/formPrivilegesApi';
 
 export default class FormPrivilegesPreviewGrid extends Component {
   constructor(props) {
@@ -47,8 +48,7 @@ export default class FormPrivilegesPreviewGrid extends Component {
     const initialPrivileges = [];
     const formUuid = this.props.formUuid;
 
-    const optionsUrl = `${formBuilderConstants.getFormPrivilegesFromUuidUrl}?formUuid=${formUuid}`;
-    httpInterceptor.get(optionsUrl)
+    getFormPrivilegesFromUuid(formUuid)
         .then((initialPrivilegesFromDB) => {
           initialPrivilegesFromDB.forEach((privilege, key) => {
             initialPrivileges.push(privilege);
