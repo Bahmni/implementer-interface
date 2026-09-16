@@ -15,6 +15,7 @@ import FormList from 'form-builder/components/FormList.jsx';
 import sinon from 'sinon';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from '../../../src/form-builder/constants';
+import { commonConstants } from '../../../src/common/constants';
 import { UrlHelper } from '../../../src/form-builder/helpers/UrlHelper';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -156,6 +157,32 @@ describe('FormList', () => {
       done();
     }, 500);
   });
+
+  it('should show export failed and not download the file when fetching privileges fails',
+    (done) => {
+      const formJson = { name: 'Vitals', version: '1' };
+      const getStub = sinon.stub(httpInterceptor, 'get');
+      getStub.onFirstCall().returns(Promise.resolve(formJson))
+        .onSecondCall(1).returns(Promise.resolve([]))
+        .onThirdCall().returns(Promise.reject(new Error('privileges fetch failed')));
+      const stringifySpy = sinon.spy(JSON, 'stringify');
+
+      wrapper = shallow(<FormList data={data} />);
+      const messageSpy = sinon.spy(wrapper.instance(), 'setMessage');
+      const exportElement = getItem(0, 5).find('a[title="Export Form"]');
+      exportElement.simulate('click');
+
+      setTimeout(() => {
+        sinon.assert.calledThrice(httpInterceptor.get);
+        sinon.assert.calledWith(messageSpy, 'Export Failed', commonConstants.responseType.error);
+        const stringifyCall = stringifySpy.getCalls()
+          .find((call) => call.args[0] && call.args[0].formJson);
+        expect(stringifyCall).to.eql(undefined);
+        getStub.restore();
+        stringifySpy.restore();
+        done();
+      }, 500);
+    });
 
   it('should render notification container', () => {
     wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);

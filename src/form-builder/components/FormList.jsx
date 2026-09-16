@@ -111,20 +111,18 @@ export default class FormList extends Component {
       .then((formJson) => {
         const translationParams =
           `formName=${form.name}&formVersion=${form.version}&formUuid=${form.uuid}`;
-        httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`)
-          .then((translations) => {
-            getFormPrivilegesFromUuid(form.uuid)
-              .then((privileges) => {
-                const formData = {
-                  formJson: Object.assign({}, formJson, { privileges }),
-                  translations,
-                };
-                fileDownload(JSON.stringify(formData), `${fileName}.json`);
-                this.setMessage('Export Successfully', commonConstants.responseType.success);
-              })
-              .catch(() => {
-                this.setMessage('Export Failed', commonConstants.responseType.error);
-              });
+        const translationsPromise =
+          httpInterceptor.get(`${formBuilderConstants.translationsUrl}?${translationParams}`);
+        const privilegesPromise = getFormPrivilegesFromUuid(form.uuid);
+
+        Promise.all([translationsPromise, privilegesPromise])
+          .then(([translations, privileges]) => {
+            const formData = {
+              formJson: Object.assign({}, formJson, { privileges }),
+              translations,
+            };
+            fileDownload(JSON.stringify(formData), `${fileName}.json`);
+            this.setMessage('Export Successfully', commonConstants.responseType.success);
           })
           .catch(() => {
             this.setMessage('Export Failed', commonConstants.responseType.error);
