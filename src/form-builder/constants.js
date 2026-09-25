@@ -9,7 +9,7 @@
 
 export const formBuilderConstants = {
   conceptUrl: '/openmrs/ws/rest/v1/concept',
-  conceptRepresentation: 'custom:(uuid,set,display,allowDecimal,name:(uuid,name),' +
+  conceptRepresentation: 'custom:(uuid,set,display,allowDecimal,name:(uuid,name),names:(uuid,name,conceptNameType),' +
   'conceptClass:(uuid,name),datatype:(uuid,name),answers,handler,hiNormal,lowNormal,' +
   'hiAbsolute,lowAbsolute,units,setMembers:(uuid,set,display,allowDecimal,name:(uuid,name),' +
   'conceptClass:(uuid,name),datatype:(uuid,name),' +
