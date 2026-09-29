@@ -26,6 +26,7 @@ import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
+import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
 
 export default class FormBuilder extends Component {
 
@@ -238,6 +239,7 @@ export default class FormBuilder extends Component {
     const formName = formJson.name;
     const value = JSON.parse(formJson.resources[0].value);
     const nameTranslations = formJson.resources[1] && formJson.resources[1].value;
+    const privileges = formJson.privileges || [];
     const form = {
       name: formName,
       version: '1',
@@ -256,7 +258,9 @@ export default class FormBuilder extends Component {
           });
           self.updateImportErrors(fileName, message);
         } else {
-          self.formJSONs.push({ form, value, formName, translations, nameTranslations });
+          self.formJSONs.push({
+            form, value, formName, translations, nameTranslations, privileges,
+          });
         }
       });
     }
@@ -288,16 +292,30 @@ export default class FormBuilder extends Component {
     const self = this;
     const importFormJsonPromises = [];
     formJsons.forEach(formJson => {
-      const { form, value, formName, translations, nameTranslations } = formJson;
+      const { form, value, formName, translations, nameTranslations, privileges } = formJson;
       importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations,
-        nameTranslations));
+        nameTranslations, privileges));
     });
     Promise.all(importFormJsonPromises)
       .then(() => self.hideLoader())
       .catch(() => self.hideLoader());
   }
 
-  saveFormJson(form, value, formName, translations, nameTranslations) {
+  saveImportedFormPrivileges(formId, formVersion, privileges) {
+    if (!privileges || privileges.length === 0) {
+      return;
+    }
+    const formPrivileges = privileges.map((privilege) => ({
+      formId,
+      formVersion,
+      privilegeName: privilege.privilegeName,
+      editable: privilege.editable,
+      viewable: privilege.viewable,
+    }));
+    saveFormPrivileges(formPrivileges);
+  }
+
+  saveFormJson(form, value, formName, translations, nameTranslations, privileges) {
     const self = this;
     const val = value;
     const hyperlinkErrors = validateFormHyperlinks(val, this.props.allowedDomains || []);
@@ -307,7 +325,9 @@ export default class FormBuilder extends Component {
       );
       return Promise.resolve();
     }
-    return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
+    const createParams = 'v=custom:(id,uuid,name,version,published)';
+    const createUrl = `${formBuilderConstants.formUrl}?${createParams}`;
+    return httpInterceptor.post(createUrl, form).then((response) => {
       val.uuid = response.uuid;
       const formResource = {
         form: {
@@ -329,6 +349,7 @@ export default class FormBuilder extends Component {
         Object.assign({}, eachTranslation, { formUuid: response.uuid }));
       self.props.saveFormResource(formResource, translationsWithFormUuid,
         formNameTranslationsResource);
+      self.saveImportedFormPrivileges(response.id, response.version, privileges);
     })
       .catch(() => {
         const formUuid = self.getFormUuid(formName);
@@ -355,6 +376,7 @@ export default class FormBuilder extends Component {
             uuid: '',
           };
           self.props.saveFormResource(formResource, translations, formNameTranslationsResource);
+          self.saveImportedFormPrivileges(data.id, data.version, privileges);
         });
       });
   }

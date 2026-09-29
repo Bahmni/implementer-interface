@@ -21,6 +21,7 @@ import jsonpath from 'jsonpath/jsonpath';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { MemoryRouter } from 'react-router-dom';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
+import { formBuilderConstants } from 'form-builder/constants';
 
 
 chai.use(chaiEnzyme());
@@ -425,6 +426,64 @@ describe('Import form', () => {
       expect(thirdArgumentOfSaveFormResource.form.uuid).to.eq('new_uuid');
       expect(thirdArgumentOfSaveFormResource.value)
         .to.eq('{"display":"1_EN_Name", "locale": "en"}');
+      done();
+    }, 500);
+  });
+
+  it('should save imported form privileges against the newly created form', (done) => {
+    const formBuilderInstance = wrapper.find('FormBuilder').instance();
+    const privileges = [
+      { privilegeName: 'sample', editable: true, viewable: false },
+    ];
+    const formJson = {
+      form: { name: 'Vitals', version: '1', published: false },
+      value: { name: 'Vitals', controls: [] },
+      formName: 'Vitals',
+      translations: [],
+      nameTranslations: undefined,
+      privileges,
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake((url) => {
+      if (url === formBuilderConstants.saveFormPrivilegesUrl) {
+        return Promise.resolve();
+      }
+      return Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' }));
+    });
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).not.to.eql(undefined);
+      expect(privilegesCall.args[1]).to.deep.eql([
+        {
+          formId: data[0].id,
+          formVersion: data[0].version,
+          privilegeName: 'sample',
+          editable: true,
+          viewable: false,
+        },
+      ]);
+      done();
+    }, 500);
+  });
+
+  it('should not call saveFormPrivileges when the imported form has no privileges', (done) => {
+    const formBuilderInstance = wrapper.find('FormBuilder').instance();
+    const formJson = {
+      form: { name: 'Vitals', version: '1', published: false },
+      value: { name: 'Vitals', controls: [] },
+      formName: 'Vitals',
+      translations: [],
+      nameTranslations: undefined,
+      privileges: [],
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake(() =>
+      Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' })));
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).to.eql(undefined);
       done();
     }, 500);
   });
