@@ -26,7 +26,7 @@ import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
-import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
+import { saveFormPrivileges, getFormPrivilegesFromUuid } from 'common/apis/formPrivilegesApi';
 
 export default class FormBuilder extends Component {
 
@@ -474,7 +474,6 @@ export default class FormBuilder extends Component {
       return;
     }
     const zip = new JSZip();
-    let fileName;
     let params = '';
     const uuids = this.state.selectedForms;
     uuids.forEach((uuid, index) => {
@@ -488,19 +487,27 @@ export default class FormBuilder extends Component {
                   commonConstants.responseType.error);
             }
             const formData = exportResponse.bahmniFormDataList;
-            formData.forEach(form => {
-              fileName = `${form.formJson.name}_${form.formJson.version}`;
-              zip.file(`${fileName}.json`, JSON.stringify(form));
-            });
-            if (formData.length > 0) {
-              zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
-                saveAs(content, commonConstants.exportFileName);
+            const privilegesPromises = formData.map((form) =>
+              getFormPrivilegesFromUuid(form.formJson.uuid));
+            return Promise.all(privilegesPromises).then((privilegesList) => {
+              formData.forEach((form, index) => {
+                const fileName = `${form.formJson.name}_${form.formJson.version}`;
+                const formWithPrivileges = Object.assign({}, form, {
+                  formJson: Object.assign({}, form.formJson,
+                    { privileges: privilegesList[index] }),
+                });
+                zip.file(`${fileName}.json`, JSON.stringify(formWithPrivileges));
               });
-              if (exportResponse.errorFormList.length === 0) {
-                this.setMessage(commonConstants.exportFormsSuccessMessage,
-                  commonConstants.responseType.success);
+              if (formData.length > 0) {
+                zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
+                  saveAs(content, commonConstants.exportFileName);
+                });
+                if (exportResponse.errorFormList.length === 0) {
+                  this.setMessage(commonConstants.exportFormsSuccessMessage,
+                    commonConstants.responseType.success);
+                }
               }
-            }
+            });
           })
     .catch(() => {
       this.setMessage('Export failed', commonConstants.responseType.error);

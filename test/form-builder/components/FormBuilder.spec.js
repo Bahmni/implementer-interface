@@ -583,6 +583,32 @@ describe('Export Forms', () => {
       done();
     }, 50);
   });
+
+  it('should include privileges when exporting multiple forms', (done) => {
+    if (JSZip.prototype.file.restore !== undefined) {
+      JSZip.prototype.file.restore();
+    }
+    const spyZipFile = sinon.spy(JSZip.prototype, 'file');
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    const privileges = [{ formId: 1, privilegeName: 'sample', editable: true, viewable: false }];
+    exportResponse = {
+      bahmniFormDataList: [{ formJson: { name: 'Form', version: '1', uuid: 'uuid1' } }],
+      errorFormList: [],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    mockHttp.get
+      .withArgs('/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid?formUuid=uuid1')
+      .returns(Promise.resolve(privileges));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      sinon.assert.calledOnce(spyZipFile);
+      const zippedContent = JSON.parse(spyZipFile.getCall(0).args[1]);
+      expect(zippedContent.formJson.privileges).to.deep.eql(privileges);
+      spyZipFile.restore();
+      done();
+    }, 50);
+  });
 });
 
 describe('Import Multiple Forms', () => {
