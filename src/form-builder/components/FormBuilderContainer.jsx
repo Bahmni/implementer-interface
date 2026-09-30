@@ -48,8 +48,8 @@ export class FormBuilderContainer extends Component {
   }
 
   getFormData() {
-    let initialForms = [];
-    let forms = [];
+    const initialForms = [];
+    const forms = [];
     const queryParams = '?=';
     const fetchFormsUrl = `${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`;
     return httpInterceptor.get(fetchFormsUrl)
