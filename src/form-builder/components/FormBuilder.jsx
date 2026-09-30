@@ -63,7 +63,8 @@ export default class FormBuilder extends Component {
     const version = this.getFormVersion(formName);
     let uuid = '';
     this.props.data.forEach(form => {
-      if (form.name === formName && form.version === version) {
+      // eslint-disable-next-line
+      if (form.name === formName && parseInt(form.version) === version) {
         uuid = form.uuid;
       }
     });
@@ -347,9 +348,16 @@ export default class FormBuilder extends Component {
       };
       const translationsWithFormUuid = translations.map((eachTranslation) =>
         Object.assign({}, eachTranslation, { formUuid: response.uuid }));
-      self.props.saveFormResource(formResource, translationsWithFormUuid,
-        formNameTranslationsResource);
-      self.saveImportedFormPrivileges(response.id, response.version, privileges);
+      return self.props.saveFormResource(formResource, translationsWithFormUuid,
+        formNameTranslationsResource)
+        .then((savedForm) => {
+          self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges);
+        })
+        .catch(() => {
+          self.props.onValidationError(
+            `Import failed for form "${formName}": could not save form content`
+          );
+        });
     })
       .catch(() => {
         const formUuid = self.getFormUuid(formName);
@@ -375,8 +383,16 @@ export default class FormBuilder extends Component {
             value: nameTranslations,
             uuid: '',
           };
-          self.props.saveFormResource(formResource, translations, formNameTranslationsResource);
-          self.saveImportedFormPrivileges(data.id, data.version, privileges);
+          return self.props
+            .saveFormResource(formResource, translations, formNameTranslationsResource)
+            .then((savedForm) => {
+              self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges);
+            });
+        })
+        .catch(() => {
+          self.props.onValidationError(
+            `Import failed for form "${formName}": could not resolve the existing form`
+          );
         });
       });
   }

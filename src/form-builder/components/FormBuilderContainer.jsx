@@ -156,7 +156,7 @@ export class FormBuilderContainer extends Component {
   saveFormResource(formJson, formTranslations, formNameTranslationsResource) {
     const self = this;
     self.setMessage('Importing Form...', commonConstants.responseType.success);
-    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+    return httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then((form) => {
         const updatedTranslations = map(formTranslations, (translation) => {
           const formTranslation = translation;
@@ -165,8 +165,12 @@ export class FormBuilderContainer extends Component {
           return formTranslation;
         });
         self.saveTranslations(updatedTranslations, formNameTranslationsResource);
+        return form.form;
       })
-      .catch((error) => this.showErrors(error));
+      .catch((error) => {
+        this.showErrors(error);
+        throw error;
+      });
   }
 
   render() {

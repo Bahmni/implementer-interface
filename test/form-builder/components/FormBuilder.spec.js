@@ -103,7 +103,8 @@ describe('Import form', () => {
   let wrapper;
   let breadcrumbsStub;
   const saveFormSpy = sinon.spy();
-  const saveFormResourceSpy = sinon.spy();
+  const saveFormResourceSpy = sinon.spy(() =>
+    Promise.resolve({ id: 201, uuid: 'new_uuid', version: 1 }));
   const dispatchSpy = sinon.spy();
   const file = [
     {
