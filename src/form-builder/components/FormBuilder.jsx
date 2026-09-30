@@ -298,7 +298,12 @@ export default class FormBuilder extends Component {
         nameTranslations, privileges));
     });
     Promise.all(importFormJsonPromises)
-      .then(() => self.hideLoader())
+      .then(() => {
+        if (self.props.onImportComplete) {
+          self.props.onImportComplete();
+        }
+        self.hideLoader();
+      })
       .catch(() => self.hideLoader());
   }
 
@@ -574,6 +579,7 @@ FormBuilder.propTypes = {
     isExact: PropTypes.bool.isRequired,
     params: PropTypes.object,
   }),
+  onImportComplete: PropTypes.func,
   onValidationError: PropTypes.func,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,

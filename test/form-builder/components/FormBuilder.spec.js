@@ -488,6 +488,30 @@ describe('Import form', () => {
       done();
     }, 500);
   });
+
+  it('should call onImportComplete once after all forms in the batch are imported', (done) => {
+    const onImportCompleteSpy = sinon.spy();
+    const localWrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}
+      routes={routes} saveForm={saveFormSpy} saveFormResource={saveFormResourceSpy}
+      onImportComplete={onImportCompleteSpy}
+    /></MemoryRouter>);
+    const formBuilderInstance = localWrapper.find('FormBuilder').instance();
+    const formJsons = ['Vitals1', 'Vitals2'].map((name) => ({
+      form: { name, version: '1', published: false },
+      value: { name, controls: [] },
+      formName: name,
+      translations: [],
+      nameTranslations: undefined,
+      privileges: [],
+    }));
+    sinon.stub(httpInterceptor, 'post').callsFake(() =>
+      Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' })));
+    formBuilderInstance.importValidForms(formJsons);
+    setTimeout(() => {
+      sinon.assert.calledOnce(onImportCompleteSpy);
+      done();
+    }, 500);
+  });
 });
 
 describe('Export Forms', () => {

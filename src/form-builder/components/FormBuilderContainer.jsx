@@ -185,6 +185,7 @@ export class FormBuilderContainer extends Component {
           data={this.state.data}
           dispatch={this.props.dispatch}
           match={this.props.match}
+          onImportComplete={() => this.getFormData()}
           onValidationError={(messages) => this.onValidationError(messages)}
           routes={this.props.routes}
           saveForm={(formName) => this.saveForm(formName)}
