@@ -484,7 +484,7 @@ export default class FormBuilder extends Component {
             }
             const formData = exportResponse.bahmniFormDataList;
             const privilegesPromises = formData.map((form) =>
-              getFormPrivilegesFromUuid(form.formJson.uuid));
+              getFormPrivilegesFromUuid(form.formJson.uuid).catch(() => []));
             return Promise.all(privilegesPromises).then((privilegesList) => {
               formData.forEach((form, index) => {
                 const fileName = `${form.formJson.name}_${form.formJson.version}`;
