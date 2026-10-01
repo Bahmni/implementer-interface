@@ -309,7 +309,7 @@ export default class FormBuilder extends Component {
 
   saveImportedFormPrivileges(formId, formVersion, privileges) {
     if (!privileges || privileges.length === 0) {
-      return;
+      return Promise.resolve();
     }
     const formPrivileges = privileges.map((privilege) => ({
       formId,
@@ -318,7 +318,7 @@ export default class FormBuilder extends Component {
       editable: privilege.editable,
       viewable: privilege.viewable,
     }));
-    saveFormPrivileges(formPrivileges);
+    return saveFormPrivileges(formPrivileges);
   }
 
   saveFormJson(form, value, formName, translations, nameTranslations, privileges) {
@@ -355,9 +355,8 @@ export default class FormBuilder extends Component {
         Object.assign({}, eachTranslation, { formUuid: response.uuid }));
       return self.props.saveFormResource(formResource, translationsWithFormUuid,
         formNameTranslationsResource)
-        .then((savedForm) => {
-          self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges);
-        })
+        .then((savedForm) =>
+          self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges))
         .catch(() => {
           self.props.onValidationError(
             `Import failed for form "${formName}": could not save form content`
@@ -390,9 +389,8 @@ export default class FormBuilder extends Component {
           };
           return self.props
             .saveFormResource(formResource, translations, formNameTranslationsResource)
-            .then((savedForm) => {
-              self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges);
-            });
+            .then((savedForm) =>
+              self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges));
         })
         .catch(() => {
           self.props.onValidationError(
