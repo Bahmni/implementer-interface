@@ -166,10 +166,6 @@ export class FormBuilderContainer extends Component {
         });
         self.saveTranslations(updatedTranslations, formNameTranslationsResource);
         return form.form;
-      })
-      .catch((error) => {
-        this.showErrors(error);
-        throw error;
       });
   }
 
