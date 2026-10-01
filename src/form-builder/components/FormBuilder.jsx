@@ -26,7 +26,9 @@ import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
-import { saveFormPrivileges, getFormPrivilegesFromUuid } from 'common/apis/formPrivilegesApi';
+import {
+  saveFormPrivileges, getFormPrivilegesFromUuid, buildFormPrivilegesPayload,
+} from 'common/apis/formPrivilegesApi';
 
 export default class FormBuilder extends Component {
 
@@ -311,14 +313,7 @@ export default class FormBuilder extends Component {
     if (!privileges || privileges.length === 0) {
       return Promise.resolve();
     }
-    const formPrivileges = privileges.map((privilege) => ({
-      formId,
-      formVersion,
-      privilegeName: privilege.privilegeName,
-      editable: privilege.editable,
-      viewable: privilege.viewable,
-    }));
-    return saveFormPrivileges(formPrivileges);
+    return saveFormPrivileges(buildFormPrivilegesPayload(formId, formVersion, privileges));
   }
 
   saveFormJson(form, value, formName, translations, nameTranslations, privileges) {
