@@ -652,6 +652,9 @@ describe('Export Forms', () => {
     };
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
         .returns(Promise.resolve(exportResponse));
+    mockHttp.get
+      .withArgs('/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid?formUuid=undefined')
+      .returns(Promise.resolve([]));
     wrapper.instance().exportForms();
     setTimeout(() => {
       sinon.assert.calledTwice(spyZipFile);
