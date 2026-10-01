@@ -489,6 +489,58 @@ describe('Import form', () => {
     }, 500);
   });
 
+  it('should save privileges and wait for completion on the "form already exists" ' +
+    'fallback path', (done) => {
+    const callOrder = [];
+    const onImportCompleteSpy = sinon.spy(() => callOrder.push('onImportComplete'));
+    const fallbackSaveFormResourceSpy = sinon.spy(() =>
+      Promise.resolve({ id: 301, uuid: 'existing_form_uuid', version: 2 }));
+    const localWrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}
+      routes={routes} saveForm={saveFormSpy} saveFormResource={fallbackSaveFormResourceSpy}
+      onImportComplete={onImportCompleteSpy}
+    /></MemoryRouter>);
+    const formBuilderInstance = localWrapper.find('FormBuilder').instance();
+    const privileges = [
+      { privilegeName: 'sample', editable: true, viewable: false },
+    ];
+    const formJson = {
+      form: { name: '1', version: '1', published: false },
+      value: { name: '1', controls: [] },
+      formName: '1',
+      translations: [],
+      nameTranslations: undefined,
+      privileges,
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake((url) => {
+      if (url === formBuilderConstants.saveFormPrivilegesUrl) {
+        callOrder.push('privileges');
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error('form already exists'));
+    });
+    sinon.stub(httpInterceptor, 'get').callsFake(() =>
+      Promise.resolve({ resources: [{ uuid: 'resource_uuid' }] }));
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      sinon.assert.calledOnce(fallbackSaveFormResourceSpy);
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).not.to.eql(undefined);
+      expect(privilegesCall.args[1]).to.deep.eql([
+        {
+          formId: 301,
+          formVersion: 2,
+          privilegeName: 'sample',
+          editable: true,
+          viewable: false,
+        },
+      ]);
+      sinon.assert.calledOnce(onImportCompleteSpy);
+      expect(callOrder).to.eql(['privileges', 'onImportComplete']);
+      done();
+    }, 500);
+  });
+
   it('should call onImportComplete once after all forms in the batch are imported', (done) => {
     const onImportCompleteSpy = sinon.spy();
     const localWrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}

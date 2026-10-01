@@ -369,7 +369,7 @@ export default class FormBuilder extends Component {
         const params =
         'v=custom:(id,uuid,name,version,published,auditInfo,' +
         'resources:(value,dataType,uuid))';
-        httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+        return httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
         .then((data) => {
           const formResource = {
             form: {
