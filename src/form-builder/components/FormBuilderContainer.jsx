@@ -48,8 +48,8 @@ export class FormBuilderContainer extends Component {
   }
 
   getFormData() {
-    let initialForms = [];
-    let forms = [];
+    const initialForms = [];
+    const forms = [];
     const queryParams = '?=';
     const fetchFormsUrl = `${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`;
     return httpInterceptor.get(fetchFormsUrl)
@@ -156,7 +156,7 @@ export class FormBuilderContainer extends Component {
   saveFormResource(formJson, formTranslations, formNameTranslationsResource) {
     const self = this;
     self.setMessage('Importing Form...', commonConstants.responseType.success);
-    httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+    return httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
       .then((form) => {
         const updatedTranslations = map(formTranslations, (translation) => {
           const formTranslation = translation;
@@ -165,8 +165,8 @@ export class FormBuilderContainer extends Component {
           return formTranslation;
         });
         self.saveTranslations(updatedTranslations, formNameTranslationsResource);
-      })
-      .catch((error) => this.showErrors(error));
+        return form.form;
+      });
   }
 
   render() {
@@ -181,6 +181,7 @@ export class FormBuilderContainer extends Component {
           data={this.state.data}
           dispatch={this.props.dispatch}
           match={this.props.match}
+          onImportComplete={() => this.getFormData()}
           onValidationError={(messages) => this.onValidationError(messages)}
           routes={this.props.routes}
           saveForm={(formName) => this.saveForm(formName)}

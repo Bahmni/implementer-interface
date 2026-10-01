@@ -14,6 +14,15 @@ import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 export function saveFormPrivileges(formPrivileges) {
   return httpInterceptor.post(formBuilderConstants.saveFormPrivilegesUrl, formPrivileges);
 }
+export function buildFormPrivilegesPayload(formId, formVersion, formPrivileges) {
+  return formPrivileges.map((privilege) => ({
+    formId,
+    formVersion,
+    privilegeName: privilege.privilegeName,
+    editable: privilege.editable,
+    viewable: privilege.viewable,
+  }));
+}
 export function getFormPrivileges(formId, formVersion) {
   return httpInterceptor.get(new UrlHelper()
       .getFormPrivilegesUrl(formId, formVersion), 'text');

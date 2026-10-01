@@ -44,7 +44,7 @@ import {
 } from 'common/apis/formTranslationApi';
 import FormPreviewModal from 'form-builder/components/FormPreviewModal.jsx';
 import Popup from 'reactjs-popup';
-import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
+import { saveFormPrivileges, buildFormPrivilegesPayload } from 'common/apis/formPrivilegesApi';
 import { validateFormHyperlinks, fetchAllowedDomains } from 'form-builder/helpers/hyperlinkValidationHelper';
 
 export class FormDetailContainer extends Component {
@@ -227,9 +227,8 @@ export class FormDetailContainer extends Component {
     });
   }
   _saveFormPrivileges(formId, formVersion) {
-    let formVersionTemp = formVersion;
     saveFormPrivileges(
-      this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
+      buildFormPrivilegesPayload(formId, formVersion, this.state.formPrivileges)
     )
       .then(() => {
         const message = 'Form Privileges saved successfully';
@@ -240,22 +239,6 @@ export class FormDetailContainer extends Component {
         this.setErrorMessage('Failed to save Privileges');
         this.setState({ loading: false });
       });
-  }
-
-  _createReqObject(formId, formVersion, formPrivileges) {
-    const formPrivilegeObj = [];
-    for (let i = 0; i < formPrivileges.length; i++) {
-      const privilege = formPrivileges[i];
-      const privilegeCopy = {
-        formId,
-        privilegeName: privilege.privilegeName,
-        editable: privilege.editable,
-        viewable: privilege.viewable,
-        formVersion,
-      };
-      formPrivilegeObj.push(privilegeCopy);
-    }
-    return formPrivilegeObj;
   }
 
   onPublish() {

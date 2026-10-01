@@ -21,6 +21,7 @@ import jsonpath from 'jsonpath/jsonpath';
 import * as FormBuilderBreadcrumbs from 'form-builder/components/FormBuilderBreadcrumbs.jsx';
 import { MemoryRouter } from 'react-router-dom';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
+import { formBuilderConstants } from 'form-builder/constants';
 
 
 chai.use(chaiEnzyme());
@@ -102,7 +103,8 @@ describe('Import form', () => {
   let wrapper;
   let breadcrumbsStub;
   const saveFormSpy = sinon.spy();
-  const saveFormResourceSpy = sinon.spy();
+  const saveFormResourceSpy = sinon.spy(() =>
+    Promise.resolve({ id: 201, uuid: 'new_uuid', version: 1 }));
   const dispatchSpy = sinon.spy();
   const file = [
     {
@@ -428,6 +430,140 @@ describe('Import form', () => {
       done();
     }, 500);
   });
+
+  it('should save imported form privileges against the newly created form', (done) => {
+    const formBuilderInstance = wrapper.find('FormBuilder').instance();
+    const privileges = [
+      { privilegeName: 'sample', editable: true, viewable: false },
+    ];
+    const formJson = {
+      form: { name: 'Vitals', version: '1', published: false },
+      value: { name: 'Vitals', controls: [] },
+      formName: 'Vitals',
+      translations: [],
+      nameTranslations: undefined,
+      privileges,
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake((url) => {
+      if (url === formBuilderConstants.saveFormPrivilegesUrl) {
+        return Promise.resolve();
+      }
+      return Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' }));
+    });
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).not.to.eql(undefined);
+      expect(privilegesCall.args[1]).to.deep.eql([
+        {
+          formId: data[0].id,
+          formVersion: data[0].version,
+          privilegeName: 'sample',
+          editable: true,
+          viewable: false,
+        },
+      ]);
+      done();
+    }, 500);
+  });
+
+  it('should not call saveFormPrivileges when the imported form has no privileges', (done) => {
+    const formBuilderInstance = wrapper.find('FormBuilder').instance();
+    const formJson = {
+      form: { name: 'Vitals', version: '1', published: false },
+      value: { name: 'Vitals', controls: [] },
+      formName: 'Vitals',
+      translations: [],
+      nameTranslations: undefined,
+      privileges: [],
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake(() =>
+      Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' })));
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).to.eql(undefined);
+      done();
+    }, 500);
+  });
+
+  it('should save privileges and wait for completion on the "form already exists" ' +
+    'fallback path', (done) => {
+    const callOrder = [];
+    const onImportCompleteSpy = sinon.spy(() => callOrder.push('onImportComplete'));
+    const fallbackSaveFormResourceSpy = sinon.spy(() =>
+      Promise.resolve({ id: 301, uuid: 'existing_form_uuid', version: 2 }));
+    const localWrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}
+      routes={routes} saveForm={saveFormSpy} saveFormResource={fallbackSaveFormResourceSpy}
+      onImportComplete={onImportCompleteSpy}
+    /></MemoryRouter>);
+    const formBuilderInstance = localWrapper.find('FormBuilder').instance();
+    const privileges = [
+      { privilegeName: 'sample', editable: true, viewable: false },
+    ];
+    const formJson = {
+      form: { name: '1', version: '1', published: false },
+      value: { name: '1', controls: [] },
+      formName: '1',
+      translations: [],
+      nameTranslations: undefined,
+      privileges,
+    };
+    sinon.stub(httpInterceptor, 'post').callsFake((url) => {
+      if (url === formBuilderConstants.saveFormPrivilegesUrl) {
+        callOrder.push('privileges');
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error('form already exists'));
+    });
+    sinon.stub(httpInterceptor, 'get').callsFake(() =>
+      Promise.resolve({ resources: [{ uuid: 'resource_uuid' }] }));
+    formBuilderInstance.importValidForms([formJson]);
+    setTimeout(() => {
+      sinon.assert.calledOnce(fallbackSaveFormResourceSpy);
+      const privilegesCall = httpInterceptor.post.getCalls()
+        .find((call) => call.args[0] === formBuilderConstants.saveFormPrivilegesUrl);
+      expect(privilegesCall).not.to.eql(undefined);
+      expect(privilegesCall.args[1]).to.deep.eql([
+        {
+          formId: 301,
+          formVersion: 2,
+          privilegeName: 'sample',
+          editable: true,
+          viewable: false,
+        },
+      ]);
+      sinon.assert.calledOnce(onImportCompleteSpy);
+      expect(callOrder).to.eql(['privileges', 'onImportComplete']);
+      done();
+    }, 500);
+  });
+
+  it('should call onImportComplete once after all forms in the batch are imported', (done) => {
+    const onImportCompleteSpy = sinon.spy();
+    const localWrapper = mount(<MemoryRouter><FormBuilder data={data} dispatch={dispatchSpy}
+      routes={routes} saveForm={saveFormSpy} saveFormResource={saveFormResourceSpy}
+      onImportComplete={onImportCompleteSpy}
+    /></MemoryRouter>);
+    const formBuilderInstance = localWrapper.find('FormBuilder').instance();
+    const formJsons = ['Vitals1', 'Vitals2'].map((name) => ({
+      form: { name, version: '1', published: false },
+      value: { name, controls: [] },
+      formName: name,
+      translations: [],
+      nameTranslations: undefined,
+      privileges: [],
+    }));
+    sinon.stub(httpInterceptor, 'post').callsFake(() =>
+      Promise.resolve(Object.assign({}, data[0], { uuid: 'new_uuid' })));
+    formBuilderInstance.importValidForms(formJsons);
+    setTimeout(() => {
+      sinon.assert.calledOnce(onImportCompleteSpy);
+      done();
+    }, 500);
+  });
 });
 
 describe('Export Forms', () => {
@@ -516,10 +652,39 @@ describe('Export Forms', () => {
     };
     mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
         .returns(Promise.resolve(exportResponse));
+    mockHttp.get
+      .withArgs('/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid?formUuid=undefined')
+      .returns(Promise.resolve([]));
     wrapper.instance().exportForms();
     setTimeout(() => {
       sinon.assert.calledTwice(spyZipFile);
       expect(wrapper.find('NotificationContainer').prop('notification').type).to.eql('success');
+      done();
+    }, 50);
+  });
+
+  it('should include privileges when exporting multiple forms', (done) => {
+    if (JSZip.prototype.file.restore !== undefined) {
+      JSZip.prototype.file.restore();
+    }
+    const spyZipFile = sinon.spy(JSZip.prototype, 'file');
+    wrapper.instance().state.selectedForms = ['uuid1'];
+    const privileges = [{ formId: 1, privilegeName: 'sample', editable: true, viewable: false }];
+    exportResponse = {
+      bahmniFormDataList: [{ formJson: { name: 'Form', version: '1', uuid: 'uuid1' } }],
+      errorFormList: [],
+    };
+    mockHttp.get.withArgs('/openmrs/ws/rest/v1/bahmniie/form/export?uuid=uuid1')
+        .returns(Promise.resolve(exportResponse));
+    mockHttp.get
+      .withArgs('/openmrs/ws/rest/v1/bahmniie/form/getFormPrivilegesFromUuid?formUuid=uuid1')
+      .returns(Promise.resolve(privileges));
+    wrapper.instance().exportForms();
+    setTimeout(() => {
+      sinon.assert.calledOnce(spyZipFile);
+      const zippedContent = JSON.parse(spyZipFile.getCall(0).args[1]);
+      expect(zippedContent.formJson.privileges).to.deep.eql(privileges);
+      spyZipFile.restore();
       done();
     }, 50);
   });
