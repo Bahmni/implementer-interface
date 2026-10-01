@@ -326,9 +326,7 @@ export default class FormBuilder extends Component {
       );
       return Promise.resolve();
     }
-    const createParams = 'v=custom:(id,uuid,name,version,published)';
-    const createUrl = `${formBuilderConstants.formUrl}?${createParams}`;
-    return httpInterceptor.post(createUrl, form).then((response) => {
+    return httpInterceptor.post(formBuilderConstants.formUrl, form).then((response) => {
       val.uuid = response.uuid;
       const formResource = {
         form: {
