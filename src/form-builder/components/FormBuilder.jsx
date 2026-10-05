@@ -26,6 +26,9 @@ import { remove } from 'lodash';
 import Spinner from 'common/Spinner';
 import { formEventUpdate, saveEventUpdate } from 'form-builder/actions/control';
 import { validateFormHyperlinks } from 'form-builder/helpers/hyperlinkValidationHelper';
+import {
+  saveFormPrivileges, getFormPrivilegesFromUuid, buildFormPrivilegesPayload,
+} from 'common/apis/formPrivilegesApi';
 
 export default class FormBuilder extends Component {
 
@@ -62,7 +65,8 @@ export default class FormBuilder extends Component {
     const version = this.getFormVersion(formName);
     let uuid = '';
     this.props.data.forEach(form => {
-      if (form.name === formName && form.version === version) {
+      // eslint-disable-next-line
+      if (form.name === formName && parseInt(form.version) === version) {
         uuid = form.uuid;
       }
     });
@@ -238,6 +242,7 @@ export default class FormBuilder extends Component {
     const formName = formJson.name;
     const value = JSON.parse(formJson.resources[0].value);
     const nameTranslations = formJson.resources[1] && formJson.resources[1].value;
+    const privileges = formJson.privileges || [];
     const form = {
       name: formName,
       version: '1',
@@ -256,7 +261,9 @@ export default class FormBuilder extends Component {
           });
           self.updateImportErrors(fileName, message);
         } else {
-          self.formJSONs.push({ form, value, formName, translations, nameTranslations });
+          self.formJSONs.push({
+            form, value, formName, translations, nameTranslations, privileges,
+          });
         }
       });
     }
@@ -288,16 +295,28 @@ export default class FormBuilder extends Component {
     const self = this;
     const importFormJsonPromises = [];
     formJsons.forEach(formJson => {
-      const { form, value, formName, translations, nameTranslations } = formJson;
+      const { form, value, formName, translations, nameTranslations, privileges } = formJson;
       importFormJsonPromises.push(self.saveFormJson(form, value, formName, translations,
-        nameTranslations));
+        nameTranslations, privileges));
     });
     Promise.all(importFormJsonPromises)
-      .then(() => self.hideLoader())
+      .then(() => {
+        if (self.props.onImportComplete) {
+          self.props.onImportComplete();
+        }
+        self.hideLoader();
+      })
       .catch(() => self.hideLoader());
   }
 
-  saveFormJson(form, value, formName, translations, nameTranslations) {
+  saveImportedFormPrivileges(formId, formVersion, privileges) {
+    if (!privileges || privileges.length === 0) {
+      return Promise.resolve();
+    }
+    return saveFormPrivileges(buildFormPrivilegesPayload(formId, formVersion, privileges));
+  }
+
+  saveFormJson(form, value, formName, translations, nameTranslations, privileges) {
     const self = this;
     const val = value;
     const hyperlinkErrors = validateFormHyperlinks(val, this.props.allowedDomains || []);
@@ -327,8 +346,15 @@ export default class FormBuilder extends Component {
       };
       const translationsWithFormUuid = translations.map((eachTranslation) =>
         Object.assign({}, eachTranslation, { formUuid: response.uuid }));
-      self.props.saveFormResource(formResource, translationsWithFormUuid,
-        formNameTranslationsResource);
+      return self.props.saveFormResource(formResource, translationsWithFormUuid,
+        formNameTranslationsResource)
+        .then((savedForm) =>
+          self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges))
+        .catch(() => {
+          self.props.onValidationError(
+            `Import failed for form "${formName}": could not save form content`
+          );
+        });
     })
       .catch(() => {
         const formUuid = self.getFormUuid(formName);
@@ -336,7 +362,7 @@ export default class FormBuilder extends Component {
         const params =
         'v=custom:(id,uuid,name,version,published,auditInfo,' +
         'resources:(value,dataType,uuid))';
-        httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
+        return httpInterceptor.get(`${formBuilderConstants.formUrl}/${formUuid}?${params}`)
         .then((data) => {
           const formResource = {
             form: {
@@ -354,7 +380,15 @@ export default class FormBuilder extends Component {
             value: nameTranslations,
             uuid: '',
           };
-          self.props.saveFormResource(formResource, translations, formNameTranslationsResource);
+          return self.props
+            .saveFormResource(formResource, translations, formNameTranslationsResource)
+            .then((savedForm) =>
+              self.saveImportedFormPrivileges(savedForm.id, savedForm.version, privileges));
+        })
+        .catch(() => {
+          self.props.onValidationError(
+            `Import failed for form "${formName}": could not resolve the existing form`
+          );
         });
       });
   }
@@ -436,7 +470,6 @@ export default class FormBuilder extends Component {
       return;
     }
     const zip = new JSZip();
-    let fileName;
     let params = '';
     const uuids = this.state.selectedForms;
     uuids.forEach((uuid, index) => {
@@ -450,19 +483,27 @@ export default class FormBuilder extends Component {
                   commonConstants.responseType.error);
             }
             const formData = exportResponse.bahmniFormDataList;
-            formData.forEach(form => {
-              fileName = `${form.formJson.name}_${form.formJson.version}`;
-              zip.file(`${fileName}.json`, JSON.stringify(form));
-            });
-            if (formData.length > 0) {
-              zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
-                saveAs(content, commonConstants.exportFileName);
+            const privilegesPromises = formData.map((form) =>
+              getFormPrivilegesFromUuid(form.formJson.uuid).catch(() => []));
+            return Promise.all(privilegesPromises).then((privilegesList) => {
+              formData.forEach((form, index) => {
+                const fileName = `${form.formJson.name}_${form.formJson.version}`;
+                const formWithPrivileges = Object.assign({}, form, {
+                  formJson: Object.assign({}, form.formJson,
+                    { privileges: privilegesList[index] }),
+                });
+                zip.file(`${fileName}.json`, JSON.stringify(formWithPrivileges));
               });
-              if (exportResponse.errorFormList.length === 0) {
-                this.setMessage(commonConstants.exportFormsSuccessMessage,
-                  commonConstants.responseType.success);
+              if (formData.length > 0) {
+                zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then((content) => {
+                  saveAs(content, commonConstants.exportFileName);
+                });
+                if (exportResponse.errorFormList.length === 0) {
+                  this.setMessage(commonConstants.exportFormsSuccessMessage,
+                    commonConstants.responseType.success);
+                }
               }
-            }
+            });
           })
     .catch(() => {
       this.setMessage('Export failed', commonConstants.responseType.error);
@@ -529,6 +570,7 @@ FormBuilder.propTypes = {
     isExact: PropTypes.bool.isRequired,
     params: PropTypes.object,
   }),
+  onImportComplete: PropTypes.func,
   onValidationError: PropTypes.func,
   routes: PropTypes.array,
   saveForm: PropTypes.func.isRequired,
