@@ -18,6 +18,7 @@ import Spinner from 'common/Spinner';
 import get from 'lodash/get';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
+import { getNextPageUrl } from 'common/utils/paginationUtils';
 import formHelper from '../helpers/formHelper';
 import { fetchAllowedDomains } from '../helpers/hyperlinkValidationHelper';
 import { connect } from 'react-redux';
@@ -53,31 +54,29 @@ export class FormBuilderContainer extends Component {
     const queryParams = '?=';
     const fetchFormsUrl = `${formBuilderConstants.formUrl}?v=custom:(id,uuid,name,version,published,auditInfo)`;
     return httpInterceptor.get(fetchFormsUrl)
-      .then((initialForms) => {
-        this.collectAllForms(initialForms, forms);
-      })
+      .then((initialForms) => this.collectAllForms(initialForms, forms))
       .catch((error) => {
         this.showErrors(error);
         this.setState({ loading: false });
       });
   }
 
-  collectAllForms(initialForms, forms) {
+  collectAllForms(initialForms, forms, requestedUrls = []) {
     forms.push(...initialForms.results);
     if (forms.length === formBuilderConstants.dataLimit) {
       this.setState({ data: this.orderFormByVersion(forms), loading: false });
-      return;
+      return Promise.resolve();
     }
-    if (initialForms.links !== undefined && initialForms.links.length > 0 && initialForms.links.find(link => link.rel === 'next') !== undefined) {
-      httpInterceptor.get(initialForms.links[0].uri)
-        .then((privileges) => this.collectAllForms(privileges, forms))
-        .catch((error) => {
-          this.showErrors(error);
-          this.setState({ loading: false });
-        });
-    } else {
+    const nextUrl = getNextPageUrl(initialForms);
+    if (!nextUrl) {
       this.setState({ data: this.orderFormByVersion(forms), loading: false });
+      return Promise.resolve();
     }
+    if (requestedUrls.includes(nextUrl)) {
+      throw new Error('Unable to load all forms: repeated pagination link');
+    }
+    return httpInterceptor.get(nextUrl)
+      .then((nextForms) => this.collectAllForms(nextForms, forms, [...requestedUrls, nextUrl]));
   }
 
   getDefaultLocale() {
