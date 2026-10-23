@@ -12,7 +12,7 @@
 // Only the path and query of the `next` link are kept so that the request is made to the
 // current origin. Returns undefined when there is no next page and throws for an invalid link.
 export function getNextPageUrl(response) {
-  const links = (response && response.links) || [];
+  const links = Array.isArray(response && response.links) ? response.links : [];
   const nextLink = links.find((link) => link.rel === 'next');
   if (!nextLink) {
     return undefined;
@@ -26,7 +26,9 @@ export function getNextPageUrl(response) {
   } catch (e) {
     throw new Error(`Invalid pagination link: ${nextLink.uri}`);
   }
-  if (nextUrl.protocol !== 'http:' && nextUrl.protocol !== 'https:') {
+  // A path starting with two slashes would be read as a network-path reference to another host
+  if ((nextUrl.protocol !== 'http:' && nextUrl.protocol !== 'https:')
+    || /^[\\/]{2}/.test(nextUrl.pathname)) {
     throw new Error(`Invalid pagination link: ${nextLink.uri}`);
   }
   return `${nextUrl.pathname}${nextUrl.search}`;

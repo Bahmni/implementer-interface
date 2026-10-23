@@ -52,5 +52,18 @@ describe('paginationUtils', () => {
       expect(() => getNextPageUrl({ links: [{ rel: 'next', uri: 'ftp://localhost/openmrs' }] }))
         .to.throw('Invalid pagination');
     });
+
+    it('should throw for a next link whose path could resolve to another host', () => {
+      ['http://localhost//evil.com/a', 'http://localhost/\\evil.com/a', 'http://localhost///evil.com']
+        .forEach((uri) => {
+          expect(() => getNextPageUrl({ links: [{ rel: 'next', uri }] }))
+            .to.throw('Invalid pagination');
+        });
+    });
+
+    it('should ignore links that are not an array', () => {
+      expect(getNextPageUrl({ links: {} })).to.eql(undefined);
+      expect(getNextPageUrl({ links: 'next' })).to.eql(undefined);
+    });
   });
 });
