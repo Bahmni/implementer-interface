@@ -96,25 +96,31 @@ export default class FormPrivilegeTable extends Component {
     let privileges = [];
     const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
-    httpInterceptor.get(optionsUrl)
-      .then((initialPrivileges) => {
-        this.collectAllPrivileges(initialPrivileges, privileges);
+    return httpInterceptor.get(optionsUrl)
+      .then((initialPrivileges) => this.collectAllPrivileges(initialPrivileges, privileges))
+      .catch((error) => {
+        this.setErrorMessage((error && error.message) || 'Failed to load privileges');
+        this.setState({ loading: false });
       });
   }
 
-  collectAllPrivileges(initialPrivileges, allPrivileges) {
+  collectAllPrivileges(initialPrivileges, allPrivileges, requestedUrls = []) {
     allPrivileges.push(...initialPrivileges.results);
     if (allPrivileges.length === formBuilderConstants.dataLimit) {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
-      return;
+      return Promise.resolve();
     }
     const nextUri = getNextPageUrl(initialPrivileges);
-    if (nextUri) {
-      httpInterceptor.get(nextUri)
-        .then((privileges) => this.collectAllPrivileges(privileges, allPrivileges));
-    } else {
+    if (!nextUri) {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
+      return Promise.resolve();
     }
+    if (requestedUrls.includes(nextUri)) {
+      throw new Error('Unable to load all privileges: repeated pagination link');
+    }
+    return httpInterceptor.get(nextUri)
+      .then((privileges) =>
+        this.collectAllPrivileges(privileges, allPrivileges, [...requestedUrls, nextUri]));
   }
 
   fetchFormPrivilegesFromDB() {
