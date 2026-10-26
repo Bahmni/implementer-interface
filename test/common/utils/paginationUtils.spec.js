@@ -61,6 +61,28 @@ describe('paginationUtils', () => {
         });
     });
 
+    it('should keep only path and query of a protocol-relative link to another host', () => {
+      const uri = '//evil.example/openmrs/ws/rest/v1/form?limit=2&startIndex=2';
+      expect(getNextPageUrl({ links: [{ rel: 'next', uri }] }))
+        .to.eql('/openmrs/ws/rest/v1/form?limit=2&startIndex=2');
+    });
+
+    it('should throw for dot-segment and protocol-relative paths that normalise to //host', () => {
+      ['http://localhost/.//evil.com/a', 'http://localhost/a/..//evil.com/a']
+        .forEach((uri) => {
+          expect(() => getNextPageUrl({ links: [{ rel: 'next', uri }] }))
+            .to.throw('Invalid pagination');
+        });
+    });
+
+    it('should never return a value that resolves to another origin', () => {
+      ['http://other.example/openmrs/a?x=1', '//evil.example/a', '///evil.com/a', 'https://evil.example:8443/a?b=%2F%2F']
+        .forEach((uri) => {
+          const result = getNextPageUrl({ links: [{ rel: 'next', uri }] });
+          expect(new URL(result, window.location.origin).origin).to.eql(window.location.origin);
+        });
+    });
+
     it('should ignore links that are not an array', () => {
       expect(getNextPageUrl({ links: {} })).to.eql(undefined);
       expect(getNextPageUrl({ links: 'next' })).to.eql(undefined);

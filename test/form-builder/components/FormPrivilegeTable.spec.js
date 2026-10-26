@@ -13,6 +13,7 @@ import FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx';
 import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
+import { httpInterceptor } from 'common/utils/httpInterceptor';
 
 chai.use(chaiEnzyme());
 
@@ -116,5 +117,45 @@ describe('FormPrivilegeTable', () => {
     instance.handleTag(event, 0);
         // expect(wrapper.state('formPrivileges').length).to.eql(2);
         // expect(wrapper.state('formPrivileges')[0].privilegeName).to.eql("abcd");
+  });
+});
+
+describe('FormPrivilegeTable pagination', () => {
+  let wrapper;
+  let getStub;
+
+  beforeEach(() => {
+    getStub = sinon.stub(httpInterceptor, 'get').returns(new Promise(() => {}));
+    wrapper = shallow(<FormPrivilegeTable formPrivileges={[{ formId: 1 }]} />);
+    getStub.resetHistory();
+  });
+
+  afterEach(() => {
+    getStub.restore();
+  });
+
+  it('should request the next page from the current origin and merge all pages', () => {
+    const next = {
+      results: [{ name: 'b' }],
+      links: [],
+    };
+    getStub.returns(Promise.resolve(next));
+    const first = {
+      results: [{ name: 'a' }],
+      links: [{ rel: 'next', uri: 'http://localhost//openmrs/ws/rest/v1/privilege?limit=1' }],
+    };
+    expect(() => wrapper.instance().collectAllPrivileges(first, [])).to.throw('Invalid pagination');
+    first.links[0].uri = 'http://other.example/openmrs/ws/rest/v1/privilege?limit=1&startIndex=1';
+    const all = [];
+    wrapper.instance().collectAllPrivileges(first, all);
+    sinon.assert.calledWith(getStub, '/openmrs/ws/rest/v1/privilege?limit=1&startIndex=1');
+    return Promise.resolve().then(() => Promise.resolve()).then(() => {
+      expect(all.map((p) => p.name)).to.eql(['a', 'b']);
+    });
+  });
+
+  it('should not request another page when there is no next link', () => {
+    wrapper.instance().collectAllPrivileges({ results: [{ name: 'a' }], links: [] }, []);
+    sinon.assert.notCalled(getStub);
   });
 });
