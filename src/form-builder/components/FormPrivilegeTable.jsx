@@ -18,6 +18,7 @@ import { selectSource, setChangedProperty } from 'form-builder/actions/control';
 import { commonConstants } from 'common/constants';
 import filter from 'lodash/filter';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { getNextPageUrl } from 'common/utils/paginationUtils';
 import Select from 'react-select';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 import sortBy from 'lodash/sortBy';
@@ -107,13 +108,8 @@ export default class FormPrivilegeTable extends Component {
       this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
       return;
     }
-    if (initialPrivileges.links !== undefined && initialPrivileges.links.length > 0) {
-      const nextLink = initialPrivileges.links.find(link => link.rel === 'next');
-      if (!nextLink) {
-        this.setState({ availablePrivileges: this.arrangePrivileges(allPrivileges), loading: false });
-        return;
-      }
-      const nextUri = this.getNextPaginationRequestUrl(nextLink.uri);
+    const nextUri = getNextPageUrl(initialPrivileges);
+    if (nextUri) {
       httpInterceptor.get(nextUri)
         .then((privileges) => this.collectAllPrivileges(privileges, allPrivileges));
     } else {
@@ -299,17 +295,6 @@ export default class FormPrivilegeTable extends Component {
       formPrivilegeObj.push(privilegeCopy);
     }
     return formPrivilegeObj;
-  }
-
-  getNextPaginationRequestUrl(uri) {
-    if (uri.indexOf('http') === -1) {
-      return uri;
-    }
-    const parsedUrl = new URL(uri);
-    if (parsedUrl.protocol != window.location.protocol) {
-      parsedUrl.protocol = window.location.protocol;
-    }
-    return parsedUrl.toString();
   }
 
   removeSelectedPrivilege(e) {
