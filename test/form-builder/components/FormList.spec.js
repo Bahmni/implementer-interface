@@ -203,6 +203,35 @@ describe('FormList', () => {
     }, 500);
   });
 
+  it('should call downloadPDFFile and open the download link when PDF icon be clicked', (done) => {
+    const formJson = { name: 'BP', version: '1.2' };
+    const translations = [];
+    const pdfResponse = { pdfName: 'BP_1.2.pdf' };
+    const getStub = sinon.stub(httpInterceptor, 'get');
+    getStub.onFirstCall().returns(Promise.resolve(formJson))
+      .onSecondCall().returns(Promise.resolve(translations));
+    const postStub = sinon.stub(httpInterceptor, 'post').returns(Promise.resolve(pdfResponse));
+    const windowOpenStub = sinon.stub(window, 'open');
+
+    wrapper = shallow(<FormList data={data} handleSelectedForm={undefined} />);
+    const pdfElement = getItem(1, 5).find('.fa-file-pdf-o').parent();
+    pdfElement.simulate('click');
+
+    setTimeout(() => {
+      sinon.assert.calledOnce(postStub);
+      sinon.assert.calledWith(postStub, formBuilderConstants.jsonToPdfConvertionUrl);
+      sinon.assert.calledWith(
+        windowOpenStub,
+        `${formBuilderConstants.pdfDownloadUrl}${pdfResponse.pdfName}`,
+        '_self'
+      );
+      getStub.restore();
+      postStub.restore();
+      windowOpenStub.restore();
+      done();
+    }, 500);
+  });
+
   it('should show translate button only for latest Published forms', () => {
     const form = {
       id: 4,
