@@ -53,7 +53,7 @@ export default class FormList extends Component {
           <b className="privilege-icon" hidden={!rowItem.published}>
             {this._privilegesIcon(rowItem)}</b>
           <a hidden={!rowItem.published}
-            onClick={() => this.pdfPreview(index)}
+            onClick={() => this.downloadPDFFile(index)}
           >
              <i className="fa fa-file-pdf-o" title="Download PDF Form" />
           </a>
@@ -88,9 +88,9 @@ export default class FormList extends Component {
              console.log(formData);
              try {
                httpInterceptor.post(formBuilderConstants.jsonToPdfConvertionUrl, formData).then((response) => {
-                 let fileName = response.pdfName;
+                 const fileName = response.pdfName;
                  const link = formBuilderConstants.pdfDownloadUrl + fileName;
-                 window.open(`/pdf/${fileName}`, '_self');
+                 window.open(link, '_self');
                });
              } catch (error) {
                console.log('error state');
