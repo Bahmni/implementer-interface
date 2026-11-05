@@ -1,3 +1,5 @@
+import { decode } from 'html-entities';
+
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -16,6 +18,39 @@ export function utf8ToBase64(str) {
 
   const binaryString = String.fromCharCode.apply(null, data);
   return btoa(binaryString);
+}
+
+export function unescapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  return decode(str);
+}
+
+export function deepUnescapeStrings(obj) {
+  if (typeof obj === 'string') {
+    return unescapeHtml(obj);
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(deepUnescapeStrings);
+  }
+  if (typeof obj === 'object' && obj !== null) {
+    const result = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = deepUnescapeStrings(obj[key]);
+    }
+    return result;
+  }
+  return obj;
+}
+
+export function unescapeFormResourceValue(valueString) {
+  if (!valueString) return valueString;
+  try {
+    const parsed = JSON.parse(valueString);
+    const unescaped = deepUnescapeStrings(parsed);
+    return JSON.stringify(unescaped);
+  } catch (e) {
+    return valueString;
+  }
 }
 
 export function base64ToUtf8(b64) {
