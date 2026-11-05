@@ -1,3 +1,5 @@
+import { decode } from 'html-entities';
+
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -20,10 +22,7 @@ export function utf8ToBase64(str) {
 
 export function unescapeHtml(str) {
   if (typeof str !== 'string') return str;
-  return str
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&');
+  return decode(str);
 }
 
 export function deepUnescapeStrings(obj) {

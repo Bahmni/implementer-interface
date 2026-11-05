@@ -102,7 +102,8 @@
     "react-router-dom": "^4.3.1",
     "reactjs-popup": "^1.5.0",
     "redux": "^4.0.5",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "^1.0.0",
+    "html-entities": "^2.6.0"
   },
   "resolutions": {
     "**/**/lodash": "^4.17.12",
