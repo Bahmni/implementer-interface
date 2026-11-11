@@ -14,6 +14,8 @@ import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 import chai, { expect } from 'chai';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
+import { formBuilderConstants } from 'form-builder/constants';
+import { commonConstants } from 'common/constants';
 
 chai.use(chaiEnzyme());
 
@@ -121,41 +123,124 @@ describe('FormPrivilegeTable', () => {
 });
 
 describe('FormPrivilegeTable pagination', () => {
+  const firstUrl = `${formBuilderConstants.formPrivilegeUrl}?=`;
+  const pageUrl = (startIndex) =>
+    `${formBuilderConstants.formPrivilegeUrl}?limit=1&startIndex=${startIndex}`;
+  const nextLink = (uri) => [{ rel: 'next', uri }];
+  const privilege = (name) => ({ uuid: `uuid-${name}`, display: name });
   let wrapper;
   let getStub;
 
   beforeEach(() => {
     getStub = sinon.stub(httpInterceptor, 'get').returns(new Promise(() => {}));
     wrapper = shallow(<FormPrivilegeTable formPrivileges={[{ formId: 1 }]} />);
-    getStub.resetHistory();
+    getStub.reset();
+    wrapper.setState({ loading: true, notification: {} });
   });
 
   afterEach(() => {
     getStub.restore();
   });
 
-  it('should request the next page from the current origin and merge all pages', () => {
-    const next = {
-      results: [{ name: 'b' }],
-      links: [],
-    };
-    getStub.returns(Promise.resolve(next));
-    const first = {
-      results: [{ name: 'a' }],
-      links: [{ rel: 'next', uri: 'http://localhost//openmrs/ws/rest/v1/privilege?limit=1' }],
-    };
-    expect(() => wrapper.instance().collectAllPrivileges(first, [])).to.throw('Invalid pagination');
-    first.links[0].uri = 'http://other.example/openmrs/ws/rest/v1/privilege?limit=1&startIndex=1';
-    const all = [];
-    wrapper.instance().collectAllPrivileges(first, all);
-    sinon.assert.calledWith(getStub, '/openmrs/ws/rest/v1/privilege?limit=1&startIndex=1');
-    return Promise.resolve().then(() => Promise.resolve()).then(() => {
-      expect(all.map((p) => p.name)).to.eql(['a', 'b']);
+  it('should request next pages from the current origin and merge all pages', () => {
+    getStub.withArgs(firstUrl).returns(Promise.resolve({
+      results: [privilege('b'), privilege('a')],
+      links: nextLink(`http://localhost${pageUrl(1)}`),
+    }));
+    getStub.withArgs(pageUrl(1)).returns(Promise.resolve({
+      results: [privilege('c')],
+      links: nextLink(`http://other.example${pageUrl(2)}`),
+    }));
+    getStub.withArgs(pageUrl(2)).returns(Promise.resolve({ results: [privilege('d')] }));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(getStub.args.map((args) => args[0])).to.eql([firstUrl, pageUrl(1), pageUrl(2)]);
+      expect(wrapper.state('availablePrivileges')).to.eql(
+        ['b', 'a', 'c', 'd'].map((name) => ({ value: name, uuid: `uuid-${name}`, label: name })));
+      getStub.args.forEach((args) => expect(args[0].charAt(0)).to.eql('/'));
+      expect(wrapper.state('loading')).to.eql(false);
+      expect(wrapper.state('notification')).to.eql({});
+    });
+  });
+
+  it('should show an error and stop loading when a later page fails', () => {
+    getStub.withArgs(firstUrl).returns(Promise.resolve({
+      results: [privilege('a')],
+      links: nextLink(pageUrl(1)),
+    }));
+    getStub.withArgs(pageUrl(1)).returns(Promise.reject(new Error('Failed to fetch')));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(wrapper.state('loading')).to.eql(false);
+      expect(wrapper.state('availablePrivileges')).to.eql([]);
+      expect(wrapper.state('notification')).to.eql(
+        { message: 'Failed to fetch', type: commonConstants.responseType.error });
+    });
+  });
+
+  it('should show an error and stop loading when the first request fails', () => {
+    getStub.withArgs(firstUrl).returns(Promise.reject(new Error('Server down')));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(wrapper.state('loading')).to.eql(false);
+      expect(wrapper.state('notification').message).to.eql('Server down');
+    });
+  });
+
+  [
+    ['an error without a message', () => new Error('')],
+    ['a null rejection', () => null],
+    ['an undefined rejection', () => undefined],
+  ].forEach(([description, makeError]) => {
+    it(`should show a fallback message and stop loading for ${description}`, () => {
+      getStub.withArgs(firstUrl).returns(Promise.reject(makeError()));
+
+      return wrapper.instance().fetchPrivileges().then(() => {
+        expect(wrapper.state('loading')).to.eql(false);
+        expect(wrapper.state('notification')).to.eql(
+          { message: 'Failed to load privileges', type: commonConstants.responseType.error });
+      });
+    });
+  });
+
+  it('should show an error and stop loading when the next link is invalid', () => {
+    getStub.withArgs(firstUrl).returns(Promise.resolve({
+      results: [privilege('a')],
+      links: nextLink('http://localhost//evil.com/a'),
+    }));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(getStub.callCount).to.eql(1);
+      expect(wrapper.state('loading')).to.eql(false);
+      expect(wrapper.state('availablePrivileges')).to.eql([]);
+      expect(wrapper.state('notification').message).to.contain('Invalid pagination link');
+    });
+  });
+
+  it('should show an error instead of looping when the next link repeats', () => {
+    getStub.withArgs(firstUrl).returns(Promise.resolve({
+      results: [privilege('a')],
+      links: nextLink(pageUrl(1)),
+    }));
+    getStub.withArgs(pageUrl(1)).returns(Promise.resolve({
+      results: [privilege('b')],
+      links: nextLink(pageUrl(1)),
+    }));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(getStub.callCount).to.eql(2);
+      expect(wrapper.state('loading')).to.eql(false);
+      expect(wrapper.state('notification').message).to.contain('repeated pagination link');
     });
   });
 
   it('should not request another page when there is no next link', () => {
-    wrapper.instance().collectAllPrivileges({ results: [{ name: 'a' }], links: [] }, []);
-    sinon.assert.notCalled(getStub);
+    getStub.withArgs(firstUrl).returns(Promise.resolve({ results: [privilege('a')], links: [] }));
+
+    return wrapper.instance().fetchPrivileges().then(() => {
+      expect(getStub.callCount).to.eql(1);
+      expect(wrapper.state('availablePrivileges').map((p) => p.label)).to.eql(['a']);
+      expect(wrapper.state('loading')).to.eql(false);
+    });
   });
 });
